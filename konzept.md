@@ -257,6 +257,47 @@ Der Kern definiert in v1 folgende öffentliche, stabile Namensfamilie; Ereigniss
 3. **Review Captain:** optionale Formularaktion für lokale Reviews in Review-Captain-Moderation; Review-Anfragen weiterhin ausschließlich über vertrauenswürdige Experience-Events. Danach Affiliate-Adapter.
 4. **Externe Dienste:** Webhooks als generische Grundlage; spezifische CRM-/Payment-Connectoren jeweils nach Nachfrage und API-Prüfung.
 
+
+
+### Kundenspezifische Projekt-Connectoren
+
+Form Captain unterstützt zusätzlich **separate Connector-Plugins für kundenspezifische Projekte**. So kann ein Kunde Formulare mit einem eigenen Kurs-, Buchungs-, CRM-, Mitglieder- oder Verwaltungsprojekt verbinden, ohne Form Captain Core zu forken oder projektspezifische Datenmodelle in den Kern aufzunehmen.
+
+#### Muster aus den bestehenden Captain-Plugins
+
+| Vorbild | Bereits gelöstes Muster | Übernahme für Form Captain |
+|---|---|---|
+| [Pass Captain – Erweiterungen](https://github.com/hastla007/wp-passmaster/blob/main/docs/EXTENSIONS.md) | Versioniertes ConnectorInterface, Registry-Filter, ausdrückliche site-lokale Aktivierung sowie wiederholbare Hintergrundjobs mit Backoff und Dead-letter. | Form Captain erhält eine stabile Registry, opt-in je Website und Formularaktion sowie eine gemeinsame Jobverarbeitung. |
+| [Voucher Captain – Connector-Leitfaden](https://github.com/hastla007/wp-couponmaster/blob/main/CONNECTORS.md) | Der Kern bleibt fachlich generisch; der separate Connector besitzt die externe Leistung. Der Leitfaden enthält einen ausführbaren Beispiel-Connector, definierte Idempotenz, Fehler-/Refund-Verhalten und Integrationstests. | Projektspezifische Geschäftslogik und Zielsystem-Zustand gehören in das separate Connector-Plugin; Beispielimplementierung und Release-Checkliste werden mitgeliefert. |
+| [Affiliate Captain – Integrationsvertrag](https://github.com/hastla007/wpaffiliatemaster/blob/main/docs/CONTRACT.md) | Versionierte öffentliche API, additive Änderungen innerhalb einer Hauptversion, Idempotenz und klare Verantwortung der Verkaufsquelle; kein Tabellenzugriff. | Form Captain dokumentiert jede öffentliche Schnittstelle, hält v1 abwärtskompatibel und bietet Scopes statt direktem Datenbankzugriff. |
+
+#### Verbindliche Architektur
+
+- **Connector ist ein eigenes WordPress-Plugin.** Es wird separat installiert und kann für einen einzelnen Kunden geschrieben oder als wiederverwendbare Branchenintegration angeboten werden. Form Captain Core enthält keine kundenspezifische Kurs-, Mitglieder-, ERP- oder CRM-Logik.
+- **Zuständigkeit:** Form Captain besitzt Formular, Schema, vollständige Einsendung, Eintragsstatus und Aufbewahrung. Der Connector besitzt Feldmapping, projektspezifische Regeln, Zugangsdaten zum Zielsystem, Remote-IDs, Rückabwicklung und den Zustand der externen Leistung.
+- **Versionierter Connector-Vertrag:** Für v1 wird ein PHP-Interface im Namespace `FormCaptain\Integrations` mit stabilem Connector-Key, Vertragsversion, deklarierten Fähigkeiten/Aktionen und einem Handler für benannte Aktionen, minimierte Payloads und Idempotency-Key vorgesehen. Connectoren registrieren sich über den öffentlichen Registry-Filter `form_captain_connectors_v1`; benutzerseitige Formularaktionen werden über `form_captain_register_action_v1` beschrieben.
+- **Kompatibilität:** v1 bleibt innerhalb der Major-Version additiv. Für inkompatible Hauptversionen wird der Connector deaktiviert und der Zustand im Admin erklärt. Nicht dokumentierte Klassen, Datenbanktabellen und interne Hooks gelten nicht als API.
+- **Opt-in:** Neue Connectoren sind nach Installation standardmäßig deaktiviert. Ein Administrator aktiviert den Connector site-lokal und wählt pro Formular ausdrücklich erlaubte Aktionen. Die Integrationsseite zeigt Plugin-/Vertragsversion, Anforderungen, Fähigkeiten und letzten Status.
+- **Feldfreigabe:** Der Administrator ordnet nur validierte Formularfelder und nötige IDs zu. Sensible Felder sind standardmäßig ausgeschlossen. Der Handler bekommt keine vollständige Submission, außer ein gesonderter, begründeter Scope wurde freigegeben.
+- **Ausführung:** Der Entry wird zuerst gespeichert. Danach stellt die Outbox die Connectoraktion asynchron zu. Ein stabiler Schlüssel je Site, Entry, Connector und Aktion macht Wiederholungen idempotent. Temporäre Fehler erhalten Backoff; nach standardmäßig acht Versuchen landet der Job im Dead-letter-Status und kann nach Diagnose manuell erneut gestartet werden.
+- **Fehlergrenze:** Ein Connector-Ausfall blockiert weder Formularannahme noch Entry-Verwaltung oder native Form-Captain-Mail. Connectoren liefern strukturierte Ergebnisse und wiederholbare/nicht wiederholbare Fehler zurück; externe Änderungen und Kompensationen bleiben Aufgabe des Connectors.
+- **Löschen und Deaktivieren:** Abschalten oder Entfernen eines Connectors löscht keine Formulare/Entries. Offene Jobs werden sichtbar pausiert oder gemäß dokumentierter Richtlinie beendet. Entry-Löschung und Consent-Widerruf lösen nur die zuvor vertraglich konfigurierten Bereinigungsereignisse aus; keine ungefragte Löschung im Fremdsystem.
+- **Lizenzierung:** Der allgemeine Connector-Vertrag, die Registry und die sichere Aktionsausführung sind im Free-Kern verfügbar. Form-Captain-Pro-Rechte gelten nur für Premiumfunktionen wie komplexe Workflows, Webhooks, Uploads oder PDFs. Ein kundenspezifischer Connector darf einfache Form-Captain-Aktionen nicht künstlich von Form Pro abhängig machen.
+- **Abgrenzung zu Webhooks:** Ein Webhook sendet ein generisches HTTP-Payload. Ein Connector-Plugin bildet einen fachlichen Prozess ab – inklusive API-Version, Zielzustand, Berechtigungen, Fehlerbehandlung, Wiederholung, Rückabwicklung und Admin-Einstellungen. Beliebiger PHP-Code wird niemals im Formular-Editor eingegeben.
+
+#### Ein Connector wird so entwickelt und betrieben
+
+1. Zielprojekt, Datenbesitz, erlaubte Aktionen, Rückabwicklung und Datenschutzumfang definieren.
+2. Connector-Plugin prüft, ob Form Captain und eine kompatible Vertragsversion verfügbar sind.
+3. Connector deklariert Aktionen, Einstellungsfelder, Voraussetzungen und benötigte Feld-Scopes.
+4. Website-Administrator aktiviert ihn ausdrücklich und ordnet pro Formular die freigegebenen Felder zu.
+5. Nach erfolgreicher Entry-Speicherung wird die Aktion mit stabilem Idempotency-Key in die Queue gestellt.
+6. Connector verarbeitet die Aktion im Zielsystem und meldet Erfolg, temporären Fehler oder endgültigen Fehler zurück.
+7. Integrationsseite zeigt Lauf, Retry/Dead-letter, Testmodus und nächste mögliche Aktion.
+8. Contract- und Zwei-Plugin-Tests prüfen Wiederholung, Ausfall, Deaktivierung, Löschung und API-Inkompatibilität.
+
+Ein Referenz-Connector im Form-Captain-Repository demonstriert Registrierung, Freigabe, Feldzuordnung, idempotente Verarbeitung und Retry gegen einen lokalen Beispieldienst. Er ist Muster und Testfixture, keine produktionsreife Anbindung an ein reales Kundensystem.
+
 ## 6. Admin-Seiten und Frontend-Seiten
 
 | Seite | Aufgabe und Inhalt |
@@ -266,7 +307,7 @@ Der Kern definiert in v1 folgende öffentliche, stabile Namensfamilie; Ereigniss
 | **Formular erstellen / Editor** | Vorlagenauswahl (Kontakt, Anfrage, Newsletter, Eventanmeldung); Feldpalette; Canvas; Feld-Einstellungen; Formular- und Benachrichtigungseinstellungen; Vorschau Desktop/Mobil; Veröffentlichung. |
 | **Einträge** | Tabelle mit Formular, Datum, Status, Name/E-Mail soweit vorhanden; Filter, Suche, Bulk-Aktionen, Export. Rollen und Capabilities müssen vor Abfrage greifen. |
 | **Eintragsdetail** | Antwortwerte, Quelle/Formular, Zeitstempel, Status, interne Notiz, Spamgrund, Lösch-/Exportaktion. Keine vollständigen IP-Adressen oder unnötigen Browser-Fingerprints. |
-| **Integrationen** | Kacheln für verfügbare Adapter, erkannte Suite-Plugins, Verbindung/Status, Feldmapping, Testlauf, letzte erfolgreiche und fehlgeschlagene Aktion. Pro-Verbindungen klar mit Lizenzstatus versehen. |
+| **Integrationen** | Suite-Adapter und separate kundenspezifische Connector-Plugins mit Erkennung, Vertragsversion, ausdrücklicher Aktivierung, Anforderungen/Fähigkeiten, Formularaktions-Auswahl, Feld-Scopes, Testmodus, Queue-/Dead-letter-Status und Fehlerdiagnose. Pro-Verbindungen klar mit Lizenzstatus versehen. |
 | **Einstellungen** | Allgemein, Absender/SMTP-Hinweis, Datenschutz/Aufbewahrung, Spamschutz, Eintragsrechte, Import/Export, Systemstatus und Entwickler-API. |
 | **Formular-Frontend** | Form mit Labeln, Pflichtfeld-Hinweisen, Inline-Fehlern, Erfolgsmeldung, Tastaturbedienung, Screenreader-Ansagen und responsivem Layout. |
 | **Optionale Systemseiten** | Erfolg-/Danke-Seite per WordPress-Seitenauswahl; keine ungefragt angelegten öffentlichen Seiten. Pro: Fortsetzen-Link, Upload-Bestätigung, Zahlungsstatus. |
@@ -444,6 +485,23 @@ flowchart LR
 ```
 
 Provisionsberechnung verwendet die bestehenden Verkaufsquellenverträge und Idempotenzregeln. Reviews ändern keine Provision. Eine spätere Review-Auswertung darf nur freigegebene Aggregate enthalten, keine Einzelreviews oder Käuferdaten.
+
+### 12.7 Kundenspezifischer Projekt-Connector
+
+¤¤¤mermaid
+flowchart LR
+    A["Connector-Plugin installiert"] --> B["Version und Voraussetzungen prüfen"]
+    B --> C["Admin aktiviert Connector"]
+    C --> D["Aktion und erlaubte Felder zuordnen"]
+    D --> E["Form Captain speichert Entry"]
+    E --> F["Idempotenter Job in Outbox"]
+    F --> G["Connector verarbeitet Zielprojekt"]
+    G -->|Erfolg| H["Ergebnis protokolliert"]
+    G -->|temporärer Fehler| I["Retry mit Backoff"]
+    I -->|nach acht Versuchen| J["Dead-letter und Admin-Diagnose"]
+¤¤¤
+
+Der Connector ist standardmäßig deaktiviert. Sein Ausfall beeinträchtigt die gespeicherte Einsendung und Form-Captain-Kernfunktionen nicht.
 
 ## 13. UI-Mockups: Konzeptansichten der Seiten
 

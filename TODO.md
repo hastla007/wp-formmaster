@@ -101,7 +101,13 @@ Das Repository enthält derzeit Konzept und separate TODO.md; Plugin-Code ist no
 - [ ] **P3-15 – Redirects gegen Open Redirect absichern.** Nur interne, erlaubte Ziele oder explizit geprüfte Ziele zulassen; Redirect-Parameter aus der Submission niemals direkt übernehmen.
 - [ ] **P3-16 – Frontend-JavaScript als progressive Verbesserung bauen.** Validierung und Bedingungen funktionieren serverseitig weiter; mehrere Formulare, Minifizierung, verzögerte Skripte und Theme-Konflikte testen.
 - [ ] **P3-17 – Eingabe-/Ressourcenlimits durchsetzen.** Maximale Anzahl Felder/Optionen, verschachtelte Payloads, Feldwertlängen und Requestgröße begrenzen und Überlast verständlich zurückweisen.
-- **Abnahme Phase 3:** Formular funktioniert in Block und Shortcode, bei aktivem Seiten-Cache sowie ohne JavaScript-Grundfunktion; ungültige oder manipulierte Requests werden serverseitig abgewiesen.
+- [ ] **P3-18 – Yoast-Kompatibilität ohne Laufzeitabhängigkeit absichern.** Yoast SEO Free/Premium defensiv erkennen; bei deaktiviertem oder fehlendem Plugin alle Form-Captain-Funktionen ohne Warnschleife oder Fatal Error betreiben.
+- [ ] **P3-19 – Yoast-Shortcode-Analyse optional integrieren.** Den offiziellen Filter `yoast.analysis.shortcodes` nur verwenden, wenn verfügbar; ausschließlich sichtbare Labels/Hilfetexte bereitstellen und niemals Submission-Werte oder private Daten in die Analyse geben.
+- [ ] **P3-20 – Yoast-Metadatenhoheit bewahren.** Keine eigenen Filter für Yoast-Titel, Meta-Beschreibung, Canonical, Robots, Open Graph, X-Tags oder Sitemap setzen; Formular auf einer Seite darf deren Yoast-Einstellungen nicht ändern.
+- [ ] **P3-21 – Doppelte Indexierungsobjekte und Schema verhindern.** Keine öffentliche Formular-URL, öffentliche Entry-Seite, Formular-CPT-Sitemap oder eigenes konkurrierendes JSON-LD ausgeben; Formular bleibt eingebetteter Seiteninhalt.
+- [ ] **P3-22 – Yoast-Block/Shortcode-Ausgabe crawlbar und zugänglich halten.** HTML serverseitig rendern; sichtbare Labels, Hilfetexte und Pflichtfeldhinweise ausgeben; Form-Assets nur auf Seiten mit Form-Captain-Block/Shortcode laden.
+- [ ] **P3-23 – SEO-Hinweis in Block und Dokumentation ergänzen.** Erklären, dass Seiteninhalt, Überschriften, Seitentitel, Meta-Beschreibung und Indexierungsregeln in WordPress/Yoast gepflegt werden und ein Formular keinen hilfreichen Seiteninhalt ersetzt.
+- **Abnahme Phase 3:** Formular funktioniert in Block und Shortcode, bei aktivem Seiten-Cache sowie ohne JavaScript-Grundfunktion; ungültige oder manipulierte Requests werden serverseitig abgewiesen; Yoast-Metadaten und Indexierung bleiben unverändert.
 
 ### Phase 4 – Entries, E-Mail und Verwaltung
 
@@ -172,6 +178,8 @@ Das Repository enthält derzeit Konzept und separate TODO.md; Plugin-Code ist no
 - [ ] **P6-17 – Datenbank- und Browsermatrix präzisieren.** CI mindestens gegen festgelegte MySQL-/MariaDB-Versionen sowie die unterstützten Browser-/Block-Editor-Kombinationen laufen lassen.
 - [ ] **P6-18 – Release-ZIP technisch prüfen.** ZIP-Install, Dateiliste, Dateirechte, PHP-Syntax auf Mindestversion, Textdomain, Lizenzhinweise und Ausschluss von Tests/Secrets vor Veröffentlichung automatisiert abnehmen.
 - [ ] **P6-19 – Produktionsfehler und Supportdiagnose testen.** Fehlercodes und Korrelations-IDs müssen Support ermöglichen, ohne Submission-Inhalte oder personenbezogene Werte exportieren zu müssen.
+- [ ] **P6-20 – Yoast-Kompatibilitätsmatrix abnehmen.** Yoast fehlt/deaktiviert, unterstützte Version, aktuelle Version sowie Free/Premium mit Gutenberg-Block und Shortcode prüfen; SEO-Ausgabe, Meta-Tags, Canonical, Robots, Sitemap und JSON-LD auf unbeabsichtigte Änderungen kontrollieren.
+- [ ] **P6-21 – Yoast-Inhaltsanalyse und Rendering prüfen.** Bei unterstütztem Shortcode-Filter nur öffentliche Formularlabels/Hilfetexte berücksichtigen; keine Entry-Werte einbeziehen. Sichtbares serverseitiges HTML, doppelte Ausgabe und Asset-Ladung auf Seiten ohne Formular kontrollieren.
 - **Abnahme Phase 6 / Free v1.0:** Reproduzierbarer Build, bestandene CI-/Sicherheits-/Accessibility-Prüfung, vollständige Dokumentation und getesteter Update-/Datenpfad; Kernprodukt bleibt ohne Pro dauerhaft benutzbar.
 
 ### Phase 7 – Form Captain Pro und License Captain

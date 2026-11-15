@@ -114,7 +114,7 @@ Alle Tarife enthalten denselben Pro-Funktionsumfang, Updates und Support währen
 
 **Nach v1.0, in dieser Reihenfolge**
 
-1. Contact Form 7-Formularimport mit Konvertierungsbericht; Entry-Import nur, wenn eine kompatible Exportquelle vorliegt.
+1. Import aus einem verbreiteten externen Formularformat mit Konvertierungsbericht; Entry-Import nur, wenn eine kompatible Exportquelle vorliegt.
 2. Pass Captain-Adapter: Eventformular aus Eventseite einbetten, Event-ID als verifizierbarer Kontext, keine automatische Ticket-/Bestellausstellung.
 3. Voucher Captain-Adapter für Gutscheinanfrage/Firmenbestellung nach expliziter Prüfung und Bestätigung.
 4. Affiliate- und Review-Adapter.

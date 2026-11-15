@@ -349,9 +349,28 @@ Beide Connectoren sind eigenständige Plugins mit eigener Versionsnummer, Instal
 | **Einträge** | Tabelle mit Formular, Datum, Status, Name/E-Mail soweit vorhanden; Filter, Suche, Bulk-Aktionen, Export. Rollen und Capabilities müssen vor Abfrage greifen. |
 | **Eintragsdetail** | Antwortwerte, Quelle/Formular, Zeitstempel, Status, interne Notiz, Spamgrund, Lösch-/Exportaktion. Keine vollständigen IP-Adressen oder unnötigen Browser-Fingerprints. |
 | **Integrationen** | Suite-Adapter und separate kundenspezifische Connector-Plugins mit Erkennung, Vertragsversion, ausdrücklicher Aktivierung, Anforderungen/Fähigkeiten, Formularaktions-Auswahl, Feld-Scopes, Testmodus, Queue-/Dead-letter-Status und Fehlerdiagnose. Pro-Verbindungen klar mit Lizenzstatus versehen. |
-| **Einstellungen** | Allgemein, Absender/SMTP-Hinweis, Datenschutz/Aufbewahrung, Spamschutz, Eintragsrechte, Import/Export, Systemstatus und Entwickler-API. |
+| **Einstellungen** | Gruppierte Tabs für Allgemein, Darstellung, E-Mail, Datenschutz & Speicherung, Spamschutz, Zugriff & Rollen sowie lesbaren Systemstatus. Integrationen bleiben ein eigener Menüpunkt; Formularimport/-export liegen bei den Formularen. Pro-Lizenz erscheint nur bei installiertem Add-on. |
 | **Formular-Frontend** | Form mit Labeln, Pflichtfeld-Hinweisen, Inline-Fehlern, Erfolgsmeldung, Tastaturbedienung, Screenreader-Ansagen und responsivem Layout. |
 | **Optionale Systemseiten** | Erfolg-/Danke-Seite per WordPress-Seitenauswahl; keine ungefragt angelegten öffentlichen Seiten. Pro: Fortsetzen-Link, Upload-Bestätigung, Zahlungsstatus. |
+
+### 6.1 Einstellungen im WordPress-Admin
+
+**Menüstruktur unter „Form Captain“:** Dashboard, Formulare, Einträge, Integrationen und Einstellungen. Die Einstellungsseite erhält eine klare Unter-Navigation mit den folgenden Bereichen; sie wird kein Sammelplatz für Formulare, Lizenzen oder beliebige Entwickleroptionen.
+
+| Bereich | Wichtige Nutzeroptionen | Festlegung für v1 |
+|---|---|---|
+| **Allgemein** | Standardwerte und Verhalten des Plugins | WordPress-Sprache und Zeitzone respektieren; keine doppelte Einstellung für bereits von WordPress verwaltete Grundfunktionen. |
+| **Darstellung** | Verhalten des Frontend-Formulars gegenüber dem Theme | Theme-Styling standardmäßig erben; optionale globale Basisdarstellung und Reset. Formulare können bei Bedarf einzeln abweichen. Keine externe Font- oder Skriptladung. |
+| **E-Mail** | Absendername/-adresse als Standard, Klartext/HTML-Versand soweit unterstützt, Testversand und Zustellhinweise | Empfänger, Reply-To, Betreff, Feldzuordnung, Bestätigungstext und Erfolg/Redirect bleiben im jeweiligen Formular. Form Captain ersetzt kein SMTP-Plugin und speichert keine SMTP-Zugangsdaten. |
+| **Datenschutz & Speicherung** | Standard-Aufbewahrung, Hinweis auf Datenschutzerklärung, Datenlöschung und Uninstall-Verhalten | Bestehende Produktentscheidung beibehalten: 12 Monate Standard; bei Setup/Einstellungen 90 Tage, 12 Monate oder manuelle Löschung. Einwilligungstexte sind formularbezogen und nie vorangekreuzt. Änderungen zeigen die betroffenen Daten und den Zeitpunkt einer Bereinigung. |
+| **Spamschutz** | Honeypot, Mindest-Ausfüllzeit, Rate-Limit, optionale Blocklisten und ausdrücklich aktivierbare Captcha-Anbieter | Schutz ohne externen Dienst ist voreingestellt. Bei einem Anbieter zeigt die UI vor Aktivierung die übermittelten Daten und verweist auf nötige Datenschutzhinweise. |
+| **Zugriff & Rollen** | Rechte für Formulare verwalten, Einträge lesen, exportieren und Einstellungen ändern | Sichere Capability-Standards. Einträge sind nicht automatisch für alle Editoren sichtbar; Rollenänderungen erläutern, wer danach Zugriff erhält. |
+| **Systemstatus** | Schema-/Plugin-Version, WP/PHP-Kompatibilität, Cron/Queue, E-Mail-Status und erkannte Konflikte | Diagnose ist lesbar und datensparsam; keine Feldwerte, vollständigen IP-Adressen, Secrets oder personenbezogenen Payloads ausgeben. |
+| **Integrationen** | Captain-Suite- und Projekt-Connectoren | Bleibt ein eigener Hauptmenüpunkt mit eigener Opt-in-, Lizenz-, Feldfreigabe- und Fehlerverwaltung; nicht mit allgemeinen Einstellungen vermischen. |
+
+**Nicht als globale Einstellungen duplizieren:** Formular-Empfänger, Antwortadresse, E-Mail-Betreff, einzelne Feldzuordnung, Nutzerbestätigung, Erfolgsmeldung und Redirect gehören in die Formularbearbeitung. Globale E-Mail-Werte sind nur Voreinstellungen; bestehende Formulare behalten ihre expliziten Werte, wenn ein globaler Standard geändert wird.
+
+**Werkzeuge getrennt halten:** Formularvorlagen und JSON-Import/-Export gehören zur Formularübersicht. CSV-Eintragsexport gehört in die Eintragsansicht. Die Pro-Lizenz und Updates erscheinen als eigener Unterpunkt nur bei installiertem Form-Captain-Pro-Add-on. Das reduziert doppelte Wege und hält die allgemeinen Einstellungen für Websitebetreiber verständlich.
 
 ### Inhalt der Ersteinrichtung
 

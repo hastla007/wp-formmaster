@@ -25,6 +25,26 @@ Das Produkt besteht aus zwei getrennten Plugins:
 
 Das kostenlose Plugin enthält keine Lizenzprüfung, keinen Lizenzclient, keinen eigenen Updater und keine nach Zahlung gesperrten Funktionen. Bereits im Free-Kern veröffentlichte Funktionen werden nicht nachträglich entzogen.
 
+## 1.1 Verbindliche Produktentscheidungen für Version 1
+
+Diese Entscheidungen gelten als Planungsgrundlage für die erste Umsetzung. Änderungen werden als bewusste Produktentscheidung dokumentiert, nicht stillschweigend während der Implementierung.
+
+| Entscheidung | Festlegung |
+|---|---|
+| **Erster Zielkunde** | Kleine und mittlere deutschsprachige Unternehmen sowie WooCommerce-Betreiber, die Anfragen verlässlich erfassen und im eigenen WordPress beantworten möchten. Agenturen sind die zweite Zielgruppe. |
+| **Primärer Einsatz** | Kontakt-, Angebots- und Supportanfragen. Event-, Gutschein- und Affiliate-Szenarien folgen als Suite-Adapter, nicht als Voraussetzung für ein funktionierendes Formularprodukt. |
+| **Positionierung** | „Formulare und Einsendungen direkt in WordPress, mit verlässlichen Suite-Verbindungen und ohne externe Abhängigkeit für den Kernbetrieb.“ |
+| **Free-Versprechen** | Unbegrenzte Formulare und Einsendungen; im Free gibt es keine künstliche Submission-Grenze, keine Pflichtregistrierung und keinen Lizenzserverkontakt. |
+| **Pro-Logik** | Ein einziges eigenständiges Add-on mit vollständigem Pro-Funktionsumfang; keine Einzel-Add-ons. Pro-Tarife unterscheiden sich nur durch Site-Limit und Support. |
+| **MVP v1.0** | Formulareditor, 3 Vorlagen (Kontakt, Angebot, Support), Kernfelder, einfache bedingte Feldanzeige, Einträge, E-Mail, Basisspamschutz, Export, Block/Shortcode, Datenschutzwerkzeuge und Installationsassistent. |
+| **Nicht im MVP** | Zahlungen, Datei-Uploads, PDF-Erzeugung, Multi-Step, CRM-spezifische Connectoren, Abandonment, Umfragen/Quiz, öffentliche Entry-Ansichten, Multisite-Netzwerkverwaltung und KI-Formularerstellung. |
+| **Erste Pro-Version** | Multi-Step, Datei-Uploads, erweiterte Bedingungen/Routing, Webhooks, PDF aus Einsendungen und Integrations-/Fehlerprotokoll. Zahlungen folgen erst nach stabiler v1.x und separater Provider-/Refund-Prüfung. |
+| **Suite-Reihenfolge** | Öffentlicher Vertrag ab Free v1.0; zuerst Pass Captain (Einbettung/Event-Kontext), danach Voucher Captain (Anfrage/Firmenbestellung), anschließend Affiliate Captain und Review Captain. |
+| **Unterstützungsumfang v1** | WordPress 6.5+, PHP 7.4+, WooCommerce optional ab Version 8.0; HPOS und klassischer Bestellspeicher. Checkout-Block-Integration ist kein MVP-Ziel. Keine Multisite-Unterstützung in v1.0. |
+| **Sprachen v1** | Englisch als Quelltextsprache und de_DE/de_AT Übersetzungen; weitere Übersetzungen nach stabiler Textdomain und Übersetzungsworkflow. |
+
+**Produktabgrenzung:** Form Captain ist zunächst kein allgemeiner No-Code-App-Builder. Keine dynamischen Datenbanken, Kundenportale oder komplexen Genehmigungsketten in v1. Diese würden Support- und Sicherheitsumfang unverhältnismäßig erhöhen.
+
 ## 2. Zielgruppen und typische Einsätze
 
 1. **Kleine Unternehmen:** Kontakt-, Angebots-, Support- und Rückrufformulare; Einsendungen zuverlässig im WordPress-Admin nachverfolgen.
@@ -62,8 +82,70 @@ Die Wettbewerber setzen unterschiedliche Schwerpunkte. Die Marktbeobachtung unte
 - [Formidable Forms Features](https://formidableforms.com/features/) und [Formidable Forms auf WordPress.org](https://wordpress.org/plugins/formidable/)
 - [Ninja Forms](https://ninjaforms.com/) und [Conditional Logic Add-on](https://ninjaforms.com/extensions/conditional-logic/)
 - [Contact Form 7 auf WordPress.org](https://wordpress.org/plugins/contact-form-7/)
+- Preisanker: [WPForms Pricing](https://wpforms.com/pricing/), [Gravity Forms Pricing](https://www.gravityforms.com/pricing/), [Fluent Forms Pricing](https://fluentforms.com/pricing/), [Formidable Forms Pricing](https://formidableforms.com/pricing/) und [Ninja Forms Pricing](https://ninjaforms.com/pricing/).
+
+### Preis- und Tarifbeobachtung (Stand 15.11.2026)
+
+Die angezeigten US-Preise sind Listenpreise bzw. der auf der offiziellen Seite ausgewiesene Preis; Aktionspreise und Verlängerungsbedingungen unterscheiden sich. Die Beobachtung dient der Positionierung und ist kein direkter EUR-Preisvergleich:
+
+| Wettbewerber | Öffentliche Jahrespreis-Anker | Lizenzstaffel / Signal |
+|---|---|---|
+| WPForms | Basic regulär 99 USD; Plus 199 USD; Pro 399 USD; Elite 599 USD. Die Seite bewirbt rabattierte Erstjahre und Verlängerung zum Listenpreis. | 1 / 3 / 5 / unbegrenzt Sites; Featureumfang nach Tier. |
+| Gravity Forms | Basic 59 USD; Pro 159 USD; Elite 259 USD pro Jahr. | 1 / 3 / unbegrenzt Sites; Add-on-Pakete nach Tier. |
+| Fluent Forms | Offizielle FAQ nennt Start ab 79 USD/Jahr; Preisseite zeigt 1 / 5 / unbegrenzt und zusätzlich Lifetime-Angebote. | Niedriger Preisanker, großzügiger Free-Tarif, umfangreiche Pro-Funktionen. |
+| Formidable Forms | Listenpreise 79 / 199 / 399 / 599 USD/Jahr; Aktionen senken oft nur das erste Jahr. | Feature- und Site-Limits je Tarif; positioniert sich für komplexe/dynamische Formulare. |
+| Ninja Forms | Core kostenlos; Plus/Pro/Elite Jahrespakete mit Add-ons; Preisseite nennt regulär 99 / 199 / 499 USD und rabattierte Erstjahre. | Kostenloser Kern plus einzelne Add-ons und Pakete. |
+
+**Schlussfolgerung für Form Captain:** Die Free-Version muss echte Eintragsverwaltung, Export und einfache Logik enthalten; sonst ist der Wechselgrund schwach. Pro sollte zum Start einfacher und günstiger als die etablierten Jahrespakete sein, aber nicht als Billig- oder Lifetime-Produkt positioniert werden. Aktionen dürfen den regulären Verlängerungspreis nicht verschleiern.
+
+### Vorgeschlagene Form-Captain-Pro-Preise zum Start
+
+| Tarif | Jahrespreis (EUR, zzgl. USt.) | Live-Sites | Support |
+|---|---:|---:|---|
+| **Solo** | 49 € | 1 | Standard |
+| **Studio** | 99 € | 5 | Standard |
+| **Agency** | 199 € | 25 | Priorisiert |
+
+Alle Tarife enthalten denselben Pro-Funktionsumfang, Updates und Support während der aktiven Laufzeit. Site-Limits zählen Live-Installationen; pro Live-Site ist eine Staging-Aktivierung enthalten, Development-Aktivierungen zählen nicht zum Limit, analog zum vorhandenen WP License Captain-Modell. Keine Lifetime-Lizenz und keine kostenpflichtigen Einzel-Add-ons zum Start. Preise nicht mit künstlichem „Normalpreis/Rabatt“-Doppelpreis vermarkten. Die Lizenz läuft 12 Monate und verlängert sich zum beim Kauf angezeigten Tarif, sofern im Checkout transparent zugestimmt wurde. Preisänderungen betreffen künftige Verlängerungen nur nach vorheriger Information und im Rahmen der Shopbedingungen.
+
+**Begründung:** Der Einstieg liegt nahe an einem bekannten 1-Site-Preisanker, die 5-Site-Stufe deckt kleine Agenturen ab und 25 Sites bilden einen klaren Agency-Tier. Die geringere Startposition gegenüber etablierten Produkten berücksichtigt den kleineren Funktions- und Supportumfang zum Launch. Preise nach den ersten 6 Monaten anhand von Conversion, Supportkosten und Verlängerungsquote neu bewerten; bis dahin keine zusätzliche Tarifstufe einführen.
+
 
 ## 4. Funktionsumfang
+
+### Verbindlicher Release-Schnitt
+
+**Free v1.0 (WordPress.org)**
+
+- Unbegrenzte Formulare, Felder und Einsendungen; genau die Feldarten aus Abschnitt 4.1.
+- Drei direkt nutzbare Vorlagen: Kontakt, Angebotsanfrage, Support.
+- Eine einfache Feldregel je Feldgruppe: anzeigen/ausblenden anhand eines Feldwerts. Keine verschachtelten Gruppen und keine bedingten Aktionen.
+- Einträge mit Status neu/gelesen/archiviert/Spam; Suche, Datums-/Formularfilter, Detailseite und CSV-Export.
+- Admin-Mail, optionales Nutzer-Receipt und eine Abschlussmeldung oder URL-Weiterleitung.
+- Honeypot, Mindestzeit und zeitbasiertes Rate-Limit; kein externer Captcha-Dienst standardmäßig.
+- Gutenberg-Block und Shortcode; kein Formular-Hosting außerhalb der Installation.
+- Privacy Exporter/Eraser, Aufbewahrungsoption, Consent-Feld und ausdrückliche Bestätigung externer Dienste.
+- Öffentlicher Contract v1 mit Events und Dokumentation; in v1.0 noch keine Suite-Automation, aber keine inkompatible private Schnittstelle.
+
+**Pro v1 (separates Add-on)**
+
+- Mehrseitige Formulare mit Fortschritt und Fortsetzen-Link.
+- Datei-Upload mit Allowlist, Größenlimit, geschützten Downloads und automatischer Löschung.
+- Verschachtelte AND/OR-Bedingungen und bedingte Bestätigungen/Benachrichtigungsziele.
+- Webhook-Aktionen mit Feldzuordnung, Signatur, Idempotenz, Retries und Protokoll.
+- PDF-Generierung aus Entry-Vorlage.
+- Lizenz-/Updater-Seite und Updatefeed nach WP License Captain Vertrag.
+
+**Nach v1.0, in dieser Reihenfolge**
+
+1. Contact Form 7-Formularimport mit Konvertierungsbericht; Entry-Import nur, wenn eine kompatible Exportquelle vorliegt.
+2. Pass Captain-Adapter: Eventformular aus Eventseite einbetten, Event-ID als verifizierbarer Kontext, keine automatische Ticket-/Bestellausstellung.
+3. Voucher Captain-Adapter für Gutscheinanfrage/Firmenbestellung nach expliziter Prüfung und Bestätigung.
+4. Affiliate- und Review-Adapter.
+5. CRM-Connectoren; Zahlungen nur nach stabiler Webhook-/Idempotenzbasis und eigener Provider-/Refund-Spezifikation.
+6. Weitere Migrationen, Analytics, White-Label und Multisite nur nach Nutzungsdaten/Nachfrage.
+
+**Wichtig für die Konkurrenzfähigkeit:** Einfache bedingte Anzeige wird in Free geliefert, weil sie bei starken kostenlosen Wettbewerbern Teil des Basispakets ist. Die bezahlte Abgrenzung liegt bei komplexen Regeln und Aktionen statt bei einer künstlichen Sperre der einfachsten Logik.
 
 ### 4.1 Form Captain Free – Kernumfang
 
@@ -100,7 +182,9 @@ Die Wettbewerber setzen unterschiedliche Schwerpunkte. Die Marktbeobachtung unte
 - Formulare als JSON importieren/exportieren; keine Entries im Formular-Export.
 - Entwickler-Hooks und versionierte öffentliche API von Anfang an vorsehen.
 
-### 4.2 Form Captain Pro – Premium-Add-on
+### 4.2 Form Captain Pro – Add-on-Roadmap
+
+Der folgende Funktionskatalog beschreibt die mittelfristige Pro-Roadmap. **Verbindlich für den ersten Verkauf ist ausschließlich „Pro v1“ im Release-Schnitt oben.** Zahlungsfunktion, direkte CRM-Connectoren und White-Label sind keine Launch-Zusagen.
 
 | Bereich | Pro-Funktionen |
 |---|---|
@@ -112,7 +196,7 @@ Die Wettbewerber setzen unterschiedliche Schwerpunkte. Die Marktbeobachtung unte
 | **Integrationen** | CRM-/Newsletter-Connectoren, Zapier/Make/n8n via Webhook oder dokumentiertem Adapter; Integrationsstatus, Testverbindung, Feldzuordnung und Fehlerjournal. |
 | **Betrieb** | Entry-Abandonment/Partial Entries, Versionshistorie und Wiederherstellung, erweiterter Export/Import und unterstützte Migrationen; Agentur-/White-Label-Option erst nach Nachfragevalidierung. |
 
-**Pro-Schnitt:** Der Free-Kern bleibt für einfache Formulare dauerhaft brauchbar. Pro monetarisiert Automatisierung, komplexe Workflows und aufwendige Betriebsfunktionen. Kernformulare, die im Free erstellt wurden, bleiben auch ohne Pro unverändert nutzbar; Pro-Daten bleiben gespeichert und werden nach Lizenzende nicht gelöscht. Pro-Aktionen pausieren bei fehlendem Recht kontrolliert und zeigen einen nachvollziehbaren Status.
+**Pro-Schnitt:** Der Free-Kern bleibt für einfache Formulare dauerhaft brauchbar. Pro monetarisiert Automatisierung, komplexe Workflows und aufwendige Betriebsfunktionen. Kernformulare, die im Free erstellt wurden, bleiben auch ohne Pro unverändert nutzbar; Pro-Daten bleiben gespeichert und werden nach Lizenzende nicht gelöscht. Die Aktivierung folgt dem gemeinsamen Add-on-Kernel: Feature-Rechte werden aus dem signierten Lizenzstatus gelesen, täglich geprüft und bis zu 14 Tage offline zwischengespeichert; nur autorisierte Pro-Features registrieren schreibende Aktionen. Bei fehlendem Recht bleiben Free-Formulare und Einträge intakt, Pro-Editor-/Workflow-Aktionen pausieren mit erklärendem Admin-Hinweis und Pro-Updates stehen nicht zur Verfügung.
 
 ## 5. Captain-Suite-Integration
 
@@ -128,6 +212,19 @@ Form Captain bleibt ein eigenständiges Formularprodukt. Jedes Suite-Plugin inte
 - Idempotency-Key für externe/geschäftskritische Aktionen; Wiederholungen erzeugen keine doppelten Gutscheine, Tickets, Provisionen oder API-Ereignisse.
 - Keine vollständigen Bestell-, Zahlungs- oder unnötigen Personendaten in Suite-Events; nur IDs und explizit freigegebene Feldwerte.
 - Integrationsdiagnose: erkanntes Plugin, Version, Vertragskompatibilität, letzte Ausführung, Fehler und erneuter Versuch.
+
+### Vertrag v1 – feste Namenskonvention und Mindestereignisse
+
+Der Kern definiert in v1 folgende öffentliche, stabile Namensfamilie; Ereignisse feuern erst nach erfolgreichem Datenbank-Commit:
+
+- Versionskonstante: FORM_CAPTAIN_CONTRACT_VERSION = 1.0.0.
+- Aktionen: form_captain_form_created_v1, form_captain_form_updated_v1, form_captain_entry_created_v1, form_captain_entry_status_changed_v1 und form_captain_entry_deleted_v1.
+- Admin-Menü: form_captain_admin_menu_built_v1($parent_slug), damit Pro und Suite-Adapter ihre Seiten als Unterseiten ergänzen können.
+- Öffentliche Read-API: form_captain_get_form_v1($form_id), form_captain_get_entry_v1($entry_id, $scopes) und form_captain_submit_v1($form_id, $payload, $context).
+- Ergebnisobjekt: success, code, form_id/entry_id und request_id; erwartete Validierungs-/Berechtigungsfehler werden als Ergebnis zurückgegeben.
+- Ein Adapter registriert sich erst nach form_captain_loaded_v1 und prüft die kompatible Vertrags-Major-Version. Inkompatible Major-Versionen werden deaktiviert und mit Code incompatible_contract in der Diagnose angezeigt.
+- Entry-Ereignisse liefern standardmäßig IDs, Form-ID, Zeitstempel und eine Allowlist explizit freigegebener Werte; keine vollständigen WordPress- oder WooCommerce-Objekte, Zahlungsdaten oder rohe IP-Adresse.
+- Jede schreibende Integration verlangt serverseitige Berechtigung und Idempotency-Key. Externe Fehler ändern keinen bereits gespeicherten Entry; sie erzeugen einen wiederholbaren Integrationsjob.
 
 ### Konkrete Integrationen
 
@@ -172,6 +269,8 @@ Form Captain bleibt ein eigenständiges Formularprodukt. Jedes Suite-Plugin inte
 
 ## 7. Datenmodell und technische Leitplanken
 
+**v1-Datenmodell (Entscheidung):** Tabellen mit WordPress-Präfix für Formulare, Entries und Entry-Werte; keine WordPress-Post-Zeile pro Antwort. Formulare haben numerische interne ID, öffentliche zufällige Kennung, Status, schema_version und ein validiertes JSON-Schema. Entries speichern Form-ID, Status, UTC-Zeitstempel, Lösch-/Retention-Datum und minimale Quellenmetadaten. Werte sind zeilenweise über entry_id + field_id abgelegt, damit CSV- und Privacy-Export gezielt möglich ist. Sensible Feldwerte werden nicht in Debug- oder Integrationslogs kopiert. Schemaänderungen erhalten versionierte Migrationen; Form-JSON-Import nimmt niemals Einsendungen oder Uploads ungefragt mit. Neue Installationen verwenden standardmäßig eine Aufbewahrungsfrist von 12 Monaten; bei der Einrichtung kann der Betreiber 90 Tage, 12 Monate oder manuelle Löschung wählen. Vor Ablauf werden keine Einsendungen automatisch ohne Admin-Hinweis gelöscht; gelöschte Einträge werden endgültig bereinigt, einschließlich referenzierter Dateien.
+
 - Formulardefinition versioniert als JSON-Schema mit stabilen Feld-IDs; Einreichungen werden tabellarisch in eigener Entry-Tabelle gespeichert, Antwortwerte strukturiert und schema-versioniert. Keine Einsendungen als WordPress-Post pro Submission.
 - Entry und Datei-Referenzen getrennt; private Dateiablage und Lösch-/Ablaufjobs für Uploads.
 - Submission-Service zentralisiert: Sanitizing, Validierung, Rate-Limit, Speicherung, E-Mail/Workflow-Queue und Integrationsereignisse in definierter Reihenfolge.
@@ -181,6 +280,8 @@ Form Captain bleibt ein eigenständiges Formularprodukt. Jedes Suite-Plugin inte
 - Multisite: Daten pro Site, Netzwerkaktivierung mit klarer Datenmigration und Capabilities; Entscheidung vor MVP festlegen.
 - Uninstall löscht Formulare/Einträge nur nach expliziter Admin-Auswahl und dokumentierter Bestätigung.
 - PHP-/WordPress-Mindestversion erst anhand der CI-Matrix und verbreiteter PHP-Versionen festlegen.
+
+**WordPress.org-Platzierung:** Die Trennung folgt den aktuellen Plugin-Richtlinien: Trialware/Funktionssperren im WordPress.org-Free-Plugin sind nicht zulässig; die Richtlinien empfehlen ausdrücklich ein außerhalb des Verzeichnisses angebotenes Add-on für Premiumcode. Lizenzprüfung, Premium-Updater und Pro-Code bleiben daher ausschließlich in form-captain-pro. Upgrade-Hinweise bleiben kontextbezogen, sparsam und wegklickbar. Quelle: [Detailed Plugin Guidelines (Developer.WordPress.org)](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/).
 
 ## 8. Lizenzierung und Verkauf
 
@@ -192,19 +293,19 @@ Die Lizenzierung folgt dem bestehenden Captain-Suite-Modell:
 4. Pro-Add-on vendort den Lizenzclient in eigenem Namespace. Der Add-on-Kernel prüft Kernplugin-Version, verbindet die Lizenzseite unter Form Captain und startet Features nur bei passenden Rechten.
 5. Der Updater validiert signierte Metadaten sowie Paketgröße und SHA-256. Lizenzstatus und Offline-Cache folgen dem bestehenden Client-Vertrag.
 6. Ablauf/Deaktivierung der Lizenz stoppt nur Pro-Aktionen/Updates gemäß Vertrag. Free-Formulare und bestehende Einträge bleiben erhalten.
-7. Preise, Paketnamen, Laufzeiten, Verlängerungs- und Supportbedingungen werden separat entschieden. Keine Preise oder unbelegte Leistungszusagen in diesem Konzept festschreiben.
+7. Die empfohlenen Starttarife stehen im Abschnitt „Vorgeschlagene Form-Captain-Pro-Preise zum Start“; die drei Jahrespläne erhalten Site-Limits 1/5/25. Feature-Entitlements sind über alle Tarife identisch. Zahlungs-, Widerrufs- und Verlängerungstexte werden vor Verkauf für die Zielmärkte geprüft.
 
 ## 9. Umsetzungsplan und To-do
 
 ### Phase 0 – Produktentscheidungen und Verträge
 
-- [ ] Kern-/Pro-Grenze nach diesem Dokument bestätigen.
-- [ ] Plugin-Namen, Ordner, Textdomains, Konstanten und Rechtepräfix festlegen.
-- [ ] Formulardaten-Schema, stabile Feld-IDs und Schema-Migrationen entwerfen.
-- [ ] Capability-/Datenschutzmodell und Aufbewahrungs-Defaults festlegen.
-- [ ] Versionierten Form-Captain-Integrationsvertrag v1 spezifizieren.
-- [ ] Pro-Produkt form-captain-pro samt Entitlements im WP License Captain planen.
-- [ ] WordPress-, PHP-, WooCommerce- und Multisite-Support-Matrix festlegen.
+- [x] Kern-/Pro-Grenze für v1.0 festgelegt (Abschnitt 1.1 und Release-Schnitt).
+- [x] Produktname Form Captain, Kernslug form-captain, Add-on form-captain-pro, Produktschlüssel form-captain-pro und Rechtepräfix form. festgelegt.
+- [ ] Form-JSON, Feld-IDs, Submission-Tabellen und Schema-Migrationen als v1-Spezifikation ausarbeiten.
+- [ ] Capability-Matrix, konkrete Privacy-Texte und Löschregeln als technisches Datenschutzpaket ausarbeiten. Default-Aufbewahrung: 12 Monate; Einrichtung lässt 90 Tage, 12 Monate oder manuelle Löschung zu.
+- [ ] Versionierten Form-Captain-Integrationsvertrag v1 mit konkreten Payloads und SemVer-Regeln ausarbeiten.
+- [x] Produktkey und Start-Entitlements definiert; Produktanlage im WooCommerce-Katalog bleibt eine Umsetzungsaufgabe.
+- [x] Mindestversionen festgelegt: WP 6.5+, PHP 7.4+, WooCommerce optional 8.0+; Multisite nach v1.0.
 - **Abnahme:** Architekturentscheidungen und öffentliche Verträge sind dokumentiert, bevor Implementierungen von Suite-Plugins abhängen.
 
 ### Phase 1 – Free-MVP
@@ -237,7 +338,7 @@ Die Lizenzierung folgt dem bestehenden Captain-Suite-Modell:
 - [ ] Lizenz- und Feature-Seite in Form Captain einhängen.
 - [ ] Rechte für Multi-Step, Uploads, Workflows, PDF, Webhook und Integrationen registrieren.
 - [ ] Pro-Features nur im Add-on implementieren; Kern-Hooks dafür neutral und ohne Lizenzprüfung anbieten.
-- [ ] Lizenzverlust-, Offline-Cache-, Update- und Deaktivierungsablauf dokumentieren.
+- [ ] Lizenzverlust-, 14-Tage-Offline-Cache-, Update- und Deaktivierungsablauf dokumentieren; Free-Formulare/Entries dürfen nicht betroffen sein.
 - **Abnahme:** aktives Add-on mit gültiger Lizenz schaltet Pro-Funktionen frei; deaktiviertes Add-on lässt Formulare/Einträge intakt.
 
 ### Phase 4 – Suite-Adapter
@@ -252,7 +353,7 @@ Die Lizenzierung folgt dem bestehenden Captain-Suite-Modell:
 
 ### Phase 5 – Ausbau und Priorisierung
 
-- [ ] Migrationen aus WPForms, Gravity Forms, Fluent Forms, Ninja Forms und Formidable priorisiert nach Nutzerbedarf.
+- [ ] Formulare aus Contact Form 7 importieren; danach WPForms/Fluent Forms priorisieren. Entry-Daten nur bei unterstützter Exportdatei übernehmen.
 - [ ] Mehrsprachigkeit (WPML/Polylang) und Multisite-Verhalten.
 - [ ] Zahlungsintegration mit offizieller API und geprüften Refund-/Webhook-Abläufen.
 - [ ] CRM-Connectoren nach Nachfrage priorisieren; zuerst dokumentiertes Webhook- und Fehlerprotokoll.

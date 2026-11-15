@@ -238,6 +238,37 @@ Jeder Adapter ist optional, versioniert, einzeln deaktivierbar und greift aussch
 - **Abnahme Connectoren:** Ein separat installierbares Connector-Plugin kann sich sicher registrieren, wird nur nach Opt-in ausgeführt, erhält genau freigegebene Daten und bleibt bei Wiederholung/Ausfall diagnostizierbar.
 
 
+#### Pilot-Connectoren: BoatingSchool B2B und LearnBoating B2C
+
+Diese Aufgaben erweitern Phase 8 um zwei echte Kundenfälle. Sie ändern nicht die Reihenfolge von Free v1.0 und Pro v1; Umsetzung startet erst nach dem allgemeinen Connector-Vertrag und einer konkreten Kundenfreigabe. Änderungen in den Kunden-Repositories werden dort separat umgesetzt und versioniert.
+
+**BoatingSchool – Form-Captain-Lead-Connector**
+
+- [ ] **P8-40 – B2B-Prozess mit Kunde und Plattformverantwortlichen abnehmen.** Formularzweck (Demo, Beratung oder Schulzugangsinformation), Zielwebsite, verantwortliche Inbox, erlaubte Felder, Einwilligung, Aufbewahrung und Follow-up festlegen. Ohne eine WordPress-Website mit Form Captain ist dieser Connector kein passender Einbauort.
+- [ ] **P8-41 – Bestehende Commerce-Grenze dokumentieren.** Vor Implementierung bestätigen, dass `/api/commerce/v1` Shopkonten, Käufe und Kurscodes verwaltet, aber keinen allgemeinen Interessenten-/Lead-Eingang. Keine bestehenden Endpunkte für Form-Leads umnutzen.
+- [ ] **P8-42 – Neuen Laravel-Lead-Vertrag spezifizieren.** Für BoatingSchool einen eigenständigen Intake-Endpunkt (Vorschlag: `POST /api/integrations/v1/form-captain/leads`) mit versioniertem JSON-Schema, erlaubten Feldern, Antwort- und Fehlercodes, Idempotenz, Rate-Limits und Schlüsselrotation definieren.
+- [ ] **P8-43 – Tenant-unabhängiges Lead-Datenmodell und Inbox planen.** Lead ist ein unqualifizierter Interessent, keinem Tenant zugeordnet und weder Benutzer-, Shopkonto- noch Schuldatensatz. Superadmin-Rollen, Status (neu, in Bearbeitung, qualifiziert, abgelehnt), interne Notizen, Aufbewahrung, Export/Löschung und Auditierung festlegen.
+- [ ] **P8-44 – Lead-Endpunkt sicher in BoatingSchool implementieren.** Separaten HMAC-Key und Signaturvertrag verwenden; Timestamp/Nonce, Replay-Schutz, Rate-Limits, Eingabevalidierung und Schemafehler abdecken. Commerce-Secrets und Commerce-Berechtigungen nicht wiederverwenden.
+- [ ] **P8-45 – Lead-Inbox im BoatingSchool-Superadmin umsetzen.** Eingehende Leads nachvollziehbar anzeigen, bearbeiten, ablehnen und löschen; keine Konto-/Schulanlage durch den Intake-Aufruf. Etwaige spätere Freigabe führt ausschließlich in den vorhandenen geprüften Onboarding-Prozess.
+- [ ] **P8-46 – Eigenständiges WordPress-Connector-Plugin erstellen.** Form Captain und kompatible Vertragsversion erkennen; Endpoint und Secret ausschließlich serverseitig konfigurieren; Connector standardmäßig deaktivieren. Ohne erreichbaren, kompatiblen Endpunkt keine scheinbar erfolgreiche Übergabe melden.
+- [ ] **P8-47 – Lead-Feldmapping und Herkunftsbezug implementieren.** Nur explizite, nicht sensible Felder, Consent-Referenz, Formular-/Entry-ID und erlaubte Quell-URL übertragen. Idempotency-Key aus Website, Formular und Entry verwenden; vollständigen Entry nicht pauschal spiegeln.
+- [ ] **P8-48 – Zustellstatus und Wiederholung über die Form-Captain-Outbox abnehmen.** Remote-Lead-ID, letzter Versuch, wiederholbarer/endgültiger Fehler und manuelle Wiederholung darstellen. Erfolgreiche Wiederholung darf keinen zweiten Lead erzeugen; Connector-Ausfall darf Entry, Spamprüfung und native Benachrichtigung nicht verhindern.
+- [ ] **P8-49 – BoatingSchool-Vertrag und Connector gemeinsam testen.** HMAC-Kompatibilität, Replay, falsches Schema, doppelte Zustellung, Timeout nach erfolgreichem Schreiben, Schlüsselrotation, Rate-Limit, Superadmin-Sichtbarkeit und Ablehnung automatischer Kontenerstellung abdecken.
+- [ ] **P8-50 – Kunden-Staging und Datenschutzabnahme dokumentieren.** WordPress → Laravel Ende-zu-Ende testen; Testleads löschen, Aufbewahrung und Einwilligung bestätigen, Wiederherstellung/Ausfallweg festhalten. Produktivschaltung erst nach Freigabe der tatsächlichen WordPress-URL, API-URL und Verantwortlichen.
+
+**LearnBoating – lokale Kursfrage-Integration**
+
+- [ ] **P8-51 – Kursfragen-Anwendungsfall bestätigen.** Auf Kurs-/Produktseiten eine unverbindliche Kursfrage als Ziel definieren. Amtliche Prüfung, Terminvergabe, Praxis-Tickets, Lernzugang, Gutschein-, Affiliate- und Kaufprozesse bleiben ausgeschlossen.
+- [ ] **P8-52 – Öffentlichen LearnBoating-Kurskontext-Vertrag spezifizieren.** Im Lernplugin einen dokumentierten, versionierten Erweiterungspunkt (Vorschlag: `bootspruefung_form_context_v1`) für öffentliche Kursdaten `course_code`, `label`, `permalink`, `status` festlegen. Keine private Klasse, Datenbankabfrage oder unverifizierte Hidden-Field-Quelle als API behandeln.
+- [ ] **P8-53 – LearnBoating-Erweiterungspunkt implementieren und dokumentieren.** Nur veröffentlichte, anfragbare Kurse ausgeben; Vertragsversion und Fehlerfall dokumentieren. Das Lernplugin muss ohne Form Captain unverändert funktionieren.
+- [ ] **P8-54 – Eigenständiges LearnBoating-Connector-Plugin erstellen.** Auf derselben WordPress-Installation wie `bootspruefung-learning` installieren; den Kurskontext lokal beziehen und als Form-Captain-Aktion anbieten. Keine HTTP-Rundreise zur eigenen Website.
+- [ ] **P8-55 – Kontext gegen Manipulation absichern.** Kurskontext serverseitig aus aktueller Kursseite übernehmen oder eine Auswahl gegen den öffentlichen Vertrag validieren. Unbekannte, unveröffentlichte oder deaktivierte Kurscodes ablehnen; Browserwerte allein nie als verlässlich behandeln.
+- [ ] **P8-56 – Entry- und Benachrichtigungsfluss umsetzen.** Form Captain bleibt Eigentümer des vollständigen Entries und versendet die konfigurierte Standardbenachrichtigung. Kursreferenz wird am Entry sichtbar. Es entsteht kein Ticketdatensatz oder Supportfall im Lernplugin, solange es keinen öffentlichen Support-Vertrag gibt.
+- [ ] **P8-57 – Datenminimierung und bestehende Connectoren abnehmen.** Keine Abfrage/Übertragung von Lernfortschritt, Prüfungsversuchen, Bestellungen, Gutscheinwerten, Affiliate-Attribution oder Nutzerprofilen. Vorbefüllung von WordPress-Kontaktdaten nur nach aktiver Nutzerentscheidung. Bestehende Voucher-/Affiliate-Connectoren bleiben zuständig.
+- [ ] **P8-58 – LearnBoating-Kompatibilität und Zwei-Plugin-Verhalten testen.** Die kombinierte Basis aus aktuellem Form-Captain- und Lernplugin-Mindeststand verifizieren (Konzeptstand: WordPress 7.0+, PHP 8.3+; WooCommerce nur nach Anforderung des Lernplugins). Aktivierung ohne Form Captain, fehlender/veralteter Vertrag, unbekannter Kurs, Plugin-Deaktivierung, Entry-Löschung und normales Formular-Fallback testen.
+- [ ] **P8-59 – Gemeinsame Pilot-Dokumentation und Supportgrenze veröffentlichen.** Installation, unterstützte Versionen, Datenfluss, Fähigkeiten, Grenzen, Consent, Fehlerbehebung und klare Trennung zwischen Form-Captain-Entry und LearnBoating-Kurszugang dokumentieren.
+- **Abnahme Kunden-Connectoren:** BoatingSchool nimmt ausschließlich minimierte Interessenten-Leads in einer neuen, getrennten Inbox auf; LearnBoating liefert nur geprüften Kurskontext. Beide Connectoren sind optional, separat installierbar, idempotent, deaktivierbar und verwenden ausschließlich öffentliche, dokumentierte Verträge.
+
 ### Phase 9 – Launch, Betrieb und spätere Erweiterungen
 
 - [ ] **P9-01 – Produkt- und Preisangaben finalisieren.** Form-Captain-Pro-Tarife, 1/5/25-Site-Limits, Supportumfang, Verlängerung und Shopprodukte mit License Captain und captain-pro abgleichen.

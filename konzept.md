@@ -298,6 +298,47 @@ Form Captain unterstützt zusätzlich **separate Connector-Plugins für kundensp
 
 Ein Referenz-Connector im Form-Captain-Repository demonstriert Registrierung, Freigabe, Feldzuordnung, idempotente Verarbeitung und Retry gegen einen lokalen Beispieldienst. Er ist Muster und Testfixture, keine produktionsreife Anbindung an ein reales Kundensystem.
 
+#### Pilot-Connectoren für zwei konkrete Interessenten
+
+Die folgenden Vorschläge sind anhand der jeweiligen Repositories abgegrenzt. Sie sind technische Konzepte und noch keine bereits implementierten oder vom Kunden bestätigten Integrationen.
+
+| Interessent | Vorgeschlagener Connector | Einsatzort und Richtung | Machbarkeit |
+|---|---|---|---|
+| **BoatingSchool – B2B-Plattform** | Separates Plugin **Form Captain – BoatingSchool Leads** | Auf einer WordPress-Marketing- oder Shop-Website mit Form Captain; serverseitig von WordPress an einen neuen Lead-Endpunkt der Laravel-Plattform. | **Machbar nach Plattform-Erweiterung.** Die dokumentierte Commerce-API dient Shopkonten, Bestellpositionen und Kurscodes. Ein Lead-/Interessenten-Endpunkt ist darin nicht dokumentiert und darf nicht durch `/accounts` oder Bestellendpunkte ersetzt werden. |
+| **LearnBoating – B2C-Lernplattform** | Separates Plugin **Form Captain – LearnBoating Connector** | Auf derselben WordPress-Installation wie `bootspruefung-learning`; lokal über dokumentierte WordPress-Erweiterungspunkte, ohne externen API-Aufruf. | **Als Kursfrage-Integration machbar.** Der Lernplugin-Vertrag beschreibt Gutscheine, Tickets und Praxis-Angebote, aber keine Formular-/Supportfälle. Für verifizierten Kurskontext braucht es einen kleinen öffentlichen Erweiterungsvertrag im Lernplugin. |
+
+##### A. BoatingSchool: B2B-Demo- und Schulzugangsanfrage
+
+**Zweck:** Interessenten aus Bootsschulen können eine Demo, ein Beratungsgespräch oder Informationen zum B2B-Angebot anfragen. Form Captain bleibt auf einer WordPress-Seite der Einstieg und speichert die vollständige Einsendung. Der neue Connector übermittelt nur die ausdrücklich freigegebenen Lead-Felder an BoatingSchool.
+
+**Benötigte Erweiterung in BoatingSchool:** eine eigene, signierte Lead-Intake-API, beispielsweise `POST /api/integrations/v1/form-captain/leads`, plus eine tenant-unabhängige Lead-Inbox im Superadmin. Diese API und Inbox sind neu zu spezifizieren; die vorhandene `/api/commerce/v1`-API ist kein Lead-CRM. Leads bleiben unqualifizierte Interessenten und werden weder automatisch zu Schulen/Tenants noch zu App-Konten oder Shopkonten. Erst der bestehende, getrennte Prüf- und Freigabeprozess darf ein Konto bzw. eine Schule anlegen.
+
+**Erlaubte Minimaldaten:** Schul-/Organisationsname, Kontaktname, geschäftliche E-Mail, optional Telefon, Land/Region, gewünschter Gesprächstyp, grobe Größenklasse und freigegebene Nachricht. Formular-ID, Entry-ID, Quell-URL und Einwilligungs-/Datenschutzhinweis werden als Herkunfts- und Nachweisreferenz mitgeführt. Feldfreigabe erfolgt pro Formular; Freitext und optionale Felder sind standardmäßig aus.
+
+**Sicherheits- und Betriebsvertrag:** HTTPS und serverseitige HMAC-Signatur mit Zeitstempel/Nonce, Replay-Schutz und eigener rotierbarer Connector-Zugangsdaten; den bestehenden Commerce-Schlüssel nicht wiederverwenden. Ein `Idempotency-Key` aus WordPress-Site, Formular und Entry verhindert doppelte Leads. Die Plattform prüft Schema und Rate-Limits und liefert eine stabile Lead-ID zurück. WordPress speichert diese Remote-ID und den Zustellstatus; Secrets bleiben in `wp-config.php` bzw. geschützter Serverkonfiguration und gelangen nie in Browser, Formfelder, Logs oder E-Mails. Temporäre Fehler werden über die Form-Captain-Outbox mit Backoff wiederholt; definitive Validierungsfehler werden angezeigt und sind nicht automatisch wiederholbar.
+
+**Admin-Ablauf:** Form-Captain-Administrator aktiviert den Connector, hinterlegt Endpoint und Zugangsdaten, führt einen Verbindungstest ohne echten Lead aus, wählt die Aktion „B2B-Lead an BoatingSchool senden“ und ordnet Felder zu. Die Integrationsseite zeigt Lead-ID, letzten Versuch, Status und sichere Fehlerbeschreibung. Die Superadmin-Inbox in BoatingSchool übernimmt Qualifizierung, Kontaktaufnahme, Ablehnung oder getrennte Konto-/Schulfreigabe.
+
+**Bewusste Grenzen:** Kein Anlegen oder Verknüpfen eines Shopkontos, keiner Schule, eines Tenants oder Lernenden; keine automatische Einladung oder Bestellung; keine Übertragung von Passwörtern, Lernständen, Prüfungsdaten oder Codes. Existiert noch kein Lead-Endpunkt, bleibt die Einsendung in Form Captain und wird über dessen normale, konfigurierte Benachrichtigung bearbeitet. Direkter Datenbankzugriff und ein Workaround über bestehende Commerce-Endpunkte sind ausgeschlossen.
+
+##### B. LearnBoating: Kursfrage mit geprüftem Kurskontext
+
+**Zweck:** Auf Kurs-, Produkt- oder Lerninformationsseiten kann eine Besucherin eine Frage zum passenden Bootsschein-Kurs stellen. Form Captain speichert den Entry und verschickt die normale, vom Websitebetreiber konfigurierte Benachrichtigung. Der Connector ergänzt den vom Lernplugin bestätigten Kurskontext und zeigt im Form-Captain-Admin eine verlässliche Kursreferenz.
+
+**Benötigter öffentlicher Erweiterungspunkt:** Das Lernplugin veröffentlicht einen dokumentierten, versionierten Kurskontext-Vertrag (Vorschlag: `bootspruefung_form_context_v1`) mit nur den öffentlichen Angaben `course_code`, `label`, `permalink` und `status`. Der Connector kann den Kontext serverseitig aus der aktuellen Seite beziehen oder eine Kursauswahl gegen diese Liste validieren. Er liest weder interne Tabellen noch private Klassen und vertraut keinem vom Browser gesetzten versteckten Kurscode. Bei fehlendem oder inkompatiblem Vertrag wird die Aktion deaktiviert und der normale Form-Captain-Entry bleibt möglich.
+
+**V1-Aktion und Datenfluss:** „Kursfrage mit Kurskontext“ ist eine lokale Form-Captain-Aktion. Sie verknüpft Entry-ID, Kurscode, Kurslabel und Herkunftsseite; Kontaktfelder gehen nur dann in eine optionale Benachrichtigung, wenn Websitebetreiber sie ausdrücklich zuordnen. Vorhandene WordPress-Kontaktdaten dürfen nur nach expliziter Besucherentscheidung vorausgefüllt werden. Lernfortschritt, Prüfungsversuche, Bestellungen, Gutscheinwerte und Nutzerprofile werden nicht ausgelesen oder übertragen.
+
+**Zielsystem und Grenze:** Da kein Support-Ticket-/Fall-API im dokumentierten LearnBoating-Vertrag beschrieben ist, wird V1 nicht als Ticketanlage oder Synchronisierung in eine Lernplugin-Inbox beworben. Der Form-Captain-Entry ist die maßgebliche Anfrage; LearnBoating liefert nur validierten Kurskontext. Eine spätere Übergabe an ein Supportsystem erfordert einen eigenen öffentlichen Vertrag samt Verantwortlichkeit, Statusmodell, Idempotenz und Löschregeln.
+
+**Ausdrücklich ausgeschlossen:** amtliche Prüfungsanmeldung oder Terminvergabe, Praxisstunden/-tickets, Bootsschul-B2B-Prozesse, Lernzugang, Gutscheine, Affiliate-Attribution, WooCommerce-Bestellung/-Zahlung und automatische Nutzeranlage. Gutschein- und Affiliate-Abläufe bleiben bei den bereits vorhandenen LearnBoating-Connectoren.
+
+##### Gemeinsame Lizenz- und Freigaberegel
+
+Beide Connectoren sind eigenständige Plugins mit eigener Versionsnummer, Installations-/Supportgrenze und dokumentiertem Datenumfang. Der stabile Form-Captain-Connector-Vertrag und einfache Aktionen sind im Free-Kern verwendbar; Form Captain Pro wird nur für tatsächlich benötigte Pro-Funktionen wie komplexe Bedingungen oder Premium-Workflows verlangt. Eine kommerzielle Lizenz für einen kundenspezifischen BoatingSchool-Connector wird separat mit dem Kunden festgelegt und kann – falls das Plugin wiederverwendbar verkauft wird – als eigenes Produkt über License Captain lizenziert werden. Sie darf nicht implizit mit einer Form-Captain-Pro-Lizenz gleichgesetzt werden.
+
+**Kompatibilitätsbasis für LearnBoating:** Der dokumentierte Stand des Lernplugins nennt WordPress 7.0+, PHP 8.1+ und WooCommerce 11.2+. Zusammen mit Form Captain gilt daher mindestens WordPress 7.0+ und PHP 8.3+; WooCommerce wird nur vorausgesetzt, soweit die installierte LearnBoating-Version selbst es benötigt. Vor Implementierung sind diese Anforderungen am dann aktuellen Release zu verifizieren.
+
 ## 6. Admin-Seiten und Frontend-Seiten
 
 | Seite | Aufgabe und Inhalt |
@@ -502,6 +543,21 @@ flowchart LR
 ¤¤¤
 
 Der Connector ist standardmäßig deaktiviert. Sein Ausfall beeinträchtigt die gespeicherte Einsendung und Form-Captain-Kernfunktionen nicht.
+
+### 12.8 Kundenabläufe: BoatingSchool und LearnBoating
+
+**BoatingSchool – neue Interessentenanfrage:** Form Captain nimmt den Entry zuerst an und speichert ihn. Der separate Connector stellt danach idempotent einen minimierten Lead an eine neue, signierte Laravel-API zu. Die Plattform legt einen Lead in einer tenant-unabhängigen Superadmin-Inbox an. Qualifizierung und eine mögliche Schul-/Kontofreigabe bleiben ein manueller, getrennter Prozess. Solange API und Inbox fehlen, bleibt die Anfrage in Form Captain.
+
+**LearnBoating – Kursfrage:** Das Lernplugin stellt über einen öffentlichen Vertrag den Kurskontext der Seite bereit. Form Captain speichert die Frage als Entry und verknüpft den validierten Kurscode. Es erfolgt keine Ticket- oder Prüfungsbuchung. Bei fehlender Erweiterungsschnittstelle kann die Einsendung weiterhin ohne Kursaktion verarbeitet werden.
+
+| Schritt | BoatingSchool B2B | LearnBoating B2C |
+|---|---|---|
+| 1. Auslöser | Demo-/Schulzugangsformular auf WordPress | Kursfrage auf Kurs-/Produktseite |
+| 2. Kontext | Explizite Lead-Felder und Einwilligung | Kurscode/Label serverseitig aus öffentlichem Lernplugin-Vertrag |
+| 3. Speicherung | Vollständiger Entry in Form Captain | Vollständiger Entry in Form Captain |
+| 4. Integration | Asynchroner, signierter API-Aufruf zur neuen Lead-Inbox | Lokale Kurskontext-Aktion; keine externe Übertragung |
+| 5. Ergebnis | Lead-ID und Status für Admin; Qualifizierung in BoatingSchool | Kursreferenz am Entry; normale Form-Captain-Benachrichtigung |
+| 6. Grenze | Keine Konto-/Tenant-/Schulanlage oder Commerce-Funktion | Keine Prüfung, Termin-, Ticket-, Gutschein-, Affiliate- oder Lernzugangsaktion |
 
 ## 13. UI-Mockups: Konzeptansichten der Seiten
 

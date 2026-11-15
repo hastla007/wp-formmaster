@@ -215,6 +215,29 @@ Jeder Adapter ist optional, versioniert, einzeln deaktivierbar und greift aussch
 - [ ] P8-22 – Export/Eraser, Retention, Consent-Widerruf, Review-Löschweitergabe, Replay/Dupe, unbekannte Felder und Multisite mit offiziellen Vertragsfixtures abnehmen.
 - Abnahme: Workflow erhält nur freigegebene Formulardaten; Workflow-Ausfall beeinträchtigt Speichern, Spam-Schutz, Eintragsverwaltung und native Benachrichtigung nicht.
 
+
+#### Kundenspezifische Projekt-Connectoren für Phase 8
+
+- [ ] **P8-23 – Connector-Architektur und Abgrenzung freigeben.** Separate WordPress-Plugins für projektspezifische Logik vorsehen; Connector-Plugin besitzt Zielsystemzustand, Form Captain bleibt Eigentümer von Formularen und Entries. Generische Webhooks bleiben ein eigener Mechanismus.
+- [ ] **P8-24 – Connector-Vertrag v1 spezifizieren.** Versioniertes Interface mit Key, Version, Fähigkeiten/Aktionen, Settings-Schema, Handler-Ergebnis, Retry-Semantik und Deprecation-Regel dokumentieren.
+- [ ] **P8-25 – Registry und Registration-API implementieren.** Connectoren nach dem Core-Load über einen öffentlichen Filter registrieren; nur dokumentierte Interfaces/Actions verwenden. API innerhalb v1 additiv halten; inkompatible Major-Versionen sichtbar deaktivieren.
+- [ ] **P8-26 – Site-lokales Opt-in ergänzen.** Installierte Connectoren standardmäßig deaktivieren; Administrator aktiviert jeden Connector ausdrücklich und kann ihn unabhängig abschalten.
+- [ ] **P8-27 – Aktionen im Formular-Editor sichtbar machen.** Connector deklariert Label, Voraussetzungen, Settings und erlaubte Events; Administrator schaltet Aktionen formularweise ein und kann einen sicheren Testlauf starten.
+- [ ] **P8-28 – Feld-Scopes und Mapping absichern.** Nur serverseitig validierte Allowlist-Felder und nötige IDs übergeben; sensible Werte standardmäßig sperren; keine vollständige Submission oder direkte Tabellenabfrage.
+- [ ] **P8-29 – Connectoren an die Outbox binden.** Aktionen nach Entry-Commit asynchron mit Schlüssel aus Site, Entry, Connector und Aktion ausführen; doppelte Zustellung muss denselben Ausgang liefern.
+- [ ] **P8-30 – Einheitliche Retry-/Dead-letter-Regeln implementieren.** Backoff, Maximalversuche (Standard acht), temporäre/definitive Fehler und manuelles Wiederholen standardisieren; native Mail und Entry-Speicherung bleiben unabhängig.
+- [ ] **P8-31 – Connector-Zustände in Integrationen anzeigen.** Erkannt, deaktiviert, aktiv, inkompatibel, wartet, fehlgeschlagen, wiederholbar und Dead-letter mit letzter Ausführung und nächstem Schritt darstellen.
+- [ ] **P8-32 – Connector-Lifecycle definieren.** Plugin-Deaktivierung, Entfernen, API-Inkompatibilität, Entry-Löschung und Consent-Widerruf behandeln; keine ungefragte Remote-Löschung, keine verlorenen offenen Jobs.
+- [ ] **P8-33 – Berechtigungen und Secrets schützen.** Connector-Einstellungen und Testläufe mit Capability/Nonce sichern; Secrets redigieren, Rotation ermöglichen und Testmodus gegen reale Nebenwirkungen absichern.
+- [ ] **P8-34 – Referenz-Connector als eigenständiges Plugin erstellen.** Beispiel für Registrierung, Form-Aktion, Feldmapping, externen Beispieldienst und idempotente Wiederholung liefern; klar als Beispiel kennzeichnen.
+- [ ] **P8-35 – Connector-Entwicklerdokumentation schreiben.** Installationsvoraussetzungen, Vertrag, Beispielcode, Payloads/Scopes, Fehlercodes, Retry, Löschung, Kompatibilität und Releasecheckliste dokumentieren.
+- [ ] **P8-36 – Contract-Testkit bereitstellen.** Gemeinsame Testfixtures prüfen Registrierung, Fähigkeiten, Schemafehler, Versionen, Idempotenz, Retry, Dead-letter, Deaktivierung und Datenschutzgrenzen.
+- [ ] **P8-37 – Zwei-Plugin-Integrationstests in CI ausführen.** Form Captain plus Referenz-Connector mit simuliertem Zielausfall, Timeout nach Erfolg, doppelter Zustellung, Entry-Löschung und inkompatibler Version testen.
+- [ ] **P8-38 – Free-/Pro-Grenze für Connectoren abnehmen.** Registry, stabile API und einfache Connector-Aktionen sind im Free-Kern nutzbar; Premiumrechte gelten ausschließlich für gesonderte Pro-Funktionen.
+- [ ] **P8-39 – Pilot-Connector aus einem realen Kundenprozess ableiten.** Erst nach Freigabe eines konkreten Einsatzfalls Mapping, Zielsystemvertrag und Supportverantwortung testen; projektspezifischen Code nicht in Form Captain Core übernehmen.
+- **Abnahme Connectoren:** Ein separat installierbares Connector-Plugin kann sich sicher registrieren, wird nur nach Opt-in ausgeführt, erhält genau freigegebene Daten und bleibt bei Wiederholung/Ausfall diagnostizierbar.
+
+
 ### Phase 9 – Launch, Betrieb und spätere Erweiterungen
 
 - [ ] **P9-01 – Produkt- und Preisangaben finalisieren.** Form-Captain-Pro-Tarife, 1/5/25-Site-Limits, Supportumfang, Verlängerung und Shopprodukte mit License Captain und captain-pro abgleichen.

@@ -6,7 +6,7 @@
 **Repository:** hastla007/wp-formmaster  
 **WordPress-Kernplugin:** form-captain  
 **Premium-Add-on:** form-captain-pro  
-**Lizenzserver-Produktschlüssel:** form-captain-pro (im WP License Captain-Katalog anzulegen)  
+**Lizenzserver-Produktschlüssel:** form-captain-pro (im License Captain-Katalog anzulegen)  
 **Rechte-Präfix:** form.  
 **Zielgruppe:** WordPress-Websites, WooCommerce-Shops, Agenturen und Nutzer der Captain Suite
 
@@ -63,7 +63,7 @@ Die Wettbewerber setzen unterschiedliche Schwerpunkte. Die Marktbeobachtung unte
 | **Gravity Forms** | Robuster lizenzierter Formular-Kern, bedingte Logik, mehrseitige Formulare, Uploads, Zahlungs- und Add-on-Ökosystem, umfangreiche Entwickler-Hooks. Kein dauerhaftes WordPress.org-Free-Plugin. | Free-Einstieg und Erweiterung über öffentlichen Vertrag; Suite-Verbindungen als gepflegte, getestete Adapter. |
 | **Fluent Forms** | Großzügiger Free-Umfang laut Anbieter: Drag-and-drop, bedingte Logik, Eintragsverwaltung, Vorlagen, Spam-Schutz, Export, teils Zahlungen und Integrationen; Pro erweitert unter anderem um Multi-Step, Uploads, PDFs, CRM und erweiterte Workflows. | Ein Free-Kern muss bereits den alltäglichen Kontaktformular-Use-Case sauber lösen. Differenzierung über klare Datenhaltung, Suite-Integration und einheitlichen Add-on-Vertrag. |
 | **Formidable Forms** | Positioniert sich für komplexe Formulare, Berechnungen, Umfragen, Quiz, dynamische Views und aus Einträgen erzeugte Inhalte. | Keine frühe Überdehnung zum App-Builder. Erst zuverlässige Formulare/Einträge/Integrationen; Berechnungen und dynamische Ausgabe danach. |
-| **Ninja Forms** | Kostenloser Kern mit einzeln kaufbaren Add-ons bzw. Paketen; Erweiterungen für Logik, mehrseitige Formulare, Zahlungen, CRM und Automationen. | Einheitliche Lizenzierung über WP License Captain und ein zusammenhängendes Pro-Add-on statt vieler Einzellizenzen. |
+| **Ninja Forms** | Kostenloser Kern mit einzeln kaufbaren Add-ons bzw. Paketen; Erweiterungen für Logik, mehrseitige Formulare, Zahlungen, CRM und Automationen. | Einheitliche Lizenzierung über License Captain und ein zusammenhängendes Pro-Add-on statt vieler Einzellizenzen. |
 | **Contact Form 7** | Etabliertes, kostenloses und schlankes Kontaktformular mit modularer Architektur und offenem Quellcode; benötigt für viele Abläufe weitere Erweiterungen oder manuelle Konfiguration. | Modernere visuelle Erstellung und integrierte Eintragsverwaltung anbieten, ohne die Leichtgewichtigkeit und Offenheit des WordPress-Ökosystems aufzugeben. |
 
 ### Marktanforderungen und Schlussfolgerungen
@@ -107,7 +107,7 @@ Die angezeigten US-Preise sind Listenpreise bzw. der auf der offiziellen Seite a
 | **Studio** | 99 € | 5 | Standard |
 | **Agency** | 199 € | 25 | Priorisiert |
 
-Alle Tarife enthalten denselben Pro-Funktionsumfang, Updates und Support während der aktiven Laufzeit. Site-Limits zählen Live-Installationen; pro Live-Site ist eine Staging-Aktivierung enthalten, Development-Aktivierungen zählen nicht zum Limit, analog zum vorhandenen WP License Captain-Modell. Keine Lifetime-Lizenz und keine kostenpflichtigen Einzel-Add-ons zum Start. Preise nicht mit künstlichem „Normalpreis/Rabatt“-Doppelpreis vermarkten. Die Lizenz läuft 12 Monate und verlängert sich zum beim Kauf angezeigten Tarif, sofern im Checkout transparent zugestimmt wurde. Preisänderungen betreffen künftige Verlängerungen nur nach vorheriger Information und im Rahmen der Shopbedingungen.
+Alle Tarife enthalten denselben Pro-Funktionsumfang, Updates und Support während der aktiven Laufzeit. Site-Limits zählen Live-Installationen; pro Live-Site ist eine Staging-Aktivierung enthalten, Development-Aktivierungen zählen nicht zum Limit, analog zum vorhandenen License Captain-Modell. Keine Lifetime-Lizenz und keine kostenpflichtigen Einzel-Add-ons zum Start. Preise nicht mit künstlichem „Normalpreis/Rabatt“-Doppelpreis vermarkten. Die Lizenz läuft 12 Monate und verlängert sich zum beim Kauf angezeigten Tarif, sofern im Checkout transparent zugestimmt wurde. Preisänderungen betreffen künftige Verlängerungen nur nach vorheriger Information und im Rahmen der Shopbedingungen.
 
 **Begründung:** Der Einstieg liegt nahe an einem bekannten 1-Site-Preisanker, die 5-Site-Stufe deckt kleine Agenturen ab und 25 Sites bilden einen klaren Agency-Tier. Die geringere Startposition gegenüber etablierten Produkten berücksichtigt den kleineren Funktions- und Supportumfang zum Launch. Preise nach den ersten 6 Monaten anhand von Conversion, Supportkosten und Verlängerungsquote neu bewerten; bis dahin keine zusätzliche Tarifstufe einführen.
 
@@ -135,7 +135,7 @@ Alle Tarife enthalten denselben Pro-Funktionsumfang, Updates und Support währen
 - Verschachtelte AND/OR-Bedingungen und bedingte Bestätigungen/Benachrichtigungsziele.
 - Webhook-Aktionen mit Feldzuordnung, Signatur, Idempotenz, Retries und Protokoll.
 - PDF-Generierung aus Entry-Vorlage.
-- Lizenz-/Updater-Seite und Updatefeed nach WP License Captain Vertrag.
+- Lizenz-/Updater-Seite und Updatefeed nach License Captain Vertrag.
 
 **Nach v1.0, in dieser Reihenfolge**
 
@@ -232,7 +232,7 @@ Der Kern definiert in v1 folgende öffentliche, stabile Namensfamilie; Ereigniss
 
 | Plugin | Möglicher Nutzen | Form Captain Vertrag / Schutz |
 |---|---|---|
-| **WP License Captain** | Pro-Aktivierung, Rechteprüfung, signierte Offline-Rechte und Pro-Updates. | Nur form-captain-pro verwendet den vorhandenen PHP License Client und Produktschlüssel form-captain-pro. Kern bleibt lizenzfrei; Lizenzseite wird unter Form Captain eingehängt. Feature-Rechte z. B. form.uploads, form.workflows, form.payments. |
+| **License Captain** | Pro-Aktivierung, Rechteprüfung, signierte Offline-Rechte und Pro-Updates. | Nur form-captain-pro verwendet den vorhandenen PHP License Client und Produktschlüssel form-captain-pro. Kern bleibt lizenzfrei; Lizenzseite wird unter Form Captain eingehängt. Feature-Rechte z. B. form.uploads, form.workflows, form.payments. |
 | **Pass Captain** | Anmelde-/Bewerbungsformulare für Events, Anmeldedaten als Ausgang für Registrierung oder Ticketverkauf, Formlink auf Eventseiten. | Pass Captain ruft eine öffentliche Form-Captain-Funktion zum Einbetten/Ermitteln eines Formulars auf oder erhält eine freigegebene Submission-Referenz. Ticket-Erstellung nur als explizite Aktion in Pass Captain Pro/Kernvertrag; keine stillschweigende Ausstellung aufgrund einer Formularantwort. |
 | **Voucher Captain** | Gutschein-Anfragen, Firmenbestellungen und Geschenkpersonalisierung. | Öffentliche Voucher-Ausstellungs-/Firmenbestell-API verwenden. Beträge, Empfänger und Einwilligung klar zuordnen; kein direkter Gutschein-Tabellenzugriff. Gutschein wird nur nach expliziter Bestätigung und optionaler Zahlung ausgestellt. |
 | **Affiliate Captain** | Partnerbewerbungen, Kontaktdaten und manuell freigegebene Anmeldungen; Referral-/Affiliate-Code als Formularfeld. | Affiliate-Vertrag zur Partneranlage/Statusänderung nutzen, falls vorhanden; keine automatische Freigabe ohne Administratorentscheidung. Referral-Code als attributiertes Feld übergeben, keine Trackingdaten ohne Zustimmung. |
@@ -302,7 +302,7 @@ Die Lizenzierung folgt dem bestehenden Captain-Suite-Modell:
 
 1. **Form Captain Free** wird als eigenständiges GPL-Kernplugin auf WordPress.org angeboten.
 2. **Form Captain Pro** wird als privates Add-on in hastla007/captain-pro geführt; Slug, Add-on-Ordner, Textdomain und Produktschlüssel: form-captain-pro.
-3. Der Lizenzserver ist WP License Captain (hastla007/wp-license). Dort wird das Produkt mit Laufzeit, Site-Limit, Support-Level und Entitlements konfiguriert.
+3. Der Lizenzserver ist License Captain (hastla007/wp-license). Dort wird das Produkt mit Laufzeit, Site-Limit, Support-Level und Entitlements konfiguriert.
 4. Pro-Add-on vendort den Lizenzclient in eigenem Namespace. Der Add-on-Kernel prüft Kernplugin-Version, verbindet die Lizenzseite unter Form Captain und startet Features nur bei passenden Rechten.
 5. Der Updater validiert signierte Metadaten sowie Paketgröße und SHA-256. Lizenzstatus und Offline-Cache folgen dem bestehenden Client-Vertrag.
 6. Ablauf/Deaktivierung der Lizenz stoppt nur Pro-Aktionen/Updates gemäß Vertrag. Free-Formulare und bestehende Einträge bleiben erhalten.
@@ -310,72 +310,181 @@ Die Lizenzierung folgt dem bestehenden Captain-Suite-Modell:
 
 ## 9. Umsetzungsplan und To-do
 
-### Phase 0 – Produktentscheidungen und Verträge
+### Arbeitsregeln und aktueller Projektstand
 
-- [x] Kern-/Pro-Grenze für v1.0 festgelegt (Abschnitt 1.1 und Release-Schnitt).
-- [x] Produktname Form Captain, Kernslug form-captain, Add-on form-captain-pro, Produktschlüssel form-captain-pro und Rechtepräfix form. festgelegt.
-- [ ] Form-JSON, Feld-IDs, Submission-Tabellen und Schema-Migrationen als v1-Spezifikation ausarbeiten.
-- [ ] Capability-Matrix, konkrete Privacy-Texte und Löschregeln als technisches Datenschutzpaket ausarbeiten. Default-Aufbewahrung: 12 Monate; Einrichtung lässt 90 Tage, 12 Monate oder manuelle Löschung zu.
-- [ ] Versionierten Form-Captain-Integrationsvertrag v1 mit konkreten Payloads und SemVer-Regeln ausarbeiten.
-- [x] Produktkey und Start-Entitlements definiert; Produktanlage im WooCommerce-Katalog bleibt eine Umsetzungsaufgabe.
-- [x] Mindestversionen festgelegt: WP 6.8+, PHP 8.3+, WooCommerce optional 8.0+; Multisite nach v1.0.
-- **Abnahme:** Architekturentscheidungen und öffentliche Verträge sind dokumentiert, bevor Implementierungen von Suite-Plugins abhängen.
+Das Repository enthält derzeit nur die kurze README und dieses Konzept; Plugin-Code und eine separate TODO-Datei sind noch nicht vorhanden. Diese bestehende To-do-Sektion ist deshalb die maßgebliche Umsetzungsplanung. Die Aufgaben sind in Abhängigkeitsreihenfolge angeordnet. Ein Task gilt erst als erledigt, wenn sein Ergebnis im Repository liegt und die angegebene Abnahme erfüllt ist.
 
-### Phase 1 – Free-MVP
+**Release-Reihenfolge:** Free v1.0 wird nach Phase 6 veröffentlicht. Pro v1 folgt nach Phase 7 als separates Add-on. Die Suite-Adapter aus Phase 8 werden einzeln und nach den jeweiligen Vertragsfreigaben ausgeliefert. Optionale Post-v1-Funktionen aus Phase 9 blockieren diese Releases nicht.
 
-- [ ] Plugin-Gerüst, Übersetzung, Aktivierung/Deaktivierung und DB-Schema/Migrationen.
-- [ ] Formularliste, Vorlagen und visueller Editor mit Kernfeldern.
-- [ ] Serverseitige Submission-Validierung, Nonces/Capabilities und sichere öffentliche Route.
-- [ ] Eigene Entry-Speicherung, Suche, Status, Detailansicht, Papierkorb.
-- [ ] Admin- und Nutzer-E-Mail mit konfigurierbaren Bestätigungen.
-- [ ] Honeypot, Mindestzeit und Rate-Limit.
-- [ ] Shortcode, Gutenberg-Block, responsives und barrierearmes Frontend.
-- [ ] CSV-Export, Formular-JSON-Import/Export, WordPress Privacy Exporter/Eraser.
-- [ ] Setup-Assistent und Beispiel-Kontaktformular.
-- **Abnahme:** Kontaktformular lässt sich ohne Pro erstellen, einbetten, absenden, sicher speichern, verwalten und exportieren.
+### Phase 0 – Entscheidungen, Spezifikation und Arbeitsgrundlage
 
-### Phase 2 – Release-Vorbereitung Free
+- [x] **P0-01 – Produktgrenze festlegen.** Free ist eigenständig nutzbar; Pro ist ein separates Add-on. Zahlungen, Uploads und Multi-Step sind nicht Teil des Free-MVP.
+- [x] **P0-02 – Produktidentität festlegen.** Name Form Captain, Kernslug `form-captain`, Add-on `form-captain-pro`, Lizenz-Produktschlüssel `form-captain-pro`, Rechtepräfix `form.`.
+- [x] **P0-03 – Mindestplattform festlegen.** WordPress 6.8+, PHP 8.3+, WooCommerce optional ab 8.0; keine Multisite-Unterstützung in Free v1.0.
+- [ ] **P0-04 – v1-Datenmodell als Spezifikation abschließen.** Tabellen, Spalten, Indizes, Fremdschlüssel-Strategie, Statuswerte, UTC-Zeitstempel und Löschverhalten für Formulare, Entries, Entry-Werte, Jobs und Upload-Referenzen dokumentieren.
+- [ ] **P0-05 – JSON-Formularschema festschreiben.** Schema-Version, stabile Feld-IDs, Feldtypen, Optionen, Validierungsregeln, bedingte Sichtbarkeit und Migrationsregeln mit Beispielen spezifizieren.
+- [ ] **P0-06 – Zustandsmodelle definieren.** Zustände und erlaubte Übergänge für Formular (Entwurf/veröffentlicht/pausiert/archiviert), Entry (neu/gelesen/archiviert/Spam/Papierkorb) sowie Integrationsjob festlegen.
+- [ ] **P0-07 – Capability- und Rollenmatrix freigeben.** Rechte zum Verwalten, Lesen, Bearbeiten, Exportieren, Löschen und Konfigurieren konkreten WordPress-Capabilities zuordnen.
+- [ ] **P0-08 – Datenschutzentscheidungen operationalisieren.** Retention-Optionen (90 Tage/12 Monate/manuell), Einwilligung, Export, Erasure, Backups, Upload-Ablauf und Deinstallation mit konkreten Admin-Texten und Datenflüssen beschreiben.
+- [ ] **P0-09 – Öffentliche API v1 spezifizieren.** Funktionsnamen, versionierte Actions, Ereigniszeitpunkt nach Commit, Payload-Allowlist, Fehlercodes, Capability-Erwartungen, Idempotenz, Deprecation-Regeln und Mindestversionen festlegen.
+- [ ] **P0-10 – Datenfluss- und Bedrohungsmodell erstellen.** Öffentliche Submission, Admin, E-Mail, CSV, Export, Upload, Webhook und Suite-Adapter mit Trust Boundaries, gespeicherten Daten und Schutzmaßnahmen abbilden.
+- [ ] **P0-11 – MVP-Abnahmekriterien in CI-taugliche Prüfpunkte übersetzen.** Für jede Free-MVP-Funktion mindestens einen nachvollziehbaren manuellen oder automatisierten Abnahmepunkt notieren.
+- **Abnahme Phase 0:** Ein Entwickler kann Datenmodell und öffentliche Verträge implementieren, ohne offene Grundsatzentscheidungen zu erraten. Keine Suite-Integration hängt von einer privaten Schnittstelle ab.
 
-- [ ] Security review und Missbrauchs-/Lastgrenzen prüfen.
-- [ ] WordPress.org-readme, Screenshots, FAQ, externe Services und Datenschutzoffenlegung.
-- [ ] Übersetzungsworkflow und mindestens Deutsch/Englisch.
-- [ ] Upgrade-/Rollback-Pfade für Schemaänderungen.
-- [ ] Importer für Contact Form 7 und Export-/Migrationen für priorisierte Mitbewerber spezifizieren.
-- [ ] Kompatibilitätsmatrix mit WooCommerce, Block-Editor und gängigen Caching-/Security-Plugins.
-- **Abnahme:** reproduzierbarer ZIP-Build, dokumentierter Supportumfang und getesteter Update-/Deinstallationspfad.
+### Phase 1 – Repository, Plugin-Gerüst und Datenbasis
 
-### Phase 3 – Form Captain Pro und Lizenzierung
+- [ ] **P1-01 – Repository-Grundstruktur anlegen.** Plugin-Hauptdatei, `src/`, `assets/`, `languages/`, `templates/`, `tests/`, `bin/` und Dokumentationsordner nach einer festgelegten Namespace-/Autoloading-Konvention einrichten.
+- [ ] **P1-02 – Projektwerkzeuge konfigurieren.** Composer-Entwicklungsabhängigkeiten, PHP-Lint, WordPress Coding Standards, statische Analyse und Testskripte mit festgelegten Mindestversionen einrichten.
+- [ ] **P1-03 – Plugin-Bootstrap bauen.** Header, Textdomain, Versionskonstanten, Autoloader, Mindestversion-Prüfung und kontrollierter Start bei fehlendem/zu altem WordPress implementieren.
+- [ ] **P1-04 – Aktivierung und Deaktivierung implementieren.** Aktivierung führt nur versionierte Migrationen aus; Deaktivierung stoppt geplante Jobs und entfernt keine Nutzdaten.
+- [ ] **P1-05 – Schema-Migrationsdienst erstellen.** Gespeicherte Schema-Version prüfen, Migrationen wiederholbar ausführen, Fehler melden und bei abgebrochener Migration einen sicheren Zustand hinterlassen.
+- [ ] **P1-06 – Tabellen für Formulare und Entries erstellen.** Die freigegebene Spezifikation mit passenden Indizes, eindeutigen IDs und WordPress-Präfix umsetzen.
+- [ ] **P1-07 – Tabelle für Entry-Werte und optionale Job-Metadaten erstellen.** Antwortwerte getrennt speichern; keine vollständigen Submission-Payloads in Logs oder Optionen duplizieren.
+- [ ] **P1-08 – Repository-/Service-Schicht einführen.** DB-Zugriff hinter testbaren Repositories kapseln; Formular-, Entry-, Submission- und Queue-Logik nicht in Admin- oder REST-Handlern ablegen.
+- [ ] **P1-09 – Status- und Fehlerkonstanten definieren.** Stabile interne Codes und öffentlich dokumentierte Fehlercodes mit Übersetzungen bereitstellen.
+- [ ] **P1-10 – Capabilities bei Aktivierung registrieren.** Standardrollen minimal berechtigen; Administrator kann alle Aufgaben ausführen; keine automatische Berechtigung zum Lesen sensibler Entries für Editor.
+- [ ] **P1-11 – Setup-/Systemstatusdaten begrenzen.** Nur notwendige Einstellungen speichern; keine personenbezogenen Daten oder Secrets im Klartext in Diagnosen ausgeben.
+- **Abnahme Phase 1:** Frische Installation und Upgrade erzeugen dasselbe korrekte Schema; Deaktivierung löscht keine Daten; automatisierte Tests können Repositories und Migrationen isoliert prüfen.
 
-- [ ] captain-pro Add-on-Grundgerüst nach bestehendem Add-on-Kernel.
-- [ ] Lizenzclient vendoren; Produktkey, Serveradresse und öffentlicher Schlüssel konfigurieren.
-- [ ] Lizenz- und Feature-Seite in Form Captain einhängen.
-- [ ] Rechte für Multi-Step, Uploads, Workflows, PDF, Webhook und Integrationen registrieren.
-- [ ] Pro-Features nur im Add-on implementieren; Kern-Hooks dafür neutral und ohne Lizenzprüfung anbieten.
-- [ ] Lizenzverlust-, 14-Tage-Offline-Cache-, Update- und Deaktivierungsablauf dokumentieren; Free-Formulare/Entries dürfen nicht betroffen sein.
-- **Abnahme:** aktives Add-on mit gültiger Lizenz schaltet Pro-Funktionen frei; deaktiviertes Add-on lässt Formulare/Einträge intakt.
+### Phase 2 – Formularverwaltung und Editor
 
-### Phase 4 – Suite-Adapter
+- [ ] **P2-01 – Admin-Menü registrieren.** Menüeinträge für Dashboard, Formulare, Einträge, Integrationen und Einstellungen mit passenden Capabilities anlegen.
+- [ ] **P2-02 – Formularübersicht bauen.** Name, Status, Entry-Anzahl und Änderungsdatum anzeigen; Suche, Filter, Pagination und leere Zustände ergänzen.
+- [ ] **P2-03 – Formularaktionen absichern.** Bearbeiten, Duplizieren, Vorschau, Pausieren, Exportieren und Löschen serverseitig mit Capability und Nonce schützen.
+- [ ] **P2-04 – Vorlagenauswahl implementieren.** Kontakt-, Angebots- und Supportvorlage als versionierte, importierbare Formdefinitionen bereitstellen.
+- [ ] **P2-05 – Editor-Grundlayout erstellen.** Feldpalette, Canvas, Einstellungsbereich und Desktop-/Mobilvorschau übersichtlich und tastaturbedienbar aufbauen.
+- [ ] **P2-06 – Feldmodell mit stabilen IDs umsetzen.** Felder hinzufügen, entfernen, duplizieren, sortieren und konfigurieren, ohne IDs beim Speichern unbeabsichtigt zu ändern.
+- [ ] **P2-07 – Free-Feldtypen implementieren.** Text, Absatz, E-Mail, Telefon, Zahl, Auswahl, Checkbox, Optionsfeld, Datum, Überschrift/HTML-Hinweis, versteckter Wert und Einwilligung.
+- [ ] **P2-08 – Feldvalidierung im Editor umsetzen.** Pflichtstatus, Labels, Hilfetext, Platzhalter, Standardwert, Zeichen-/Wertebereich und Feldschlüssel prüfen.
+- [ ] **P2-09 – HTML-Hinweise sicher begrenzen.** Erlaubte Markup-Tags definieren und HTML beim Speichern sowie bei Ausgabe konsequent bereinigen.
+- [ ] **P2-10 – Einfache bedingte Feldanzeige umsetzen.** Eine Regel pro Feldgruppe unterstützen; Regeln clientseitig darstellen und serverseitig unabhängig validieren.
+- [ ] **P2-11 – Formular- und Benachrichtigungseinstellungen ergänzen.** Admin-Empfänger, Antwortadresse, Betreff, Nutzerbestätigung, Erfolgsmeldung und Redirect konfigurieren lassen.
+- [ ] **P2-12 – Entwurf, Veröffentlichung und Pause implementieren.** Ungültige Formulare dürfen nicht veröffentlicht werden; pausierte Formulare zeigen eine konfigurierbare, neutrale Meldung.
+- [ ] **P2-13 – Editor-Speicherung gegen Konflikte absichern.** Schema-Version beim Speichern prüfen und parallele Änderungen mit verständlicher Konfliktmeldung behandeln.
+- [ ] **P2-14 – Vorschau ohne echte Submission anbieten.** Vorschau darf keine Entry-Datensätze, Benachrichtigungen oder externen Aktionen erzeugen.
+- **Abnahme Phase 2:** Ein Administrator erstellt aus einer Vorlage ein Formular, ordnet Felder, Regeln und Benachrichtigungen zu, speichert es als Entwurf und veröffentlicht eine valide Version.
 
-- [ ] Pass-Captain-Einbettung und Event-Kontext-Adapter.
-- [ ] Voucher-Captain-Anfrage/Firmenbestell-Adapter mit explizitem Bestätigungsschritt.
-- [ ] Affiliate-Captain-Bewerbung und manuelle Freigabe.
-- [ ] Review-Captain-Brücke für lokal eingereichte Reviews: explizite Formularaktion, Mapping, Herkunftsreferenz, Idempotenz, Verifizierungsstatus „nicht verifiziert“ und Löschweitergabe. Review-Anfragen bleiben Review-Captain-Eigentum und benötigen vertrauenswürdige Experience-Events, Kontaktresolver sowie Versandberechtigung.
-- [ ] WooCommerce-Adapter für Produkt-/Bestellkontext (HPOS, Classic und Blocks soweit sinnvoll).
-- [ ] Schnittstellenabgleich vor Adapterbau dokumentieren: Voucher PHP-API, Pass Captain öffentliche Services, Affiliate Vertrag v1.3 und geplanter Review-Action-Vertrag jeweils mit Mindestversion und Fehler-/Retry-Verhalten.
-- [ ] Voucher-Adapter bleibt eine bestätigungspflichtige Anfrage, keine automatische Gutschein-Ausgabe; Affiliate-Adapter nur nach Entscheidung zum vorhandenen Bewerbungsablauf und standardmäßig Status `pending`.
-- [ ] Form→Review nur als lokale, nicht verifizierte Moderations-Review umsetzen; Einladung, Versand und öffentliche Plattform-Reviews bleiben ausgeschlossen.
-- [ ] Lizenzintegration von Form Captain Pro mit WP License Captain und Captain-Pro-Kernel inklusive Produktkey, Entitlements, Site-Limits und Updatepaket abnehmen.
-- [ ] Vertragstests gegen jede unterstützte Suite-Version sowie Diagnoseansicht.
-- **Abnahme:** Kein Adapter benötigt direkten Tabellenzugriff; Wiederholung eines Ereignisses dupliziert keine Aktion.
+### Phase 3 – Frontend, Einbettung und sichere Submission
 
-### Phase 5 – Ausbau und Priorisierung
+- [ ] **P3-01 – Formular-Renderer erstellen.** JSON-Schema in semantisches, responsives HTML umwandeln; keine unnötigen externen Fonts oder Skripte laden.
+- [ ] **P3-02 – Gutenberg-Block bauen.** Formularauswahl, Vorschau im Editor und verständlichen Fallback bei gelöschtem/pausiertem Formular bereitstellen.
+- [ ] **P3-03 – Shortcode bauen.** Formular-ID validieren, Ausgabe über denselben Renderer erzeugen und ungültige IDs sicher behandeln.
+- [ ] **P3-04 – Barrierefreie Feldkomponenten implementieren.** Labels, Pflichtfeldhinweise, Fehlerzuordnung, Tastaturbedienung, Fokusmanagement und Screenreader-Ansagen ergänzen.
+- [ ] **P3-05 – Servervalidierung pro Feldtyp implementieren.** Typ, Pflichtfeld, Zeichen-/Wertebereich, erlaubte Optionen, E-Mail/Datum und bedingte Sichtbarkeit prüfen.
+- [ ] **P3-06 – Submission-Endpunkt definieren und umsetzen.** Nur definierte öffentliche Operationen erlauben; Requestgröße, Formularstatus und Herkunftskontext prüfen.
+- [ ] **P3-07 – Submission-Daten normalisieren.** Unbekannte Feld-IDs, doppelte Werte, unerwartete Arrays und nicht sichtbare bedingte Felder ablehnen oder nach klarer Regel verwerfen.
+- [ ] **P3-08 – Honeypot und Mindestzeit implementieren.** Spamverdacht ohne unnötige personenbezogene Protokollierung bewerten.
+- [ ] **P3-09 – Rate-Limit implementieren.** Pro Formular und zeitlich begrenztem, gehashtem Kontext drosseln; Speicherbereinigung und Fehlermeldung definieren.
+- [ ] **P3-10 – Bestätigungsablauf implementieren.** Nach erfolgreicher Speicherung Meldung oder vorher freigegebenes Redirect ausgeben; Fehler behalten Eingaben soweit sicher und sinnvoll.
+- [ ] **P3-11 – CSRF-/Nonce-Strategie festlegen.** Öffentliche Formulare dürfen nicht auf kurzlebige Admin-Nonces angewiesen sein; Missbrauchsschutz und Cache-Kompatibilität gemeinsam absichern.
+- [ ] **P3-12 – Fehler- und Erfolgsmeldungen übersetzen.** Keine internen Exception-, SQL- oder Providerdetails an öffentliche Besucher ausgeben.
+- **Abnahme Phase 3:** Formular funktioniert in Block und Shortcode, bei aktivem Seiten-Cache sowie ohne JavaScript-Grundfunktion; ungültige oder manipulierte Requests werden serverseitig abgewiesen.
 
-- [ ] Formulare aus Contact Form 7 importieren; danach WPForms/Fluent Forms priorisieren. Entry-Daten nur bei unterstützter Exportdatei übernehmen.
-- [ ] Mehrsprachigkeit (WPML/Polylang) und Multisite-Verhalten.
-- [ ] Zahlungsintegration mit offizieller API und geprüften Refund-/Webhook-Abläufen.
-- [ ] CRM-Connectoren nach Nachfrage priorisieren; zuerst dokumentiertes Webhook- und Fehlerprotokoll.
-- [ ] Agentur-/White-Label-Funktionen nur nach Validierung von Lizenz- und Supportkosten.
-- **Abnahme:** jeder zusätzliche Connector hat einen klaren Eigentümer, API-/Datenschutzprüfung, Fehlerbehandlung und Wartungsplan.
+### Phase 4 – Entries, E-Mail und Verwaltung
+
+- [ ] **P4-01 – Submission-Service implementieren.** Ablauf zentral orchestrieren: Formular laden, Felder validieren, Spam prüfen, Entry transaktional speichern und erst nach Commit Folgejobs anlegen.
+- [ ] **P4-02 – Entry-Werte mit Schema-Version verknüpfen.** Eintrag bleibt auch nach Formularänderung verständlich; gelöschte Felder werden nicht fälschlich neuen Werten zugeordnet.
+- [ ] **P4-03 – Eindeutige Request-/Idempotenzreferenz setzen.** Wiederholte HTTP-Requests dürfen nicht unkontrolliert doppelte Geschäftsaktionen oder E-Mails erzeugen.
+- [ ] **P4-04 – Entry-Übersicht bauen.** Formular, Zeit, Status und vorhandene Kontaktfelder zeigen; Suche, Datums-/Formularfilter und Pagination ergänzen.
+- [ ] **P4-05 – Entry-Detailseite bauen.** Antworten, Quelle, Zeitstempel, Status, interne Notiz und Spamgrund anzeigen; unnötige IP-/Browserdaten weglassen.
+- [ ] **P4-06 – Statusaktionen umsetzen.** Neu/gelesen/archiviert/Spam/Papierkorb sowie Bulk-Aktionen mit Capability, Nonce und Audit-Informationen sichern.
+- [ ] **P4-07 – Admin-Mail als Queue-Aufgabe senden.** Empfänger, Reply-To, Betreff und explizit gewählte Felder unterstützen; sensible Felder standardmäßig nicht in E-Mail aufnehmen.
+- [ ] **P4-08 – Nutzerbestätigung optional senden.** Nur an validierte E-Mail-Adresse; neutrale Bestätigung, konfigurierbare Inhalte und klare Fehlerdiagnose bereitstellen.
+- [ ] **P4-09 – Versandstatus sichtbar machen.** Queue-Status, letzter Fehler und Wiederholungsaktion für berechtigte Admins anzeigen; keine Secrets oder vollständige Feldwerte protokollieren.
+- [ ] **P4-10 – Interne Notizen implementieren.** Nur berechtigte Nutzer sehen sie; Notizänderungen verändern keine ursprüngliche Submission.
+- [ ] **P4-11 – CSV-Export bauen.** Datums-/Formularfilter und Spaltenauswahl; CSV-Formelinjektion, Zeichensatz, Zeilenumbrüche und große Exporte berücksichtigen.
+- [ ] **P4-12 – JSON-Export/Import für Formulare implementieren.** Nur Formulardefinitionen übertragen, keine Entries, Uploads oder Secrets ungefragt; Import vor Speicherung validieren.
+- [ ] **P4-13 – Papierkorb und endgültige Löschung umsetzen.** Wiederherstellung zeitlich begrenzen; endgültige Löschung entfernt Werte, Referenzen und zugehörige Dateien.
+- **Abnahme Phase 4:** Erfolgreiche Submission ist dauerhaft gespeichert, unabhängig von E-Mail/Connector-Ausfällen; berechtigte Nutzer können Einträge verwalten, suchen und sicher exportieren.
+
+### Phase 5 – Datenschutz, Sicherheit und Betrieb
+
+- [ ] **P5-01 – Privacy Exporter integrieren.** Entries zu einer verifizierten Person auffindbar und als lesbarer Export ausgeben.
+- [ ] **P5-02 – Privacy Eraser integrieren.** Löschung oder Anonymisierung nach klarer Zuordnung ausführen und abhängige Werte/Dateien behandeln.
+- [ ] **P5-03 – Retention-Einstellung implementieren.** 90 Tage/12 Monate/manuell anbieten; Ablaufdaten berechnen, bevorstehende Löschung im Admin sichtbar machen und Löschjob protokollieren.
+- [ ] **P5-04 – Geplanten Bereinigungsjob robust bauen.** Batchweise löschen, Wiederholbarkeit sicherstellen, bei Fehlern fortsetzen und keine großen Laufzeiten pro Cron-Aufruf verursachen.
+- [ ] **P5-05 – Datenbereinigung und Exportgrenzen prüfen.** Anonymisierte/gelöschte Entries dürfen nicht über CSV, API, Queue oder Backups als aktive Datensätze wieder erscheinen.
+- [ ] **P5-06 – Uninstall-Verhalten umsetzen.** Standardmäßig Daten behalten; vollständige Löschung nur über explizite Einstellung und dokumentierte Bestätigung.
+- [ ] **P5-07 – Admin- und öffentliche Requests auf Rechte prüfen.** Capability, Nonce/Token, Parameter, Requestgröße, Rate-Limit und Datenzugriff in jeder Route einzeln testen.
+- [ ] **P5-08 – SQL-/HTML-/Mail-Sicherheit prüfen.** Prepared statements, Output escaping, Sanitizing, Header-Injection-Schutz und sichere Fehlerbehandlung verifizieren.
+- [ ] **P5-09 – Logs datensparsam gestalten.** Keine vollständigen Submissionwerte, Roh-IP, E-Mail-Adressen, Tokens oder Webhook-Secrets in Standardlogs schreiben.
+- [ ] **P5-10 – Systemstatusseite implementieren.** WP/PHP-Version, Schema-Version, Cron-/Queue-Status, Mailkonfiguration und erkannte Suite-Plugins ohne Geheimnisse anzeigen.
+- [ ] **P5-11 – Rollen- und Mandantengrenzen manuell prüfen.** Autor, Editor und nicht berechtigte Rollen dürfen keine fremden Entries lesen/exportieren oder Admin-Aktionen ausführen.
+- [ ] **P5-12 – Sicherheitsreview durchführen.** Submission, Admin, Export, CSV, Import, Cron, Mail und Löschung unabhängig prüfen; Befunde beheben und nachvollziehbar schließen.
+- **Abnahme Phase 5:** Daten können exportiert, gelöscht und automatisch bereinigt werden; alle Admin-/öffentlichen Datenzugriffe haben explizite Rechte- und Eingabeprüfungen.
+
+### Phase 6 – Free v1.0 Qualität und Veröffentlichung
+
+- [ ] **P6-01 – Automatisierte Testbasis aufbauen.** Unit-Tests für Schema, Validatoren, Bedingungen, Statuswechsel und CSV-Bereinigung; Integrationstests für DB/Migrationen/Submission.
+- [ ] **P6-02 – WordPress-Testmatrix einrichten.** Mindest- und aktuelle WordPress-Version sowie unterstützte PHP-Versionen in CI prüfen.
+- [ ] **P6-03 – WooCommerce-Kompatibilität verifizieren.** Plugin muss ohne WooCommerce funktionieren; mit WooCommerce dürfen Aktivierung und Formularsubmission keine Checkout-/HPOS-Daten verändern.
+- [ ] **P6-04 – Kompatibilität und Konfliktfälle prüfen.** Block-Editor, Classic Editor, Caching, gängige Security-/SMTP-Plugins und mehrere Formulare auf einer Seite testen.
+- [ ] **P6-05 – Last-/Missbrauchsgrenzen prüfen.** Große Formulare, viele Entries, CSV-Export, parallele Einsendungen, Spamwellen und fehlende Cron-Ausführung testen.
+- [ ] **P6-06 – Accessibility-Abnahme durchführen.** Tastatur, Screenreader, Fokusreihenfolge, Fehleransagen, Kontrast und Mobilansicht an repräsentativen Formularen abnehmen.
+- [ ] **P6-07 – Übersetzungsbasis erstellen.** Textdomain `form-captain`, POT-Erzeugung und vollständige deutsche/englische Texte für Admin, Frontend, E-Mails und Fehler etablieren.
+- [ ] **P6-08 – Readme und Produktdokumentation fertigstellen.** Installation, Feldtypen, Rechte, externe Datenflüsse, Datenschutz, Mailzustellung, Retention, FAQ und Supportgrenzen dokumentieren.
+- [ ] **P6-09 – Lizenz- und Pro-Prompts im Free prüfen.** Upgrade-Hinweise sparsam, kontextbezogen, wegklickbar und ohne künstliche Funktionssperre im Free gestalten.
+- [ ] **P6-10 – Build reproduzierbar machen.** Release-ZIP ohne Entwicklungsdateien/Secrets bauen; Versionsnummer, Checksums und Release-Notizen erzeugen.
+- [ ] **P6-11 – Upgrade-/Rollback-/Deinstallationspfad abnehmen.** Alte Schema-Versionen migrieren, abgebrochene Migration testen, Downgrade-Verhalten dokumentieren und Nutzdaten standardmäßig behalten.
+- [ ] **P6-12 – WordPress.org-Einreichung vorbereiten.** Richtlinien, Assets, Screenshots, Datenschutzhinweise, SVN/Releaseprozess und Supportkanal prüfen.
+- **Abnahme Phase 6 / Free v1.0:** Reproduzierbarer Build, bestandene CI-/Sicherheits-/Accessibility-Prüfung, vollständige Dokumentation und getesteter Update-/Datenpfad; Kernprodukt bleibt ohne Pro dauerhaft benutzbar.
+
+### Phase 7 – Form Captain Pro und License Captain
+
+- [ ] **P7-01 – Premiumumfang und Entitlements final mit License Captain abstimmen.** Feature-Namen, Produktkey `form-captain-pro`, Tariflimits 1/5/25 Sites, Supportlevel und Updatekanal synchronisieren.
+- [ ] **P7-02 – Add-on im captain-pro Repository anlegen.** Ordner, Slug, Textdomain und Produktschlüssel identisch setzen; Build-/Übersetzungsregeln des vorhandenen Add-on-Kernels einhalten.
+- [ ] **P7-03 – Mindestversion und Feature-Hooks im Kern bereitstellen.** Kern bietet neutrale Erweiterungspunkte; keine Lizenzprüfung und kein Premiumcode im Free-Plugin.
+- [ ] **P7-04 – License Client und Add-on-Kernel integrieren.** Lizenzseite unter Form Captain einhängen; Aktivierung, Site-Limit, signierte Entitlements, Updateprüfung und Diagnosen abbilden.
+- [ ] **P7-05 – Feature-Registry für Pro-Funktionen registrieren.** Multi-Step, Uploads, komplexe Bedingungen/Routing, Webhooks und PDF jeweils getrennt und mit stabilem `form.*`-Recht schalten.
+- [ ] **P7-06 – Lizenzzustände testen.** Ungültige/abgelaufene Lizenz, Offline-Zeit, Entitlementwechsel, Domainwechsel und Add-on-Deaktivierung dürfen Free-Formulare und Entries nicht beeinträchtigen.
+- [ ] **P7-07 – Multi-Step-Formulare bauen.** Fortschritt, serverseitige Zwischenschritte, Validierung, Wiederaufnahme und Ablauf von Fortsetzen-Links absichern.
+- [ ] **P7-08 – Uploads sicher umsetzen.** Allowlist, Größenlimit, MIME-Prüfung, zufällige Namen, nicht öffentliche Ablage, Download-Berechtigung und Bereinigung durchsetzen.
+- [ ] **P7-09 – Upload-Datenschutz integrieren.** Aufbewahrung, Entry-Löschung, Privacy-Erasure, Backup-Hinweise und Links in Benachrichtigungen sicher behandeln.
+- [ ] **P7-10 – Erweiterte Bedingungen und Routing bauen.** AND/OR-Regeln mit serverseitiger Prüfung; bedingte Bestätigungen und Benachrichtigungsziele ohne unsichere dynamische Codeausführung.
+- [ ] **P7-11 – Webhook-Aktionen bauen.** Feld-Allowlist, HMAC-Signatur, Timeout, Idempotency-Key, Retry-Backoff, maximale Versuche, Dead-letter und manuelles Wiederholen implementieren.
+- [ ] **P7-12 – PDF aus Entry generieren.** Nur freigegebene Felder und Templates rendern; HTML/CSS/Dateien begrenzen und PDF im Adminzugriff schützen.
+- [ ] **P7-13 – Pro-E2E-Lizenztest durchführen.** Add-on-Build, Lizenzaktivierung, Featurefreigabe, Update, Ablauf/Offline und Datenintegrität gegen License Captain prüfen.
+- **Abnahme Phase 7 / Pro v1:** Pro-Funktionen liegen ausschließlich im Add-on, sind getrennt entitelt, signiert lizenziert und lassen bei Lizenzverlust Free-Daten unverändert.
+
+### Phase 8 – Captain-Suite-Integrationen
+
+Jeder Adapter ist optional, versioniert, einzeln deaktivierbar und greift ausschließlich über dokumentierte öffentliche APIs/Actions zu. Zuerst Kernvertrag und Diagnose implementieren, danach jeweils genau einen Adapter.
+
+- [ ] **P8-01 – Form-Captain-Contract v1 implementieren.** Versionskonstante, Read-API, registrierbare Formularaktionen, Post-Commit-Ereignisse, Fehlerobjekte und Payload-Allowlist gemäß Abschnitt 5 bereitstellen.
+- [ ] **P8-02 – Contract-Kompatibilität prüfen.** Adapter nach `form_captain_loaded_v1` registrieren; Major-Version validieren; inkompatible Adapter sichtbar mit Fehlercode deaktivieren.
+- [ ] **P8-03 – Integrationsjob und Idempotenz implementieren.** Externe Fehler dürfen gespeicherte Entries nicht zurückrollen; Jobstatus, Retry-Limit, Dead-letter, manuelles Wiederholen und Diagnose ergänzen.
+- [ ] **P8-04 – Integrationsseite bauen.** Erkanntes Plugin, Plugin-/Vertragsversion, Lizenzstatus, Feldmapping, letzter Lauf, Fehler und Testaktion anzeigen; nur erlaubte Daten vor dem Senden zeigen.
+- [ ] **P8-05 – Pass-Captain-Einbettung bauen.** Eventformular auswählen/verlinken und freigegebenen Eventkontext über öffentliche Pass-/Form-Schnittstelle setzen; Formularentry darf keine Reservierung oder Ticket-Ausstellung auslösen.
+- [ ] **P8-06 – Voucher-Anfrageadapter bauen.** Firmenanfrage/Personalisierung mit expliziter Adminprüfung und Bestätigung an Voucher Captain übergeben; keine automatische Ausgabe oder Zahlung.
+- [ ] **P8-07 – Affiliate-Entscheidung umsetzen.** Zuerst prüfen, ob der vorhandene Partnerbewerbungsablauf genügt. Nur bei bestätigtem Bedarf API/Adapter implementieren; neuer Partner bleibt `pending`, nie automatische Freigabe oder Provision.
+- [ ] **P8-08 – Form→Review lokale Übergabe bauen.** Nur mit Review Captain Pro; explizites Zahlen-/Text-/Anzeigenamen-Mapping, Herkunftsreferenz und Idempotency-Key verwenden; Review bleibt pending und unverified.
+- [ ] **P8-09 – Review-Lösch- und Einladungsgrenze umsetzen.** Gelöschter Form-Entry entfernt den wartenden Review gemäß Vertrag; veröffentlichte Reviews folgen Review-Captain-Privacy-Regeln. Form-Entries lösen nie Einladungs-E-Mails aus.
+- [ ] **P8-10 – Suite-Diagnose pro Verbindung vervollständigen.** Fehlendes Plugin, Lizenz fehlt, inkompatibler Vertrag, Timeout und wiederholbarer Fehler mit nächstem Schritt anzeigen.
+- [ ] **P8-11 – Adapter-Vertragstests erstellen.** Pass, Voucher, Affiliate, Review und License Captain mit Testdoubles bzw. offiziellen Vertragsbeispielen prüfen; keine privaten Klassen/Tables mocken.
+- [ ] **P8-12 – Suite-E2E durchführen.** Formulareinsendung, Feldmapping, Doppelzustellung, Plugin-Deaktivierung, API-Ausfall, Entry-Löschung und inkompatible Version durchspielen.
+- **Abnahme Phase 8:** Integrationen funktionieren unabhängig voneinander; keine Datenbankkopplung; kein doppelter Side-Effect; Fehler und Löschfolgen sind im Admin nachvollziehbar.
+
+### Phase 9 – Launch, Betrieb und spätere Erweiterungen
+
+- [ ] **P9-01 – Produkt- und Preisangaben finalisieren.** Form-Captain-Pro-Tarife, 1/5/25-Site-Limits, Supportumfang, Verlängerung und Shopprodukte mit License Captain und captain-pro abgleichen.
+- [ ] **P9-02 – Support- und Fehlerprozess festlegen.** Supportkanal, Systemstatus-Export, Datenschutz beim Supportdump, Fehler-Triage und Sicherheitskontakt dokumentieren.
+- [ ] **P9-03 – Release-Checkliste durchführen.** Versionsnummer, Changelog, ZIP-Prüfsumme, Upgrade-Test, Lizenz-/Entitlementtest, Datenbackup und Rollbackplan vor jedem Release bestätigen.
+- [ ] **P9-04 – Nutzungsfeedback nach Free-Launch auswerten.** Abbruchraten im Setup, häufige Feldtypen, Mailprobleme und Supportanfragen datensparsam erfassen; keine Submission-Inhalte als Telemetrie senden.
+- [ ] **P9-05 – Contact Form 7 Import nach v1 spezifizieren.** Feld-/Regelzuordnung, nicht unterstützte Funktionen, Vorschau und Konvertierungsbericht festlegen.
+- [ ] **P9-06 – Importer implementieren und testen.** Bestehende Formulare sicher migrieren; Entries nur über dokumentierte Exportdateien übernehmen; Originaldaten vor Import nicht löschen.
+- [ ] **P9-07 – Mehrsprachigkeit erweitern.** WPML/Polylang-Unterstützung erst mit definierter Formular-/Übersetzungszuordnung und Testmatrix ergänzen.
+- [ ] **P9-08 – Multisite separat planen.** Pro-Site-Datentrennung, Netzwerkaktivierung, Massenmigration und Lizenzzählung vor Implementierung spezifizieren.
+- [ ] **P9-09 – Zahlungen, CRM, Analytics und White-Label nicht vorziehen.** Für jeden Bereich erst API-/Provider-, Refund-, Rechts-/Datenschutz-, Support- und Betriebskosten spezifizieren; danach eigene Releaseentscheidung treffen.
+- **Abnahme Phase 9:** Releases sind reproduzierbar und betreibbar; spätere Erweiterungen haben eine begründete Nachfrage und klare Daten-/Supportverantwortung.
+
+### Gesamt-Abnahmekriterien für „Form Captain fertig“
+
+- [ ] Free v1.0 kann installiert, eingerichtet und aktualisiert werden; Formulare lassen sich bauen, veröffentlichen, absenden, speichern, verwalten und exportieren.
+- [ ] Datenschutz-, Berechtigungs-, Spam-, E-Mail-, CSV-, Migrations- und Löschpfade sind abgenommen.
+- [ ] Free-Release ist WordPress.org-fähig und besitzt vollständige Dokumentation sowie reproduzierbaren Build.
+- [ ] Pro v1 ist ein separates, korrekt lizenziertes Add-on; Pro-Ablauf oder Deaktivierung löscht keine Free-Formulare oder Entries.
+- [ ] Suite-Adapter verwenden ausschließlich freigegebene Verträge, sind idempotent und erfüllen die Datenbesitz-/Einladungsgrenzen dieses Konzepts.
+- [ ] Offene spätere Erweiterungen aus Phase 9 sind entweder mit begründetem Releaseplan versehen oder bewusst aus dem Produktumfang ausgeschlossen.
 
 ## 10. Risiken und Entscheidungen vor Produktionsstart
 
@@ -410,6 +519,6 @@ Die Lizenzierung folgt dem bestehenden Captain-Suite-Modell:
 | Voucher Captain | Versionierte PHP-API, externe Einlösung und Connector-Verträge sind vorhanden. | Anfrage-/Personalisierungsadapter fehlt. Erst nach ausdrücklicher Prüfung über Voucher-Service ausstellen; keine direkte Tabellenmanipulation. |
 | Affiliate Captain | Öffentlicher Verkaufs-/Partnervertrag v1.3 mit Status `pending` ist vorhanden. | Eine Formular-zu-Partner-Anlage ist nicht im Vertrag. Vor einer Erweiterung den bestehenden Bewerbungsablauf bevorzugen; keine stillschweigende Freigabe oder Provisionsanlage. |
 | Review Captain | Konzept definiert optionales Formular-Action-Mapping und lokale Review-Übergabe. | Noch nicht implementiert. Benötigt Review Captain Pro, explizite Feldzuordnung, idempotente Quelle, pending/unverified und Löschweitergabe. Keine Einladungs-E-Mail aus Form-Einsendungen. |
-| WP License Captain / Captain Pro | Bestehendes Add-on-/License-Client-Modell ist etabliert. | Form Captain Pro ist geplant; Produktschlüssel, Entitlements, Admin-Einbindung und Lizenzkatalog müssen vor Premium-Release mit den bestehenden Add-ons abgeglichen werden. |
+| License Captain / Captain Pro | Bestehendes Add-on-/License-Client-Modell ist etabliert. | Form Captain Pro ist geplant; Produktschlüssel, Entitlements, Admin-Einbindung und Lizenzkatalog müssen vor Premium-Release mit den bestehenden Add-ons abgeglichen werden. |
 
 Für die Implementierung sind die genannten Verträge versionsgenau zu prüfen. Bestehende APIs/Hooks werden nur gemäß ihrer dokumentierten Semantik verwendet; ein im Konzept benannter zukünftiger Hook ist bis zur Implementierung kein vorhandener Vertrag.

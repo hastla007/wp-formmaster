@@ -40,7 +40,7 @@ Diese Entscheidungen gelten als Planungsgrundlage für die erste Umsetzung. Änd
 | **Nicht im MVP** | Zahlungen, Datei-Uploads, PDF-Erzeugung, Multi-Step, CRM-spezifische Connectoren, Abandonment, Umfragen/Quiz, öffentliche Entry-Ansichten, Multisite-Netzwerkverwaltung und KI-Formularerstellung. |
 | **Erste Pro-Version** | Multi-Step, Datei-Uploads, erweiterte Bedingungen/Routing, Webhooks, PDF aus Einsendungen und Integrations-/Fehlerprotokoll. Zahlungen folgen erst nach stabiler v1.x und separater Provider-/Refund-Prüfung. |
 | **Suite-Reihenfolge** | Öffentlicher Vertrag ab Free v1.0; zuerst Pass Captain (Einbettung/Event-Kontext), danach Voucher Captain (Anfrage/Firmenbestellung), anschließend Affiliate Captain und Review Captain. |
-| **Unterstützungsumfang v1** | WordPress 6.5+, PHP 7.4+, WooCommerce optional ab Version 8.0; HPOS und klassischer Bestellspeicher. Checkout-Block-Integration ist kein MVP-Ziel. Keine Multisite-Unterstützung in v1.0. |
+| **Unterstützungsumfang v1** | WordPress 6.8+, PHP 8.3+, WooCommerce optional ab Version 8.0; HPOS und klassischer Bestellspeicher. CI prüft zusätzlich die aktuelle stabile WordPress-Version und unterstützte PHP-Versionen. Checkout-Block-Integration ist kein MVP-Ziel. Keine Multisite-Unterstützung in v1.0. |
 | **Sprachen v1** | Englisch als Quelltextsprache und de_DE/de_AT Übersetzungen; weitere Übersetzungen nach stabiler Textdomain und Übersetzungsworkflow. |
 
 **Produktabgrenzung:** Form Captain ist zunächst kein allgemeiner No-Code-App-Builder. Keine dynamischen Datenbanken, Kundenportale oder komplexen Genehmigungsketten in v1. Diese würden Support- und Sicherheitsumfang unverhältnismäßig erhöhen.
@@ -82,6 +82,7 @@ Die Wettbewerber setzen unterschiedliche Schwerpunkte. Die Marktbeobachtung unte
 - [Formidable Forms Features](https://formidableforms.com/features/) und [Formidable Forms auf WordPress.org](https://wordpress.org/plugins/formidable/)
 - [Ninja Forms](https://ninjaforms.com/) und [Conditional Logic Add-on](https://ninjaforms.com/extensions/conditional-logic/)
 - [Contact Form 7 auf WordPress.org](https://wordpress.org/plugins/contact-form-7/)
+- [WordPress.org Voraussetzungen](https://wordpress.org/about/requirements/) (PHP 8.3+ empfohlen; PHP 7.4 ist EOL).
 - Preisanker: [WPForms Pricing](https://wpforms.com/pricing/), [Gravity Forms Pricing](https://www.gravityforms.com/pricing/), [Fluent Forms Pricing](https://fluentforms.com/pricing/), [Formidable Forms Pricing](https://formidableforms.com/pricing/) und [Ninja Forms Pricing](https://ninjaforms.com/pricing/).
 
 ### Preis- und Tarifbeobachtung (Stand 15.11.2026)
@@ -279,7 +280,7 @@ Der Kern definiert in v1 folgende öffentliche, stabile Namensfamilie; Ereigniss
 - HPOS-kompatibler Woo-Adapter; keine Abhängigkeit von WooCommerce für das Kernplugin.
 - Multisite: Daten pro Site, Netzwerkaktivierung mit klarer Datenmigration und Capabilities; Entscheidung vor MVP festlegen.
 - Uninstall löscht Formulare/Einträge nur nach expliziter Admin-Auswahl und dokumentierter Bestätigung.
-- PHP-/WordPress-Mindestversion erst anhand der CI-Matrix und verbreiteter PHP-Versionen festlegen.
+- PHP-/WordPress-Mindestversion: WP 6.8+ und PHP 8.3+; CI-Matrix muss zusätzlich gegen aktuelle stabile Versionen laufen.
 
 **WordPress.org-Platzierung:** Die Trennung folgt den aktuellen Plugin-Richtlinien: Trialware/Funktionssperren im WordPress.org-Free-Plugin sind nicht zulässig; die Richtlinien empfehlen ausdrücklich ein außerhalb des Verzeichnisses angebotenes Add-on für Premiumcode. Lizenzprüfung, Premium-Updater und Pro-Code bleiben daher ausschließlich in form-captain-pro. Upgrade-Hinweise bleiben kontextbezogen, sparsam und wegklickbar. Quelle: [Detailed Plugin Guidelines (Developer.WordPress.org)](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/).
 
@@ -305,7 +306,7 @@ Die Lizenzierung folgt dem bestehenden Captain-Suite-Modell:
 - [ ] Capability-Matrix, konkrete Privacy-Texte und Löschregeln als technisches Datenschutzpaket ausarbeiten. Default-Aufbewahrung: 12 Monate; Einrichtung lässt 90 Tage, 12 Monate oder manuelle Löschung zu.
 - [ ] Versionierten Form-Captain-Integrationsvertrag v1 mit konkreten Payloads und SemVer-Regeln ausarbeiten.
 - [x] Produktkey und Start-Entitlements definiert; Produktanlage im WooCommerce-Katalog bleibt eine Umsetzungsaufgabe.
-- [x] Mindestversionen festgelegt: WP 6.5+, PHP 7.4+, WooCommerce optional 8.0+; Multisite nach v1.0.
+- [x] Mindestversionen festgelegt: WP 6.8+, PHP 8.3+, WooCommerce optional 8.0+; Multisite nach v1.0.
 - **Abnahme:** Architekturentscheidungen und öffentliche Verträge sind dokumentiert, bevor Implementierungen von Suite-Plugins abhängen.
 
 ### Phase 1 – Free-MVP

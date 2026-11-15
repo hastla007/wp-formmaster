@@ -361,6 +361,10 @@ Die Lizenzierung folgt dem bestehenden Captain-Suite-Modell:
 - [ ] Affiliate-Captain-Bewerbung und manuelle Freigabe.
 - [ ] Review-Captain-Brücke für lokal eingereichte Reviews: explizite Formularaktion, Mapping, Herkunftsreferenz, Idempotenz, Verifizierungsstatus „nicht verifiziert“ und Löschweitergabe. Review-Anfragen bleiben Review-Captain-Eigentum und benötigen vertrauenswürdige Experience-Events, Kontaktresolver sowie Versandberechtigung.
 - [ ] WooCommerce-Adapter für Produkt-/Bestellkontext (HPOS, Classic und Blocks soweit sinnvoll).
+- [ ] Schnittstellenabgleich vor Adapterbau dokumentieren: Voucher PHP-API, Pass Captain öffentliche Services, Affiliate Vertrag v1.3 und geplanter Review-Action-Vertrag jeweils mit Mindestversion und Fehler-/Retry-Verhalten.
+- [ ] Voucher-Adapter bleibt eine bestätigungspflichtige Anfrage, keine automatische Gutschein-Ausgabe; Affiliate-Adapter nur nach Entscheidung zum vorhandenen Bewerbungsablauf und standardmäßig Status `pending`.
+- [ ] Form→Review nur als lokale, nicht verifizierte Moderations-Review umsetzen; Einladung, Versand und öffentliche Plattform-Reviews bleiben ausgeschlossen.
+- [ ] Lizenzintegration von Form Captain Pro mit WP License Captain und Captain-Pro-Kernel inklusive Produktkey, Entitlements, Site-Limits und Updatepaket abnehmen.
 - [ ] Vertragstests gegen jede unterstützte Suite-Version sowie Diagnoseansicht.
 - **Abnahme:** Kein Adapter benötigt direkten Tabellenzugriff; Wiederholung eines Ereignisses dupliziert keine Aktion.
 
@@ -396,3 +400,16 @@ Die Lizenzierung folgt dem bestehenden Captain-Suite-Modell:
 ## Quellen und Referenzen
 
 - [Review Captain – Produktkonzept und Suite-Vertrag](https://github.com/hastla007/wp-reviewmaster/blob/main/konzept.md)
+
+
+## Suite-Abgleich mit den gebauten Plugins (15.11.2026)
+
+| Verbindung | Vorhandene Grundlage | Noch zu bauen / verbindliche Grenze |
+|---|---|---|
+| Pass Captain | Öffentliche Services und versionierte Voucher-/Check-in-Provider sind im Konzept und in der Hook-Dokumentation beschrieben. | Formularauswahl/Einbettung im Event-Admin und ein eigener Form-Captain-Adapter fehlen. Ein Formularentry darf keine Buchung oder Ticket-Ausstellung auslösen. |
+| Voucher Captain | Versionierte PHP-API, externe Einlösung und Connector-Verträge sind vorhanden. | Anfrage-/Personalisierungsadapter fehlt. Erst nach ausdrücklicher Prüfung über Voucher-Service ausstellen; keine direkte Tabellenmanipulation. |
+| Affiliate Captain | Öffentlicher Verkaufs-/Partnervertrag v1.3 mit Status `pending` ist vorhanden. | Eine Formular-zu-Partner-Anlage ist nicht im Vertrag. Vor einer Erweiterung den bestehenden Bewerbungsablauf bevorzugen; keine stillschweigende Freigabe oder Provisionsanlage. |
+| Review Captain | Konzept definiert optionales Formular-Action-Mapping und lokale Review-Übergabe. | Noch nicht implementiert. Benötigt Review Captain Pro, explizite Feldzuordnung, idempotente Quelle, pending/unverified und Löschweitergabe. Keine Einladungs-E-Mail aus Form-Einsendungen. |
+| WP License Captain / Captain Pro | Bestehendes Add-on-/License-Client-Modell ist etabliert. | Form Captain Pro ist geplant; Produktschlüssel, Entitlements, Admin-Einbindung und Lizenzkatalog müssen vor Premium-Release mit den bestehenden Add-ons abgeglichen werden. |
+
+Für die Implementierung sind die genannten Verträge versionsgenau zu prüfen. Bestehende APIs/Hooks werden nur gemäß ihrer dokumentierten Semantik verwendet; ein im Konzept benannter zukünftiger Hook ist bis zur Implementierung kein vorhandener Vertrag.

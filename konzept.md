@@ -266,6 +266,12 @@ Der Kern definiert in v1 folgende öffentliche, stabile Namensfamilie; Ereigniss
 - **Datenbesitz:** Form Captain führt vollständige Fragen/Antworten und deren Retention. WooCommerce speichert über seine CRUD-Objekte nur Formular-ID, Entry-Referenz und Status an der Bestellposition; keine zweite vollständige Kopie der Antworten. HPOS wird ohne direkte Tabellen- oder Order-Meta-Abfragen unterstützt.
 - **Kaufablauf:** Checkout, Zahlungsanbieter, Steuern, Bestand, E-Mails für Zahlung, Storno und Refund bleiben WooCommerce-Aufgabe. Form Captain löst keine Zahlung aus. Fragebögen werden bei unbezahlten, fehlgeschlagenen, stornierten oder erstatteten Aufträgen nicht neu angefordert; bereits gespeicherte Antworten werden nach der normalen Retention-/Privacy-Regel behandelt.
 - **Umfang v1:** eine abgeschlossene Antwort je Bestellposition, nicht je Stückzahl. Separate Teilnehmer-/Antwortbögen für jede Menge, WooCommerce-Abonnements, Buchungen, Bundles und harte Download-/Fulfillment-Sperren folgen nur nach Nachfrage und eigener Spezifikation.
+- **Konfiguration einfrieren:** Fragebogen-Zuordnung und veröffentlichte Formularversion werden bei Erstellung der WooCommerce-Bestellposition festgehalten. Eine spätere Änderung/Löschung des Produkts oder Formulars ändert offene Käuferfragebögen nicht; die gespeicherte Version bleibt bis zum Abschluss/Verfall verfügbar.
+- **Bezahlstatus und Gratisbestellungen:** Zugriff wird freigegeben, sobald WooCommerce die Zahlung bestätigt. Aufträge mit Gesamtsumme 0, bei denen keine Zahlung erforderlich ist, können nach WooCommerce-Bestätigung des Abschlusses ebenfalls berechtigt sein. Pending/On-hold, Draft, Failed, Cancelled und vollständig Refunded bleiben gesperrt.
+- **Teilerstattungen:** Eine Erstattung an einer Bestellposition beendet oder löscht nicht automatisch Fragebögen anderer Positionen. Für die betroffene Zeile gelten Menge und Refund-Zustand der WooCommerce-Order-Item-Daten; da v1 einen Bogen je Zeile führt, muss die Regel für teilweise erstattete Mengen im Setup-Text transparent sein.
+- **Hinweis vor dem Kauf:** Auf Produktseite und in Warenkorb/Bestellübersicht wird angezeigt, wenn nach dem Kauf noch Angaben folgen und ob sie für die Bearbeitung benötigt werden. Die Mitteilung enthält Zweck und Datenschutzverweis; Antworten selbst werden nicht vor Zahlung abgefragt.
+- **Gastzugang:** Ein abgelaufener Gast-Link kann nach erneuter Prüfung über die WooCommerce-Bestellansicht oder eine kontrollierte neue E-Mail erteilt werden. Tokens sind widerrufbar und auf Auftrag, Position und Formular beschränkt.
+- **Pro-Lizenzende:** Bereits bestellte, noch offene Fragebögen bleiben ausfüllbar und für berechtigte Shopmitarbeiter sichtbar, auch wenn die Pro-Lizenz später ausläuft. Neue Produktzuordnungen bleiben bei abgelaufenem Entitlement gesperrt.
 - **E-Mail-/Reminder-Regeln:** E-Mail-Link und optionale Erinnerung verwenden die WooCommerce-Mailer und die vorhandene Form-Captain-Queue. Versand erfolgt idempotent und nur, solange Auftrag, Kontaktkontext und Fragebogenstatus zulässig sind. Antworten oder sensible Feldwerte stehen nie im Mail-Link.
 - **Privacy:** Entry-Export/-Löschung berücksichtigt die Bestellreferenz; in WooCommerce verbleibt höchstens ein nicht sensibler Abschlussmarker bzw. eine verwaiste Referenz, keine Antworten. Retention, Gastzugangstoken und Widerruf sind in der Admin-Diagnose nachvollziehbar.
 
@@ -651,7 +657,7 @@ flowchart TD
     G --> H["WooCommerce zeigt Status und Entry-Referenz"]
 ¤¤¤
 
-Die Antwort bleibt im Form-Captain-Entry; Checkout und Zahlungsstatus bleiben bei WooCommerce. „Vor Bearbeitung erforderlich“ zeigt dem Verkäufer eine offene Aufgabe an, ändert aber in v1 weder Bestellstatus noch Downloadrechte.
+Die Antwort bleibt im Form-Captain-Entry; Checkout und Zahlungsstatus bleiben bei WooCommerce. „Vor Bearbeitung erforderlich“ zeigt dem Verkäufer eine offene Aufgabe an, ändert aber in v1 weder Bestellstatus noch Downloadrechte. Die Fragebogen-Version wird pro Bestellposition eingefroren; kostenlose, von WooCommerce abgeschlossene Bestellungen können einbezogen werden, Teilrückerstattungen anderer Positionen ändern den Fragebogenstatus nicht.
 
 ## 13. UI-Mockups: Konzeptansichten der Seiten
 

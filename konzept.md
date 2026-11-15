@@ -57,18 +57,9 @@ Diese Entscheidungen gelten als Planungsgrundlage für die erste Umsetzung. Änd
 4. **Agenturen:** Vorlagen, wiederverwendbare Formulare, Rollen und Import aus bestehenden Plugins.
 5. **Captain-Suite-Nutzer:** Formulare als gemeinsamer Einstiegspunkt für Gutschein-, Ticket-, Affiliate-, Review- und Lizenzprozesse.
 
-## 3. Wettbewerbsanalyse
+## 3. Anonymisierte Marktanforderungen
 
-Die Wettbewerber setzen unterschiedliche Schwerpunkte. Die Marktbeobachtung unten fasst die öffentlich dokumentierten Produktmerkmale zusammen (Stand 15.11.2026); Tarifgrenzen und API-Verfügbarkeit können sich ändern.
-
-| Produkt | Stärken / öffentlich sichtbare Merkmale | Produktchance für Form Captain |
-|---|---|---|
-| **WPForms** | Einsteigerorientierter Drag-and-drop-Builder, Vorlagen, bedingte Logik, Benachrichtigungsrouting, Spam-Abwehr, Marketing- und Automationsintegrationen; aktuelle Feature-Seite bewirbt auch KI-gestützte Erstellung/Bearbeitung. | Fokus auf nachvollziehbare, WordPress-native Einträge und Captain-Suite-Aktionen statt primär auf möglichst viele Integrationslogos. |
-| **Gravity Forms** | Robuster lizenzierter Formular-Kern, bedingte Logik, mehrseitige Formulare, Uploads, Zahlungs- und Add-on-Ökosystem, umfangreiche Entwickler-Hooks. Kein dauerhaftes WordPress.org-Free-Plugin. | Free-Einstieg und Erweiterung über öffentlichen Vertrag; Suite-Verbindungen als gepflegte, getestete Adapter. |
-| **Fluent Forms** | Großzügiger Free-Umfang laut Anbieter: Drag-and-drop, bedingte Logik, Eintragsverwaltung, Vorlagen, Spam-Schutz, Export, teils Zahlungen und Integrationen; Pro erweitert unter anderem um Multi-Step, Uploads, PDFs, CRM und erweiterte Workflows. | Ein Free-Kern muss bereits den alltäglichen Kontaktformular-Use-Case sauber lösen. Differenzierung über klare Datenhaltung, Suite-Integration und einheitlichen Add-on-Vertrag. |
-| **Formidable Forms** | Positioniert sich für komplexe Formulare, Berechnungen, Umfragen, Quiz, dynamische Views und aus Einträgen erzeugte Inhalte. | Keine frühe Überdehnung zum App-Builder. Erst zuverlässige Formulare/Einträge/Integrationen; Berechnungen und dynamische Ausgabe danach. |
-| **Ninja Forms** | Kostenloser Kern mit einzeln kaufbaren Add-ons bzw. Paketen; Erweiterungen für Logik, mehrseitige Formulare, Zahlungen, CRM und Automationen. | Einheitliche Lizenzierung über License Captain und ein zusammenhängendes Pro-Add-on statt vieler Einzellizenzen. |
-| **Contact Form 7** | Etabliertes, kostenloses und schlankes Kontaktformular mit modularer Architektur und offenem Quellcode; benötigt für viele Abläufe weitere Erweiterungen oder manuelle Konfiguration. | Modernere visuelle Erstellung und integrierte Eintragsverwaltung anbieten, ohne die Leichtgewichtigkeit und Offenheit des WordPress-Ökosystems aufzugeben. |
+Die Produktanforderungen werden ohne Namen, Domains oder Links konkurrierender Formularprodukte dokumentiert. Relevante Funktionskategorien sind: Drag-and-drop-Builder, Vorlagen, bedingte Logik, mehrseitige Formulare, Eintragsverwaltung, Uploads, Zahlungen, Anti-Spam, Automationen, API-Erweiterbarkeit und Free-/Pro-Grenzen.
 
 ### Marktanforderungen und Schlussfolgerungen
 
@@ -78,30 +69,9 @@ Die Wettbewerber setzen unterschiedliche Schwerpunkte. Die Marktbeobachtung unte
 - Ein breites Integrationsverzeichnis ist kein Ersatz für stabile, idempotente Verträge und nachvollziehbare Fehlerberichte.
 - Form Captain sollte mit einem kleineren, tief integrierten und gut dokumentierten Funktionssatz starten. Keine übertriebenen „X Integrationen“-Versprechen, bevor Adapter getestet und betreibbar sind.
 
-### Quellen (Anbieter- und WordPress-Seiten)
+### Neutrale Markt- und Preisvalidierung
 
-- [WPForms Features](https://wpforms.com/features/) und [WPForms Pricing](https://wpforms.com/pricing/)
-- [Gravity Forms Features](https://www.gravityforms.com/features/) und [Gravity Forms Dokumentation: Features](https://docs.gravityforms.com/features/)
-- [Fluent Forms Free vs Pro](https://fluentforms.com/free-vs-pro/) und [Fluent Forms auf WordPress.org](https://wordpress.org/plugins/fluentform/)
-- [Formidable Forms Features](https://formidableforms.com/features/) und [Formidable Forms auf WordPress.org](https://wordpress.org/plugins/formidable/)
-- [Ninja Forms](https://ninjaforms.com/) und [Conditional Logic Add-on](https://ninjaforms.com/extensions/conditional-logic/)
-- [Contact Form 7 auf WordPress.org](https://wordpress.org/plugins/contact-form-7/)
-- [WordPress.org Voraussetzungen](https://wordpress.org/about/requirements/) (PHP 8.3+ empfohlen; PHP 7.4 ist EOL).
-- Preisanker: [WPForms Pricing](https://wpforms.com/pricing/), [Gravity Forms Pricing](https://www.gravityforms.com/pricing/), [Fluent Forms Pricing](https://fluentforms.com/pricing/), [Formidable Forms Pricing](https://formidableforms.com/pricing/) und [Ninja Forms Pricing](https://ninjaforms.com/pricing/).
-
-### Preis- und Tarifbeobachtung (Stand 15.11.2026)
-
-Die angezeigten US-Preise sind Listenpreise bzw. der auf der offiziellen Seite ausgewiesene Preis; Aktionspreise und Verlängerungsbedingungen unterscheiden sich. Die Beobachtung dient der Positionierung und ist kein direkter EUR-Preisvergleich:
-
-| Wettbewerber | Öffentliche Jahrespreis-Anker | Lizenzstaffel / Signal |
-|---|---|---|
-| WPForms | Basic regulär 99 USD; Plus 199 USD; Pro 399 USD; Elite 599 USD. Die Seite bewirbt rabattierte Erstjahre und Verlängerung zum Listenpreis. | 1 / 3 / 5 / unbegrenzt Sites; Featureumfang nach Tier. |
-| Gravity Forms | Basic 59 USD; Pro 159 USD; Elite 259 USD pro Jahr. | 1 / 3 / unbegrenzt Sites; Add-on-Pakete nach Tier. |
-| Fluent Forms | Offizielle FAQ nennt Start ab 79 USD/Jahr; Preisseite zeigt 1 / 5 / unbegrenzt und zusätzlich Lifetime-Angebote. | Niedriger Preisanker, großzügiger Free-Tarif, umfangreiche Pro-Funktionen. |
-| Formidable Forms | Listenpreise 79 / 199 / 399 / 599 USD/Jahr; Aktionen senken oft nur das erste Jahr. | Feature- und Site-Limits je Tarif; positioniert sich für komplexe/dynamische Formulare. |
-| Ninja Forms | Core kostenlos; Plus/Pro/Elite Jahrespakete mit Add-ons; Preisseite nennt regulär 99 / 199 / 499 USD und rabattierte Erstjahre. | Kostenloser Kern plus einzelne Add-ons und Pakete. |
-
-**Schlussfolgerung für Form Captain:** Die Free-Version muss echte Eintragsverwaltung, Export und einfache Logik enthalten; sonst ist der Wechselgrund schwach. Pro sollte zum Start einfacher und günstiger als die etablierten Jahrespakete sein, aber nicht als Billig- oder Lifetime-Produkt positioniert werden. Aktionen dürfen den regulären Verlängerungspreis nicht verschleiern.
+Preis- und Funktionsentscheidungen werden aus eigenem Leistungsumfang, Supportkosten, Site-Limits, Kundenbedarf und Wartungsaufwand begründet. Fremde Wettbewerbermarken, Preislisten und URLs werden in diesen Projektdateien nicht geführt. Offizielle technische Plattformdokumentation darf für tatsächlich benötigte APIs weiterhin verlinkt werden.
 
 ### Vorgeschlagene Form-Captain-Pro-Preise zum Start
 

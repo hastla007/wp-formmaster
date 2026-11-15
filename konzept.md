@@ -38,9 +38,9 @@ Diese Entscheidungen gelten als Planungsgrundlage für die erste Umsetzung. Änd
 | **Pro-Logik** | Ein einziges eigenständiges Add-on mit vollständigem Pro-Funktionsumfang; keine Einzel-Add-ons. Pro-Tarife unterscheiden sich nur durch Site-Limit und Support. |
 | **MVP v1.0** | Formulareditor, 3 Vorlagen (Kontakt, Angebot, Support), Kernfelder, einfache bedingte Feldanzeige, Einträge, E-Mail, Basisspamschutz, Export, Block/Shortcode, Datenschutzwerkzeuge und Installationsassistent. |
 | **Nicht im MVP** | Zahlungen, Datei-Uploads, PDF-Erzeugung, Multi-Step, CRM-spezifische Connectoren, Abandonment, Umfragen/Quiz, öffentliche Entry-Ansichten, Multisite-Netzwerkverwaltung und KI-Formularerstellung. |
-| **Erste Pro-Version** | Multi-Step, Datei-Uploads, erweiterte Bedingungen/Routing, Webhooks, PDF aus Einsendungen und Integrations-/Fehlerprotokoll. Zahlungen folgen erst nach stabiler v1.x und separater Provider-/Refund-Prüfung. |
+| **Erste Pro-Version** | Multi-Step, Datei-Uploads, erweiterte Bedingungen/Routing, Webhooks, PDF aus Einsendungen, Integrations-/Fehlerprotokoll und WooCommerce-Käuferfragebögen je Produkt nach bestätigtem Kauf. Zahlungen durch Form Captain folgen erst nach stabiler v1.x und separater Provider-/Refund-Prüfung. |
 | **Suite-Reihenfolge** | Öffentlicher Vertrag ab Free v1.0; zuerst Pass Captain (Einbettung/Event-Kontext), danach Voucher Captain (Anfrage/Firmenbestellung), anschließend Review Captain (optionale lokale Review-Übergabe) und Affiliate Captain. |
-| **Unterstützungsumfang v1** | WordPress 6.8+, PHP 8.3+, WooCommerce optional ab Version 8.0; HPOS und klassischer Bestellspeicher. CI prüft zusätzlich die aktuelle stabile WordPress-Version und unterstützte PHP-Versionen. Checkout-Block-Integration ist kein MVP-Ziel. Keine Multisite-Unterstützung in v1.0. |
+| **Unterstützungsumfang v1** | WordPress 6.8+, PHP 8.3+, WooCommerce optional ab Version 8.0; HPOS und klassischer Bestellspeicher. Free v1.0 greift nicht in Verkauf, Checkout oder Zahlung ein. Das Pro-Fragebogenmodul arbeitet nach Bestellung und muss Bestellungen aus klassischem sowie Block-Checkout unterstützen, ohne Checkout-Felder oder Zahlungsablauf zu verändern. CI prüft Mindest- und aktuelle Versionen. Keine Multisite-Unterstützung in v1.0. |
 | **Sprachen v1** | Englisch als Quelltextsprache und de_DE/de_AT Übersetzungen; weitere Übersetzungen nach stabiler Textdomain und Übersetzungsworkflow. |
 
 **Produktabgrenzung:** Form Captain ist zunächst kein allgemeiner No-Code-App-Builder. Keine dynamischen Datenbanken, Kundenportale oder komplexen Genehmigungsketten in v1. Diese würden Support- und Sicherheitsumfang unverhältnismäßig erhöhen.
@@ -136,6 +136,7 @@ Alle Tarife enthalten denselben Pro-Funktionsumfang, Updates und Support währen
 - Webhook-Aktionen mit Feldzuordnung, Signatur, Idempotenz, Retries und Protokoll.
 - PDF-Generierung aus Entry-Vorlage.
 - Lizenz-/Updater-Seite und Updatefeed nach License Captain Vertrag.
+- WooCommerce-Pro-Modul: ein optionaler Käuferfragebogen je Produkt und Bestellposition nach bestätigtem Kauf; Antworten als Form-Captain-Entry mit sicherem Bestellbezug, Status im WooCommerce-Auftrag und optionaler Kennzeichnung „vor Bearbeitung erforderlich“. Keine Zahlung, kein Checkout-Eingriff und keine automatische Änderung des WooCommerce-Bestellstatus.
 
 **Nach v1.0, in dieser Reihenfolge**
 
@@ -237,7 +238,38 @@ Der Kern definiert in v1 folgende öffentliche, stabile Namensfamilie; Ereigniss
 | **Voucher Captain** | Gutschein-Anfragen, Firmenbestellungen und Geschenkpersonalisierung. | Öffentliche Voucher-Ausstellungs-/Firmenbestell-API verwenden. Beträge, Empfänger und Einwilligung klar zuordnen; kein direkter Gutschein-Tabellenzugriff. Gutschein wird nur nach expliziter Bestätigung und optionaler Zahlung ausgestellt. |
 | **Affiliate Captain** | Partnerbewerbungen, Kontaktdaten und manuell freigegebene Anmeldungen; Referral-/Affiliate-Code als Formularfeld. | Affiliate-Vertrag zur Partneranlage/Statusänderung nutzen, falls vorhanden; keine automatische Freigabe ohne Administratorentscheidung. Referral-Code als attributiertes Feld übergeben, keine Trackingdaten ohne Zustimmung. |
 | **Review Captain** | Optional Form-Captain-Formulare als Eingabeoberfläche für lokale Reviews nutzen. | Review Captain Pro registriert eine Formularaktion „Review zur Moderation übergeben“ und übergibt explizit zugeordnete Felder an die Review-Captain-API. Review Captain besitzt Review, Herkunft, Moderation und Veröffentlichung; Form Captain besitzt Formular und Einsendung. Nicht verifizierte Formantworten werden nie als Kauf-/Teilnahme-verifiziert markiert. Formulareinsendungen lösen keine Review-Einladung aus. |
-| **WooCommerce** | Produktanfragen, Reklamation, Angebotsanfrage, Checkout-/Bestellbezug und Zahlung. | Optionaler Adapter über WooCommerce CRUD/Hook APIs (HPOS und Blocks berücksichtigen). IDs statt serialisierter Bestellobjekte übergeben; Zahlungsauslösung nur mit serverseitig validiertem, idempotentem Payment-Provider. |
+| **WooCommerce** | Shop-Kompatibilität im Free-Kern; im Pro optionaler Käuferfragebogen je Produkt nach bestätigtem Kauf, etwa zur Abfrage von Personalisierungs- oder Lieferangaben. | Verkäufer ordnet im Produkt einen bestehenden Form-Captain-Formularentwurf zu und markiert ihn als optional oder vor Bearbeitung erforderlich. Käufer füllt ihn nach Bestellung über Bestellbestätigung, WooCommerce-Konto oder sicheren E-Mail-Link aus. Antwort bleibt ein Form-Captain-Entry; WooCommerce speichert nur Formular-/Entry-Referenz und Bearbeitungsstatus. Integration über offizielle Hooks und WooCommerce CRUD, HPOS sowie klassische und Block-Checkout-Bestellpfade. Keine Checkout-Felder, Zahlungen oder automatischen Änderungen an Zahlungs-/Bestellstatus. |
+
+### WooCommerce Pro: Käuferfragebogen nach dem Kauf
+
+**Produktentscheidung:** WooCommerce-Kompatibilität (keine Konflikte mit Shop, Checkout, HPOS oder Bestellungen) gehört zum Free-Kern. Die produktbezogene Fragebogen-Zuordnung und -Verarbeitung ist ein Pro v1-Workflow unter dem License-Captain-Recht form.woocommerce_questionnaires. Sie ist ein nachgelagerter Fragebogen, kein Checkout-Formular und kein Zahlungsmodul.
+
+#### Verkäuferablauf
+
+1. Im Produkteditor aktiviert der Verkäufer **„Käuferfragebogen nach dem Kauf“**, wählt ein veröffentlichtes Form-Captain-Formular und bestimmt, ob es optional oder **vor Bearbeitung erforderlich** ist. Standard ist deaktiviert.
+2. Die Fragebogen-Zuordnung wird für einfache und variable Produkte definiert; Variationseinstellungen erben die Produktzuordnung, sofern kein expliziter Override vorgesehen ist.
+3. WooCommerce erstellt die Bestellung und bleibt führend für Produkt, Menge, Preis, Steuer, Zahlung, Storno und Rückerstattung.
+4. Erst nachdem WooCommerce die Bestellung als bezahlt bestätigt, wird pro passender Bestellposition ein Formularzugang und ein idempotenter Folgejob bereitgestellt. Entwürfe, unbezahlte und fehlgeschlagene Bestellungen erhalten keinen Fragebogen.
+5. Der Käufer findet die Aktion auf der Bestellbestätigungsseite, in „Mein Konto → Bestellung ansehen“ und über einen Link in der passenden WooCommerce-E-Mail. Wenn eine Bestellbestätigungsoberfläche nicht unterstützt wird, bleiben Konto- und E-Mail-Link der verlässliche Fallback.
+6. Die Einsendung wird als Form-Captain-Entry gespeichert und mit Bestell-ID, Bestellpositions-ID und Produktreferenz verknüpft. Im WooCommerce-Auftrag erscheinen Status und Entry-Link für berechtigte Shopmitarbeiter.
+
+#### Status, Zugriff und Datenbesitz
+
+- **Käuferzugriff:** Angemeldete Kunden müssen Eigentümer der Bestellung sein. Gastkunden verwenden einen eng begrenzten, zeitlich beschränkten, widerrufbaren Zugang für genau die relevante Bestellposition; keine erratbaren Bestell-IDs, keine offen lesbaren Antworten und keine Antwortdaten in URL-Parametern.
+- **Validierung:** Produkt-, Bestell- und Bestellpositionskontext wird serverseitig aus der WooCommerce-Bestellung abgeleitet. Manipulierte versteckte Felder können die Zuordnung nicht ändern. Ein Auftrag muss tatsächlich bezahlt und noch nicht storniert/erstattet sein.
+- **Status:** Pro Bestellposition gibt es „nicht angefordert“, „ausstehend“, „abgeschlossen“ oder „erneut angefordert“. Der Shopbetreiber sieht offene Pflichtangaben direkt an der Bestellung. Bei einer Korrektur kann er den Fragebogen erneut freigeben; neue Antworten werden als neue Entry-Version verknüpft, statt alte Werte still zu überschreiben.
+- **„Vor Bearbeitung erforderlich“ ist ein Erfüllungshinweis:** In v1 ändert die offene Antwort weder WooCommerce-Zahlungsstatus noch den Bestellstatus, Downloadrechte oder den Checkout. Der Betreiber entscheidet anhand des sichtbaren Hinweises, wann er die Bearbeitung beginnt. Eine harte Sperre für Downloads oder Versand ist ein separates Folgevorhaben.
+- **Datenbesitz:** Form Captain führt vollständige Fragen/Antworten und deren Retention. WooCommerce speichert über seine CRUD-Objekte nur Formular-ID, Entry-Referenz und Status an der Bestellposition; keine zweite vollständige Kopie der Antworten. HPOS wird ohne direkte Tabellen- oder Order-Meta-Abfragen unterstützt.
+- **Kaufablauf:** Checkout, Zahlungsanbieter, Steuern, Bestand, E-Mails für Zahlung, Storno und Refund bleiben WooCommerce-Aufgabe. Form Captain löst keine Zahlung aus. Fragebögen werden bei unbezahlten, fehlgeschlagenen, stornierten oder erstatteten Aufträgen nicht neu angefordert; bereits gespeicherte Antworten werden nach der normalen Retention-/Privacy-Regel behandelt.
+- **Umfang v1:** eine abgeschlossene Antwort je Bestellposition, nicht je Stückzahl. Separate Teilnehmer-/Antwortbögen für jede Menge, WooCommerce-Abonnements, Buchungen, Bundles und harte Download-/Fulfillment-Sperren folgen nur nach Nachfrage und eigener Spezifikation.
+- **E-Mail-/Reminder-Regeln:** E-Mail-Link und optionale Erinnerung verwenden die WooCommerce-Mailer und die vorhandene Form-Captain-Queue. Versand erfolgt idempotent und nur, solange Auftrag, Kontaktkontext und Fragebogenstatus zulässig sind. Antworten oder sensible Feldwerte stehen nie im Mail-Link.
+- **Privacy:** Entry-Export/-Löschung berücksichtigt die Bestellreferenz; in WooCommerce verbleibt höchstens ein nicht sensibler Abschlussmarker bzw. eine verwaiste Referenz, keine Antworten. Retention, Gastzugangstoken und Widerruf sind in der Admin-Diagnose nachvollziehbar.
+
+#### Checkout- und Administrationsgrenzen
+
+Das Modul fügt keine Felder in Cart/Checkout Blocks oder den klassischen Checkout ein. Es muss dennoch mit Bestellungen aus beiden Checkout-Varianten funktionieren. Produktzuordnung erscheint in der Produktbearbeitung; Käuferzugang und Status erscheinen auf Bestellbestätigung, Bestellansicht und E-Mail. Im WooCommerce-Integrationsbereich von Form Captain werden Aktivität, unterstützte Versionen und Pro-Lizenzstatus angezeigt; Zuordnungen bleiben am Produkt bearbeitbar.
+
+Um HPOS-kompatibel zu sein, werden Bestellungen und Bestellpositionen ausschließlich über WooCommerce CRUD-/Order-APIs gelesen und geändert. Es wird keine eigene Produkt-/Bestellkopie angelegt. Die Implementierung folgt den offiziellen Dokumenten zu [HPOS-CRUD](https://developer.woocommerce.com/docs/features/orders/high-performance-order-storage/recipe-book/), [Bestellstatus](https://woocommerce.com/document/managing-orders/order-statuses/) und [Checkout-Blocks-Kompatibilität](https://developer.woocommerce.com/docs/extensions/best-practices-extensions/compatibility/).
 
 ### Festgelegte Form-Captain-Brücke
 
@@ -601,6 +633,21 @@ Der Connector ist standardmäßig deaktiviert. Sein Ausfall beeinträchtigt die 
 | 4. Integration | Asynchroner, signierter API-Aufruf zur neuen Lead-Inbox | Lokale Kurskontext-Aktion; keine externe Übertragung |
 | 5. Ergebnis | Lead-ID und Status für Admin; Qualifizierung in BoatingSchool | Kursreferenz am Entry; normale Form-Captain-Benachrichtigung |
 | 6. Grenze | Keine Konto-/Tenant-/Schulanlage oder Commerce-Funktion | Keine Prüfung, Termin-, Ticket-, Gutschein-, Affiliate- oder Lernzugangsaktion |
+
+### 12.9 WooCommerce-Käuferfragebogen nach bestätigtem Kauf
+
+¤¤¤mermaid
+flowchart TD
+    A["Verkäufer ordnet Formular Produkt zu"] --> B["WooCommerce erstellt Bestellung"]
+    B --> C{"WooCommerce bestätigt Zahlung?"}
+    C -->|Nein| D["Kein Fragebogen-Link"]
+    C -->|Ja| E["Fragebogen je Bestellposition bereitstellen"]
+    E --> F["Käufer füllt Formular sicher aus"]
+    F --> G["Form Captain speichert Entry"]
+    G --> H["WooCommerce zeigt Status und Entry-Referenz"]
+¤¤¤
+
+Die Antwort bleibt im Form-Captain-Entry; Checkout und Zahlungsstatus bleiben bei WooCommerce. „Vor Bearbeitung erforderlich“ zeigt dem Verkäufer eine offene Aufgabe an, ändert aber in v1 weder Bestellstatus noch Downloadrechte.
 
 ## 13. UI-Mockups: Konzeptansichten der Seiten
 

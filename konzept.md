@@ -372,6 +372,30 @@ Beide Connectoren sind eigenständige Plugins mit eigener Versionsnummer, Instal
 
 **Werkzeuge getrennt halten:** Formularvorlagen und JSON-Import/-Export gehören zur Formularübersicht. CSV-Eintragsexport gehört in die Eintragsansicht. Die Pro-Lizenz und Updates erscheinen als eigener Unterpunkt nur bei installiertem Form-Captain-Pro-Add-on. Das reduziert doppelte Wege und hält die allgemeinen Einstellungen für Websitebetreiber verständlich.
 
+### 6.2 Yoast SEO-Kompatibilität
+
+Form Captain soll mit Yoast SEO Free und Premium konfliktfrei zusammenarbeiten, aber keine zweite SEO-Oberfläche bauen. Yoast ist optional; Form Captain funktioniert vollständig, wenn Yoast nicht installiert oder deaktiviert ist.
+
+#### SEO-Grundmodell
+
+- Die **WordPress-Seite oder der Beitrag, der ein Formular enthält, ist das indexierbare Dokument**. Der Websitebetreiber bearbeitet Titel, Meta-Beschreibung, Canonical, Robots-Vorgaben, Social-Metadaten und den Seitentyp in Yoast.
+- Form Captain erstellt keine eigenständigen öffentlichen Formular-URLs, kein öffentliches Formular-Custom-Post-Type-Archiv, keinen eigenen Sitemap-Eintrag und keine indexierbaren Entry-Seiten. Einträge und Admin-Routen bleiben privat.
+- Der Block und der Shortcode geben das Formular semantisch und serverseitig im HTML der Seite aus. Labels, Pflichtfeldhinweise und Hilfetexte sind sichtbar und zugänglich. Redaktioneller Einleitungstext, Überschriften, Nutzen, Kontaktinformationen und Datenschutzhinweis gehören auf die umgebende WordPress-Seite; ein Formular allein ersetzt keinen hilfreichen Seiteninhalt.
+- Form Captain verändert keine Yoast-Titel, Beschreibungen, Canonicals, Robots-/Noindex-Regeln, XML-Sitemaps oder Open-Graph-/X-Tags. Es setzt auch kein Noindex auf die Seite, nur weil dort ein Formular steht.
+- **Kein eigenes Schema-Markup in v1:** Form Captain erzeugt weder `WebPage`, `ContactPage`, `Organization`, `LocalBusiness`, `FAQPage` noch einen zweiten JSON-LD-Graph. Yoast und die Website bleiben für diese Inhalte zuständig. Ein künftiges spezielles Schema wäre separat fachlich zu begründen und müsste über Yoasts dokumentierte Schema-API in den vorhandenen Graph eingebunden werden, niemals als konkurrierender Script-Tag.
+
+#### Editor- und Inhaltsanalyse
+
+- Gutenberg-Formulare bleiben normale Seitenblöcke; der Form-Captain-Block führt keine Yoast-Analyse- oder Schema-Sonderlogik aus, wenn Yoast fehlt.
+- Yoast hat die automatische Shortcode-Analyse ab Version 21.4 entfernt und bietet seit 21.7 den Filter `yoast.analysis.shortcodes` zum gezielten Einbeziehen registrierter Shortcodes. Form Captain kann diesen dokumentierten Erweiterungspunkt bedingt nutzen, um öffentliche Formularlabels und Hilfetexte der Analyse bereitzustellen. Eingaben, gespeicherte Entries, private Metadaten und dynamische persönliche Werte dürfen nie in die Analyse gelangen. Falls die unterstützte Yoast-Version den Filter nicht anbietet, bleibt die Seite nutzbar und Yoast analysiert den redaktionellen Seiteninhalt.
+- Die Analyse bleibt ein Redaktionshinweis; Form Captain verändert keine Yoast-Bewertung künstlich und verspricht keine bessere Positionierung. Der Block zeigt bei Bedarf einen kurzen Hinweis, dass ergänzender Seitentext und die SEO-Felder in Yoast gepflegt werden.
+
+#### Kompatibilität, Performance und Referenzen
+
+Yoast wird nur nach defensiver Erkennung seiner verfügbaren Schnittstellen angesprochen. Keine Pflichtabhängigkeit, kein Fatal Error bei deaktiviertem oder veraltetem Yoast und keine privaten Yoast-Klassen. Frontend-CSS/JavaScript wird nur geladen, wenn Seite/Beitrag tatsächlich einen Form-Captain-Block oder -Shortcode enthält. Form Captain darf Yoasts Schema-Ausgabe nicht global deaktivieren oder überschreiben.
+
+Implementierung und Tests orientieren sich an den offiziellen Yoast-Entwicklerdokumenten: [Shortcode-Inhaltsanalyse](https://developer.yoast.com/customization/yoast-seo/filters/shortcodes-filter/), [Schema-API](https://developer.yoast.com/features/schema/api/) und [Canonical-API](https://developer.yoast.com/features/seo-tags/canonical-urls/api/).
+
 ### Inhalt der Ersteinrichtung
 
 1. Formularzweck auswählen; ein importierbares Beispiel wird erstellt.

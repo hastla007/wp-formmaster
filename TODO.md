@@ -72,7 +72,15 @@ Das Repository enthält derzeit Konzept und separate TODO.md; Plugin-Code ist no
 - [ ] **P2-14 – Vorschau ohne echte Submission anbieten.** Vorschau darf keine Entry-Datensätze, Benachrichtigungen oder externen Aktionen erzeugen.
 - [ ] **P2-15 – Entwurfs- und Vorschauzugriff absichern.** Vorschau-Links für unveröffentlichte Formulare kurzlebig und zufällig machen; Vorschau darf ohne Berechtigung keine Antworten speichern oder Formularschema offenlegen.
 - [ ] **P2-16 – Schemaänderungen für bestehende Entries festlegen.** Geänderte/entfernte Felder, neue Pflichtfelder und Optionen so versionieren, dass historische Entries mit dem ursprünglichen Schema lesbar bleiben.
-- **Abnahme Phase 2:** Ein Administrator erstellt aus einer Vorlage ein Formular, ordnet Felder, Regeln und Benachrichtigungen zu, speichert es als Entwurf und veröffentlicht eine valide Version.
+- [ ] **P2-17 – Einstellungsstruktur und globale Voreinstellungen spezifizieren.** Tabs Allgemein, Darstellung, E-Mail, Datenschutz & Speicherung, Spamschutz, Zugriff & Rollen und Systemstatus anhand Abschnitt 6.1 umsetzen; Integrationen und formularbezogene Optionen klar ausgrenzen.
+- [ ] **P2-18 – WordPress-Menü und Settings-Navigation bauen.** Dashboard, Formulare, Einträge, Integrationen und Einstellungen als schlanke Plugin-Navigation anlegen; innerhalb der Einstellungen klare Tabs, Seitentitel, Breadcrumbs/Zurückwege und leere Zustände anbieten.
+- [ ] **P2-19 – Einstellungen über die WordPress Settings API speichern.** Pro Option Schema, Typ, Standardwert, Sanitizing, Validierung, Capability, Nonce und verständliche Fehlermeldung definieren; keine beliebigen Optionen oder ungeprüfte Werte übernehmen.
+- [ ] **P2-20 – Globale Standards und Formularwerte trennen.** E-Mail-Absender und Darstellung dürfen als neue Formular-Defaults dienen; Empfänger, Reply-To, Betreff, Feld-Mapping, Bestätigung und Redirect bleiben formularbezogen. Änderung globaler Defaults darf veröffentlichte Formulare nicht unbemerkt ändern.
+- [ ] **P2-21 – Darstellungseinstellungen mit sicherem Reset umsetzen.** Theme-Styling ist Standard; globale Basisdarstellung und Formular-Ausnahme samt Vorschau/Zurücksetzen bereitstellen, ohne fremde Themes zu überschreiben oder externe Assets nachzuladen.
+- [ ] **P2-22 – E-Mail-Einstellungen als Zustellhilfe gestalten.** Standard-Absender aus Website-Identität übernehmen, Testnachricht und verständliche Zustell-/Konfigurationshinweise anbieten; keine SMTP-Verbindung oder geheimen Mailserver-Zugangsdaten im Form-Captain-Kern verwalten.
+- [ ] **P2-23 – Navigationsorte für Import, Export und Lizenz festlegen.** Formular-JSON Import/Export in der Formularübersicht, Entry-CSV-Export in Einträge und Pro-Lizenz/Updates nur bei installiertem Add-on anbieten; keine redundanten Optionen in mehreren Menüs.
+- [ ] **P2-24 – Einstellungsänderungen nachvollziehbar machen.** Speichern, Validierungsfehler, Zurücksetzen und Änderungen mit Datenfolgen klar bestätigen; bei globalen Defaults anzeigen, welche Formulare unverändert eigene Werte verwenden.
+- **Abnahme Phase 2:** Ein Administrator findet jede Einstellung im erwartbaren Bereich, kann speichern und zurücksetzen; Formular-spezifische Optionen werden nicht mit globalen Defaults verwechselt.
 
 ### Phase 3 – Frontend, Einbettung und sichere Submission
 
@@ -136,6 +144,11 @@ Das Repository enthält derzeit Konzept und separate TODO.md; Plugin-Code ist no
 - [ ] **P5-15 – Objektzugriff gegen IDOR prüfen.** Jede Entry-/Form-ID wird nach Capability und Site-Zugehörigkeit geprüft; erratene IDs dürfen keine Daten preisgeben oder fremde Datensätze ändern.
 - [ ] **P5-16 – Tokens und Secrets sicher speichern.** Webhook-Secrets, Vorschau-/Fortsetzen-Token und Signaturschlüssel nie im Klartext loggen; Rotation, Widerruf und Löschung dokumentieren.
 - [ ] **P5-17 – Datenschutz über alle Kopien testen.** Export, Mailqueue, Webhookqueue, Papierkorb, Logs und Upload-Referenzen auf Lösch-/Retention-Verhalten prüfen.
+- [ ] **P5-18 – Datenschutz-Einstellungen mit sicheren Defaults umsetzen.** 12 Monate Standard und 90 Tage/12 Monate/manuell wählbar; Consent niemals vorangekreuzt; Datenschutzhinweis und anstehende/konkrete Löschfolgen sichtbar machen.
+- [ ] **P5-19 – Spamschutz-Optionen datensparsam konfigurieren.** Honeypot, Mindestzeit und Rate-Limit standardmäßig aktivieren; externe Captcha-Anbieter bleiben opt-in mit Anbieter, Datenfluss und erforderlichem Datenschutzhinweis vor Aktivierung.
+- [ ] **P5-20 – Einstellungsrechte und Rollenänderungen absichern.** Nur passende Capabilities dürfen Datenschutz-, Integrations-, Rollen- oder Mailoptionen ändern; Änderungen an Entry-Lese-/Exportrechten mit aktualisiertem Zugriff verständlich anzeigen.
+- [ ] **P5-21 – Einstellungs-Migrations- und Rücksetzverhalten sichern.** Neue Versionen ergänzen Defaults ohne bestehende Werte zu überschreiben; Reset fragt nach Konsequenzen und setzt nur den gewählten Bereich zurück.
+- [ ] **P5-22 – Diagnoseausgabe aus Einstellungen datenschutzprüfen.** Queue-/Mail-/Systemdiagnose enthält Status und sichere Fehlercodes, aber keine Submission-Inhalte, Tokens, Secrets oder personenbezogenen Details.
 - **Abnahme Phase 5:** Daten können exportiert, gelöscht und automatisch bereinigt werden; alle Admin-/öffentlichen Datenzugriffe haben explizite Rechte- und Eingabeprüfungen.
 
 ### Phase 6 – Free v1.0 Qualität und Veröffentlichung

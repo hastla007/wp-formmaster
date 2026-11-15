@@ -39,7 +39,7 @@ Diese Entscheidungen gelten als Planungsgrundlage für die erste Umsetzung. Änd
 | **MVP v1.0** | Formulareditor, 3 Vorlagen (Kontakt, Angebot, Support), Kernfelder, einfache bedingte Feldanzeige, Einträge, E-Mail, Basisspamschutz, Export, Block/Shortcode, Datenschutzwerkzeuge und Installationsassistent. |
 | **Nicht im MVP** | Zahlungen, Datei-Uploads, PDF-Erzeugung, Multi-Step, CRM-spezifische Connectoren, Abandonment, Umfragen/Quiz, öffentliche Entry-Ansichten, Multisite-Netzwerkverwaltung und KI-Formularerstellung. |
 | **Erste Pro-Version** | Multi-Step, Datei-Uploads, erweiterte Bedingungen/Routing, Webhooks, PDF aus Einsendungen und Integrations-/Fehlerprotokoll. Zahlungen folgen erst nach stabiler v1.x und separater Provider-/Refund-Prüfung. |
-| **Suite-Reihenfolge** | Öffentlicher Vertrag ab Free v1.0; zuerst Pass Captain (Einbettung/Event-Kontext), danach Voucher Captain (Anfrage/Firmenbestellung), anschließend Affiliate Captain und Review Captain. |
+| **Suite-Reihenfolge** | Öffentlicher Vertrag ab Free v1.0; zuerst Pass Captain (Einbettung/Event-Kontext), danach Voucher Captain (Anfrage/Firmenbestellung), anschließend Review Captain (optionale lokale Review-Übergabe) und Affiliate Captain. |
 | **Unterstützungsumfang v1** | WordPress 6.8+, PHP 8.3+, WooCommerce optional ab Version 8.0; HPOS und klassischer Bestellspeicher. CI prüft zusätzlich die aktuelle stabile WordPress-Version und unterstützte PHP-Versionen. Checkout-Block-Integration ist kein MVP-Ziel. Keine Multisite-Unterstützung in v1.0. |
 | **Sprachen v1** | Englisch als Quelltextsprache und de_DE/de_AT Übersetzungen; weitere Übersetzungen nach stabiler Textdomain und Übersetzungsworkflow. |
 
@@ -222,6 +222,7 @@ Der Kern definiert in v1 folgende öffentliche, stabile Namensfamilie; Ereigniss
 - Aktionen: form_captain_form_created_v1, form_captain_form_updated_v1, form_captain_entry_created_v1, form_captain_entry_status_changed_v1 und form_captain_entry_deleted_v1.
 - Admin-Menü: form_captain_admin_menu_built_v1($parent_slug), damit Pro und Suite-Adapter ihre Seiten als Unterseiten ergänzen können.
 - Öffentliche Read-API: form_captain_get_form_v1($form_id), form_captain_get_entry_v1($entry_id, $scopes) und form_captain_submit_v1($form_id, $payload, $context).
+- Erweiterungspunkt für Adapter: form_captain_register_action_v1($key, $definition, $callback) registriert eine Formularaktion mit Version, Einstellungsfeldern, Mapping/Validierung und Callback. Sie darf erst nach form_captain_loaded_v1 registriert werden. Beim Senden erhält der Callback nur die vom Administrator zugeordneten, validierten Werte plus form_id, entry_id und idempotency_key; keine vollständige Submission außerhalb des Scopes.
 - Ergebnisobjekt: success, code, form_id/entry_id und request_id; erwartete Validierungs-/Berechtigungsfehler werden als Ergebnis zurückgegeben.
 - Ein Adapter registriert sich erst nach form_captain_loaded_v1 und prüft die kompatible Vertrags-Major-Version. Inkompatible Major-Versionen werden deaktiviert und mit Code incompatible_contract in der Diagnose angezeigt.
 - Entry-Ereignisse liefern standardmäßig IDs, Form-ID, Zeitstempel und eine Allowlist explizit freigegebener Werte; keine vollständigen WordPress- oder WooCommerce-Objekte, Zahlungsdaten oder rohe IP-Adresse.
@@ -235,14 +236,25 @@ Der Kern definiert in v1 folgende öffentliche, stabile Namensfamilie; Ereigniss
 | **Pass Captain** | Anmelde-/Bewerbungsformulare für Events, Anmeldedaten als Ausgang für Registrierung oder Ticketverkauf, Formlink auf Eventseiten. | Pass Captain ruft eine öffentliche Form-Captain-Funktion zum Einbetten/Ermitteln eines Formulars auf oder erhält eine freigegebene Submission-Referenz. Ticket-Erstellung nur als explizite Aktion in Pass Captain Pro/Kernvertrag; keine stillschweigende Ausstellung aufgrund einer Formularantwort. |
 | **Voucher Captain** | Gutschein-Anfragen, Firmenbestellungen und Geschenkpersonalisierung. | Öffentliche Voucher-Ausstellungs-/Firmenbestell-API verwenden. Beträge, Empfänger und Einwilligung klar zuordnen; kein direkter Gutschein-Tabellenzugriff. Gutschein wird nur nach expliziter Bestätigung und optionaler Zahlung ausgestellt. |
 | **Affiliate Captain** | Partnerbewerbungen, Kontaktdaten und manuell freigegebene Anmeldungen; Referral-/Affiliate-Code als Formularfeld. | Affiliate-Vertrag zur Partneranlage/Statusänderung nutzen, falls vorhanden; keine automatische Freigabe ohne Administratorentscheidung. Referral-Code als attributiertes Feld übergeben, keine Trackingdaten ohne Zustimmung. |
-| **Review Captain** | Bewertungs-/Feedbackanfragen oder internes Feedbackformular nach Ticket-/Gutschein-/Bestellereignis. | Review-Anfragen nur für echte Interaktionen und mit Frequenzschutz/Opt-out. Öffentliche Review-Captain-API für Quelle/Request nutzen; keine gekaufte oder incentivierte positive Bewertung. |
+| **Review Captain** | Optional Form-Captain-Formulare als Eingabeoberfläche für lokale Reviews nutzen. | Review Captain Pro registriert eine Formularaktion „Review zur Moderation übergeben“ und übergibt explizit zugeordnete Felder an die Review-Captain-API. Review Captain besitzt Review, Herkunft, Moderation und Veröffentlichung; Form Captain besitzt Formular und Einsendung. Nicht verifizierte Formantworten werden nie als Kauf-/Teilnahme-verifiziert markiert. Formulareinsendungen lösen keine Review-Einladung aus. |
 | **WooCommerce** | Produktanfragen, Reklamation, Angebotsanfrage, Checkout-/Bestellbezug und Zahlung. | Optionaler Adapter über WooCommerce CRUD/Hook APIs (HPOS und Blocks berücksichtigen). IDs statt serialisierter Bestellobjekte übergeben; Zahlungsauslösung nur mit serverseitig validiertem, idempotentem Payment-Provider. |
+
+### Festgelegte Form-Captain-Brücke
+
+- **Keine gegenseitige Pflichtabhängigkeit:** beide Free-Plugins funktionieren einzeln. Der Review-Adapter ist ein späterer Suite-Ausbau; er benötigt Form Captain Core und Review Captain Pro mit aktivem Entitlement review.suite_integrations. Form Captain Pro ist für den einfachen Übergang nicht nötig.
+- **Datenbesitz:** Form Captain bleibt System of Record für Formular, vollständige Einsendung und deren Aufbewahrung. Review Captain ist System of Record für die daraus erzeugte lokale Review, Moderationsstatus und öffentliche Anzeige. Es gibt keine direkten Tabellenzugriffe.
+- **Explizite Aktion statt stiller Automatik:** ein Administrator ordnet im Formular die Felder für Sternebewertung, Reviewtext und optionalen Anzeigenamen zu und aktiviert „Review Captain: lokale Review zur Moderation anlegen“. Eine gültige Einsendung erzeugt nur einen wartenden Review; es gibt keine automatische Veröffentlichung oder Anfragen-E-Mail.
+- **Herkunft:** Review-Datensatz speichert source_plugin=form-captain und source_entry_id. Der Idempotency-Key lautet form-captain:{site_id}:{entry_id}; Wiederholungen erzeugen keine Review-Duplikate.
+- **Verifizierungsstatus:** Formulareingaben sind standardmäßig „nicht verifiziert“. Ein Nutzerfeld oder versteckter Wert kann niemals Kauf/Teilnahme nachweisen. Nur ein vertrauenswürdiger Commerce-/Event-Vertrag darf verifiziert, kaufbestätigt oder teilnahmebestätigt setzen.
+- **Löschung:** wird die Quell-Einsendung gelöscht, entfernt Review Captain den Verweis und löscht standardmäßig die noch wartende, daraus erzeugte Review. Freigegebene Reviews werden über die Review-Captain-Privacy- und Moderationsregel entfernt/anonymisiert; dies wird in beiden Admins nachvollziehbar angezeigt.
+- **Einladungen:** Review Captain plant öffentliche Plattform-Anfragen nur aus vertrauenswürdigen, vom Quell-Plugin bestätigten Erlebnisereignissen mit experience_id, Kontaktresolver und Versandberechtigung. form_captain_entry_created_v1 allein ist dafür kein zulässiger Trigger.
+- **Einführungszeitpunkt:** nicht Teil von Free v1.0. Erst nach stabilen Form-Captain- und Review-Captain-Core-Verträgen bauen und Ende-zu-Ende testen.
 
 ### Integrationsausbau in Stufen
 
 1. **MVP:** Gutenberg/Shortcode, WooCommerce-Kontext als versteckter signierter Referenzwert, Ereignis-Hooks und Developer-Dokumentation.
 2. **Erste Suite-Adapter:** Pass Captain und Voucher Captain für Einbettung/Anfragen; klare Aktionen im Form-Editor; keine automatische Geschäftsaktion ohne Review.
-3. **Affiliate/Review:** Bewerbung, Feedbackanfrage, freigegebene Übergabe und Auswertung.
+3. **Review Captain:** optionale Formularaktion für lokale Reviews in Review-Captain-Moderation; Review-Anfragen weiterhin ausschließlich über vertrauenswürdige Experience-Events. Danach Affiliate-Adapter.
 4. **Externe Dienste:** Webhooks als generische Grundlage; spezifische CRM-/Payment-Connectoren jeweils nach Nachfrage und API-Prüfung.
 
 ## 6. Admin-Seiten und Frontend-Seiten
@@ -347,7 +359,7 @@ Die Lizenzierung folgt dem bestehenden Captain-Suite-Modell:
 - [ ] Pass-Captain-Einbettung und Event-Kontext-Adapter.
 - [ ] Voucher-Captain-Anfrage/Firmenbestell-Adapter mit explizitem Bestätigungsschritt.
 - [ ] Affiliate-Captain-Bewerbung und manuelle Freigabe.
-- [ ] Review-Captain-Feedbackanfrage mit Zustimmung, Opt-out und Frequenzlimit.
+- [ ] Review-Captain-Brücke für lokal eingereichte Reviews: explizite Formularaktion, Mapping, Herkunftsreferenz, Idempotenz, Verifizierungsstatus „nicht verifiziert“ und Löschweitergabe. Review-Anfragen bleiben Review-Captain-Eigentum und benötigen vertrauenswürdige Experience-Events, Kontaktresolver sowie Versandberechtigung.
 - [ ] WooCommerce-Adapter für Produkt-/Bestellkontext (HPOS, Classic und Blocks soweit sinnvoll).
 - [ ] Vertragstests gegen jede unterstützte Suite-Version sowie Diagnoseansicht.
 - **Abnahme:** Kein Adapter benötigt direkten Tabellenzugriff; Wiederholung eines Ereignisses dupliziert keine Aktion.
@@ -381,3 +393,6 @@ Die Lizenzierung folgt dem bestehenden Captain-Suite-Modell:
 - Jede Suite-Aktion ist nachvollziehbar, wiederholbar und idempotent.
 - Free ist ohne Lizenz verwendbar; Pro-Funktion und Update sind nach Lizenzserver-Vertrag überprüfbar.
 - Migrationen erhalten Feldzuordnungen und Entry-Daten, soweit die Quellformate dies ermöglichen.
+## Quellen und Referenzen
+
+- [Review Captain – Produktkonzept und Suite-Vertrag](https://github.com/hastla007/wp-reviewmaster/blob/main/konzept.md)

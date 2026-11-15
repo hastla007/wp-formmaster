@@ -348,3 +348,142 @@ Die vollständige Umsetzungsliste wurde in [TODO.md](TODO.md) übernommen und um
 | License Captain / Captain Pro | Bestehendes Add-on-/License-Client-Modell ist etabliert. | Form Captain Pro ist geplant; Produktschlüssel, Entitlements, Admin-Einbindung und Lizenzkatalog müssen vor Premium-Release mit den bestehenden Add-ons abgeglichen werden. |
 
 Für die Implementierung sind die genannten Verträge versionsgenau zu prüfen. Bestehende APIs/Hooks werden nur gemäß ihrer dokumentierten Semantik verwendet; ein im Konzept benannter zukünftiger Hook ist bis zur Implementierung kein vorhandener Vertrag.
+
+
+## 12. Ablaufdiagramme: Form Captain und Captain Suite
+
+### 12.1 Formular erstellen und Einsendung verarbeiten
+
+```mermaid
+flowchart LR
+    A["Besucher öffnet Formular"] --> B["Form Captain rendert Formular"]
+    B --> C["Server prüft Felder, Regeln und Spam-Schutz"]
+    C -->|ungültig| D["Fehler am passenden Feld anzeigen"]
+    D --> B
+    C -->|gültig| E["Entry und Werte in einer Transaktion speichern"]
+    E -->|Commit erfolgreich| F["Erfolgsmeldung oder freigegebene Weiterleitung"]
+    E --> G["Outbox: Mail- und Integrationsjobs"]
+    G --> H["Worker verarbeitet Jobs"]
+    H -->|Erfolg| I["Status und Zeitstempel protokollieren"]
+    H -->|Fehler| J["Retry oder Dead-letter; Entry bleibt gespeichert"]
+```
+
+**Verbindliche Reihenfolge:** Erst Eingaben validieren, dann Entry dauerhaft speichern, danach E-Mail und Adapterjobs ausführen. Mail- oder API-Ausfälle dürfen keine gespeicherte Einsendung zurückrollen. Fehlerausgaben an Besucher enthalten keine internen SQL-, Server- oder Providerdetails.
+
+### 12.2 Free, Pro und Lizenzprüfung
+
+```mermaid
+flowchart TB
+    A["Form Captain Free"] --> B["Formular- und Entry-Kern"]
+    A --> C{"Form Captain Pro installiert?"}
+    C -->|Nein| D["Free-Funktionen bleiben verfügbar"]
+    C -->|Ja| E["Captain Pro Add-on und Feature-Registry"]
+    E --> F["License Captain prüft Lizenz und Entitlements"]
+    F -->|gültig| G["Erlaubte Pro-Funktionen aktiv"]
+    F -->|abgelaufen oder offline| H["Pro gemäß Cache-Regel begrenzen"]
+    H --> B
+```
+
+Form Captain Free bleibt ohne Lizenzserver nutzbar. License Captain verwaltet Lizenzstatus, Site-Limits und Updates; Captain Pro enthält den Premiumcode. Lizenzverlust darf Free-Formulare und bestehende Einsendungen nicht löschen.
+
+### 12.3 Captain-Suite-Verbindungen und Datenbesitz
+
+```mermaid
+flowchart TB
+    FC["Form Captain<br/>Formulare und Einsendungen"] --> PASS["Pass Captain<br/>Events und Tickets"]
+    FC --> VOUCHER["Voucher Captain<br/>Gutscheinanfragen und Gutscheine"]
+    FC --> AFFILIATE["Affiliate Captain<br/>Partner und Provisionen"]
+    FC --> REVIEW["Review Captain<br/>Reviews, Moderation und Einladungen"]
+    LC["License Captain"] --> PRO["Captain Pro<br/>Premium-Add-ons"]
+    PRO --> FC
+    PRO --> REVIEW
+```
+
+Die Verbindungen sind optionale Adapter über dokumentierte Verträge. Sie öffnen keine fremden Tabellen. Form Captain verwaltet Formular und vollständige Einsendung. Das jeweilige Zielplugin bleibt Eigentümer seines Geschäftsdatensatzes. License Captain und Captain Pro betreffen nur Pro-Lizenzierung und Premiumcode.
+
+### 12.4 Freigabepflichtige Formularaktionen
+
+```mermaid
+flowchart LR
+    A["Form Captain Entry"] --> B{"Explizite Aktion und Feldmapping?"}
+    B -->|Nein| C["Entry bleibt in Form Captain"]
+    B -->|Ja| D["Validierte Allowlist-Werte übergeben"]
+    D --> E{"Zielplugin"}
+    E --> F["Pass: Eventanfrage<br/>keine automatische Ticket-Ausgabe"]
+    E --> G["Voucher: Firmenanfrage<br/>Gutschein erst nach Prüfung"]
+    E --> H["Affiliate: Bewerbung<br/>Partner bleibt pending"]
+    E --> I["Review: lokale Review<br/>pending und unverified"]
+```
+
+Ein verstecktes Formularfeld beweist weder Zahlung noch Teilnahme. Die Review-Übergabe erzeugt keine öffentliche Review-Einladung. Jede Aktion benötigt Idempotenz, Diagnose und eine definierte Löschweitergabe.
+
+### 12.5 Review-Einladungen nach bestätigtem Erlebnis
+
+```mermaid
+flowchart TB
+    A["Pass Captain: bestätigte Teilnahme"] --> C["Review Captain prüft Berechtigung"]
+    B["Voucher Captain: bestätigte Leistungseinlösung"] --> C
+    C --> D{"Opt-out, Storno und Duplikat geprüft?"}
+    D -->|Nein| E["Keine Einladung"]
+    D -->|Ja| F["Eine neutrale Einladung in Review Captain"]
+    G["Formulareinsendung oder Affiliate-Provision"] --> E
+```
+
+Ein Ticketkauf, eine Gutscheinausgabe, eine allgemeine Einlösung, ein Formulareintrag oder eine Provision ist allein kein zulässiger Auslöser. Quellplugin, Erlebnisreferenz, Kontaktauflösung, Versandberechtigung und deduplizierter Status müssen vertraglich feststehen.
+
+### 12.6 Verkauf und Affiliate-Zuordnung
+
+```mermaid
+flowchart LR
+    A["WooCommerce"] --> D["Affiliate Captain Verkaufsvertrag"]
+    B["Pass Captain"] --> D
+    C["Voucher Captain"] --> D
+    D --> E["Attribution und Provisionsledger"]
+    E --> F["Refund/Storno als Korrektur"]
+    G["Review Captain"] -. "nur spätere aggregierte Auswertung" .-> D
+```
+
+Provisionsberechnung verwendet die bestehenden Verkaufsquellenverträge und Idempotenzregeln. Reviews ändern keine Provision. Eine spätere Review-Auswertung darf nur freigegebene Aggregate enthalten, keine Einzelreviews oder Käuferdaten.
+
+## 13. UI-Mockups: Konzeptansichten der Seiten
+
+Die folgenden SVGs sind **illustrative Mockups des geplanten Produkts**, keine Screenshots einer bereits installierten oder implementierten Anwendung. Beispielnamen, Zahlen und Lizenzstatus sind Platzhalter. Die Integrationskacheln stellen Verfügbarkeit bzw. Planungsstatus dar, keine aktive Verbindung.
+
+### 13.1 Dashboard und Einrichtung
+
+![Form Captain Dashboard-Mockup mit Setup-Fortschritt, Kennzahlen, letzten Einsendungen und Systemstatus](docs/visuals/dashboard.svg)
+
+### 13.2 Formularübersicht
+
+![Form Captain Formularübersicht mit Status, Eintragszahlen und Aktionen](docs/visuals/forms.svg)
+
+### 13.3 Formular-Editor
+
+![Form Captain Editor-Mockup mit Feldpalette, Formularcanvas und Feldeinstellungen](docs/visuals/builder.svg)
+
+### 13.4 Einsendungen verwalten
+
+![Form Captain Einsendungsübersicht mit Filtern, Status und Export](docs/visuals/entries.svg)
+
+### 13.5 Integrationen der Captain Suite
+
+![Integrationsseite mit License Captain, Pass Captain, Voucher Captain, Affiliate Captain, Review Captain und WooCommerce](docs/visuals/integrations.svg)
+
+### 13.6 Datenschutz, E-Mail und Pro-Lizenz
+
+![Einstellungs-Mockup mit Datenschutz, Absenderkonfiguration und Pro-Lizenzstatus](docs/visuals/settings.svg)
+
+![License-Captain- und Captain-Pro-Seite mit Lizenzstatus, Site-Limit und Entitlements](docs/visuals/license-pro.svg)
+
+### 13.7 Öffentliches Formular
+
+![Öffentliches Form-Captain-Kontaktformular als Frontend-Mockup](docs/visuals/public-form.svg)
+
+### 13.8 Gestaltungs- und Umsetzungsregeln
+
+- Die Admin-Oberfläche orientiert sich an WordPress, verwendet klare Statusfarben und zeigt Rechte-/Fehlerzustände direkt am betroffenen Objekt.
+- Seiten müssen leere, ladende, erfolgreiche, fehlerhafte und nicht berechtigte Zustände erhalten; die Mockups zeigen überwiegend den Normalzustand.
+- Der Editor muss auf Desktop und Tablet funktionieren. Feldlabels, Fehlermeldungen, Fokuszustände und Status sind nicht allein durch Farbe zu vermitteln.
+- Frontend-Formulare erben Theme-Stile kontrolliert; der Block-/Shortcode-Output lädt keine unnötigen Drittanbieterressourcen.
+- In den Integrationsansichten sind „vorhandene Kern-API“, „geplanter Adapter“, „Pro-Verbindung“ und „nicht verbunden“ deutlich unterschiedliche Zustände.
+- Vor Implementierung der Oberfläche werden diese Ansichten in echte WordPress-Seiten, leere Zustände, Berechtigungsfälle und responsive Varianten übersetzt.

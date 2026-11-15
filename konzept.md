@@ -329,6 +329,10 @@ Das Repository enthält derzeit nur die kurze README und dieses Konzept; Plugin-
 - [ ] **P0-09 – Öffentliche API v1 spezifizieren.** Funktionsnamen, versionierte Actions, Ereigniszeitpunkt nach Commit, Payload-Allowlist, Fehlercodes, Capability-Erwartungen, Idempotenz, Deprecation-Regeln und Mindestversionen festlegen.
 - [ ] **P0-10 – Datenfluss- und Bedrohungsmodell erstellen.** Öffentliche Submission, Admin, E-Mail, CSV, Export, Upload, Webhook und Suite-Adapter mit Trust Boundaries, gespeicherten Daten und Schutzmaßnahmen abbilden.
 - [ ] **P0-11 – MVP-Abnahmekriterien in CI-taugliche Prüfpunkte übersetzen.** Für jede Free-MVP-Funktion mindestens einen nachvollziehbaren manuellen oder automatisierten Abnahmepunkt notieren.
+- [ ] **P0-12 – Entwicklungs- und CI-Umgebung festlegen.** Lokales WordPress-Testsystem, PHP-/Datenbankversionen, Gutenberg-Buildwerkzeuge und unterstützte Browser bestimmen; reproduzierbare Start-, Test- und Buildbefehle festhalten.
+- [ ] **P0-13 – Queue-/Worker-Architektur entscheiden.** Festlegen, ob WordPress-Cron, Action Scheduler oder ein eigener Worker die Jobs verarbeitet; Verhalten bei deaktiviertem Cron, parallelen Läufen, Sperren und verzögerten Wiederholungen dokumentieren.
+- [ ] **P0-14 – Bedrohungsmodell um konkrete Angriffsflächen ergänzen.** SSRF und Redirects bei Webhooks, manipulierte Uploads, MIME-Spoofing, sehr große/komprimierte Dateien, gefälschter Suite-Kontext und öffentlich erreichbare Downloads mit konkreten Schutzregeln erfassen.
+- [ ] **P0-15 – Site-Kontext für Suite-Adapter definieren.** Für Event-/Bestellreferenzen festlegen, wie serverseitig signierte, kurzlebige und zweckgebundene Werte erzeugt und validiert werden; vom Nutzer editierbare Hidden Fields gelten nie als Vertrauensnachweis.
 - **Abnahme Phase 0:** Ein Entwickler kann Datenmodell und öffentliche Verträge implementieren, ohne offene Grundsatzentscheidungen zu erraten. Keine Suite-Integration hängt von einer privaten Schnittstelle ab.
 
 ### Phase 1 – Repository, Plugin-Gerüst und Datenbasis
@@ -344,6 +348,8 @@ Das Repository enthält derzeit nur die kurze README und dieses Konzept; Plugin-
 - [ ] **P1-09 – Status- und Fehlerkonstanten definieren.** Stabile interne Codes und öffentlich dokumentierte Fehlercodes mit Übersetzungen bereitstellen.
 - [ ] **P1-10 – Capabilities bei Aktivierung registrieren.** Standardrollen minimal berechtigen; Administrator kann alle Aufgaben ausführen; keine automatische Berechtigung zum Lesen sensibler Entries für Editor.
 - [ ] **P1-11 – Setup-/Systemstatusdaten begrenzen.** Nur notwendige Einstellungen speichern; keine personenbezogenen Daten oder Secrets im Klartext in Diagnosen ausgeben.
+- [ ] **P1-12 – Lokale WordPress-Umgebung und CI einrichten.** Plugin automatisiert auf leerer Installation installieren/aktivieren; Datenbankdienst, WP-CLI, Testdaten und reproduzierbare Testkommandos bereitstellen.
+- [ ] **P1-13 – Frontend-Asset-Build konfigurieren.** Gutenberg-/Admin-JavaScript und CSS versioniert bauen, Produktionsassets reproduzierbar erzeugen und Quell-/Builddateien klar trennen.
 - **Abnahme Phase 1:** Frische Installation und Upgrade erzeugen dasselbe korrekte Schema; Deaktivierung löscht keine Daten; automatisierte Tests können Repositories und Migrationen isoliert prüfen.
 
 ### Phase 2 – Formularverwaltung und Editor
@@ -395,6 +401,8 @@ Das Repository enthält derzeit nur die kurze README und dieses Konzept; Plugin-
 - [ ] **P4-11 – CSV-Export bauen.** Datums-/Formularfilter und Spaltenauswahl; CSV-Formelinjektion, Zeichensatz, Zeilenumbrüche und große Exporte berücksichtigen.
 - [ ] **P4-12 – JSON-Export/Import für Formulare implementieren.** Nur Formulardefinitionen übertragen, keine Entries, Uploads oder Secrets ungefragt; Import vor Speicherung validieren.
 - [ ] **P4-13 – Papierkorb und endgültige Löschung umsetzen.** Wiederherstellung zeitlich begrenzen; endgültige Löschung entfernt Werte, Referenzen und zugehörige Dateien.
+- [ ] **P4-14 – Dauerhafte Jobverarbeitung umsetzen.** Jobs erst nach Entry-Commit dauerhaft einreihen; Worker mit Sperren, begrenzten Batches, Backoff, Maximalversuchen und Dead-letter-Status bauen.
+- [ ] **P4-15 – Queue-Ausfallpfade verifizieren.** Doppelte und parallele Worker, deaktivierten WP-Cron, Timeout, Datenbankfehler, wiederkehrende Providerfehler und manuelle Wiederholung testen; Submission darf in keinem Fall verloren gehen.
 - **Abnahme Phase 4:** Erfolgreiche Submission ist dauerhaft gespeichert, unabhängig von E-Mail/Connector-Ausfällen; berechtigte Nutzer können Einträge verwalten, suchen und sicher exportieren.
 
 ### Phase 5 – Datenschutz, Sicherheit und Betrieb
@@ -411,6 +419,8 @@ Das Repository enthält derzeit nur die kurze README und dieses Konzept; Plugin-
 - [ ] **P5-10 – Systemstatusseite implementieren.** WP/PHP-Version, Schema-Version, Cron-/Queue-Status, Mailkonfiguration und erkannte Suite-Plugins ohne Geheimnisse anzeigen.
 - [ ] **P5-11 – Rollen- und Mandantengrenzen manuell prüfen.** Autor, Editor und nicht berechtigte Rollen dürfen keine fremden Entries lesen/exportieren oder Admin-Aktionen ausführen.
 - [ ] **P5-12 – Sicherheitsreview durchführen.** Submission, Admin, Export, CSV, Import, Cron, Mail und Löschung unabhängig prüfen; Befunde beheben und nachvollziehbar schließen.
+- [ ] **P5-13 – Backup-/Restore-Verfahren definieren und testen.** Formulare, Entries, Werte, Jobzustände und Pro-Dateireferenzen auf einer separaten Installation sichern und wiederherstellen; Wiederherstellung und Datenintegrität dokumentieren.
+- [ ] **P5-14 – Datenlebenszyklus einschließlich Backups abnehmen.** Retention, Privacy-Erasure, Papierkorb, Queue-Kopien und Backup-Ablauf so abstimmen, dass gelöschte Daten nicht als aktive Entries wieder auftauchen.
 - **Abnahme Phase 5:** Daten können exportiert, gelöscht und automatisch bereinigt werden; alle Admin-/öffentlichen Datenzugriffe haben explizite Rechte- und Eingabeprüfungen.
 
 ### Phase 6 – Free v1.0 Qualität und Veröffentlichung
@@ -427,6 +437,9 @@ Das Repository enthält derzeit nur die kurze README und dieses Konzept; Plugin-
 - [ ] **P6-10 – Build reproduzierbar machen.** Release-ZIP ohne Entwicklungsdateien/Secrets bauen; Versionsnummer, Checksums und Release-Notizen erzeugen.
 - [ ] **P6-11 – Upgrade-/Rollback-/Deinstallationspfad abnehmen.** Alte Schema-Versionen migrieren, abgebrochene Migration testen, Downgrade-Verhalten dokumentieren und Nutzdaten standardmäßig behalten.
 - [ ] **P6-12 – WordPress.org-Einreichung vorbereiten.** Richtlinien, Assets, Screenshots, Datenschutzhinweise, SVN/Releaseprozess und Supportkanal prüfen.
+- [ ] **P6-13 – Browser-E2E für den Hauptablauf einrichten.** Formular erstellen, veröffentlichen, auf einer Seite einbetten, absenden, Entry verwalten und exportieren automatisiert in unterstützten Browsern abdecken.
+- [ ] **P6-14 – Upgrade-Matrix abnehmen.** Mindestens Ausgangsversion, Schema-Upgrades, unterbrochene Migration, Wiederaufnahme und Rollback-/Wiederherstellungsverhalten mit repräsentativen Daten prüfen.
+- [ ] **P6-15 – Admin-Oberfläche barrierefrei abnehmen.** Dashboard, Editor, Entry-Liste/-Detail und Einstellungen zusätzlich zum Frontend mit Tastatur, Screenreader, Fokusführung und Mobilansicht prüfen.
 - **Abnahme Phase 6 / Free v1.0:** Reproduzierbarer Build, bestandene CI-/Sicherheits-/Accessibility-Prüfung, vollständige Dokumentation und getesteter Update-/Datenpfad; Kernprodukt bleibt ohne Pro dauerhaft benutzbar.
 
 ### Phase 7 – Form Captain Pro und License Captain
@@ -444,6 +457,9 @@ Das Repository enthält derzeit nur die kurze README und dieses Konzept; Plugin-
 - [ ] **P7-11 – Webhook-Aktionen bauen.** Feld-Allowlist, HMAC-Signatur, Timeout, Idempotency-Key, Retry-Backoff, maximale Versuche, Dead-letter und manuelles Wiederholen implementieren.
 - [ ] **P7-12 – PDF aus Entry generieren.** Nur freigegebene Felder und Templates rendern; HTML/CSS/Dateien begrenzen und PDF im Adminzugriff schützen.
 - [ ] **P7-13 – Pro-E2E-Lizenztest durchführen.** Add-on-Build, Lizenzaktivierung, Featurefreigabe, Update, Ablauf/Offline und Datenintegrität gegen License Captain prüfen.
+- [ ] **P7-14 – Webhook-Ziele gegen SSRF absichern.** Nur erlaubte HTTP(S)-Ziele zulassen, Loopback-/private/link-local IPs und DNS-Wechsel blockieren, Redirects kontrollieren und Timeouts/Antwortgrößen begrenzen.
+- [ ] **P7-15 – Upload-Prüfung und Quarantäne ergänzen.** Dateiinhalt unabhängig von Dateiendung prüfen, gefährliche/komprimierte Formate begrenzen, optionale Malware-Scanner-Hooks definieren und ungeprüfte Dateien nicht ausliefern.
+- [ ] **P7-16 – Geschützte Downloads und Löschung E2E prüfen.** Nicht angemeldete oder unberechtigte Nutzer dürfen Dateien nicht erraten/abrufen; Löschung, abgelaufene Lizenz und Entry-Erasure müssen Dateien und temporäre Kopien erfassen.
 - **Abnahme Phase 7 / Pro v1:** Pro-Funktionen liegen ausschließlich im Add-on, sind getrennt entitelt, signiert lizenziert und lassen bei Lizenzverlust Free-Daten unverändert.
 
 ### Phase 8 – Captain-Suite-Integrationen
@@ -462,6 +478,8 @@ Jeder Adapter ist optional, versioniert, einzeln deaktivierbar und greift aussch
 - [ ] **P8-10 – Suite-Diagnose pro Verbindung vervollständigen.** Fehlendes Plugin, Lizenz fehlt, inkompatibler Vertrag, Timeout und wiederholbarer Fehler mit nächstem Schritt anzeigen.
 - [ ] **P8-11 – Adapter-Vertragstests erstellen.** Pass, Voucher, Affiliate, Review und License Captain mit Testdoubles bzw. offiziellen Vertragsbeispielen prüfen; keine privaten Klassen/Tables mocken.
 - [ ] **P8-12 – Suite-E2E durchführen.** Formulareinsendung, Feldmapping, Doppelzustellung, Plugin-Deaktivierung, API-Ausfall, Entry-Löschung und inkompatible Version durchspielen.
+- [ ] **P8-13 – Signierten Suite-Kontext implementieren.** Event-/Bestell-IDs ausschließlich aus serverseitig validierten, kurzlebigen und zweckgebundenen Kontexten übernehmen; manipulierte Hidden Fields und wiederverwendete Tokens zurückweisen.
+- [ ] **P8-14 – Vertrauensgrenzen der Adapter testen.** Abgelaufene/geänderte Signatur, fremde Site, fremdes Formular, fehlendes Plugin, Replay und doppelte Zustellung müssen ohne Seiteneffekt abgewiesen oder idempotent verarbeitet werden.
 - **Abnahme Phase 8:** Integrationen funktionieren unabhängig voneinander; keine Datenbankkopplung; kein doppelter Side-Effect; Fehler und Löschfolgen sind im Admin nachvollziehbar.
 
 ### Phase 9 – Launch, Betrieb und spätere Erweiterungen
@@ -475,6 +493,9 @@ Jeder Adapter ist optional, versioniert, einzeln deaktivierbar und greift aussch
 - [ ] **P9-07 – Mehrsprachigkeit erweitern.** WPML/Polylang-Unterstützung erst mit definierter Formular-/Übersetzungszuordnung und Testmatrix ergänzen.
 - [ ] **P9-08 – Multisite separat planen.** Pro-Site-Datentrennung, Netzwerkaktivierung, Massenmigration und Lizenzzählung vor Implementierung spezifizieren.
 - [ ] **P9-09 – Zahlungen, CRM, Analytics und White-Label nicht vorziehen.** Für jeden Bereich erst API-/Provider-, Refund-, Rechts-/Datenschutz-, Support- und Betriebskosten spezifizieren; danach eigene Releaseentscheidung treffen.
+- [ ] **P9-10 – Datenschutz-/Rechtsfreigabe vor Verkauf einholen.** Datenflüsse, Einwilligungstexte, externe Dienste, Retention, Löschung, Auftragsverarbeitung und Upload-/Mailverhalten für die Zielmärkte fachlich prüfen und dokumentierte Freigabe ablegen.
+- [ ] **P9-11 – E-Mail-Zustellung auf typischen Hostern abnehmen.** Absender-/Reply-To-Regeln, SMTP-Konfiguration, SPF/DKIM-Hinweise, Fehlerstatus und Wiederholungsweg in einer repräsentativen Hostingmatrix verifizieren.
+- [ ] **P9-12 – Release- und Rollbackübung durchführen.** Testrelease auf Staging installieren, Update/Fehler simulieren, Datenbank und Dateien wiederherstellen und Rückkehr zur letzten funktionierenden Version dokumentieren.
 - **Abnahme Phase 9:** Releases sind reproduzierbar und betreibbar; spätere Erweiterungen haben eine begründete Nachfrage und klare Daten-/Supportverantwortung.
 
 ### Gesamt-Abnahmekriterien für „Form Captain fertig“

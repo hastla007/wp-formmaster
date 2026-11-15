@@ -6,7 +6,7 @@
 
 ### Arbeitsregeln und aktueller Projektstand
 
-Das Repository enthält derzeit nur die kurze README und dieses Konzept; Plugin-Code und eine separate TODO-Datei sind noch nicht vorhanden. Diese bestehende To-do-Sektion ist deshalb die maßgebliche Umsetzungsplanung. Die Aufgaben sind in Abhängigkeitsreihenfolge angeordnet. Ein Task gilt erst als erledigt, wenn sein Ergebnis im Repository liegt und die angegebene Abnahme erfüllt ist.
+Das Repository enthält derzeit Konzept und separate TODO.md; Plugin-Code ist noch nicht vorhanden. Diese Datei ist die operative Umsetzungsplanung, übernommen aus Abschnitt 9 des Konzepts. Die Aufgaben sind in Abhängigkeitsreihenfolge angeordnet. Ein Task gilt erst als erledigt, wenn sein Ergebnis im Repository liegt und die angegebene Abnahme erfüllt ist.
 
 **Release-Reihenfolge:** Free v1.0 wird nach Phase 6 veröffentlicht. Pro v1 folgt nach Phase 7 als separates Add-on. Die Suite-Adapter aus Phase 8 werden einzeln und nach den jeweiligen Vertragsfreigaben ausgeliefert. Optionale Post-v1-Funktionen aus Phase 9 blockieren diese Releases nicht.
 

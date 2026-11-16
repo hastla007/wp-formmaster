@@ -282,6 +282,7 @@ final class EntriesPage {
 			'date_to'   => $date( 'date_to' ),
 			'paged'     => isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1,
 		);
+
 		$consent        = isset( $_GET['consent'] ) ? sanitize_key( wp_unslash( $_GET['consent'] ) ) : '';
 		$out['consent'] = in_array( $consent, array( 'withdrawn', 'active' ), true ) ? $consent : '';
 		// phpcs:enable

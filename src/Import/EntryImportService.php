@@ -19,6 +19,7 @@ namespace FormCaptain\Import;
 
 use FormCaptain\Import\Profiles\GenericCsv;
 use FormCaptain\Install\Capabilities;
+use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
 use FormCaptain\Service\EntryDeletionService;
@@ -67,8 +68,6 @@ final class EntryImportService {
 
 	private const STATE_PREFIX = 'form_captain_eimp_';
 
-	private bool $registered = false;
-
 	public function __construct(
 		private ImportService $import,
 		private EntryRepository $entries,
@@ -76,13 +75,10 @@ final class EntryImportService {
 		private EntryDeletionService $deletion
 	) {}
 
-	public function register(): void {
-		if ( $this->registered ) {
-			return;
-		}
-		$this->registered = true;
-		add_action( self::CLEANUP_HOOK, array( $this, 'cleanup_file' ) );
-		add_action( 'form_captain_hourly_cleanup', array( $this, 'sweep' ) );
+	/** Cron hooks (lazy: the service is only built when a hook fires). */
+	public static function register_hooks( Plugin $plugin ): void {
+		add_action( self::CLEANUP_HOOK, static fn( $name = '' ) => $plugin->get( self::class )->cleanup_file( (string) $name ) );
+		add_action( 'form_captain_hourly_cleanup', static fn() => $plugin->get( self::class )->sweep() );
 	}
 
 	public static function can_import(): bool {

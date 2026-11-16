@@ -28,7 +28,8 @@ Adapter registrieren sich ausschließlich in oder nach `form_captain_loaded_v1`.
 | `form_captain_form_updated_v1` | `array $form`, `string $change` (`saved`, `published`, `paused`, `unpublished`, `archived`) |
 | `form_captain_entry_created_v1` | `array $event` (Entry-Event, s. u.) |
 | `form_captain_entry_status_changed_v1` | `int $entry_id`, `string $old`, `string $new`, `int $form_id` |
-| `form_captain_entry_deleted_v1` | `int $entry_id`, `int $form_id`, `string $reason` (`manual`, `retention`, `erasure`, `anonymized`, `form_deleted`) |
+| `form_captain_entry_deleted_v1` | `int $entry_id`, `int $form_id`, `string $reason` (`manual`, `retention`, `erasure`, `anonymized`, `form_deleted`, `consent_withdrawn`) |
+| `form_captain_consent_withdrawn_v1` | `int $entry_id`, `int $form_id`, `string $source` (`admin`, `api`, `cli`, `privacy_request`, `system`), `array $event` (4. Argument, optional per `accepted_args`; s. u.) |
 | `form_captain_notification_failed_v1` | `int $entry_id`, `int $form_id`, `string $job_type`, `string $error_code` |
 
 `form_captain_entry_created_v1` wird **nicht** für Spam gefeuert.
@@ -52,6 +53,24 @@ Adapter registrieren sich ausschließlich in oder nach `form_captain_loaded_v1`.
 
 Nie enthalten: IP, User-Agent, vollständige WP-/Woo-Objekte, sensible Felder.
 
+### Consent-Widerruf-Payload (`form_captain_consent_withdrawn_v1`, seit Kern-Schema v2)
+
+Gefeuert **einmal** je Entry, nachdem `consent_withdrawn_gmt` gespeichert und offene `mail.*`-/`connector.*`-Jobs storniert wurden, und **vor** einer optionalen Anonymisierung/Löschung (die ihrerseits `entry_deleted_v1` feuert). Fixture: `tests/fixtures/contract/v1/consent-withdrawn.json`.
+
+```php
+[
+  'contract'       => '1.0.0',
+  'entry_id'       => 123,
+  'form_id'        => 7,
+  'form_public_id' => 'a1b2c3d4e5f6g7h8',
+  'withdrawn_gmt'  => '2026-11-16T10:00:00Z',
+  'source'         => 'admin',
+  'then'           => 'keep' | 'anonymize' | 'delete', // geplanter Folgeschritt
+]
+```
+
+Nie enthalten: Feldwerte, Kontext, Consent-Text, IP, User-Agent. Adapter dürfen Daten im Fremdsystem nur löschen, wenn das vertraglich konfiguriert ist; Standard ist Kennzeichnen. Nach dem Widerruf erhalten Aktionen für diesen Entry keine Jobs mehr (`fail` mit Code `consent_withdrawn`).
+
 ## Funktionen
 
 ```php
@@ -67,7 +86,7 @@ form_captain_register_context_purpose_v1( string $purpose, array $definition ): 
 Signierter Suite-Kontext: siehe [`suite-kontext.md`](suite-kontext.md).
 
 - `get_form_v1`: Form-DTO `{id, public_id, title, status, version, fields:[{id,key,type,label,required,sensitive,options}]}`; erfordert `form_captain_manage_forms` **oder** `published`-Status (dann ohne `hidden`-Defaults).
-- `get_entry_v1`: Scopes `meta` (Status, Zeiten, Form-ID), `values` (alle nicht sensiblen Werte), `sensitive` (auch sensible). Erfordert `form_captain_read_entries`; `sensitive` zusätzlich `form_captain_export_entries`. Im Cron-/Job-Kontext prüft der Kern die Rechte über die vom Admin freigegebene Aktionskonfiguration.
+- `get_entry_v1`: Scopes `meta` (Status, Zeiten, Form-ID, `anonymized`/`anonymized_gmt`, `consent_withdrawn`/`consent_withdrawn_gmt` – additiv seit Schema v2), `values` (alle nicht sensiblen Werte), `sensitive` (auch sensible). Erfordert `form_captain_read_entries`; `sensitive` zusätzlich `form_captain_export_entries`. Im Cron-/Job-Kontext prüft der Kern die Rechte über die vom Admin freigegebene Aktionskonfiguration.
 - `submit_v1`: programmatische Einsendung durch vertrauenswürdigen Servercode; durchläuft dieselbe Validierung, aber kein Honeypot/Mindestzeit. `$context` kann `['signed_context' => '…']` enthalten. Rückgabe: Ergebnisobjekt.
 - `get_render_v1`: HTML für Einbettung (z. B. Pass Captain).
 

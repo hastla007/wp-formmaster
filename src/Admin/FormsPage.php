@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace FormCaptain\Admin;
 
 use FormCaptain\Admin\Tables\FormsListTable;
+use FormCaptain\Import\EntryImportAdmin;
+use FormCaptain\Import\EntryImportService;
 use FormCaptain\Import\ImportAdmin;
 use FormCaptain\Install\Capabilities;
 use FormCaptain\Plugin;
@@ -21,7 +23,7 @@ use FormCaptain\Support\Asset;
 final class FormsPage {
 
 	/** Row actions handled via admin-post.php?action=form_captain_form_{action}. */
-	public const ACTIONS = array( 'create', 'duplicate', 'pause', 'resume', 'publish', 'unpublish', 'archive', 'restore', 'export', 'delete', 'import', 'preview', 'type_a_preview', 'type_a_import' );
+	public const ACTIONS = array( 'create', 'duplicate', 'pause', 'resume', 'publish', 'unpublish', 'archive', 'restore', 'export', 'delete', 'import', 'preview', 'type_a_preview', 'type_a_import', 'entries_upload', 'entries_map', 'entries_import', 'entries_cancel', 'entries_revert' );
 
 	/** Actions without form ID (nonce without ID suffix). */
 	private const GLOBAL_ACTIONS = array( 'create', 'import', 'type_a_preview', 'type_a_import' );
@@ -37,6 +39,7 @@ final class FormsPage {
 			add_action( 'admin_post_form_captain_form_' . $action, array( $this, 'handle' ) );
 		}
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
+		EntryImportService::register_hooks( $plugin );
 	}
 
 	public function assets( string $hook ): void {
@@ -116,6 +119,12 @@ final class FormsPage {
 			case 'type_a_preview':
 			case 'type_a_import':
 				return array( 'redirect' => Plugin::instance()->get( ImportAdmin::class )->handle( $action, $list, $this ) );
+			case 'entries_upload':
+			case 'entries_map':
+			case 'entries_import':
+			case 'entries_cancel':
+			case 'entries_revert':
+				return array( 'redirect' => Plugin::instance()->get( EntryImportAdmin::class )->handle( $action, $form_id ) );
 			case 'export':
 				$data = $this->service->export( $form_id );
 				if ( is_wp_error( $data ) ) {
@@ -202,6 +211,12 @@ final class FormsPage {
 		if ( ! current_user_can( Capabilities::MANAGE_FORMS ) ) {
 			wp_die( esc_html__( 'You are not allowed to manage forms.', 'form-captain' ), '', array( 'response' => 403 ) );
 		}
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only screen switch.
+		if ( isset( $_GET[ EntryImportAdmin::QUERY ] ) ) {
+			Plugin::instance()->get( EntryImportAdmin::class )->render_page( absint( $_GET[ EntryImportAdmin::QUERY ] ) );
+			return;
+		}
+		// phpcs:enable
 		$table = new FormsListTable( $this->forms );
 		$table->prepare_items();
 		echo '<div class="wrap fc-admin">';
@@ -221,6 +236,7 @@ final class FormsPage {
 		echo '</form>';
 		$this->import_form();
 		Plugin::instance()->get( ImportAdmin::class )->render();
+		Plugin::instance()->get( EntryImportAdmin::class )->render_entry_box();
 		DashboardPage::pro_hint( 'forms' );
 		echo '</div>';
 	}

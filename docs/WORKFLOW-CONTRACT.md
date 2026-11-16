@@ -1,6 +1,6 @@
 # Form-Workflowvertrag v1 (P8-17 … P8-22)
 
-Der Workflowvertrag führt **keine zusätzlichen Events** ein. Alle Workflow-Zustände werden auf die vorhandenen, nach Commit gefeuerten Events aus [`spec/api-v1.md`](spec/api-v1.md) und auf die Outbox abgebildet. Neue Events kämen nur additiv in einer Minor-Version.
+Der Workflowvertrag führt außer `form_captain_consent_withdrawn_v1` (additiv, Produktentscheidung #4) **keine zusätzlichen Events** ein. Alle Workflow-Zustände werden auf die vorhandenen, nach Commit gefeuerten Events aus [`spec/api-v1.md`](spec/api-v1.md) und auf die Outbox abgebildet. Neue Events kämen nur additiv in einer Minor-Version.
 
 ## 1. Abbildung der Workflow-Ereignisse (P8-17)
 
@@ -11,7 +11,8 @@ Der Workflowvertrag führt **keine zusätzlichen Events** ein. Alle Workflow-Zus
 | Entry angenommen | `form_captain_entry_created_v1( $event )` | nur für Nicht-Spam; Payload mit `form_version`, `request_id`, Allowlist-Werten |
 | Entry validiert | implizit in `entry_created_v1` | Es gibt nur validierte Entries; ungültige Einsendungen werden nicht gespeichert |
 | Entry markiert (gelesen, archiviert, Spam) | `form_captain_entry_status_changed_v1( $id, $old, $new, $form_id )` | „Spam“ = `new === 'spam'` |
-| Entry gelöscht / anonymisiert | `form_captain_entry_deleted_v1( $id, $form_id, $reason )` | `reason`: `manual`, `retention`, `erasure`, `anonymized`, `form_deleted` |
+| Entry gelöscht / anonymisiert | `form_captain_entry_deleted_v1( $id, $form_id, $reason )` | `reason`: `manual`, `retention`, `erasure`, `anonymized`, `form_deleted`, `consent_withdrawn` |
+| Einwilligung widerrufen | `form_captain_consent_withdrawn_v1( $id, $form_id, $source, $event )` | additiv (Minor); Payload nur IDs, `withdrawn_gmt`, `source`, `then` – keine Werte (api-v1.md); danach keine neuen `mail.*`-/`connector.*`-Jobs |
 | Benachrichtigung fehlgeschlagen | `form_captain_notification_failed_v1( $entry_id, $form_id, $job_type, $error_code )` | nach Dead-letter eines `mail.*`-Jobs |
 | Aktion ausgeführt | Outbox-Job `connector.action` (Status, `remote_id`) | kein Event; sichtbar unter Integrationen; bei deaktiviertem Connector Status `paused` |
 
@@ -56,7 +57,7 @@ Admin-Mail und Bestätigung laufen als eigene Jobs (`mail.admin`, `mail.confirma
 | Vertrag inkompatibel | `incompatible_contract` | Connector-Karte „Inkompatibel“ |
 | Queue-Timeout | `queue_timeout` (Systemstatus, > 15 min) | Systemstatus, Site Health |
 | Entry gelöscht | `entry_deleted` / `entry_anonymized` | Job-Liste |
-| Consent widerrufen | `consent_withdrawn` (reserviert, v1 ohne eigenen Ablauf) | – |
+| Consent widerrufen | `consent_withdrawn` – offene Jobs werden damit storniert, später eingereihte Jobs enden `dead` (`MailJobHandler`, `ConnectorRegistry::handle_job()`) | Job-Liste, Versandstatus im Entry, Badge „Einwilligung widerrufen am …“ |
 
 Speicherung und Spamprüfung sind von Workflows unabhängig: Jobs entstehen erst nach dem Commit, Fehler ändern den Entry nicht.
 

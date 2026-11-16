@@ -33,7 +33,11 @@ final class ConnectorPauseTest extends TestCase {
 
 	private FakeConnector $fake;
 
-	/** Second connector whose action key contains "fake.send" as a substring (LIKE false positive). */
+	/**
+	 * Second connector whose action key contains "fake.send" as a substring (LIKE false positive).
+	 *
+	 * @var FakeConnector
+	 */
 	private FakeConnector $other;
 
 	/** @var callable */

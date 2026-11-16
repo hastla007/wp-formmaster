@@ -87,7 +87,7 @@ final class ConsentService {
 				sprintf( 'source=%s then=%s cancelled=%d', $source, $then, $cancelled ),
 				array( 'entry_id' => $entry_id, 'form_id' => $form_id )
 			);
-			do_action( self::EVENT, $entry_id, $form_id, $source, $this->event( $entry_id, $form_id, $when, $source, $then ) );
+			do_action( 'form_captain_consent_withdrawn_v1', $entry_id, $form_id, $source, $this->event( $entry_id, $form_id, $when, $source, $then ) );
 		}
 
 		$result = 'kept';

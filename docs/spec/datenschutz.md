@@ -205,6 +205,25 @@ Einstellung `form_captain_settings[privacy_erasure_mode]`: `delete` (Default) od
 - Fehlschlag bei einzelnem Entry: `items_retained = true`, Nachricht DS-T-23 mit Entry-ID; kein Abbruch der übrigen Seite.
 - Suite-Adapter: Nach Löschung/Anonymisierung feuert nur die Contract-Action; Fremdsysteme löschen nur, wenn der Adapter dies vertraglich konfiguriert hat (konzept 5, „keine ungefragte Löschung im Fremdsystem“). Der Eraser-Report enthält DS-T-24, wenn für betroffene Entries aktive Connector-Aktionen ausgeführt wurden.
 
+### 6.5 Einwilligungswiderruf (Schema v2)
+
+Erfasst ein Admin (oder Servercode) den Widerruf einer Einwilligung, läuft `FormCaptain\Service\ConsentService::withdraw( $entry_id, $source, $then )`:
+
+| Schritt | Wirkung |
+|---|---|
+| 1 | `fc_entries.consent_withdrawn_gmt = now` (atomar, nur wenn noch NULL; Consent-Nachweis `consent_json` bleibt unverändert) |
+| 2 | offene Jobs `mail.*` und `connector.*` des Entries → `cancelled`, Code `consent_withdrawn` (andere geplante Jobs, z. B. `core.anonymize`, bleiben) |
+| 3 | Audit-Notiz `consent_withdrawn_{source}` (nur Code + Benutzer, keine Werte); Log nur IDs |
+| 4 | nach dem Speichern: Action `form_captain_consent_withdrawn_v1( $entry_id, $form_id, $source, $event )` – `$event` enthält nur IDs, Zeit, `source`, `then` (api-v1.md) |
+| 5 | `then = keep`: nichts weiter · `anonymize`: wie Eraser-Anonymisierung 6.4 (danach Audit `consent_withdrawn_anonymized`, Event `entry_deleted_v1` mit `anonymized`) · `delete`: `EntryDeletionService::delete( …, 'consent_withdrawn' )` |
+
+- `source`: `admin` (Default), `api`, `cli`, `privacy_request`, `system`; Unbekanntes → `admin`.
+- **Idempotent:** ein zweiter Aufruf setzt den Zeitpunkt nicht neu, storniert nichts erneut und feuert kein zweites Event; ein noch nicht ausgeführter Folgeschritt (`anonymize`/`delete`) wird nachgeholt.
+- **Keine neuen Jobs:** `OutboxPlanner` plant für widerrufene Entries nichts; „Admin-Benachrichtigung erneut senden“ wird mit `conflict` abgelehnt; `MailJobHandler` und `ConnectorRegistry::handle_job()` beenden trotzdem eingereihte Jobs mit `fail('consent_withdrawn')` (→ `dead`, keine Wiederholung); ausstehende `core.handoff`-Bestätigungen entfallen.
+- **Rechte:** `form_captain_read_entries` + `form_captain_edit_entries`; `then = delete` zusätzlich `form_captain_delete_entries`. Admin-Aktion mit Entry-gebundener Nonce und Pflicht-Bestätigung (Checkbox).
+- **Sichtbarkeit:** Badge „Einwilligung widerrufen am …“ in Liste und Detail, Listenfilter `consent=withdrawn|active`, CSV-Spalte „Consent withdrawn“ (Datum, standardmäßig ausgewählt, abwählbar), Entry-DTO `consent_withdrawn`/`consent_withdrawn_gmt`.
+- **Fremdsysteme:** nur das Event; Connectoren entscheiden vertraglich (Referenz-Connector markiert sein Ticket als `consent_withdrawn`, löscht Daten nur bei Konfiguration). Keine ungefragte Remote-Löschung.
+
 ## 7. Backups
 
 Form Captain erstellt, verwaltet oder löscht keine Backups. Verbindliche Regeln:
@@ -296,7 +315,7 @@ Englisch ist Quelltext (`__( '…', 'form-captain' )`); Deutsch ist die de_DE-Ü
 2. ~~Default des Erasers~~ – **entschieden: `delete`** (#2); `anonymize` bleibt Admin-Option, deren rechtliche Eignung Teil der Prüfmappe ist.
 3. ~~Interne Notizen im Auskunftsexport~~ – **entschieden: enthalten** (#3); Audit-Einträge nicht; Hinweis am Notizfeld.
 4. **Text DS-T-70** ist ein Vorschlag, keine geprüfte Datenschutzerklärung.
-5. **Consent-Widerruf**: v1 bietet keinen eigenen Widerrufsablauf; Admin löscht/anonymisiert manuell. Ob ein strukturierter Widerruf (Status, Event) vor v1.0 nötig ist, ist zu entscheiden.
+5. ~~Consent-Widerruf~~ – **entschieden 16.11.2026: strukturierter Ablauf schon in v1** (docs/ENTSCHEIDUNGEN.md #4); umgesetzt in Abschnitt 6.5 (Schema v2 `consent_withdrawn_gmt`, `ConsentService`, Event `form_captain_consent_withdrawn_v1`).
 6. ~~Schonfrist/Vorwarnfenster~~ – **entschieden: je 14 Tage** (#6).
 7. ~~Event bei Anonymisierung~~ – umgesetzt mit `reason = anonymized` (api-v1.md).
 8. ~~Schema-/Datenmodell-Nachträge~~ (erledigt): Anonymisierungsmarker und `trashed_gmt` für Spam (Abschnitt 2); Feld-Eigenschaften `consent_revision` und `privacy_lookup` in `formularschema.md`.

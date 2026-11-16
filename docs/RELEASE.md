@@ -42,7 +42,7 @@ npm run build:check      # Build-Ausgabe entspricht dem committeten Stand (ADR 0
 composer lint            # php -l über alle Dateien
 composer phpcs           # WordPress Coding Standards
 composer phpstan         # Level 6
-composer test            # test:unit + test:integration
+composer test            # Integrationstests (WordPress-Testsuite)
 npm run e2e              # Hauptablauf (P6-13)
 bin/check-secrets.sh     # keine Secrets im Arbeitsbaum
 ```

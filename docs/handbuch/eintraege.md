@@ -8,7 +8,7 @@ Dieses Kapitel beschreibt, wie Sie mit Einsendungen arbeiten, wie E-Mails zugest
 
 - **Liste:** Name und E-Mail (aus dem ersten Text- bzw. E-Mail-Feld, nie aus sensiblen Feldern), Formular, Eingangszeit in der Zeitzone der Website, Status.
 - **Reiter:** Alle (ohne Spam/Papierkorb), Neu, Gelesen, Archiviert, Spam, Papierkorb, *Läuft bald ab* (automatische Löschung in den nächsten 14 Tagen).
-- **Filter:** Formular, Zeitraum (von/bis), Volltextsuche in den Antworten, Seitenweise Anzeige (20 je Seite).
+- **Filter:** Formular, Zeitraum (von/bis), Einwilligung (widerrufen / nicht widerrufen), Volltextsuche in den Antworten, Seitenweise Anzeige (20 je Seite). Einträge mit widerrufener Einwilligung tragen in der Statusspalte das Badge „Einwilligung widerrufen am …“.
 - **Sammelaktionen:** Als gelesen markieren, Archivieren, Als Spam markieren, Kein Spam, In den Papierkorb, Wiederherstellen, Endgültig löschen. Jede Aktion prüft je Eintrag das passende Recht; nicht erlaubte oder nicht mehr vorhandene Einträge werden übersprungen und gezählt.
 
 ### Detailansicht
@@ -22,6 +22,24 @@ Ein Klick auf einen Eintrag öffnet die Detailansicht. Ein **neuer** Eintrag wir
 - **Interne Notizen:** sehen alle mit *Einträge lesen*, schreiben nur Nutzer mit *Einträge bearbeiten*. Notizen ändern die ursprüngliche Einsendung nie. Statuswechsel und erneute Zustellversuche werden als Protokolleintrag (ohne Feldwerte) festgehalten.
 
 IP-Adressen und Browserkennungen werden nicht gespeichert und deshalb auch nicht angezeigt.
+
+### Einwilligung widerrufen
+
+Widerruft eine Person ihre Einwilligung (z. B. per E-Mail), erfassen Sie das in der Detailansicht im Kasten **Einwilligung widerrufen** (Recht *Einträge bearbeiten*):
+
+1. Wählen Sie, was mit dem Eintrag geschehen soll:
+   - **Eintrag behalten** – die Antworten bleiben, der Eintrag wird nur gekennzeichnet.
+   - **Personenbezogene Daten anonymisieren** – wie bei einer Löschanfrage im Modus „Anonymisieren“: persönliche Werte werden durch `[deleted]` ersetzt, Notizen gelöscht, Auswahlwerte und Einwilligungsnachweis bleiben.
+   - **Eintrag endgültig löschen** – nur mit dem Recht *Einträge löschen*.
+2. Bestätigen Sie mit dem Häkchen, dass die Person widerrufen hat, und klicken Sie **Einwilligung widerrufen**.
+
+Was dann passiert:
+
+- Der Zeitpunkt wird gespeichert und als Badge „Einwilligung widerrufen am …“ in Liste und Detailansicht angezeigt. Der ursprüngliche Einwilligungsnachweis bleibt unverändert.
+- Noch offene Mails und Integrations-Aufträge des Eintrags werden abgebrochen (Fehlercode `consent_withdrawn` im Versandstatus). Danach werden für diesen Eintrag keine Mails und keine Integrations-Aufträge mehr ausgeführt; „Admin-Benachrichtigung erneut senden“ steht nicht mehr zur Verfügung.
+- Ein Protokolleintrag „Widerruf der Einwilligung erfasst“ (ohne Feldwerte) wird angelegt.
+- Verbundene Integrationen werden über das Ereignis `form_captain_consent_withdrawn_v1` informiert (nur IDs, Zeitpunkt, Quelle). Ob und wie ein Fremdsystem darauf reagiert, legt die jeweilige Integration fest; Daten im Fremdsystem werden nicht ungefragt gelöscht.
+- Der Widerruf lässt sich nicht rückgängig machen. Ein zweiter Widerruf ändert nichts.
 
 ### Status
 
@@ -50,6 +68,7 @@ Hinweise:
 - Mehrzeilige Antworten bleiben in einer Zelle (korrekt in Anführungszeichen).
 - Die Datei wird direkt gestreamt und nicht auf dem Server gespeichert. Maximal 100 000 Zeilen je Export, sonst bitte den Zeitraum eingrenzen; höchstens 10 Exporte je Stunde und Nutzer.
 - Gelöschte Einträge sind nie enthalten; anonymisierte erscheinen mit Status „Anonymisiert“ und Platzhaltern.
+- Die Spalte **Consent withdrawn** (Einwilligung widerrufen) ist standardmäßig ausgewählt und enthält bei widerrufener Einwilligung Datum und Uhrzeit, sonst bleibt sie leer. Sie können sie abwählen.
 - Jeder Export wird im technischen Protokoll vermerkt (Nutzer-ID, Formular, Zeilenzahl – keine Inhalte).
 
 Behandeln Sie exportierte Dateien wie die Einträge selbst: nur so lange aufbewahren wie nötig.

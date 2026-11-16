@@ -116,28 +116,28 @@ final class ContractApi {
 		if ( ! $entry ) {
 			return new \WP_Error( 'entry_not_found', __( 'Entry not found.', 'form-captain' ) );
 		}
-		$version        = $this->forms->find_version( (int) $entry['form_version_id'] );
-		$ctx            = is_array( $entry['context'] ) ? $entry['context'] : null;
-		$out            = array(
-			'contract'       => FORM_CAPTAIN_CONTRACT_VERSION,
-			'entry_id'       => (int) $entry['id'],
-			'form_id'        => (int) $entry['form_id'],
-			'form_version'   => $version ? (int) $version['version_no'] : null,
-			'status'         => (string) $entry['status'],
-			'created_gmt'    => self::iso( (string) $entry['created_gmt'] ),
-			'updated_gmt'    => self::iso( (string) $entry['updated_gmt'] ),
-			'context'        => $ctx ? array(
+		$version = $this->forms->find_version( (int) $entry['form_version_id'] );
+		$ctx     = is_array( $entry['context'] ) ? $entry['context'] : null;
+		$out     = array(
+			'contract'              => FORM_CAPTAIN_CONTRACT_VERSION,
+			'entry_id'              => (int) $entry['id'],
+			'form_id'               => (int) $entry['form_id'],
+			'form_version'          => $version ? (int) $version['version_no'] : null,
+			'status'                => (string) $entry['status'],
+			'created_gmt'           => self::iso( (string) $entry['created_gmt'] ),
+			'updated_gmt'           => self::iso( (string) $entry['updated_gmt'] ),
+			'context'               => $ctx ? array(
 				'purpose'  => (string) ( $ctx['purpose'] ?? '' ),
 				'ref_type' => (string) ( $ctx['ref_type'] ?? '' ),
 				'ref_id'   => (string) ( $ctx['ref_id'] ?? '' ),
 				'verified' => ! empty( $ctx['verified'] ),
 			) : null,
-			'anonymized'     => ! empty( $entry['anonymized_gmt'] ),
-			'anonymized_gmt' => ! empty( $entry['anonymized_gmt'] ) ? self::iso( (string) $entry['anonymized_gmt'] ) : null,
+			'anonymized'            => ! empty( $entry['anonymized_gmt'] ),
+			'anonymized_gmt'        => ! empty( $entry['anonymized_gmt'] ) ? self::iso( (string) $entry['anonymized_gmt'] ) : null,
+			// Additive (contract 1.x): consent withdrawal marker, no values.
+			'consent_withdrawn'     => ! empty( $entry['consent_withdrawn_gmt'] ),
+			'consent_withdrawn_gmt' => ! empty( $entry['consent_withdrawn_gmt'] ) ? self::iso( (string) $entry['consent_withdrawn_gmt'] ) : null,
 		);
-		// Additive (contract 1.x): consent withdrawal marker, no values.
-		$out['consent_withdrawn']     = ! empty( $entry['consent_withdrawn_gmt'] );
-		$out['consent_withdrawn_gmt'] = ! empty( $entry['consent_withdrawn_gmt'] ) ? self::iso( (string) $entry['consent_withdrawn_gmt'] ) : null;
 		$want_values    = in_array( 'values', $scopes, true ) || in_array( 'sensitive', $scopes, true );
 		$want_sensitive = in_array( 'sensitive', $scopes, true );
 		if ( $want_values ) {

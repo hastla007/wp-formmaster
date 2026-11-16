@@ -150,7 +150,8 @@ Systemstatus und Site Health führen `paused` getrennt (`queue.paused`, `integra
 
 - Form Captain ist Eigentümer von Entry und Aufbewahrung. Beim Löschen feuert `form_captain_entry_deleted_v1( $entry_id, $form_id, $reason )` mit `manual`, `retention`, `erasure`, `anonymized` oder `form_deleted`. Offene Jobs des Entries werden `cancelled`.
 - Der Connector entscheidet nach seinem Vertrag mit dem Zielsystem, ob er Remote-Daten löscht. **Keine ungefragte Remote-Löschung**; das Referenzbeispiel entfernt nur lokale Personendaten.
-- Consent-Widerruf: v1 hat keinen eigenen Ablauf; Admins löschen/anonymisieren den Entry (→ Event oben). Code `consent_withdrawn` ist für künftige Versionen reserviert.
+- Consent-Widerruf (ab Kern-Schema v2): `form_captain_consent_withdrawn_v1( $entry_id, $form_id, $source, $event )` feuert einmal je Entry nach dem Speichern des Widerrufs (Payload nur IDs, `withdrawn_gmt`, `source`, `then`; api-v1.md). Die Registry storniert vorher offene `connector.action`-Jobs des Entries (Code `consent_withdrawn`, auch `paused`) und `ConnectorRegistry::handle_job()` beendet später eingereihte Jobs mit `fail('consent_withdrawn')` – der Callback wird für diesen Entry nie mehr aufgerufen. Folgt eine Anonymisierung/Löschung, kommt zusätzlich `entry_deleted_v1` (`anonymized` bzw. `consent_withdrawn`).
+- Empfohlene Reaktion: Datensatz im Zielsystem als „Einwilligung widerrufen“ kennzeichnen; Remote-Löschung nur, wenn der Betreiber sie im Connector ausdrücklich konfiguriert hat. Das Referenzbeispiel setzt `status = consent_withdrawn` am Ticket und leert Personendaten nur bei Option `fcrc_consent_withdrawal_mode = delete`.
 
 ## 9. Secrets
 

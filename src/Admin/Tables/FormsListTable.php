@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace FormCaptain\Admin\Tables;
 
 use FormCaptain\Admin\FormsPage;
+use FormCaptain\Import\EntryImportAdmin;
 use FormCaptain\Install\Capabilities;
 use FormCaptain\Repository\FormRepository;
 
@@ -162,6 +163,9 @@ final class FormsListTable extends \WP_List_Table {
 			$actions['archive'] = '<a href="' . esc_url( FormsPage::action_url( 'archive', $id ) ) . '">' . esc_html__( 'Archive', 'form-captain' ) . '</a>';
 		}
 		$actions['export'] = '<a href="' . esc_url( FormsPage::action_url( 'export', $id ) ) . '">' . esc_html__( 'Export JSON', 'form-captain' ) . '</a>';
+		if ( in_array( $item['status'], array( 'published', 'paused' ), true ) && current_user_can( Capabilities::EDIT_ENTRIES ) ) {
+			$actions['import_entries'] = '<a href="' . esc_url( EntryImportAdmin::page_url( $id ) ) . '">' . esc_html__( 'Import entries', 'form-captain' ) . '</a>';
+		}
 		$total             = FormsPage::entry_total( $id );
 		if ( 0 === $total ) {
 			$actions['delete'] = '<a class="submitdelete" href="' . esc_url( FormsPage::action_url( 'delete', $id ) ) . '" onclick="return window.confirm(this.dataset.confirm);" data-confirm="' . esc_attr__( 'Delete this form permanently?', 'form-captain' ) . '">' . esc_html__( 'Delete', 'form-captain' ) . '</a>';

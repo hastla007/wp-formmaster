@@ -1,4 +1,4 @@
-/* Form Captain – small helpers for forms overview and dashboard (copy shortcode). */
+/* Form Captain – small helpers for forms overview and dashboard (copy shortcode, entry import steps). */
 ( function () {
 	'use strict';
 	document.addEventListener( 'click', function ( event ) {
@@ -28,4 +28,12 @@
 			} catch ( e ) {}
 		}
 	} );
+
+	// Entry import: batch steps continue automatically (the button stays as fallback).
+	var auto = document.querySelector( 'form[data-fc-autosubmit]' );
+	if ( auto ) {
+		window.setTimeout( function () {
+			auto.submit();
+		}, 400 );
+	}
 }() );

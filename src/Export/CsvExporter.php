@@ -40,16 +40,16 @@ final class CsvExporter {
 	 * @return array<string,array{label:string,sensitive:bool,field:array<string,mixed>|null,removed:bool}>
 	 */
 	public function columns( array $form ): array {
-		$cols    = array(
+		$cols = array(
 			'meta:id'           => array( 'label' => __( 'Submission ID', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
 			'meta:created'      => array( 'label' => __( 'Submitted at', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
 			'meta:status'       => array( 'label' => __( 'Status', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
 			'meta:form_version' => array( 'label' => __( 'Form version', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
 			'meta:source_url'   => array( 'label' => __( 'Source page', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
-			// Selected by default so withdrawn consents are marked in every export; can be deselected.
-			'meta:consent_withdrawn' => array( 'label' => __( 'Consent withdrawn', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
 		);
-		$current = array();
+		// Selected by default so withdrawn consents are marked in every export; can be deselected.
+		$cols['meta:consent_withdrawn'] = array( 'label' => __( 'Consent withdrawn', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false );
+		$current                        = array();
 		foreach ( MailBuilder::fields( (array) ( $form['schema'] ?? array() ) ) as $field ) {
 			if ( ! self::exportable( $field ) ) {
 				continue;

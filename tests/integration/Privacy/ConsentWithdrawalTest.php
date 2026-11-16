@@ -380,6 +380,9 @@ final class ConsentWithdrawalTest extends TestCase {
 			}
 			update_option( Migrator::OPTION_VERSION, Migrator::TARGET_VERSION );
 			delete_option( Migrator::OPTION_STATE );
+			// The ALTER statements committed the test transaction implicitly (incl. the intermediate
+			// version/state options); persist the restored state so later tests see a clean install.
+			$wpdb->query( 'COMMIT' );
 		}
 	}
 

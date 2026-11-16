@@ -10,6 +10,7 @@
 - Idempotenz: Tickets werden je `idempotency_key` gespeichert – eine Wiederholung liefert dieselbe Ticket-ID.
 - Testmodus (`test_mode = true`) ohne Seiteneffekt.
 - Reaktion auf `form_captain_entry_deleted_v1`: entfernt lokal gespeicherte Personendaten, keine blinde Remote-Löschung.
+- Reaktion auf `form_captain_consent_withdrawn_v1`: markiert das Ticket als `consent_withdrawn`. Personendaten werden nur entfernt, wenn die Option `fcrc_consent_withdrawal_mode` auf `delete` steht (`wp option update fcrc_consent_withdrawal_mode delete`); keine Remote-Löschung ohne Konfiguration.
 
 ## Installation
 

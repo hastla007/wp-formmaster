@@ -167,6 +167,26 @@ final class ReferenceConnectorTest extends TestCase {
 		$this->assertCount( 0, $this->tickets() );
 	}
 
+	public function test_consent_withdrawal_marks_ticket_and_deletes_only_when_configured(): void {
+		$this->activate();
+		delete_option( Reference_Connector::WITHDRAWAL_OPTION );
+		list( , $entry, $id ) = $this->submission();
+		$this->assertSame( 'succeeded', $this->run_job( $id ) );
+		$consent = $this->plugin()->get( \FormCaptain\Service\ConsentService::class );
+		$consent->withdraw( $entry, 'admin', 'keep' );
+		$ticket = array_values( $this->tickets() )[0];
+		$this->assertSame( 'consent_withdrawn', $ticket['status'] );
+		$this->assertSame( 'ada@example.org', $ticket['email'], 'no deletion without configuration' );
+
+		// Explicitly configured deletion; unknown entries leave tickets untouched.
+		update_option( Reference_Connector::WITHDRAWAL_OPTION, 'delete' );
+		Reference_Connector::on_consent_withdrawn( $entry + 1000, 0, 'admin' );
+		$this->assertSame( 'ada@example.org', array_values( $this->tickets() )[0]['email'] );
+		Reference_Connector::on_consent_withdrawn( $entry, 0, 'admin' );
+		$this->assertSame( '', array_values( $this->tickets() )[0]['email'] );
+		$this->assertConsentWithdrawnEventShape( self::contract_fixture( 'consent-withdrawn' ) );
+	}
+
 	public function test_test_mode_has_no_side_effects(): void {
 		$this->activate();
 		$res = $this->registry()->test_action( 'reference.create_ticket', array( 'queue' => 'x' ) );

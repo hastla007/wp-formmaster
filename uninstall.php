@@ -20,6 +20,15 @@ $form_captain_delete   = is_array( $form_captain_settings )
 wp_clear_scheduled_hook( 'form_captain_process_jobs' );
 wp_clear_scheduled_hook( 'form_captain_daily_cleanup' );
 wp_clear_scheduled_hook( 'form_captain_hourly_cleanup' );
+wp_unschedule_hook( 'form_captain_entry_import_cleanup' );
+
+// Temporary entry import uploads are always removed (never kept data).
+$form_captain_uploads = wp_upload_dir( null, false );
+if ( ! empty( $form_captain_uploads['basedir'] ) ) {
+	foreach ( (array) glob( trailingslashit( $form_captain_uploads['basedir'] ) . 'form-captain-private/imports/*.csv.tmp' ) as $form_captain_file ) {
+		wp_delete_file( (string) $form_captain_file );
+	}
+}
 
 if ( ! $form_captain_delete ) {
 	return;
@@ -48,6 +57,7 @@ $form_captain_options = array(
 	'form_captain_cleanup_failures',
 	'form_captain_last_cleanup',
 	'form_captain_last_cleanup_at',
+	'form_captain_entry_import_runs',
 );
 foreach ( $form_captain_options as $form_captain_option ) {
 	delete_option( $form_captain_option );

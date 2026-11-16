@@ -411,12 +411,15 @@
 				return hadToken ? null : wait( form._fcMinSubmitAt );
 			} )
 			.then( function () {
+				// Forms with file inputs (enctype set by an extension, contract 1.1.0) are sent as
+				// multipart/form-data with the same field names as the no-JS fallback.
+				var multipart = ( form.getAttribute( 'enctype' ) || '' ).toLowerCase() === 'multipart/form-data';
 				return fetch( restUrl( form.getAttribute( 'data-fc-form' ), 'submissions' ), {
 					method: 'POST',
 					credentials: 'same-origin',
 					cache: 'no-store',
-					headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-					body: JSON.stringify( collect( form ) ),
+					headers: multipart ? { Accept: 'application/json' } : { 'Content-Type': 'application/json', Accept: 'application/json' },
+					body: multipart ? new FormData( form ) : JSON.stringify( collect( form ) ),
 				} );
 			} )
 			.then( function ( res ) {

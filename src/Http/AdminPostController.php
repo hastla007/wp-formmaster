@@ -59,7 +59,7 @@ final class AdminPostController {
 				'code'    => Errors::FORM_NOT_FOUND,
 				'message' => Errors::public_message( Errors::FORM_NOT_FOUND ),
 			);
-		} elseif ( (int) ( $server['CONTENT_LENGTH'] ?? 0 ) > Limits::get( 'request_bytes' ) ) {
+		} elseif ( (int) ( $server['CONTENT_LENGTH'] ?? 0 ) - self::file_bytes( $files ) > Limits::get( 'request_bytes' ) ) {
 			$result = array(
 				'success' => false,
 				'code'    => Errors::PAYLOAD_TOO_LARGE,
@@ -74,7 +74,7 @@ final class AdminPostController {
 					'source_url'     => $back,
 					'source_post_id' => $post['_fc_src'] ?? null,
 					'user_id'        => 0, // No nonce in cached HTML → no user binding (ADR 0003).
-					'body_bytes'     => (int) ( $server['CONTENT_LENGTH'] ?? 0 ),
+					'body_bytes'     => max( 0, (int) ( $server['CONTENT_LENGTH'] ?? 0 ) - self::file_bytes( $files ) ),
 					'files'          => UploadedFiles::by_field( $files ),
 				)
 			);
@@ -117,6 +117,20 @@ final class AdminPostController {
 			'status'   => 303,
 			'result'   => $result,
 		);
+	}
+
+	/**
+	 * Bytes of uploaded files for extension fields: they do not count against the request limit
+	 * of the form fields; their own limits are checked by the extension (contract 1.1.0).
+	 *
+	 * @param array<string,mixed> $files $_FILES
+	 */
+	private static function file_bytes( array $files ): int {
+		$sum = 0;
+		foreach ( UploadedFiles::by_field( $files ) as $file ) {
+			$sum += max( 0, (int) $file['size'] );
+		}
+		return $sum;
 	}
 
 	/**

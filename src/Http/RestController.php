@@ -169,6 +169,10 @@ final class RestController {
 		if ( ! is_array( $raw ) ) {
 			return self::respond( self::error_body( Errors::VALIDATION_FAILED ), 400 );
 		}
+		if ( 'multipart/form-data' === $type && strlen( (string) wp_json_encode( $raw ) ) > Limits::get( 'request_bytes' ) ) {
+			// Multipart: the raw body is not readable; the non-file fields are limited here, files by their extension.
+			return self::respond( self::error_body( Errors::PAYLOAD_TOO_LARGE ), 413 );
+		}
 		$form = $this->forms->find_by_public_id( (string) $request['public_id'] );
 		if ( ! $form ) {
 			return self::respond( self::error_body( Errors::FORM_NOT_FOUND ), 404 );

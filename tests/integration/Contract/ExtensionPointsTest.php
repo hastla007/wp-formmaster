@@ -229,4 +229,16 @@ final class ExtensionPointsTest extends TestCase {
 		$this->assertNotSame( 'override attempt', $boot['messages']['required'], 'core messages win' );
 		$this->assertSame( 'logic', $boot['extensions'][0]['key'] );
 	}
+
+	public function test_admin_post_does_not_count_uploaded_files_against_the_request_limit(): void {
+		$form       = $this->create_published_form( $this->fields() );
+		$controller = $this->plugin()->get( \FormCaptain\Http\AdminPostController::class );
+		$limit      = \FormCaptain\Support\Limits::get( 'request_bytes' );
+		$files      = array( 'fc' => array( 'name' => array( 'f_file01' => 'cv.pdf' ), 'type' => array( 'f_file01' => 'application/pdf' ), 'tmp_name' => array( 'f_file01' => '/tmp/x' ), 'error' => array( 'f_file01' => 0 ), 'size' => array( 'f_file01' => 5 * $limit ) ) );
+		$post       = array( '_fc_form' => $form['public_id'], 'fc' => array( 'f_name01' => 'Ada' ) );
+		$with_file  = $controller->process( $post, array( 'CONTENT_LENGTH' => 5 * $limit + 500 ), $files );
+		$this->assertNotSame( 'payload_too_large', $with_file['result']['code'], 'the file has its own limit' );
+		$too_big    = $controller->process( $post, array( 'CONTENT_LENGTH' => 5 * $limit + $limit + 1 ), $files );
+		$this->assertSame( 'payload_too_large', $too_big['result']['code'], 'the form fields alone are still limited' );
+	}
 }

@@ -647,7 +647,7 @@ final class EntriesPage {
 		foreach ( $extra as $name => $value ) {
 			echo '<input type="hidden" name="' . esc_attr( (string) $name ) . '" value="' . esc_attr( (string) $value ) . '" />';
 		}
-		echo '<button type="submit" class="button' . ( 'delete' === $style ? ' button-link-delete' : '' ) . '">' . esc_html( $label ) . '</button>';
+		echo '<button type="submit" class="button' . ( 'delete' === $style ? ' fc-button-delete" style="color:#8a1f11;border-color:#8a1f11' : '' ) . '">' . esc_html( $label ) . '</button>';
 		echo '</form>';
 	}
 

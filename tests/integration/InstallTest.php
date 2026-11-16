@@ -9,8 +9,10 @@ declare(strict_types=1);
 
 namespace FormCaptain\Tests\Integration;
 
+use FormCaptain\Admin\SystemStatus;
 use FormCaptain\Database\Migrator;
 use FormCaptain\Database\Tables;
+use FormCaptain\Install\Activator;
 use FormCaptain\Install\Capabilities;
 use FormCaptain\Install\Deactivator;
 use FormCaptain\Jobs\Scheduler;
@@ -40,6 +42,23 @@ final class InstallTest extends TestCase {
 		$this->assertSame( 'schema_newer_than_plugin', $state['error'] );
 		update_option( Migrator::OPTION_VERSION, Migrator::TARGET_VERSION );
 		delete_option( Migrator::OPTION_STATE );
+	}
+
+	/** P9-12 finding: the boot path records a downgrade and clears the notice once the newer version is back. */
+	public function test_boot_records_downgrade_and_clears_it_after_reinstall(): void {
+		update_option( Migrator::OPTION_VERSION, Migrator::TARGET_VERSION + 1 );
+		delete_option( Migrator::OPTION_STATE );
+		Activator::maybe_upgrade();
+		$state = get_option( Migrator::OPTION_STATE );
+		$this->assertSame( 'schema_newer_than_plugin', $state['error'] ?? null );
+		$this->assertSame( Migrator::TARGET_VERSION + 1, ( new Migrator() )->installed_version(), 'version untouched' );
+		$status = $this->plugin()->get( SystemStatus::class );
+		$this->assertStringContainsString( 'newer Form Captain version', $status->problems()['schema'] ?? '' );
+
+		update_option( Migrator::OPTION_VERSION, Migrator::TARGET_VERSION );
+		Activator::maybe_upgrade();
+		$this->assertFalse( get_option( Migrator::OPTION_STATE ) );
+		$this->assertArrayNotHasKey( 'schema', $status->problems() );
 	}
 
 	public function test_admin_has_caps_editor_has_none(): void {

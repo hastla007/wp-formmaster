@@ -118,8 +118,8 @@ final class SignedContextTest extends FrontendTestCase {
 		$this->assertContains( $this->ctx()->verify( $token, $form )['code'], array( 'context_signature_invalid', 'context_malformed' ) );
 
 		// Correctly signed payload with an extra key.
-		$key    = SignedContext::derive_key( wp_salt( 'auth' ), (string) get_option( Secret::OPTION ) );
-		$bad    = SignedContext::encode(
+		$key = SignedContext::derive_key( wp_salt( 'auth' ), (string) get_option( Secret::OPTION ) );
+		$bad = SignedContext::encode(
 			array( 'purpose' => 'pass.event_registration', 'form_id' => (int) $form['id'], 'ref_type' => 'event', 'ref_id' => '1', 'site' => SignedContext::site_hash(), 'exp' => time() + 60, 'nonce' => str_repeat( 'a', 22 ), 'extra' => 1 ),
 			$key
 		);
@@ -149,10 +149,10 @@ final class SignedContextTest extends FrontendTestCase {
 	}
 
 	public function test_form_without_purposes_ignores_context(): void {
-		$with   = $this->form();
-		$plain  = $this->create_published_form();
-		$signed = $this->ctx()->sign( 'pass.event_registration', (int) $with['id'], 'event', '1187' );
-		$raw    = $this->payload( $plain, $this->valid_fields() );
+		$with           = $this->form();
+		$plain          = $this->create_published_form();
+		$signed         = $this->ctx()->sign( 'pass.event_registration', (int) $with['id'], 'event', '1187' );
+		$raw            = $this->payload( $plain, $this->valid_fields() );
 		$raw['_fc_ctx'] = $signed['context'];
 		$res            = $this->plugin()->get( SubmissionService::class )->submit( $plain, $raw );
 		$this->assertTrue( $res['success'] );
@@ -180,11 +180,11 @@ final class SignedContextTest extends FrontendTestCase {
 	}
 
 	public function test_submit_check_rejection_and_trusted_detail_code(): void {
-		$form              = $this->form();
-		$signed            = $this->ctx()->sign( 'woo.order_item_questionnaire', (int) $form['id'], 'order_item', '1:3' );
+		$form                   = $this->form();
+		$signed                 = $this->ctx()->sign( 'woo.order_item_questionnaire', (int) $form['id'], 'order_item', '1:3' );
 		self::$checks['submit'] = false;
-		$raw            = $this->payload( $form, $this->valid_fields() );
-		$raw['_fc_ctx'] = $signed['context'];
+		$raw                    = $this->payload( $form, $this->valid_fields() );
+		$raw['_fc_ctx']         = $signed['context'];
 		$this->assertSame( 'invalid_context', $this->plugin()->get( SubmissionService::class )->submit( $form, $raw )['code'] );
 
 		$res = $this->plugin()->get( SubmissionService::class )->submit(

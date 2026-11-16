@@ -123,7 +123,7 @@ Je Feldtyp ein Unit-Test für den Validator und ein Integrationstest über die R
 
 | ID | Typ | Vorgehen | Erwartetes Ergebnis |
 |---|---|---|---|
-| AC-069 | integration | Submission ohne Token / manipuliert / abgelaufen (> 2 h) / zu jung (< 3 s) / für anderes Formular | jeweils `invalid_token` (400); kein Entry |
+| AC-069 | integration | Submission ohne Token / manipuliert / abgelaufen (> 2 h) / für anderes Formular → `invalid_token` (400), kein Entry. Zu jung (< Mindestzeit) → als Spam `too_fast` gespeichert, neutrale Erfolgsmeldung, keine Jobs |
 | AC-070 | integration | Honeypot befüllt | Antwort wie Erfolg; Entry Status `spam`, Spamgrund `honeypot`; keine Jobs |
 | AC-071 | integration | Blocklisten-Wort im Text / gesperrte E-Mail-Domain | `spam`, Grund `blocklist`; keine Jobs |
 | AC-072 | integration | 6 Submissions in 10 min von gleicher IP an ein Formular | 6. → `rate_limited` (429) mit `Retry-After` (RL-02) |

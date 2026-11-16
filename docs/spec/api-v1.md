@@ -73,9 +73,23 @@ Signierter Suite-Kontext: siehe [`suite-kontext.md`](suite-kontext.md).
 
 ### Ergebnisobjekt
 
+Zusätzlich: `detail_code` (nur bei vertrauenswürdigen PHP-Aufrufen, z. B. genauer Kontext-Fehlercode) und in REST-Antworten `error_codes` (field_id => Fehlercode, maschinenlesbar neben den übersetzten `errors`).
+
 ```php
 ['success' => bool, 'code' => 'created'|'validation_failed'|…, 'form_id' => 7, 'entry_id' => 123|null, 'request_id' => '…', 'errors' => ['f_x' => 'message']]
 ```
+
+### Formular-Einstellungen für Suite-Kontext und Ausgabe
+
+| Schlüssel | Bedeutung |
+|---|---|
+| `accepted_context_purposes` | Liste der Kontext-Zwecke, die dieses Formular akzeptiert (leer = keiner) |
+| `context_required` | bool – Einsendung ohne gültigen signierten Kontext wird abgelehnt (`invalid_context`) |
+| `submit_label` | Beschriftung des Absende-Buttons |
+
+## HTTP-Statuscodes der öffentlichen Submission
+
+201 neuer Entry, 200 wiederholter Request (gleiches Ergebnis, keine neuen Jobs), 400 Validierungs-/Token-/Kontextfehler, 403, 404, 405 falsche Methode, 409 Formular nimmt nicht an, 413 zu groß, 415 falscher Content-Type, 429 Rate-Limit, 503 Speicherfehler. Zu schnelle Einsendungen (Mindestzeit) werden als Spam (`too_fast`) gespeichert und dem Besucher neutral bestätigt.
 
 ## Fehlercodes (stabil)
 

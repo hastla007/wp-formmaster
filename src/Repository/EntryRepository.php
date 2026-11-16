@@ -31,19 +31,33 @@ final class EntryRepository {
 	}
 
 	/** Starts a transaction; returns false if unsupported. */
+	/**
+	 * Starts a transaction; returns false if unsupported.
+	 *
+	 * When an outer transaction is already open (e.g. the WordPress test suite wraps
+	 * every test in one), START TRANSACTION would implicitly commit it. The filter
+	 * `form_captain_db_in_outer_transaction` switches to savepoints in that case.
+	 */
 	public function begin(): bool {
 		global $wpdb;
+		if ( self::nested() ) {
+			return false !== $wpdb->query( 'SAVEPOINT form_captain_tx' );
+		}
 		return false !== $wpdb->query( 'START TRANSACTION' );
 	}
 
 	public function commit(): void {
 		global $wpdb;
-		$wpdb->query( 'COMMIT' );
+		$wpdb->query( self::nested() ? 'RELEASE SAVEPOINT form_captain_tx' : 'COMMIT' );
 	}
 
 	public function rollback(): void {
 		global $wpdb;
-		$wpdb->query( 'ROLLBACK' );
+		$wpdb->query( self::nested() ? 'ROLLBACK TO SAVEPOINT form_captain_tx' : 'ROLLBACK' );
+	}
+
+	private static function nested(): bool {
+		return (bool) apply_filters( 'form_captain_db_in_outer_transaction', false );
 	}
 
 	/** @return array<string,mixed>|null */

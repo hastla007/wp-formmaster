@@ -34,5 +34,8 @@ tests_add_filter(
 	2
 );
 
+// WP_UnitTestCase wraps each test in a transaction; use savepoints instead of nested transactions.
+tests_add_filter( 'form_captain_db_in_outer_transaction', '__return_true' );
+
 require $form_captain_tests_dir . '/includes/bootstrap.php';
 require_once __DIR__ . '/integration/TestCase.php';

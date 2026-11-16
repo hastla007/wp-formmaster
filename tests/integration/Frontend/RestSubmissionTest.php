@@ -66,8 +66,8 @@ final class RestSubmissionTest extends FrontendTestCase {
 	}
 
 	public function test_urlencoded_submission_and_duplicate(): void {
-		$form  = $this->create_published_form();
-		$body  = $this->payload( $form, array() );
+		$form = $this->create_published_form();
+		$body = $this->payload( $form, array() );
 		unset( $body['fields'] );
 		$body['fc'] = $this->valid_fields();
 		$first      = $this->post( (string) $form['public_id'], $body, 'application/x-www-form-urlencoded' );
@@ -147,8 +147,8 @@ final class RestSubmissionTest extends FrontendTestCase {
 	}
 
 	public function test_nojs_error_keeps_values_and_never_redirects_externally(): void {
-		$form = $this->create_published_form();
-		$post = array(
+		$form   = $this->create_published_form();
+		$post   = array(
 			'_fc_form'  => $form['public_id'],
 			'_fc_token' => $this->token( $form ),
 			'fc'        => array( 'f_name01' => 'Erika', 'f_mail01' => 'kaputt' ),

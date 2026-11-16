@@ -579,20 +579,24 @@ final class ConnectorRegistry {
 	/**
 	 * Data for the form editor (P8-27).
 	 *
-	 * @return array<int,array{key:string,label:string,connector:?string,settings:array,mapping:array,available:bool,reason:string}>
+	 * @return array<int,array<string,mixed>> key, action_key, label, connector, connector_label, settings, mapping, available, reason, message
 	 */
 	public function actions_for_editor(): array {
 		$out = array();
 		foreach ( $this->actions() as $key => $def ) {
 			$reason = $this->unavailable_reason( $key );
-			$out[]  = array(
-				'key'       => $key,
-				'label'     => $def['label'],
-				'connector' => $def['connector'],
-				'settings'  => $def['settings'],
-				'mapping'   => $def['mapping'],
-				'available' => '' === $reason,
-				'reason'    => $reason,
+			$connector = null !== $def['connector'] ? (string) ( $this->seen[ $def['connector'] ]['label'] ?? $def['connector'] ) : '';
+			$out[]     = array(
+				'key'             => $key,
+				'action_key'      => $key,
+				'label'           => $def['label'],
+				'connector'       => $def['connector'],
+				'connector_label' => $connector,
+				'settings'        => $def['settings'],
+				'mapping'         => $def['mapping'],
+				'available'       => '' === $reason,
+				'reason'          => $reason,
+				'message'         => '' === $reason ? '' : self::next_step( $reason ),
 			);
 		}
 		return $out;

@@ -332,7 +332,7 @@ final class SubmissionService {
 		return array( 'message' => $message );
 	}
 
-	/** True while a savepoint inside a caller-managed transaction is used instead of our own transaction. */
+	/** @var bool true while a savepoint inside a caller-managed transaction replaces our own transaction */
 	private bool $nested = false;
 
 	/**

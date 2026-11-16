@@ -22,7 +22,7 @@ final class SubmissionServiceTest extends FrontendTestCase {
 	}
 
 	public function test_success_stores_entry_values_and_jobs(): void {
-		$form = $this->create_published_form(
+		$form   = $this->create_published_form(
 			null,
 			array(
 				'actions' => array(
@@ -32,9 +32,12 @@ final class SubmissionServiceTest extends FrontendTestCase {
 			)
 		);
 		$events = array();
-		add_action( 'form_captain_entry_created_v1', static function ( array $e ) use ( &$events ): void {
-			$events[] = $e;
-		} );
+		add_action(
+			'form_captain_entry_created_v1',
+			static function ( array $e ) use ( &$events ): void {
+				$events[] = $e;
+			}
+		);
 		$res = $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ), array( 'ip' => '198.51.100.1' ) );
 
 		$this->assertTrue( $res['success'] );
@@ -74,9 +77,12 @@ final class SubmissionServiceTest extends FrontendTestCase {
 		$form   = $this->create_published_form( $fields );
 		add_filter( 'form_captain_event_value_allowlist_v1', static fn() => array( 'name', 'secret' ) );
 		$event = null;
-		add_action( 'form_captain_entry_created_v1', static function ( array $e ) use ( &$event ): void {
-			$event = $e;
-		} );
+		add_action(
+			'form_captain_entry_created_v1',
+			static function ( array $e ) use ( &$event ): void {
+				$event = $e;
+			}
+		);
 		$this->service()->submit( $form, $this->payload( $form, array( 'f_name01' => 'Max', 'f_secr01' => 'geheim' ) ) );
 		$this->assertSame( array( 'name' => 'Max' ), $event['values'] );
 	}
@@ -110,15 +116,15 @@ final class SubmissionServiceTest extends FrontendTestCase {
 	/** @return array<string,array{0:array<string,mixed>,1:string,2:string}> */
 	public function manipulated_payloads(): array {
 		return array(
-			'unknown field'      => array( array( 'f_zzzzzz' => 'x' ), 'f_zzzzzz', 'unknown_field' ),
-			'array for text'     => array( array( 'f_name01' => array( 'a', 'b' ) ), 'f_name01', 'invalid_value' ),
-			'nested array'       => array( array( 'f_choice' => array( array( 'a' ) ) ), 'f_choice', 'invalid_value' ),
-			'option not in list' => array( array( 'f_select' => 'evil' ), 'f_select', 'invalid_option' ),
-			'checkbox unknown'   => array( array( 'f_choice' => array( 'a', 'zzz' ) ), 'f_choice', 'invalid_option' ),
-			'too long'           => array( array( 'f_name01' => str_repeat( 'x', 191 ) ), 'f_name01', 'too_long' ),
-			'bad date'           => array( array( 'f_date01' => '2026-02-30' ), 'f_date01', 'invalid_date' ),
+			'unknown field'       => array( array( 'f_zzzzzz' => 'x' ), 'f_zzzzzz', 'unknown_field' ),
+			'array for text'      => array( array( 'f_name01' => array( 'a', 'b' ) ), 'f_name01', 'invalid_value' ),
+			'nested array'        => array( array( 'f_choice' => array( array( 'a' ) ) ), 'f_choice', 'invalid_value' ),
+			'option not in list'  => array( array( 'f_select' => 'evil' ), 'f_select', 'invalid_option' ),
+			'checkbox unknown'    => array( array( 'f_choice' => array( 'a', 'zzz' ) ), 'f_choice', 'invalid_option' ),
+			'too long'            => array( array( 'f_name01' => str_repeat( 'x', 191 ) ), 'f_name01', 'too_long' ),
+			'bad date'            => array( array( 'f_date01' => '2026-02-30' ), 'f_date01', 'invalid_date' ),
 			'number out of range' => array( array( 'f_numb01' => '11' ), 'f_numb01', 'out_of_range' ),
-			'radio array'        => array( array( 'f_radio1' => array( 'a', 'b' ) ), 'f_radio1', 'invalid_value' ),
+			'radio array'         => array( array( 'f_radio1' => array( 'a', 'b' ) ), 'f_radio1', 'invalid_value' ),
 		);
 	}
 
@@ -174,8 +180,8 @@ final class SubmissionServiceTest extends FrontendTestCase {
 			array( 'id' => 'f_topic1', 'type' => 'radio', 'key' => 'topic', 'label' => 'Topic', 'options' => array( array( 'value' => 'quote', 'label' => 'Quote' ), array( 'value' => 'other', 'label' => 'Other' ) ) ),
 			array( 'id' => 'f_budget', 'type' => 'text', 'key' => 'budget', 'label' => 'Budget', 'required' => true, 'condition' => array( 'action' => 'show', 'field' => 'f_topic1', 'operator' => 'equals', 'value' => 'quote' ) ),
 		);
-		$form = $this->create_published_form( $fields );
-		$res  = $this->service()->submit( $form, $this->payload( $form, array( 'f_topic1' => 'other', 'f_budget' => '1000' ) ) );
+		$form   = $this->create_published_form( $fields );
+		$res    = $this->service()->submit( $form, $this->payload( $form, array( 'f_topic1' => 'other', 'f_budget' => '1000' ) ) );
 		$this->assertTrue( $res['success'], 'Hidden required field may be empty.' );
 		$values = $this->plugin()->get( EntryRepository::class )->values_for( (int) $res['entry_id'] );
 		$this->assertSame( array( 'f_topic1' => 'other' ), $values );
@@ -187,9 +193,12 @@ final class SubmissionServiceTest extends FrontendTestCase {
 	public function test_honeypot_marks_spam_without_jobs_or_event(): void {
 		$form  = $this->create_published_form();
 		$fired = 0;
-		add_action( 'form_captain_entry_created_v1', static function () use ( &$fired ): void {
-			++$fired;
-		} );
+		add_action(
+			'form_captain_entry_created_v1',
+			static function () use ( &$fired ): void {
+				++$fired;
+			}
+		);
 		$raw = $this->payload( $form, $this->valid_fields() );
 		$raw[ \FormCaptain\Security\SpamGuard::honeypot_name( (string) $form['public_id'] ) ] = 'http://spam.example';
 		$res = $this->service()->submit( $form, $raw );
@@ -234,9 +243,9 @@ final class SubmissionServiceTest extends FrontendTestCase {
 	}
 
 	public function test_paused_and_draft_forms(): void {
-		$form             = $this->create_published_form( null, array( 'paused_message' => 'Pause!' ) );
-		$form['status']   = 'paused';
-		$res              = $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) );
+		$form           = $this->create_published_form( null, array( 'paused_message' => 'Pause!' ) );
+		$form['status'] = 'paused';
+		$res            = $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) );
 		$this->assertSame( 'form_not_accepting', $res['code'] );
 		$this->assertSame( 'Pause!', $res['message'] );
 		$form['status'] = 'draft';
@@ -280,8 +289,8 @@ final class SubmissionServiceTest extends FrontendTestCase {
 		$fields = array(
 			array( 'id' => 'f_cons01', 'type' => 'consent', 'key' => 'consent', 'label' => 'Einwilligung', 'required' => true, 'consent_text' => 'Ich stimme der <strong>Verarbeitung</strong> zu.', 'consent_revision' => 3 ),
 		);
-		$form = $this->create_published_form( $fields );
-		$res  = $this->service()->submit( $form, $this->payload( $form, array() ) );
+		$form   = $this->create_published_form( $fields );
+		$res    = $this->service()->submit( $form, $this->payload( $form, array() ) );
 		$this->assertSame( 'consent_required', $res['error_codes']['f_cons01'] );
 
 		$res   = $this->service()->submit( $form, $this->payload( $form, array( 'f_cons01' => '1' ) ) );
@@ -296,8 +305,8 @@ final class SubmissionServiceTest extends FrontendTestCase {
 	}
 
 	public function test_storage_failure_rolls_back(): void {
-		$form   = $this->create_published_form();
-		$break  = static function ( string $q ): string {
+		$form  = $this->create_published_form();
+		$break = static function ( string $q ): string {
 			return str_contains( $q, 'fc_entry_values' ) && str_starts_with( ltrim( $q ), 'INSERT' ) ? 'INSERT INTO fc_table_that_does_not_exist VALUES (1)' : $q;
 		};
 		global $wpdb;

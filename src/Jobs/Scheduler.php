@@ -15,11 +15,20 @@ final class Scheduler {
 
 	public const HOOK_JOBS    = 'form_captain_process_jobs';
 	public const HOOK_CLEANUP = 'form_captain_daily_cleanup';
+	public const HOOK_HOURLY  = 'form_captain_hourly_cleanup';
 
 	public function register( Plugin $plugin ): void {
 		add_filter( 'cron_schedules', array( self::class, 'add_interval' ) ); // phpcs:ignore WordPress.WP.CronInterval
 		add_action( self::HOOK_JOBS, static fn() => $plugin->get( JobRunner::class )->run() );
 		add_action( self::HOOK_CLEANUP, static fn() => do_action( 'form_captain_cleanup' ) );
+		add_action(
+			self::HOOK_HOURLY,
+			static function () use ( $plugin ): void {
+				if ( class_exists( \FormCaptain\Security\RateLimiter::class ) ) {
+					$plugin->get( \FormCaptain\Security\RateLimiter::class )->purge_old();
+				}
+			}
+		);
 		add_action( 'init', array( self::class, 'schedule' ) );
 		add_action(
 			'admin_init',
@@ -72,11 +81,15 @@ final class Scheduler {
 		if ( ! wp_next_scheduled( self::HOOK_CLEANUP ) ) {
 			wp_schedule_event( time() + 3600, 'daily', self::HOOK_CLEANUP );
 		}
+		if ( ! wp_next_scheduled( self::HOOK_HOURLY ) ) {
+			wp_schedule_event( time() + 900, 'hourly', self::HOOK_HOURLY );
+		}
 	}
 
 	public static function unschedule(): void {
 		wp_clear_scheduled_hook( self::HOOK_JOBS );
 		wp_clear_scheduled_hook( self::HOOK_CLEANUP );
+		wp_clear_scheduled_hook( self::HOOK_HOURLY );
 	}
 
 	/** Non-blocking nudge after a submission so mails go out quickly. */

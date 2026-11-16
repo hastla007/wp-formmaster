@@ -66,15 +66,15 @@ final class RendererTest extends FrontendTestCase {
 	}
 
 	public function test_two_forms_get_unique_ids(): void {
-		$form  = $this->create_published_form();
-		$html  = $this->render( $form ) . $this->render( $form );
+		$form = $this->create_published_form();
+		$html = $this->render( $form ) . $this->render( $form );
 		preg_match_all( '/\sid="([^"]+)"/', $html, $m );
 		$this->assertSame( count( $m[1] ), count( array_unique( $m[1] ) ) );
 	}
 
 	public function test_paused_archived_and_missing(): void {
-		$form             = $this->create_published_form( null, array( 'paused_message' => 'Gerade Pause.' ) );
-		$form['status']   = 'paused';
+		$form           = $this->create_published_form( null, array( 'paused_message' => 'Gerade Pause.' ) );
+		$form['status'] = 'paused';
 		wp_set_current_user( 0 );
 		$html = $this->render( $form );
 		$this->assertStringContainsString( 'Gerade Pause.', $html );

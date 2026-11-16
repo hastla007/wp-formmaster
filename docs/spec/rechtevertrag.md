@@ -50,16 +50,16 @@ Antwortformat REST (öffentlich und Admin): `{ "success": false, "code": "<code>
 | `form_not_found` | 404 | Formular existiert nicht oder ist öffentlich nicht sichtbar (draft/archived) |
 | `form_not_accepting` | 409 | Formular `paused` |
 | `not_found` | 404 | Entry/Notiz/Job/Datei/Integration nicht vorhanden oder gehört nicht zum übergeordneten Objekt |
-| `validation_failed` | 422 | Feldvalidierung fehlgeschlagen; Feldcodes z. B. `required`, `invalid_email`, `too_long`, `out_of_range`, `invalid_option`, `unknown_field`, `consent_required` |
-| `schema_invalid` | 422 | Formularschema/Import ungültig |
-| `schema_unsupported` | 422 | Schema-Version unbekannt/zu neu (Import) |
+| `validation_failed` | 400 | Feldvalidierung fehlgeschlagen; Feldcodes z. B. `required`, `invalid_email`, `too_long`, `out_of_range`, `invalid_option`, `unknown_field`, `consent_required` |
+| `schema_invalid` | 400 | Formularschema/Import ungültig |
+| `schema_unsupported` | 400 | Schema-Version unbekannt/zu neu (Import) |
 | `too_many_fields` | 413 | mehr Felder als Budget (`budgets.md`) |
 | `revision_conflict` | 409 | Schema-Revision beim Speichern veraltet (Editor) |
 | `invalid_scope` | 400 | unbekannter Scope in `form_captain_get_entry_v1` |
 | `invalid_request` | 400 | Parameter fehlen/haben falschen Typ (Admin-Routen) |
 | `conflict` ¹ | 409 | unzulässiger Status-/Lebenszyklusübergang (`zustaende.md`), Formular mit Entries ohne Löschbestätigung |
 | `rate_limited` | 429 | Rate-Limit überschritten; Header `Retry-After` |
-| `spam_suspected` | 200/422 | Blockliste getroffen. Öffentlich: Default-Antwort wie Erfolg (200, `success: true`, Code `created`), damit Bots nichts lernen; bei Einstellung „Spam sichtbar ablehnen“ 422. Contract: `success: false`, `code: spam_suspected`. |
+| `spam_suspected` | 200/400 | Blockliste getroffen. Öffentlich: Default-Antwort wie Erfolg (200, `success: true`, Code `created`), damit Bots nichts lernen; bei Einstellung „Spam sichtbar ablehnen“ 400. Contract: `success: false`, `code: spam_suspected`. |
 | `payload_too_large` | 413 | Body/Felder/Dateien über Limit |
 | `unsupported_media_type` | 415 | Content-Type nicht `application/json` bzw. `multipart/form-data`/`application/x-www-form-urlencoded` |
 | `incompatible_contract` | – (Diagnose) / 409 | Adapter/Connector-Major-Version inkompatibel |
@@ -69,7 +69,7 @@ Antwortformat REST (öffentlich und Admin): `{ "success": false, "code": "<code>
 | `context_expired` / `context_replayed` | 400 | Kontext abgelaufen bzw. Einweg-Kontext wiederverwendet (`suite-kontext.md` 5) |
 | `storage_failed` | 500 | Entry konnte nicht gespeichert werden (Transaktion zurückgerollt) |
 | `job_not_retryable` | 409 | Retry für Job in Status `succeeded`/`running`/`cancelled` |
-| `export_too_large` | 422 | CSV-Export > 100 000 Zeilen |
+| `export_too_large` | 400 | CSV-Export > 100 000 Zeilen |
 | `not_ready` | – | Contract-Aufruf vor `form_captain_loaded_v1` |
 | `internal_error` | 500 | Unerwarteter Fehler; Details nur in `fc_log` |
 

@@ -30,9 +30,9 @@ abstract class FrontendTestCase extends TestCase {
 		Renderer::reset_counters();
 		Assets::reset();
 		$this->plugin()->get( FormSchemaLoader::class )->flush();
-		$GLOBALS['wp_scripts'] = null;
-		$GLOBALS['wp_styles']  = null;
-		$_GET                  = array();
+		$GLOBALS['wp_scripts']  = null;
+		$GLOBALS['wp_styles']   = null;
+		$_GET                   = array();
 		$_SERVER['REMOTE_ADDR'] = '203.0.113.10';
 	}
 

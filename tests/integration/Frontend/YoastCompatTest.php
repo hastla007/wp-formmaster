@@ -27,10 +27,24 @@ final class YoastCompatTest extends FrontendTestCase {
 
 	public function test_no_seo_hooks_registered(): void {
 		$hooks = array(
-			'wpseo_title', 'wpseo_metadesc', 'wpseo_canonical', 'wpseo_robots', 'wpseo_opengraph_title', 'wpseo_opengraph_desc',
-			'wpseo_opengraph_url', 'wpseo_twitter_title', 'wpseo_twitter_description', 'wpseo_schema_graph', 'wpseo_schema_graph_pieces',
-			'wpseo_sitemap_index', 'wpseo_sitemap_exclude_post_type', 'wpseo_exclude_from_sitemap_by_post_ids', 'wpseo_frontend_presenters',
-			'document_title_parts', 'pre_get_document_title', 'wp_robots',
+			'wpseo_title',
+			'wpseo_metadesc',
+			'wpseo_canonical',
+			'wpseo_robots',
+			'wpseo_opengraph_title',
+			'wpseo_opengraph_desc',
+			'wpseo_opengraph_url',
+			'wpseo_twitter_title',
+			'wpseo_twitter_description',
+			'wpseo_schema_graph',
+			'wpseo_schema_graph_pieces',
+			'wpseo_sitemap_index',
+			'wpseo_sitemap_exclude_post_type',
+			'wpseo_exclude_from_sitemap_by_post_ids',
+			'wpseo_frontend_presenters',
+			'document_title_parts',
+			'pre_get_document_title',
+			'wp_robots',
 		);
 		global $wp_filter;
 		foreach ( $hooks as $hook ) {
@@ -59,12 +73,12 @@ final class YoastCompatTest extends FrontendTestCase {
 			array( 'id' => 'f_name01', 'type' => 'text', 'key' => 'name', 'label' => 'Ihr Name', 'help' => 'Vor- und Nachname' ),
 			array( 'id' => 'f_hidden', 'type' => 'hidden', 'key' => 'campaign', 'label' => '', 'default' => 'secret-campaign' ),
 		);
-		$form = $this->create_published_form( $fields );
-		$html = YoastCompat::analysis_markup( $form, $this->plugin() );
+		$form   = $this->create_published_form( $fields );
+		$html   = YoastCompat::analysis_markup( $form, $this->plugin() );
 		$this->assertStringContainsString( 'Ihr Name', $html );
 		$this->assertStringContainsString( 'Vor- und Nachname', $html );
 		$this->assertStringNotContainsString( 'secret-campaign', $html );
 		$this->assertStringNotContainsString( '_fc_token', $html );
-		$this->assertStringContainsString( "yoast.analysis.shortcodes", YoastCompat::inline_script() );
+		$this->assertStringContainsString( 'yoast.analysis.shortcodes', YoastCompat::inline_script() );
 	}
 }

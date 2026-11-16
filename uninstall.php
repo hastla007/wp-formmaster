@@ -19,6 +19,7 @@ $form_captain_delete   = is_array( $form_captain_settings )
 
 wp_clear_scheduled_hook( 'form_captain_process_jobs' );
 wp_clear_scheduled_hook( 'form_captain_daily_cleanup' );
+wp_clear_scheduled_hook( 'form_captain_hourly_cleanup' );
 
 if ( ! $form_captain_delete ) {
 	return;

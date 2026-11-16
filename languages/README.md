@@ -24,6 +24,11 @@ PHP lädt die `.mo`-Dateien über `load_plugin_textdomain()`, JavaScript die JSO
 
    `assets/build` wird ausgeschlossen, damit die Quellreferenzen auf `assets/src/*.js` zeigen.
 
+   Ohne Zugriff auf `develop.svn.wordpress.org` bricht make-pot beim Lesen von `block.json` ab. Dann mit
+   `--skip-block-json` (und `--exclude=…,build,dist,tools`) erzeugen und die fünf Block-Texte aus
+   `blocks/form/block.json` (Kontexte `block title`, `block description`, `block keyword`) wieder oben in POT und PO
+   einfügen; die Übersetzungen dazu stehen in der PO-Datei unter `#: blocks/form/block.json`.
+
 2. **PO-Dateien aktualisieren und übersetzen:**
 
    ```sh

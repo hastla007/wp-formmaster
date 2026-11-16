@@ -177,6 +177,8 @@ Die Umsetzung gilt als vertragstreu, wenn die Fälle aus P8-74 und P8-87 (Regres
 
 ## 6. Vor der Umsetzung an einer echten WooCommerce-Installation zu prüfen
 
+**Ergebnis vom 16.11.2026** (WooCommerce 11.3.0, WordPress 7.1.4; captain-pro `docs/FORM-PRO.md`): 6.1 ja, der Hook feuert auch beim Store-API-Checkout (Position mit `frozen_via: checkout`); 6.2 eine 0-Euro-Bestellung mit `payment_complete()` steht auf `completed` und ist berechtigt; 6.3 bleibt beim Inhaber (umgesetzt ist der Vorschlag: keine automatische Löschung).
+
 1. **Einfrier-Hook im Block-Checkout:** Feuert `woocommerce_checkout_create_order_line_item` auch beim Store-API-Checkout (Cart/Checkout Blocks) für jede Position? Wenn nicht, gilt der Fallback 2.2 Nr. 2 (Einfrieren bei der ersten Berechtigungsprüfung), mit Test in P8-74.
 2. **Gratisbestellungen:** Welchen Status setzt die aktuelle WooCommerce-Version nach einem 0-Euro-Checkout (`processing` oder `completed`)? Prüfung über `is_paid()` und den Fall in 2.3 Nr. 2.
 3. **Entscheidung für den Inhaber:** Sollen Entries zu einem Auftrag gelöscht werden, wenn WooCommerce den Auftrag über den Privacy-Eraser anonymisiert? Vorschlag: nein, Form-Captain-Retention bleibt maßgeblich; der Hinweis im Systemstatus genügt.

@@ -239,11 +239,11 @@ final class SubmissionService {
 			if ( $trusted ) {
 				return $fail( Errors::SPAM_SUSPECTED, array( 'entry_id' => $entry_id ) );
 			}
-			return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED );
+			return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED, $values );
 		}
 		$this->dispatch_event( $form, $fields, $entry_id, (int) $version['version_no'], $values, $context, $request_id, $now );
 		Scheduler::nudge();
-		return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED );
+		return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED, $values );
 	}
 
 	/**
@@ -311,14 +311,15 @@ final class SubmissionService {
 				'errors'     => array(),
 			);
 		}
-		return $this->success( $form, (int) $entry['id'], $request_id, self::CODE_DUPLICATE );
+		return $this->success( $form, (int) $entry['id'], $request_id, self::CODE_DUPLICATE, $this->entries->values_for( (int) $entry['id'] ) );
 	}
 
 	/**
-	 * @param array<string,mixed> $form
+	 * @param array<string,mixed>                     $form
+	 * @param array<string,string|array<int,string>> $values validated values (for conditional confirmations)
 	 * @return array<string,mixed>
 	 */
-	private function success( array $form, int $entry_id, string $request_id, string $code ): array {
+	private function success( array $form, int $entry_id, string $request_id, string $code, array $values = array() ): array {
 		$out = array(
 			'success'    => true,
 			'code'       => $code,
@@ -328,7 +329,7 @@ final class SubmissionService {
 			'request_id' => $request_id,
 			'errors'     => array(),
 		);
-		return array_merge( $out, self::confirmation( $form, $entry_id ) );
+		return array_merge( $out, self::confirmation( $form, $entry_id, $values ) );
 	}
 
 	/**
@@ -338,11 +339,12 @@ final class SubmissionService {
 	 * @param array<string,mixed> $form
 	 * @return array{message:string,redirect_url?:string}
 	 */
-	public static function confirmation( array $form, int $entry_id = 0 ): array {
+	public static function confirmation( array $form, int $entry_id = 0, array $values = array() ): array {
 		$conf = is_array( $form['settings']['confirmation'] ?? null ) ? $form['settings']['confirmation'] : array();
 		if ( $entry_id > 0 ) {
 			// Conditional confirmation (contract 1.1.0): same shape as settings.confirmation, same checks below.
-			$filtered = apply_filters( 'form_captain_confirmation_v1', $conf, $form, $entry_id );
+			// $values: validated values of the entry (field_id => value), never shown to the visitor.
+			$filtered = apply_filters( 'form_captain_confirmation_v1', $conf, $form, $entry_id, $values );
 			$conf     = is_array( $filtered ) ? $filtered : $conf;
 		}
 		$message = trim( wp_strip_all_tags( (string) ( $conf['message'] ?? '' ) ) );

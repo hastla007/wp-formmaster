@@ -180,9 +180,9 @@ final class ExtensionPointsTest extends TestCase {
 		$this->assertSame( array( 'admin@example.org' ), $mail['to'] );
 
 		$draft = self::factory()->post->create( array( 'post_type' => 'page', 'post_status' => 'draft' ) );
-		$this->hook( 'form_captain_confirmation_v1', static fn( $conf, array $form, int $entry_id ): array => array( 'type' => 'page', 'page_id' => $draft, 'message' => 'Routed thanks' ), 10, 3 );
+		$this->hook( 'form_captain_confirmation_v1', static fn( $conf, array $form, int $entry_id, array $values ): array => array( 'type' => 'page', 'page_id' => $draft, 'message' => 'Routed thanks ' . ( $values['f_name01'] ?? '?' ) ), 10, 4 );
 		$res = $this->plugin()->get( SubmissionService::class )->submit( $form, array( 'f_name01' => 'Ada', 'f_mail01' => 'ada@example.org' ), array( 'trusted' => true, 'idempotency_key' => 'ext-4' ) );
-		$this->assertSame( 'Routed thanks', $res['message'] );
+		$this->assertSame( 'Routed thanks Ada', $res['message'], 'the filter sees the validated values' );
 		$this->assertArrayNotHasKey( 'redirect_url', $res, 'an unpublished page is never a redirect target' );
 	}
 

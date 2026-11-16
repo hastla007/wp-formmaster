@@ -129,6 +129,7 @@ final class MailJobHandler {
 	 * Sends via wp_mail(); HTML mails get a plain-text alternative (multipart/alternative).
 	 *
 	 * @param array<string,mixed> $mail
+	 * @param-out string $error
 	 */
 	public function send( array $mail, string &$error = '' ): bool {
 		$headers = array();

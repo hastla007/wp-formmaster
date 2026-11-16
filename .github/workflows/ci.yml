@@ -22,8 +22,8 @@ jobs:
       - run: composer phpcs
       - name: PHPStan
         run: |
-          composer global require --no-interaction phpstan/phpstan:^2.1 szepeviktor/phpstan-wordpress:^2.0 phpstan/extension-installer:^1.4
-          ~/.composer/vendor/bin/phpstan analyse --memory-limit=1G -c phpstan.neon.dist
+          composer install --no-interaction --no-progress --working-dir=tools/phpstan
+          tools/phpstan/vendor/bin/phpstan analyse --memory-limit=1G -c phpstan.neon.dist --no-progress
       - name: Composer audit (dependencies, P1-15)
         run: composer audit --no-interaction
       - name: Secret scan (P1-15)
@@ -82,9 +82,9 @@ jobs:
         with: { php-version: '${{ matrix.php }}', extensions: mysqli, tools: composer:v2 }
       - run: composer install --no-interaction --no-progress
       - run: bin/install-wp-tests.sh "$WP_VERSION"
-      - run: WP_CORE_DIR="$PWD/vendor/wordpress/$WP_VERSION" vendor/bin/phpunit
+      - run: vendor/bin/phpunit
       - name: Two-plugin contract tests (core + reference connector loaded as plugin)
-        run: FC_LOAD_REFERENCE_CONNECTOR=1 WP_CORE_DIR="$PWD/vendor/wordpress/$WP_VERSION" vendor/bin/phpunit --group two-plugin
+        run: FC_LOAD_REFERENCE_CONNECTOR=1 vendor/bin/phpunit --group two-plugin
 
   e2e:
     name: Browser E2E (${{ matrix.browser }})

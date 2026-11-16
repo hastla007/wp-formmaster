@@ -73,7 +73,11 @@ final class FormRepository {
 		return $row ? $this->hydrate( $row ) : null;
 	}
 
-	/** Accepts numeric ID or public ID. */
+	/**
+	 * Accepts numeric ID or public ID.
+	 *
+	 * @return array<string,mixed>|null
+	 */
 	public function resolve( int|string $id ): ?array {
 		if ( is_int( $id ) || ctype_digit( (string) $id ) ) {
 			return $this->find( (int) $id );

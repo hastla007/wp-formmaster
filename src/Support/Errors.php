@@ -68,6 +68,9 @@ final class Errors {
 		};
 	}
 
+	/**
+	 * @param array<string,mixed> $data
+	 */
 	public static function error( string $code, string $message = '', array $data = array() ): \WP_Error {
 		return new \WP_Error( $code, '' !== $message ? $message : self::public_message( $code ), array_merge( array( 'status' => self::status( $code ) ), $data ) );
 	}

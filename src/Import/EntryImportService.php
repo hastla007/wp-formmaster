@@ -77,8 +77,18 @@ final class EntryImportService {
 
 	/** Cron hooks (lazy: the service is only built when a hook fires). */
 	public static function register_hooks( Plugin $plugin ): void {
-		add_action( self::CLEANUP_HOOK, static fn( $name = '' ) => $plugin->get( self::class )->cleanup_file( (string) $name ) );
-		add_action( 'form_captain_hourly_cleanup', static fn() => $plugin->get( self::class )->sweep() );
+		add_action(
+			self::CLEANUP_HOOK,
+			static function ( $name = '' ) use ( $plugin ): void {
+				$plugin->get( self::class )->cleanup_file( (string) $name );
+			}
+		);
+		add_action(
+			'form_captain_hourly_cleanup',
+			static function () use ( $plugin ): void {
+				$plugin->get( self::class )->sweep();
+			}
+		);
 	}
 
 	public static function can_import(): bool {
@@ -121,7 +131,7 @@ final class EntryImportService {
 	}
 
 	/** Cron callback: deletes one uploaded file (name only, never a path). */
-	public function cleanup_file( $name = '' ): void {
+	public function cleanup_file( mixed $name = '' ): void {
 		$path = self::file_path( (string) $name );
 		if ( null !== $path && file_exists( $path ) ) {
 			wp_delete_file( $path );

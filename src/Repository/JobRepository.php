@@ -274,8 +274,8 @@ final class JobRepository {
 		global $wpdb;
 		$out = array();
 		foreach ( $wpdb->get_col( $wpdb->prepare( "SELECT payload_json FROM {$this->table()} WHERE type = %s AND status = 'paused' LIMIT 10000", self::CONNECTOR_JOB_TYPE ) ) ?: array() as $json ) {
-			$payload = json_decode( (string) $json, true );
-			$key     = is_array( $payload ) ? (string) ( $payload['action_key'] ?? '' ) : '';
+			$payload     = json_decode( (string) $json, true );
+			$key         = is_array( $payload ) ? (string) ( $payload['action_key'] ?? '' ) : '';
 			$out[ $key ] = ( $out[ $key ] ?? 0 ) + 1;
 		}
 		ksort( $out );
@@ -288,6 +288,9 @@ final class JobRepository {
 		return max( 30, $base + $jitter );
 	}
 
+	/**
+	 * @param array<string,mixed>|null $result
+	 */
 	private function finish( int $id, string $token, string $status, ?string $code, ?string $message, ?array $result = null ): bool {
 		global $wpdb;
 		$now      = Clock::now();

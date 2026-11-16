@@ -207,9 +207,9 @@ final class IntegrationsPage {
 	public function paused_counts(): array {
 		$out = array();
 		foreach ( $this->jobs->paused_by_action() as $action_key => $count ) {
-			$job    = array( 'payload' => array( 'action_key' => $action_key ) );
-			$action = $this->registry->action( (string) $action_key );
-			$key    = 'connector_not_found' === $this->registry->paused_reason( $job ) ? '' : (string) ( $action['connector'] ?? '' );
+			$job         = array( 'payload' => array( 'action_key' => $action_key ) );
+			$action      = $this->registry->action( (string) $action_key );
+			$key         = 'connector_not_found' === $this->registry->paused_reason( $job ) ? '' : (string) ( $action['connector'] ?? '' );
 			$out[ $key ] = ( $out[ $key ] ?? 0 ) + $count;
 		}
 		return $out;

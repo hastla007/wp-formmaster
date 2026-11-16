@@ -73,7 +73,11 @@ final class AccessControl {
 		return $result;
 	}
 
-	/** Restores the default: administrators get everything, all other roles nothing. */
+	/**
+	 * Restores the default: administrators get everything, all other roles nothing.
+	 *
+	 * @return array<string,mixed>
+	 */
 	public static function reset(): array {
 		$input = array( 'administrator' => array_fill_keys( Capabilities::ALL, true ) );
 		return self::apply( $input );

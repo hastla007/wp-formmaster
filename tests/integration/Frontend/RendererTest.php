@@ -135,7 +135,11 @@ final class RendererTest extends FrontendTestCase {
 		do_action( 'wp_enqueue_scripts' );
 		$this->assertTrue( wp_script_is( Assets::HANDLE, 'enqueued' ) );
 		$this->assertTrue( wp_style_is( Assets::HANDLE, 'enqueued' ) );
-		$this->assertStringNotContainsString( 'nonce', (string) wp_scripts()->get_data( Assets::HANDLE, 'before' )[1] );
+		// The inline config must never carry a nonce (cache safety, ADR 0003). The internal layout of
+		// the "before" data differs between WordPress versions, so all inline parts are checked together.
+		$inline = implode( "\n", array_filter( (array) wp_scripts()->get_data( Assets::HANDLE, 'before' ), 'is_string' ) );
+		$this->assertNotSame( '', trim( $inline ), 'inline frontend config is present' );
+		$this->assertStringNotContainsString( 'nonce', $inline );
 	}
 
 	public function test_renderer_marks_assets_and_base_mode(): void {

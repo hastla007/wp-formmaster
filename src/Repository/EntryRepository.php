@@ -234,7 +234,27 @@ final class EntryRepository {
 		return array_map( array( $this, 'hydrate' ), $rows ?: array() );
 	}
 
-	/** @return array{0:string,1:array<int,mixed>} */
+	/**
+	 * Returns a valid "Y-m-d H:i:s" (or "Y-m-d", expanded to midnight) datetime string or null.
+	 */
+	public static function valid_datetime( mixed $value ): ?string {
+		if ( ! is_string( $value ) || ! preg_match( '/^(\d{4})-(\d{2})-(\d{2})(?: (\d{2}):(\d{2}):(\d{2}))?$/', $value, $m ) ) {
+			return null;
+		}
+		if ( ! checkdate( (int) $m[2], (int) $m[3], (int) $m[1] ) ) {
+			return null;
+		}
+		if ( isset( $m[4] ) && ( (int) $m[4] > 23 || (int) $m[5] > 59 || (int) $m[6] > 59 ) ) {
+			return null;
+		}
+		return isset( $m[4] ) ? $value : $value . ' 00:00:00';
+	}
+
+	/**
+	 * @return array{0:string,1:array<int,mixed>}
+	 *
+	 * @param array<string,mixed> $args
+	 */
 	private function where( array $args ): array {
 		global $wpdb;
 		$where  = array( '1=1' );
@@ -249,13 +269,17 @@ final class EntryRepository {
 		} elseif ( empty( $args['any_status'] ) ) {
 			$where[] = "e.status NOT IN ('trash','spam')";
 		}
-		if ( ! empty( $args['date_from'] ) ) {
+		// Only well-formed UTC datetimes reach the database; anything else is ignored
+		// (strict SQL modes reject invalid DATETIME literals with an error).
+		$date_from = self::valid_datetime( $args['date_from'] ?? null );
+		if ( null !== $date_from ) {
 			$where[]  = 'e.created_gmt >= %s';
-			$params[] = (string) $args['date_from'];
+			$params[] = $date_from;
 		}
-		if ( ! empty( $args['date_to'] ) ) {
+		$date_to = self::valid_datetime( $args['date_to'] ?? null );
+		if ( null !== $date_to ) {
 			$where[]  = 'e.created_gmt <= %s';
-			$params[] = (string) $args['date_to'];
+			$params[] = $date_to;
 		}
 		if ( ! empty( $args['ids'] ) ) {
 			$ids     = array_map( 'intval', (array) $args['ids'] );
@@ -277,7 +301,12 @@ final class EntryRepository {
 		return array( implode( ' AND ', $where ), $params );
 	}
 
-	/** Entry IDs whose lookup fields equal $email (privacy). */
+	/**
+	 * Entry IDs whose lookup fields equal $email (privacy).
+	 *
+	 * @param array<int,int|string> $field_ids
+	 * @return array<int,int>
+	 */
 	public function ids_by_value( array $field_ids, string $value, int $limit = 500, int $offset = 0 ): array {
 		global $wpdb;
 		if ( ! $field_ids ) {

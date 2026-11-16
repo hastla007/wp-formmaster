@@ -346,7 +346,7 @@ final class RetentionService {
 	 *
 	 * @param mixed $form
 	 */
-	public function on_form_updated( $form, $change = '' ): void {
+	public function on_form_updated( mixed $form, mixed $change = '' ): void {
 		unset( $change );
 		if ( ! is_array( $form ) || empty( $form['id'] ) ) {
 			return;
@@ -432,21 +432,10 @@ final class RetentionService {
 	}
 
 	private function purge_rate_limits(): void {
-		foreach ( array( 'FormCaptain\\Security\\RateLimiter', 'FormCaptain\\Service\\RateLimiter', 'FormCaptain\\Frontend\\RateLimiter' ) as $class ) {
-			if ( ! class_exists( $class ) || ! method_exists( $class, 'purge_old' ) ) {
-				continue;
-			}
-			try {
-				$method = new \ReflectionMethod( $class, 'purge_old' );
-				if ( $method->isStatic() ) {
-					$class::purge_old();
-				} else {
-					( $this->plugin ?? Plugin::instance() )->get( $class )->purge_old();
-				}
-			} catch ( \Throwable $e ) {
-				Logger::log( 'warning', 'rate_limit_purge_failed', get_class( $e ) );
-			}
-			return;
+		try {
+			( $this->plugin ?? Plugin::instance() )->get( \FormCaptain\Security\RateLimiter::class )->purge_old();
+		} catch ( \Throwable $e ) {
+			Logger::log( 'warning', 'rate_limit_purge_failed', get_class( $e ) );
 		}
 	}
 }

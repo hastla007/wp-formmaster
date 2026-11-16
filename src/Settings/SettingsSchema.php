@@ -243,7 +243,7 @@ final class SettingsSchema {
 			}
 			$path = $group . '.' . $key;
 			if ( 'bool' === $def['type'] ) {
-				$values[ $key ] = ! empty( $input[ $key ] ) && '0' !== $input[ $key ];
+				$values[ $key ] = ! empty( $input[ $key ] );
 				continue;
 			}
 			if ( ! array_key_exists( $key, $input ) ) {

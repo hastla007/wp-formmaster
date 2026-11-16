@@ -242,7 +242,11 @@ final class InjectionTest extends TestCase {
 		$this->assertSame( 0, $entries->list( array( 'search' => '%' ) )['total'], 'LIKE wildcards are escaped' );
 		$this->assertSame( 0, $entries->list( array( 'search' => '_' ) )['total'] );
 		$this->assertSame( 1, $entries->list( array( 'form_id' => (int) $form['id'], 'status' => self::SQL ) )['total'], 'Unknown status ignored' );
-		$this->assertIsInt( $entries->list( array( 'date_from' => self::SQL, 'date_to' => self::SQL ) )['total'], 'Dates are bound parameters' );
+		// Malformed dates never reach the database (strict SQL modes would raise an error) and are ignored.
+		$this->assertSame( $entries->list( array() )['total'], $entries->list( array( 'date_from' => self::SQL, 'date_to' => self::SQL ) )['total'], 'Invalid dates are ignored' );
+		$this->assertSame( '', $wpdb->last_error, 'No SQL error from date payloads' );
+		$this->assertNull( EntryRepository::valid_datetime( '2026-02-30' ), 'Impossible calendar dates rejected' );
+		$this->assertSame( '2026-11-16 00:00:00', EntryRepository::valid_datetime( '2026-11-16' ) );
 		$res = $forms->list( array( 'search' => self::SQL, 'orderby' => 'id; DROP TABLE x', 'order' => 'DESC; --' ) );
 		$this->assertSame( 0, $res['total'] );
 		$res = $forms->list( array( 'orderby' => '(SELECT SLEEP(5))', 'order' => 'asc' ) );

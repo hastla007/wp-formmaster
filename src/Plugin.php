@@ -106,7 +106,7 @@ final class Plugin {
 
 	/**
 	 * @template T of object
-	 * @param class-string<T>|string $id
+	 * @param class-string<T> $id
 	 * @return T
 	 */
 	public function get( string $id ): object {
@@ -132,8 +132,9 @@ final class Plugin {
 		$args = array();
 		foreach ( $ctor->getParameters() as $param ) {
 			$type = $param->getType();
-			if ( $type instanceof \ReflectionNamedType && ! $type->isBuiltin() ) {
-				$args[] = self::class === $type->getName() ? $this : $this->get( $type->getName() );
+			$dep  = $type instanceof \ReflectionNamedType && ! $type->isBuiltin() ? $type->getName() : '';
+			if ( '' !== $dep && ( class_exists( $dep ) || interface_exists( $dep ) ) ) {
+				$args[] = self::class === $dep ? $this : $this->get( $dep );
 			} elseif ( $param->isDefaultValueAvailable() ) {
 				$args[] = $param->getDefaultValue();
 			} else {

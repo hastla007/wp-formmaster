@@ -8,3 +8,5 @@
 .phpunit.cache/
 *.log
 .DS_Store
+/tools/phpstan/vendor/
+/tools/phpstan/composer.lock

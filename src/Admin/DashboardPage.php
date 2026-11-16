@@ -123,7 +123,7 @@ final class DashboardPage {
 	/** Marks a manual step as done. Returns redirect URL (testable). */
 	public function process_step(): string {
 		$this->verify( 'form_captain_setup_step' );
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
+		// phpcs:ignore WordPress.Security.NonceVerification -- verified above via check_admin_referer().
 		$step = isset( $_REQUEST['step'] ) ? sanitize_key( wp_unslash( $_REQUEST['step'] ) ) : '';
 		if ( in_array( $step, self::MANUAL_STEPS, true ) ) {
 			$steps          = (array) get_option( self::STEPS_OPTION, array() );
@@ -151,7 +151,7 @@ final class DashboardPage {
 		if ( ! current_user_can( 'edit_pages' ) ) {
 			wp_die( esc_html__( 'You are not allowed to create pages.', 'form-captain' ), '', array( 'response' => 403 ) );
 		}
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
+		// phpcs:ignore WordPress.Security.NonceVerification -- verified above via check_admin_referer().
 		$form = $this->forms->find( isset( $_REQUEST['form'] ) ? absint( $_REQUEST['form'] ) : 0 );
 		if ( ! $form ) {
 			return admin_url( 'admin.php?page=form-captain&fc_error=not_found' );

@@ -39,6 +39,9 @@ final class EntryImportAdmin {
 		private FormRepository $forms
 	) {}
 
+	/**
+	 * @param array<string,mixed> $args
+	 */
 	public static function page_url( int $form_id, array $args = array() ): string {
 		return add_query_arg( array_merge( array( 'page' => 'form-captain-forms', self::QUERY => $form_id ), $args ), admin_url( 'admin.php' ) );
 	}
@@ -47,6 +50,9 @@ final class EntryImportAdmin {
 		return 'form_captain_eimp_msg_' . get_current_user_id();
 	}
 
+	/**
+	 * @param array<string,mixed> $args
+	 */
 	private static function fail( \WP_Error $error, int $form_id, array $args = array() ): string {
 		set_transient( self::message_key(), $error->get_error_message(), 300 );
 		return self::page_url( $form_id, $args + array( 'fc_ei_error' => $error->get_error_code() ) );
@@ -327,6 +333,9 @@ final class EntryImportAdmin {
 		return $out;
 	}
 
+	/**
+	 * @param array<string,mixed> $field
+	 */
 	private static function type_hint( array $field ): string {
 		return match ( (string) $field['type'] ) {
 			'email' => __( 'e-mail address', 'form-captain' ),
@@ -389,7 +398,7 @@ final class EntryImportAdmin {
 			$selected = (string) ( $current[ $idx ] ?? ( $suggest[ $idx ] ?? '' ) );
 			$label_id = 'fc-col-' . (int) $idx;
 			echo '<tr><th scope="row"><label for="' . esc_attr( $label_id ) . '">' . esc_html( '' !== (string) $name ? (string) $name : sprintf( /* translators: %d: column number */ __( 'Column %d', 'form-captain' ), (int) $idx + 1 ) ) . '</label></th>';
-			echo '<td><code>' . implode( '</code><br><code>', array_map( 'esc_html', array_filter( $examples, 'strlen' ) ) ) . '</code></td>';
+			echo '<td><code>' . implode( '</code><br><code>', array_map( 'esc_html', array_filter( $examples, static fn( string $s ): bool => '' !== $s ) ) ) . '</code></td>';
 			echo '<td><select id="' . esc_attr( $label_id ) . '" name="fc_col[' . (int) $idx . ']"><option value="">' . esc_html__( '– Ignore –', 'form-captain' ) . '</option>';
 			foreach ( $fields as $fid => $f ) {
 				echo '<option value="' . esc_attr( $fid ) . '"' . selected( $selected, $fid, false ) . '>' . esc_html( (string) $f['label'] . ' (' . self::type_hint( $f ) . ')' ) . '</option>';

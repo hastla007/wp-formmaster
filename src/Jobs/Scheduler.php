@@ -19,7 +19,12 @@ final class Scheduler {
 
 	public function register( Plugin $plugin ): void {
 		add_filter( 'cron_schedules', array( self::class, 'add_interval' ) ); // phpcs:ignore WordPress.WP.CronInterval
-		add_action( self::HOOK_JOBS, static fn() => $plugin->get( JobRunner::class )->run() );
+		add_action(
+			self::HOOK_JOBS,
+			static function () use ( $plugin ): void {
+				$plugin->get( JobRunner::class )->run();
+			}
+		);
 		add_action( self::HOOK_CLEANUP, static fn() => do_action( 'form_captain_cleanup' ) );
 		add_action(
 			self::HOOK_HOURLY,

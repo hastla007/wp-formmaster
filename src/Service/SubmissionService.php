@@ -105,7 +105,7 @@ final class SubmissionService {
 			if ( ! $token['ok'] ) {
 				return $fail( Errors::INVALID_TOKEN );
 			}
-			$issued_at   = (int) $token['issued_at'];
+			$issued_at = (int) $token['issued_at'];
 			// A cached page can hand the same token to several visitors. The key therefore
 			// also covers the submitted values: an identical retry is deduplicated (P4-03),
 			// a different visitor's submission with the shared token is stored (P3-14).
@@ -275,6 +275,9 @@ final class SubmissionService {
 		return hash( 'sha256', (string) wp_json_encode( $input ) );
 	}
 
+	/**
+	 * @param array<string,mixed> $meta
+	 */
 	private function trusted_request_key( int $form_id, array $meta ): string {
 		if ( isset( $meta['request_key'] ) && is_string( $meta['request_key'] ) && preg_match( '/^[0-9a-f]{64}$/', $meta['request_key'] ) ) {
 			return $meta['request_key'];

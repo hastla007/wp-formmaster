@@ -11,6 +11,10 @@ DB_NAME="${E2E_DB_NAME:-wp_e2e}"
 DB_USER="${E2E_DB_USER:-wp}"
 DB_PASS="${E2E_DB_PASSWORD:-wp}"
 DB_HOST="${E2E_DB_HOST:-localhost}"
+# The mysql client takes the port separately; WordPress accepts "host:port".
+DB_CLI_HOST="${DB_HOST%%:*}"
+DB_CLI_PORT=""
+case "$DB_HOST" in *:*) DB_CLI_PORT="--protocol=TCP --port=${DB_HOST##*:}" ;; esac
 URL="http://127.0.0.1:$PORT"
 PIDFILE="$DIR/.server.pid"
 
@@ -49,7 +53,7 @@ define( 'WP_SITEURL', '$URL' );
 if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', __DIR__ . '/' ); }
 require_once ABSPATH . 'wp-settings.php';
 PHP
-	mysql --user="$DB_USER" --password="$DB_PASS" --host="$DB_HOST" -e "DROP DATABASE IF EXISTS \`$DB_NAME\`; CREATE DATABASE \`$DB_NAME\`" 2>/dev/null || mysql -e "DROP DATABASE IF EXISTS \`$DB_NAME\`; CREATE DATABASE \`$DB_NAME\`; GRANT ALL ON \`$DB_NAME\`.* TO '$DB_USER'@'localhost';"
+	mysql --user="$DB_USER" --password="$DB_PASS" --host="$DB_CLI_HOST" $DB_CLI_PORT -e "DROP DATABASE IF EXISTS \`$DB_NAME\`; CREATE DATABASE \`$DB_NAME\`" 2>/dev/null || mysql -e "DROP DATABASE IF EXISTS \`$DB_NAME\`; CREATE DATABASE \`$DB_NAME\`; GRANT ALL ON \`$DB_NAME\`.* TO '$DB_USER'@'localhost';"
 	php -d display_errors=0 -r "
 		define( 'WP_INSTALLING', true );
 		\$_SERVER['HTTP_HOST'] = '127.0.0.1:$PORT';

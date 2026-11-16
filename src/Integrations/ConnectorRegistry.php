@@ -321,7 +321,11 @@ final class ConnectorRegistry {
 		return ( '' === $state || self::STATE_MISSING === $state ) ? 'connector_not_found' : 'connector_disabled';
 	}
 
-	/** Translated status label for a paused job (Integrations, entry detail). */
+	/**
+	 * Translated status label for a paused job (Integrations, entry detail).
+	 *
+	 * @param array<string,mixed> $job
+	 */
 	public function paused_label( array $job ): string {
 		return 'connector_not_found' === $this->paused_reason( $job )
 			? __( 'Paused (connector missing)', 'form-captain' )
@@ -887,6 +891,9 @@ final class ConnectorRegistry {
 		);
 	}
 
+	/**
+	 * @return string|array<int,string>
+	 */
 	public static function sample_value( string $type ): string|array {
 		return match ( $type ) {
 			'email' => 'test@example.com',

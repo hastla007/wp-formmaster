@@ -1,0 +1,12 @@
+{
+  "name": "hastla007/form-captain-tools-phpstan",
+  "description": "Isolated PHPStan toolchain (kept out of the plugin's dev dependencies).",
+  "require": {
+    "php-stubs/wp-cli-stubs": "^2.11",
+    "phpstan/phpstan": "^2.1",
+    "szepeviktor/phpstan-wordpress": "^2.0"
+  },
+  "config": {
+    "sort-packages": true
+  }
+}

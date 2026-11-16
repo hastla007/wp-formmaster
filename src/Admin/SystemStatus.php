@@ -120,9 +120,9 @@ final class SystemStatus {
 	private function paused_by_connector(): array {
 		$out = array();
 		foreach ( $this->jobs->paused_by_action() as $action_key => $count ) {
-			$job    = array( 'payload' => array( 'action_key' => (string) $action_key ) );
-			$action = $this->registry->action( (string) $action_key );
-			$key    = 'connector_not_found' === $this->registry->paused_reason( $job ) ? 'missing' : (string) ( $action['connector'] ?? 'missing' );
+			$job         = array( 'payload' => array( 'action_key' => (string) $action_key ) );
+			$action      = $this->registry->action( (string) $action_key );
+			$key         = 'connector_not_found' === $this->registry->paused_reason( $job ) ? 'missing' : (string) ( $action['connector'] ?? 'missing' );
 			$out[ $key ] = ( $out[ $key ] ?? 0 ) + (int) $count;
 		}
 		return $out;
@@ -142,7 +142,11 @@ final class SystemStatus {
 		}
 	}
 
-	/** Numbers of the last cleanup run (counts only). */
+	/**
+	 * Numbers of the last cleanup run (counts only).
+	 *
+	 * @return array<string,int>
+	 */
 	private static function cleanup_stats(): array {
 		$stats = get_option( 'form_captain_last_cleanup', array() );
 		$out   = array();
@@ -227,7 +231,12 @@ final class SystemStatus {
 		return $out;
 	}
 
-	/** Problems for notices, Site Health and CLI: code => translated message. */
+	/**
+	 * Problems for notices, Site Health and CLI: code => translated message.
+	 *
+	 * @param array<string,mixed>|null $data
+	 * @return array<string,string>
+	 */
 	public function problems( ?array $data = null ): array {
 		$d   = $data ?? $this->collect();
 		$out = array();
@@ -269,6 +278,7 @@ final class SystemStatus {
 
 	/**
 	 * Copyable support report without personal data (P5-22, P6-19).
+	 * @param array<string,mixed>|null $data
 	 */
 	public function report_text( ?array $data = null ): string {
 		$d     = $data ?? $this->collect();

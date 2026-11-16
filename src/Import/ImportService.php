@@ -505,7 +505,7 @@ final class ImportService {
 	private static function csv_value( array $field, string $value ): string|array {
 		$type  = (string) $field['type'];
 		$multi = 'checkbox' === $type || ( 'select' === $type && ! empty( $field['multiple'] ) );
-		$parts = $multi ? array_values( array_filter( array_map( 'trim', explode( GenericCsv::MULTI_SEPARATOR, $value ) ), 'strlen' ) ) : array( $value );
+		$parts = $multi ? array_values( array_filter( array_map( 'trim', explode( GenericCsv::MULTI_SEPARATOR, $value ) ), static fn( string $s ): bool => '' !== $s ) ) : array( $value );
 		if ( in_array( $type, array( 'select', 'radio', 'checkbox' ), true ) ) {
 			$labels = array();
 			foreach ( (array) ( $field['options'] ?? array() ) as $o ) {

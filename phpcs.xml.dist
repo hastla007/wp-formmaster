@@ -40,6 +40,23 @@
 	<!-- The reference connector is a separate plugin with its own text domain and prefix. -->
 	<rule ref="WordPress.WP.I18n.TextDomainMismatch"><exclude-pattern>connectors/*</exclude-pattern></rule>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals"><exclude-pattern>connectors/*</exclude-pattern></rule>
+	<!-- Hook/interface callbacks (module register( Plugin ), WP-CLI ( $args, $assoc ), WordPress filters)
+	     must keep their documented signatures even when a parameter is not needed. -->
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"><severity>0</severity></rule>
+	<!-- Custom capabilities registered by FormCaptain\Install\Capabilities. -->
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="form_captain_manage_forms"/>
+				<element value="form_captain_read_entries"/>
+				<element value="form_captain_edit_entries"/>
+				<element value="form_captain_export_entries"/>
+				<element value="form_captain_delete_entries"/>
+				<element value="form_captain_manage_settings"/>
+				<element value="form_captain_manage_integrations"/>
+			</property>
+		</properties>
+	</rule>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">

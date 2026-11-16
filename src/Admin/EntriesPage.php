@@ -57,6 +57,9 @@ final class EntriesPage {
 		add_action( 'admin_post_' . CsvExporter::ACTION, array( $this->exporter, 'handle_request' ) );
 	}
 
+	/**
+	 * @param array<string,mixed> $args
+	 */
 	public static function url( array $args = array() ): string {
 		return add_query_arg( array_merge( array( 'page' => self::SLUG ), $args ), admin_url( 'admin.php' ) );
 	}

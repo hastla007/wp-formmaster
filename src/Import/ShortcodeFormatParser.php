@@ -836,7 +836,7 @@ final class ShortcodeFormatParser {
 				continue;
 			}
 			if ( preg_match( '/^(\d*)x(\d*)(?:\/(\d+))?$/', $w, $m ) && ( '' !== $m[1] || '' !== $m[2] ) ) {
-				$out['size'] = array( 'max' => isset( $m[3] ) && '' !== $m[3] ? (int) $m[3] : null, 'rows' => '' !== $m[2] ? (int) $m[2] : null );
+				$out['size'] = array( 'max' => isset( $m[3] ) ? (int) $m[3] : null, 'rows' => '' !== $m[2] ? (int) $m[2] : null );
 				continue;
 			}
 			if ( preg_match( '/^\d+$/', $w ) ) {

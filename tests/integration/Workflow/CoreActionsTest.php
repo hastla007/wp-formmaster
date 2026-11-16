@@ -246,7 +246,13 @@ final class CoreActionsTest extends TestCase {
 		$this->assertCount( 1, $sections );
 		$this->assertStringContainsString( 'action=' . CoreActions::ADMIN_ACTION, html_entity_decode( $sections[0]['html'] ) );
 		$this->assertStringContainsString( '_wpnonce=', $sections[0]['html'] );
-		$this->assertSame( $sections[0]['html'], wp_kses_post( $sections[0]['html'] ), 'Section survives the kses filter of the detail view' );
+		// kses must keep every element and attribute. WordPress 7.x normalizes "&#038;" to "&amp;",
+		// so the markup is compared after decoding entities.
+		$this->assertSame(
+			html_entity_decode( $sections[0]['html'], ENT_QUOTES | ENT_HTML5 ),
+			html_entity_decode( wp_kses_post( $sections[0]['html'] ), ENT_QUOTES | ENT_HTML5 ),
+			'Section survives the kses filter of the detail view'
+		);
 		$this->assertGreaterThan( 0, $admin );
 
 		$job_id = $core->confirm_handoff( $entry, 'a_00000000bb' );

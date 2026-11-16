@@ -25,7 +25,6 @@ final class EditorPage {
 
 	public function __construct(
 		private FormRepository $forms,
-		private FormService $service,
 		private PreviewTokens $previews,
 		private Templates $templates
 	) {}

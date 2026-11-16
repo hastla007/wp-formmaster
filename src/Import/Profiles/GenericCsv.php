@@ -54,7 +54,7 @@ final class GenericCsv {
 	 * @param array<int,string> $samples
 	 */
 	public static function detect_time_format( array $samples ): ?string {
-		$samples = array_values( array_filter( array_map( 'trim', $samples ), 'strlen' ) );
+		$samples = array_values( array_filter( array_map( 'trim', $samples ), static fn( string $s ): bool => '' !== $s ) );
 		if ( ! $samples ) {
 			return null;
 		}

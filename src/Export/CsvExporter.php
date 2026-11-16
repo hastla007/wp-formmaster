@@ -118,7 +118,11 @@ final class CsvExporter {
 		return $value;
 	}
 
-	/** RFC 4180 line with CRLF ending. */
+	/**
+	 * RFC 4180 line with CRLF ending.
+	 *
+	 * @param array<int|string,mixed> $cells
+	 */
 	public static function line( array $cells, string $delimiter = ',' ): string {
 		$out = array();
 		foreach ( $cells as $cell ) {
@@ -333,6 +337,7 @@ final class CsvExporter {
 
 	/**
 	 * Permission/method/nonce checks for the admin-post handler.
+	 * @param array<string,mixed> $request
 	 */
 	public function check_request( string $method, array $request ): true|\WP_Error {
 		if ( ! current_user_can( Capabilities::READ_ENTRIES ) || ! current_user_can( Capabilities::EXPORT_ENTRIES ) ) {

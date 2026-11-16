@@ -394,6 +394,7 @@ final class FormService {
 	}
 
 	/** Total number of entries of a form incl. trash and spam. */
+	/** @phpstan-impure Reads the live entry count. */
 	public function entry_total( int $id ): int {
 		return (int) array_sum( $this->entries->status_counts( $id ) );
 	}
@@ -414,13 +415,11 @@ final class FormService {
 			if ( ! current_user_can( Capabilities::DELETE_ENTRIES ) ) {
 				return Errors::error( Errors::FORBIDDEN, __( 'You are not allowed to delete entries.', 'form-captain' ) );
 			}
-			$service_class = '\\FormCaptain\\Service\\EntryDeletionService';
-			if ( ! class_exists( $service_class ) ) {
-				return Errors::error( 'conflict', __( 'Entries cannot be deleted right now. Archive the form instead.', 'form-captain' ), array( 'status' => 409 ) );
-			}
-			$service = \FormCaptain\Plugin::instance()->get( $service_class );
-			for ( $i = 0; $i < 1000 && $this->entry_total( $id ) > 0; $i++ ) {
+			$service = \FormCaptain\Plugin::instance()->get( EntryDeletionService::class );
+			$rounds  = 0;
+			while ( $rounds < 1000 && $this->entry_total( $id ) > 0 ) {
 				$service->delete_for_form( $id );
+				++$rounds;
 			}
 			if ( $this->entry_total( $id ) > 0 ) {
 				return Errors::error( 'conflict', __( 'Not all entries could be deleted. Please try again.', 'form-captain' ), array( 'status' => 409 ) );
@@ -810,12 +809,8 @@ final class FormService {
 	 * @return array<string,array{key:string,label:string,connector:string,available:bool,message:string,settings:array<int,array{key:string,type:string,label:string,required:bool,options:array<int,string>}>,mapping:array<string,array{key:string,label:string,types:array<int,string>,required:bool}>}>
 	 */
 	public static function action_catalog(): array {
-		$class = '\\FormCaptain\\Integrations\\ConnectorRegistry';
-		if ( ! class_exists( $class ) || ! method_exists( $class, 'actions_for_editor' ) ) {
-			return array();
-		}
 		try {
-			$raw = (array) \FormCaptain\Plugin::instance()->get( $class )->actions_for_editor();
+			$raw = (array) \FormCaptain\Plugin::instance()->get( \FormCaptain\Integrations\ConnectorRegistry::class )->actions_for_editor();
 		} catch ( \Throwable $e ) {
 			return array();
 		}

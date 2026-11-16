@@ -299,7 +299,10 @@ final class ConsentWithdrawalTest extends TestCase {
 		$stream = fopen( 'php://memory', 'w+b' );
 		$exporter->export( array( 'form_id' => (int) $form['id'], 'columns' => array( 'meta:id', 'meta:consent_withdrawn' ) ), $stream );
 		rewind( $stream );
-		$lines = array_map( 'str_getcsv', array_filter( explode( "\r\n", (string) stream_get_contents( $stream ) ) ) );
+		$lines = array_map(
+			static fn( string $line ): array => str_getcsv( $line, ',', '"', '' ),
+			array_filter( explode( "\r\n", (string) stream_get_contents( $stream ) ) )
+		);
 		$this->assertSame( array( 'Submission ID', 'Consent withdrawn' ), $lines[0] );
 		$by_id = array_column( array_slice( $lines, 1 ), 1, 0 );
 		$this->assertNotSame( '', $by_id[ (string) $withdrawn ] );

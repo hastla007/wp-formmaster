@@ -239,7 +239,7 @@ final class AdminRest {
 	}
 
 	public function delete_form( \WP_REST_Request $request ): \WP_REST_Response {
-		$result = $this->service->delete( (int) $request['id'], rest_sanitize_boolean( $request->get_param( 'delete_entries' ) ?? false ) );
+		$result = $this->service->delete( (int) $request['id'], (bool) filter_var( $request->get_param( 'delete_entries' ) ?? false, FILTER_VALIDATE_BOOLEAN ) );
 		if ( is_wp_error( $result ) ) {
 			return $this->error( $result );
 		}

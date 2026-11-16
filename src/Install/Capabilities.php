@@ -48,7 +48,11 @@ final class Capabilities {
 		}
 	}
 
-	/** Labels for the access settings screen. */
+	/**
+	 * Labels for the access settings screen.
+	 *
+	 * @return array<string,string>
+	 */
 	public static function labels(): array {
 		return array(
 			self::MANAGE_FORMS        => __( 'Manage forms', 'form-captain' ),

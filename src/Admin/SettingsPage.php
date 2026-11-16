@@ -297,7 +297,11 @@ final class SettingsPage {
 		return self::notice( 'error', array( __( 'The test e-mail could not be sent. WordPress reported an error; an SMTP plugin usually solves delivery problems.', 'form-captain' ) . ( '' !== $error ? ' (' . $error . ')' : '' ) ) );
 	}
 
-	/** Rotates the signing key with a 26 h grace window for the previous key (suite-kontext.md 6). */
+	/**
+	 * Rotates the signing key with a 26 h grace window for the previous key (suite-kontext.md 6).
+	 *
+	 * @return array<string,mixed>
+	 */
 	public function rotate_secret( bool $discard_previous = false ): array {
 		$old = get_option( Secret::OPTION );
 		if ( is_string( $old ) && ! $discard_previous ) {

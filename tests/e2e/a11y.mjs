@@ -42,10 +42,10 @@ const ctx = await browser.newContext( { viewport: { width: 1280, height: 900 } }
 const page = await ctx.newPage();
 let failures = 0;
 
-await page.goto( `${ BASE }/wp-login.php` );
+await page.goto( `${ BASE }/wp-login.php?redirect_to=${ encodeURIComponent( `${ BASE }/wp-admin/admin.php?page=form-captain` ) }` );
 await page.fill( '#user_login', process.env.E2E_USER || 'admin' );
 await page.fill( '#user_pass', process.env.E2E_PASS || 'admin-password' );
-await Promise.all( [ page.waitForURL( /wp-admin/ ), page.click( '#wp-submit' ) ] );
+await Promise.all( [ page.waitForURL( /wp-admin\/admin\.php\?page=form-captain/, { waitUntil: 'domcontentloaded' } ), page.click( '#wp-submit' ) ] );
 
 const adminPages = [
 	[ 'Dashboard', 'form-captain' ],

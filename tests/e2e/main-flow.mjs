@@ -34,10 +34,14 @@ async function step( name, fn ) {
 }
 
 async function login( page ) {
-	await page.goto( `${ BASE }/wp-login.php` );
+	// Land on Form Captain's own screen instead of the core dashboard: the dashboard
+	// fires slow background requests (news widget, compression test, heartbeat) that
+	// can stall its load event and are not what this suite tests.
+	const target = encodeURIComponent( `${ BASE }/wp-admin/admin.php?page=form-captain` );
+	await page.goto( `${ BASE }/wp-login.php?redirect_to=${ target }` );
 	await page.fill( '#user_login', USER );
 	await page.fill( '#user_pass', PASS );
-	await Promise.all( [ page.waitForURL( /wp-admin/ ), page.click( '#wp-submit' ) ] );
+	await Promise.all( [ page.waitForURL( /wp-admin\/admin\.php\?page=form-captain/, { waitUntil: 'domcontentloaded' } ), page.click( '#wp-submit' ) ] );
 }
 
 async function fillContact( page, name ) {

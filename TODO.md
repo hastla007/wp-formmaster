@@ -262,7 +262,9 @@ Jeder Adapter ist optional, versioniert, einzeln deaktivierbar und greift aussch
 
 #### Pilot-Connectoren: BoatingSchool B2B und LearnBoating B2C
 
-Diese Aufgaben erweitern Phase 8 um zwei echte Kundenfälle. Sie ändern nicht die Reihenfolge von Free v1.0 und Pro v1; Umsetzung startet erst nach dem allgemeinen Connector-Vertrag und einer konkreten Kundenfreigabe. Änderungen in den Kunden-Repositories werden dort separat umgesetzt und versioniert.
+Diese Aufgaben erweitern Phase 8 um zwei echte Kundenfälle. Sie ändern nicht die Reihenfolge von Free v1.0 und Pro v1; Umsetzung startet erst nach dem allgemeinen Connector-Vertrag (erledigt) und der Freigabe des Inhabers – BoatingSchool und LearnBoating sind eigene Projekte des Inhabers, eine externe Kundenfreigabe ist nicht nötig. Änderungen in den Projekt-Repositories werden dort separat umgesetzt und versioniert.
+
+**Lizenz (Entscheidung Nr. 17):** Beide Connectoren sind proprietäre Projekt-Plugins im jeweiligen Projekt-Repository, separat installiert, mit eigenem Projektprodukt auf dem eigenen Lizenzserver; nicht Teil von Form Captain Pro (Muster: `learnboating-voucher-connector`, captain-pro TODO Abschnitt 13).
 
 **BoatingSchool – Form-Captain-Lead-Connector**
 
@@ -289,7 +291,9 @@ Diese Aufgaben erweitern Phase 8 um zwei echte Kundenfälle. Sie ändern nicht d
 - [ ] **P8-57 – Datenminimierung und bestehende Connectoren abnehmen.** Keine Abfrage/Übertragung von Lernfortschritt, Prüfungsversuchen, Bestellungen, Gutscheinwerten, Affiliate-Attribution oder Nutzerprofilen. Vorbefüllung von WordPress-Kontaktdaten nur nach aktiver Nutzerentscheidung. Bestehende Voucher-/Affiliate-Connectoren bleiben zuständig.
 - [ ] **P8-58 – LearnBoating-Kompatibilität und Zwei-Plugin-Verhalten testen.** Die kombinierte Basis aus aktuellem Form-Captain- und Lernplugin-Mindeststand verifizieren (Konzeptstand: WordPress 7.0+, PHP 8.3+; WooCommerce nur nach Anforderung des Lernplugins). Aktivierung ohne Form Captain, fehlender/veralteter Vertrag, unbekannter Kurs, Plugin-Deaktivierung, Entry-Löschung und normales Formular-Fallback testen.
 - [ ] **P8-59 – Gemeinsame Pilot-Dokumentation und Supportgrenze veröffentlichen.** Installation, unterstützte Versionen, Datenfluss, Fähigkeiten, Grenzen, Consent, Fehlerbehebung und klare Trennung zwischen Form-Captain-Entry und LearnBoating-Kurszugang dokumentieren.
-- **Abnahme Kunden-Connectoren:** BoatingSchool nimmt ausschließlich minimierte Interessenten-Leads in einer neuen, getrennten Inbox auf; LearnBoating liefert nur geprüften Kurskontext. Beide Connectoren sind optional, separat installierbar, idempotent, deaktivierbar und verwenden ausschließlich öffentliche, dokumentierte Verträge.
+- [ ] **P8-88 – Lizenz BoatingSchool-Connector.** Projektprodukt (Vorschlag Produktschlüssel = Ordner = Textdomain `boatingschool-form-connector`, Recht `boatingschool.form_leads`) per MU-Plugin am eigenen Lizenzserver anmelden (`wplc_entitlement_catalog`, `wplc_known_product_keys`); Kernel und Lizenzclient mit `ClientExporter` aus captain-pro nach `lib/` kopieren (Herkunft/SHA-256 in `lib/SOURCE.md`); ohne gültige Lizenz Ergebnis `retry`/pausiert statt Übergabe, Entry bleibt gespeichert; Updates über den Lizenzserver.
+- [ ] **P8-89 – Lizenz LearnBoating-Connector.** Wie P8-88 (Vorschlag `learnboating-form-connector`, Recht `learnboating.course_questions`), im learnboating-Repository neben `learnboating-voucher-connector`; dessen Lizenz-Setup (`license-server/`, Sync-Werkzeug) wiederverwenden statt zweiter Variante.
+- **Abnahme Kunden-Connectoren:** BoatingSchool nimmt ausschließlich minimierte Interessenten-Leads in einer neuen, getrennten Inbox auf; LearnBoating liefert nur geprüften Kurskontext. Beide Connectoren sind optional, separat installierbar, mit eigenem Projektprodukt lizenziert (fail-closed), idempotent, deaktivierbar und verwenden ausschließlich öffentliche, dokumentierte Verträge.
 
 #### WooCommerce Pro: Käuferfragebögen je Produkt nach dem Kauf
 

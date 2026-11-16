@@ -1,0 +1,29 @@
+# ADR 0005 – Entwicklungs- und CI-Umgebung (P0-12, P1-12)
+
+| Bereich | Festlegung |
+|---|---|
+| PHP | 8.3 (Minimum) und 8.4 in CI |
+| WordPress | 6.8 (Minimum) und aktuelle stabile Version |
+| Datenbank | MariaDB 10.6 / 10.11, MySQL 8.0 / 8.4 |
+| Testframework | PHPUnit 9.6 + `wp-phpunit/wp-phpunit` + `yoast/phpunit-polyfills` |
+| Statische Analyse | PHPStan (Level 6) mit `szepeviktor/phpstan-wordpress`, WPCS 3 |
+| JS-Build | Node 20+, `esbuild` |
+| E2E | Playwright (Chromium; Firefox/WebKit in nächtlicher Matrix) gegen `@wordpress/env` oder lokales WP |
+| Browser (Support) | aktuelle und vorherige Version von Chrome, Firefox, Safari, Edge; iOS Safari, Android Chrome |
+
+**Befehle**
+
+```bash
+composer install
+composer lint        # PHP-Syntax (php -l) über alle Dateien
+composer phpcs
+composer phpstan
+composer test:unit
+bin/install-wp-tests.sh wp_tests wp wp localhost   # einmalig
+composer test:integration
+npm ci && npm run build
+npm run e2e
+bin/build-release.sh # Release-ZIP + SHA-256
+```
+
+`tests/integration` nutzt die WordPress-Test-Suite aus `wp-phpunit/wp-phpunit` mit dem Core aus `roots/wordpress-no-content` (beide über Composer, keine SVN-Abhängigkeit). Konfiguration über Umgebungsvariablen `WP_TESTS_DB_NAME`, `WP_TESTS_DB_USER`, `WP_TESTS_DB_PASSWORD`, `WP_TESTS_DB_HOST`.

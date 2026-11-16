@@ -111,6 +111,25 @@ final class MailJobHandlerTest extends TestCase {
 		$this->assertStringContainsString( 'view=' . $id, $body );
 	}
 
+	/** P9-11: the sender filters only apply to Form Captain mails; an invalid form sender falls back to the global default. */
+	public function test_sender_filters_do_not_leak_and_invalid_sender_falls_back(): void {
+		$form = $this->form( array(), array( 'email' => array( 'from_name' => 'Kontakt Team', 'from_address' => "bad\r\nBcc: x@example.org" ) ) );
+		$id   = $this->make_entry( $form, $this->values() );
+		$this->enqueue_mail( $id, (int) $form['id'] );
+		$this->runner()->run();
+		$mails = $this->sent_mails();
+		$this->assertCount( 1, $mails );
+		$host = (string) wp_parse_url( home_url(), PHP_URL_HOST );
+		$this->assertMatchesRegularExpression( '/^From: Kontakt Team <wordpress@' . preg_quote( preg_replace( '/^www\./', '', $host ), '/' ) . '>\r?$/m', $mails[0]->header );
+		$this->assertStringNotContainsString( 'Bcc', $mails[0]->header );
+
+		$this->assertSame( 'core@example.org', apply_filters( 'wp_mail_from', 'core@example.org' ), 'no Form Captain sender after the job' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- core hook, read only
+		$this->assertSame( 'Core', apply_filters( 'wp_mail_from_name', 'Core' ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- core hook, read only
+		$this->reset_mailer();
+		wp_mail( 'someone@example.org', 'Other plugin', 'Body' );
+		$this->assertStringNotContainsString( 'Kontakt Team', $this->sent_mails()[0]->header );
+	}
+
 	public function test_explicit_field_selection_includes_only_chosen_fields(): void {
 		$form = $this->form( array( 'fields' => array( 'f_mail01', 'iban' ) ) );
 		$id   = $this->make_entry( $form, $this->values() );

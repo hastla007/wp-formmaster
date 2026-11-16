@@ -82,9 +82,9 @@ final class Renderer {
 				}
 			}
 		}
-		$fields  = $version['fields'] ?? array();
-		$mode    = (string) ( $form['settings']['appearance']['mode'] ?? Settings::get( 'appearance.mode' ) );
-		$mode    = 'base' === $mode ? 'base' : 'inherit';
+		$fields = $version['fields'] ?? array();
+		$mode   = (string) ( $form['settings']['appearance']['mode'] ?? Settings::get( 'appearance.mode' ) );
+		$mode   = 'base' === $mode ? 'base' : 'inherit';
 		Assets::mark_rendered( $mode );
 
 		++self::$instance;

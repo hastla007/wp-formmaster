@@ -287,6 +287,19 @@ final class ContractApi {
 			return '';
 		}
 		$allowed = array_intersect_key( $args, array_flip( array( 'context', 'title' ) ) );
+		// Public-endpoint issuance (suite-kontext.md 2.2): the renderer prints the reference and the
+		// frontend fetches a fresh context; only plain strings pass.
+		if ( is_array( $args['context_ref'] ?? null ) ) {
+			$ref = array();
+			foreach ( array( 'purpose', 'ref_type', 'ref_id' ) as $k ) {
+				if ( isset( $args['context_ref'][ $k ] ) && is_scalar( $args['context_ref'][ $k ] ) ) {
+					$ref[ $k ] = (string) $args['context_ref'][ $k ];
+				}
+			}
+			if ( 3 === count( $ref ) ) {
+				$allowed['context_ref'] = $ref;
+			}
+		}
 		try {
 			return (string) $this->plugin->get( self::RENDERER )->render( $form, $allowed );
 		} catch ( \Throwable $e ) {

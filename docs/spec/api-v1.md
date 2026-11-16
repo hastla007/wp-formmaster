@@ -79,7 +79,7 @@ form_captain_get_form_v1( int|string $form_id ): array|WP_Error
 form_captain_get_entry_v1( int $entry_id, array $scopes = ['meta'] ): array|WP_Error
 form_captain_submit_v1( int|string $form_id, array $payload, array $context = [] ): array
 form_captain_register_action_v1( string $key, array $definition, callable $callback ): true|WP_Error
-form_captain_get_render_v1( int|string $form_id, array $args = [] ): string
+form_captain_get_render_v1( int|string $form_id, array $args = [] ): string // $args: context (signierter Wert, nur aus PHP), title, seit 1.1.0 context_ref {purpose, ref_type, ref_id} für den Ausgabeweg public_endpoint
 form_captain_sign_context_v1( string $purpose, int $form_id, string $ref_type, string $ref_id, int $ttl = 0 ): array
 form_captain_register_context_purpose_v1( string $purpose, array $definition ): true|WP_Error
 form_captain_validate_v1( int|string $form_id, array $values, array $only = [] ): array|WP_Error // seit 1.1.0: prüft gegen die veröffentlichte Version, speichert nichts; nur Fehler der Felder in $only (leer = alle); Rückgabe {valid, errors, codes}

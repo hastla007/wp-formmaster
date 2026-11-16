@@ -194,6 +194,8 @@ Für Uploads, Mehrschritt-Formulare und erweiterte Bedingungen/Routing (P7-07, P
 | `form_captain_form_attributes_v1` | Filter | `array()`, `array $form` → Attribute | Angenommen werden nur `data-fc-x-*`, zusätzliche Klassen und `enctype="multipart/form-data"`. Kern-Attribute sind nicht überschreibbar. |
 | `form_captain_field_attributes_v1` | Filter | `array()`, `array $field` → Attribute | Nur `data-fc-x-*` und zusätzliche Klassen (z. B. Schrittnummer, Bedingungsgruppe für eigenes JavaScript). |
 
+**Ereignis im Browser:** Nach erfolgreicher Einsendung über das Frontend-Skript löst das Formular-Element das DOM-Ereignis `fc:submitted` aus (`bubbles: true`, ohne Daten).
+
 **Gruppierte Bedingungen im Browser:** Trägt ein Feld das Attribut `data-fc-x-condition` mit JSON `{ "action": "show"|"hide", "match": "all"|"any", "rules": [ { "field", "operator", "value" } ] }`, wertet das Frontend-Skript des Kerns diese Gruppe statt `data-fc-condition` aus. Es gelten dieselben Operatoren und dieselbe Regel für ausgeblendete Bezugsfelder. Maßgeblich bleibt die Serverprüfung der Erweiterung über `form_captain_condition_evaluators_v1`.
 | `form_captain_notification_recipients_v1` | Filter | `string\|array $to`, `array $form`, `int $entry_id`, `array $values` → Empfängerliste | Routing. Das Ergebnis durchläuft dieselbe Prüfung wie konfigurierte Adressen (Header-Injection, `is_email`). |
 | `form_captain_confirmation_v1` | Filter | `array $confirmation` (Form wie `settings.confirmation`), `array $form`, `int $entry_id`, `array $values` (geprüfte Werte, Feld-ID → Wert; bei Doppelversand die gespeicherten) → Bestätigung | Bedingte Bestätigung. Eine Seite muss veröffentlicht und intern sein, sonst bleibt es bei der Meldung. |

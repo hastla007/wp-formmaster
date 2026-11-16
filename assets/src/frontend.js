@@ -330,6 +330,10 @@
 		if ( status ) {
 			status.focus();
 		}
+		// Contract 1.1.0: extensions react to a successful submission (e.g. discard a saved draft).
+		if ( typeof window.CustomEvent === 'function' ) {
+			form.dispatchEvent( new window.CustomEvent( 'fc:submitted', { bubbles: true } ) );
+		}
 	}
 
 	/* ---------------------------------------------------------------

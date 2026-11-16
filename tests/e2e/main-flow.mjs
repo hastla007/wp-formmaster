@@ -48,13 +48,27 @@ async function fillContact( page, name ) {
 	await page.locator( 'input[type="checkbox"]' ).last().check();
 }
 
+/*
+ * WordPress core's dashboard fires a background admin-ajax "wp-compression-test"
+ * request; WebKit reports it as an access-control error when the page navigates
+ * away before it finishes. It is not Form Captain code, so only that exact core
+ * request is ignored – every other page error still fails the run.
+ */
+const IGNORED_CORE_ERRORS = [ /admin-ajax\.php\?action=wp-compression-test\b/ ];
+function recordError( errors, e ) {
+	const message = String( ( e && e.message ) || e );
+	if ( ! IGNORED_CORE_ERRORS.some( ( re ) => re.test( message ) ) ) {
+		errors.push( message );
+	}
+}
+
 async function run( engineName ) {
 	console.log( `\n[${ engineName }]` );
 	const browser = await engines[ engineName ].launch();
 	const admin = await browser.newContext( { viewport: { width: 1280, height: 900 } } );
 	const page = await admin.newPage();
 	const errors = [];
-	page.on( 'pageerror', ( e ) => errors.push( e.message ) );
+	page.on( 'pageerror', ( e ) => recordError( errors, e ) );
 	const stamp = Date.now().toString( 36 );
 	let pageUrl = '';
 	let formTitle = '';
@@ -99,7 +113,7 @@ async function run( engineName ) {
 
 		const visitor = await browser.newContext();
 		const vpage = await visitor.newPage();
-		vpage.on( 'pageerror', ( e ) => errors.push( e.message ) );
+		vpage.on( 'pageerror', ( e ) => recordError( errors, e ) );
 
 		await step( 'Frontend: barrierefreies Markup', async () => {
 			await vpage.goto( pageUrl );

@@ -148,6 +148,27 @@ final class SignedContextTest extends FrontendTestCase {
 		$this->assertStringNotContainsString( $signed['context'], (string) $log['message'] );
 	}
 
+	public function test_accepted_purposes_filter_lets_the_owner_accept_its_purpose(): void {
+		$form = $this->form( array() );
+		$this->assertSame( 'context_purpose_not_allowed', $this->ctx()->sign( 'woo.order_item_questionnaire', (int) $form['id'], 'order_item', '1:2' )['code'] );
+
+		$filter = static function ( $list, $form_id ) use ( $form ) {
+			return (int) $form['id'] === $form_id ? array_merge( (array) $list, array( 'woo.order_item_questionnaire', 'bad purpose', 42 ) ) : $list;
+		};
+		add_filter( 'form_captain_accepted_context_purposes_v1', $filter, 10, 2 );
+		$this->assertSame( array( 'woo.order_item_questionnaire' ), SignedContext::accepted_purposes( $form ), 'invalid entries are dropped' );
+		$signed = $this->ctx()->sign( 'woo.order_item_questionnaire', (int) $form['id'], 'order_item', '1:2' );
+		$this->assertTrue( $signed['success'], wp_json_encode( $signed ) );
+
+		$raw            = $this->payload( $form, $this->valid_fields() );
+		$raw['_fc_ctx'] = $signed['context'];
+		$res            = $this->plugin()->get( SubmissionService::class )->submit( $form, $raw );
+		$this->assertTrue( $res['success'], wp_json_encode( $res ) );
+		$this->assertSame( '1:2', $this->plugin()->get( EntryRepository::class )->find( (int) $res['entry_id'] )['context']['ref_id'] );
+		remove_filter( 'form_captain_accepted_context_purposes_v1', $filter, 10 );
+		$this->assertSame( array(), SignedContext::accepted_purposes( $form ) );
+	}
+
 	public function test_form_without_purposes_ignores_context(): void {
 		$with           = $this->form();
 		$plain          = $this->create_published_form();

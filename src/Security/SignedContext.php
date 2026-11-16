@@ -442,7 +442,20 @@ final class SignedContext {
 	 */
 	public static function accepted_purposes( array $form ): array {
 		$list = $form['settings']['accepted_context_purposes'] ?? array();
-		return is_array( $list ) ? array_values( array_filter( $list, 'is_string' ) ) : array();
+		$list = is_array( $list ) ? array_values( array_filter( $list, 'is_string' ) ) : array();
+		/**
+		 * Context purposes a form accepts (contract 1.1.0). Lets the owner of a purpose (an add-on that
+		 * assigns the form, e.g. to a product) accept its purpose without editing the stored settings.
+		 * The purpose must still be registered; the signature, TTL and checks are unchanged.
+		 *
+		 * @param string[] $list    Purposes from the form settings.
+		 * @param int      $form_id Form ID.
+		 */
+		$filtered = apply_filters( 'form_captain_accepted_context_purposes_v1', $list, (int) ( $form['id'] ?? 0 ) );
+		if ( ! is_array( $filtered ) ) {
+			return $list;
+		}
+		return array_values( array_unique( array_filter( $filtered, static fn( $p ): bool => is_string( $p ) && 1 === preg_match( self::PURPOSE_RE, $p ) ) ) );
 	}
 
 	private static function run_check( mixed $callback, string $ref_type, string $ref_id, int $form_id ): bool {

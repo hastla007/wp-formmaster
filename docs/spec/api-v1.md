@@ -178,6 +178,7 @@ Connectoren sind nach Installation **deaktiviert**; nur aktivierte Connectoren d
 | `form_captain_csv_columns_v1` | zusätzliche CSV-Spalten (nur Metadaten) |
 | `form_captain_spam_checks_v1` | zusätzliche Spamprüfungen (z. B. Captcha-Provider, opt-in) |
 | `form_captain_signed_context_purposes_v1` | registrierte Kontext-Zwecke |
+| `form_captain_accepted_context_purposes_v1` | (seit Contract 1.1.0) Kontext-Zwecke, die ein Formular annimmt: `( string[] $purposes, int $form_id )`. Für das Add-on, dem ein Zweck gehört und das das Formular zuordnet (z. B. Käuferfragebogen an einem Produkt); Signatur, TTL und Prüfungen bleiben unverändert. |
 | `form_captain_pro_active` | Pro meldet sich (nur für sparsame Hinweise im Free) |
 
 ## Erweiterungspunkte für Pro-Funktionen (seit Contract 1.1.0)

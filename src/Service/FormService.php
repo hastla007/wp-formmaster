@@ -40,9 +40,7 @@ final class FormService {
 		private Templates $templates
 	) {}
 
-	/* ------------------------------------------------------------------ */
-	/* Creation                                                            */
-	/* ------------------------------------------------------------------ */
+	// Creation.
 
 	/** @return int|\WP_Error new form ID */
 	public function create_blank( string $title = '' ): int|\WP_Error {
@@ -105,12 +103,12 @@ final class FormService {
 	public function default_settings(): array {
 		return array(
 			'notification'      => array(
-				'enabled'         => true,
-				'to'              => array( '{admin_email}' ),
-				'reply_to_field'  => '',
+				'enabled'        => true,
+				'to'             => array( '{admin_email}' ),
+				'reply_to_field' => '',
 				/* translators: {form_title} is a placeholder and must not be translated. */
-				'subject'         => __( 'New submission: {form_title}', 'form-captain' ),
-				'fields'          => 'all_non_sensitive',
+				'subject'        => __( 'New submission: {form_title}', 'form-captain' ),
+				'fields'         => 'all_non_sensitive',
 			),
 			'confirmation_mail' => array(
 				'enabled' => false,
@@ -134,9 +132,7 @@ final class FormService {
 		);
 	}
 
-	/* ------------------------------------------------------------------ */
-	/* Saving                                                              */
-	/* ------------------------------------------------------------------ */
+	// Saving.
 
 	/**
 	 * Saves the working copy with optimistic locking. Drafts with validation errors are
@@ -171,8 +167,8 @@ final class FormService {
 				$settings[ $keep ] = $form['settings'][ $keep ];
 			}
 		}
-		$clean    = $this->sanitize_settings( $settings, $result['schema'] );
-		$new_rev  = $this->forms->update(
+		$clean   = $this->sanitize_settings( $settings, $result['schema'] );
+		$new_rev = $this->forms->update(
 			$id,
 			array(
 				'title'    => self::plain_title( '' !== trim( $title ) ? $title : (string) $form['title'] ),
@@ -267,7 +263,7 @@ final class FormService {
 				$retired[] = $fid;
 			}
 		}
-		$retired       = array_values( array_unique( array_diff( $retired, array_keys( $new_ids ) ) ) );
+		$retired       = array_values( array_unique( array_filter( $retired, static fn( $rid ) => (bool) preg_match( '/^f_[a-z0-9]{6,32}$/', $rid ) ) ) );
 		$new['fields'] = $fields;
 		if ( $retired ) {
 			$new['retired_ids'] = $retired;
@@ -277,9 +273,7 @@ final class FormService {
 		return $new;
 	}
 
-	/* ------------------------------------------------------------------ */
-	/* Publishing and status                                               */
-	/* ------------------------------------------------------------------ */
+	// Publishing and status.
 
 	/**
 	 * Validation result of the stored working copy incl. publish requirements.
@@ -358,9 +352,7 @@ final class FormService {
 		return array( 'fields' => 'no_input_fields' );
 	}
 
-	/* ------------------------------------------------------------------ */
-	/* Duplicate / delete                                                  */
-	/* ------------------------------------------------------------------ */
+	// Duplicate / delete.
 
 	/** @return int|\WP_Error new form ID */
 	public function duplicate( int $id ): int|\WP_Error {
@@ -428,9 +420,7 @@ final class FormService {
 		return true;
 	}
 
-	/* ------------------------------------------------------------------ */
-	/* JSON export / import (P4-12, T-JSON-*)                              */
-	/* ------------------------------------------------------------------ */
+	// JSON export / import (P4-12, T-JSON-*).
 
 	/**
 	 * Portable definition without entries, IDs, user IDs or secrets (T-JSON-06).
@@ -553,9 +543,7 @@ final class FormService {
 		);
 	}
 
-	/* ------------------------------------------------------------------ */
-	/* Settings sanitizing                                                 */
-	/* ------------------------------------------------------------------ */
+	// Settings sanitizing.
 
 	/**
 	 * Normalizes form settings (docs/spec/formularschema.md). Invalid values are reset
@@ -612,11 +600,11 @@ final class FormService {
 			$subject = $defaults['notification']['subject'];
 		}
 		$out['notification'] = array(
-			'enabled'         => $enabled,
-			'to'              => $recipients,
-			'reply_to_field'  => $reply,
-			'subject'         => $subject,
-			'fields'          => null === $selected ? 'all_non_sensitive' : $selected,
+			'enabled'        => $enabled,
+			'to'             => $recipients,
+			'reply_to_field' => $reply,
+			'subject'        => $subject,
+			'fields'         => null === $selected ? 'all_non_sensitive' : $selected,
 		);
 
 		$c                        = is_array( $in['confirmation_mail'] ?? null ) ? $in['confirmation_mail'] : array();
@@ -872,9 +860,7 @@ final class FormService {
 		return $out;
 	}
 
-	/* ------------------------------------------------------------------ */
-	/* Helpers                                                             */
-	/* ------------------------------------------------------------------ */
+	// Helpers.
 
 	/**
 	 * Form DTO for events (api-v1.md).

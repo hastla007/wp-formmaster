@@ -1,0 +1,23 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "form-captain/form",
+	"title": "Form Captain",
+	"category": "widgets",
+	"icon": "feedback",
+	"description": "Embeds a published Form Captain form.",
+	"keywords": [ "form", "contact", "formular" ],
+	"textdomain": "form-captain",
+	"attributes": {
+		"formId": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"reusable": true,
+		"align": [ "wide", "full" ]
+	},
+	"editorScript": "form-captain-block-editor"
+}

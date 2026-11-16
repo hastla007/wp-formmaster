@@ -44,14 +44,12 @@ final class SignedContext {
 	/** @var array<int,string>|null derived keys (current, previous) */
 	private ?array $keys = null;
 
-	/** Generation counter per purpose (diagnostics only). */
+	/** @var array<string,int> generation counter per purpose (diagnostics only) */
 	private array $issued = array();
 
 	public function __construct( private FormRepository $forms ) {}
 
-	/* ------------------------------------------------------------------
-	 * Key handling
-	 * ------------------------------------------------------------------ */
+	// Key handling.
 
 	/** K_ctx derivation (spec 1.2). Pure; used by fixtures. */
 	public static function derive_key( string $auth_salt, string $secret ): string {
@@ -112,9 +110,7 @@ final class SignedContext {
 		$this->purposes = null;
 	}
 
-	/* ------------------------------------------------------------------
-	 * Purpose registry (spec 3.1)
-	 * ------------------------------------------------------------------ */
+	// Purpose registry (spec 3.1).
 
 	/**
 	 * @param array<string,mixed> $definition
@@ -239,9 +235,7 @@ final class SignedContext {
 		return (int) $m[1] === (int) explode( '.', FORM_CAPTAIN_CONTRACT_VERSION )[0];
 	}
 
-	/* ------------------------------------------------------------------
-	 * Signing (spec 2.1)
-	 * ------------------------------------------------------------------ */
+	// Signing (spec 2.1).
 
 	/**
 	 * @return array{success:bool,code:string,context?:string,expires_at?:int,request_id:string}
@@ -278,10 +272,10 @@ final class SignedContext {
 			$result['code'] = 'context_ref_rejected';
 			return $result;
 		}
-		$ttl     = 0 === $ttl ? (int) $def['default_ttl'] : $ttl;
-		$ttl     = max( 60, min( $ttl, (int) $def['max_ttl'], self::MAX_TTL ) );
-		$exp     = Clock::timestamp() + $ttl;
-		$payload = array(
+		$ttl                      = 0 === $ttl ? (int) $def['default_ttl'] : $ttl;
+		$ttl                      = max( 60, min( $ttl, (int) $def['max_ttl'], self::MAX_TTL ) );
+		$exp                      = Clock::timestamp() + $ttl;
+		$payload                  = array(
 			'purpose'  => $purpose,
 			'form_id'  => $form_id,
 			'ref_type' => $ref_type,
@@ -300,9 +294,7 @@ final class SignedContext {
 		);
 	}
 
-	/* ------------------------------------------------------------------
-	 * Verification (spec 4.2)
-	 * ------------------------------------------------------------------ */
+	// Verification (spec 4.2).
 
 	/**
 	 * Verifies a context for the addressed form. Steps 1–13 of spec 4.2.
@@ -461,9 +453,7 @@ final class SignedContext {
 		}
 	}
 
-	/* ------------------------------------------------------------------
-	 * Replay protection (spec 4.3)
-	 * ------------------------------------------------------------------ */
+	// Replay protection (spec 4.3).
 
 	private static function nonce_bucket( string $nonce ): string {
 		return hash( 'sha256', 'ctxnonce:' . $nonce );

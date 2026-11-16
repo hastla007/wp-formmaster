@@ -1,0 +1,13 @@
+{
+	"form_id": 7,
+	"entry_id": 125,
+	"idempotency_key": "form-captain:1:125:reference.create_ticket:a_0123456789",
+	"action_key": "reference.create_ticket",
+	"instance_id": "a_0123456789",
+	"settings": { "queue": "support", "unknown_setting": "x" },
+	"values": { "email": "person@example.org" },
+	"context": { "purpose": "pass.event_registration", "ref_type": "event", "ref_id": "42", "verified": false },
+	"test_mode": false,
+	"attempt": 2,
+	"added_in_1_4": [ "tolerated" ]
+}

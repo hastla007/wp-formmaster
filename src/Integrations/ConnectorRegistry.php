@@ -823,7 +823,7 @@ final class ConnectorRegistry {
 		Logger::log( 'info', 'connector_test_run', $action_key . ' ' . $result->status . ' ' . $result->code );
 		return array(
 			'status'    => $result->status,
-			'code'      => $result->code,
+			'code'      => (string) ( $result->data['code'] ?? $result->code ),
 			'message'   => $result->message,
 			'remote_id' => (string) ( $result->data['remote_id'] ?? '' ),
 			'values'    => $values,

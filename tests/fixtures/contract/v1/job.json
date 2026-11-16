@@ -1,0 +1,9 @@
+{
+	"form_id": 7,
+	"entry_id": 123,
+	"idempotency_key": "form-captain:1:123:reference.create_ticket:a_0123456789",
+	"settings": { "queue": "support" },
+	"values": { "email": "person@example.org", "subject": "Hello", "message": "Please call me." },
+	"context": {},
+	"test_mode": false
+}

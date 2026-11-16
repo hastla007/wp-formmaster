@@ -166,7 +166,7 @@ final class FormsListTable extends \WP_List_Table {
 		if ( in_array( $item['status'], array( 'published', 'paused' ), true ) && current_user_can( Capabilities::EDIT_ENTRIES ) ) {
 			$actions['import_entries'] = '<a href="' . esc_url( EntryImportAdmin::page_url( $id ) ) . '">' . esc_html__( 'Import entries', 'form-captain' ) . '</a>';
 		}
-		$total             = FormsPage::entry_total( $id );
+		$total = FormsPage::entry_total( $id );
 		if ( 0 === $total ) {
 			$actions['delete'] = '<a class="submitdelete" href="' . esc_url( FormsPage::action_url( 'delete', $id ) ) . '" onclick="return window.confirm(this.dataset.confirm);" data-confirm="' . esc_attr__( 'Delete this form permanently?', 'form-captain' ) . '">' . esc_html__( 'Delete', 'form-captain' ) . '</a>';
 		} elseif ( current_user_can( Capabilities::DELETE_ENTRIES ) ) {

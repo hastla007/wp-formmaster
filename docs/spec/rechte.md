@@ -13,6 +13,7 @@
 - Bei Aktivierung erhält **nur** die Rolle `administrator` alle Capabilities. Die Rollenzuweisung lässt sich unter *Einstellungen → Zugriff & Rollen* ändern; dort wird je Rolle angezeigt, welche Nutzeranzahl danach Zugriff auf Entries erhält.
 - Die Rolle `administrator` kann die Capability `form_captain_manage_settings` nicht verlieren (Aussperrschutz).
 - Menü: Hauptmenü sichtbar für jede der Capabilities; Unterseiten jeweils nur mit der passenden Capability.
+- CSV-Eintragsimport: `manage_forms` **und** `edit_entries` für Upload, Zuordnung, Prüfung und Import; Rücknahme eines Imports `manage_forms` **und** `delete_entries` (siehe `rechtevertrag.md` OP-FRM-13/14).
 - Multisite ist in v1 nicht unterstützt; Super-Admins werden nicht gesondert behandelt.
 - Deinstallation mit Datenlöschung entfernt die Capabilities aus allen Rollen.
 

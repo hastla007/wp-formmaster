@@ -48,16 +48,57 @@ Weitere Regeln:
 
 Der Bericht enthält keine Feldwerte. Er wird zusammen mit der Zuordnung „Quellname → Feld-ID“ beim importierten Formular gespeichert.
 
-## Einträge aus einer CSV-Datei (technischer Ablauf)
+## Einträge aus einer CSV-Datei importieren
 
-Das Format Typ A speichert selbst keine Einsendungen. Einträge lassen sich nur aus einer dokumentierten CSV-Exportdatei übernehmen (Formatprofil „Generisches CSV“):
+Bisherige Einsendungen lassen sich aus einer CSV-Datei in ein **veröffentlichtes** (oder pausiertes) Formular übernehmen – unabhängig davon, ob das Formular importiert oder neu angelegt wurde.
 
-- UTF-8 (mit oder ohne BOM), Kopfzeile, eine Zeile je Einsendung, Trennzeichen `,` oder `;`, Mehrfachwerte durch `|` getrennt;
-- eine Spalte mit der Einsendezeit (ISO 8601 oder `JJJJ-MM-TT HH:MM:SS` in der gewählten Zeitzone);
-- höchstens 20 MB und 50 000 Zeilen.
+**Einstieg:** *Form Captain → Formulare* → beim Formular die Zeilenaktion **„Einträge importieren“**, oder unten im Importbereich **„Einträge aus einer CSV-Datei importieren“** das Zielformular wählen.
 
-Voraussetzungen: Das Formular wurde über diesen Import angelegt und anschließend **veröffentlicht**; Sie benötigen zusätzlich das Recht *Einträge bearbeiten*. Die Spalten werden den Feldern zugeordnet; jede Zeile wird geprüft (Pflichtfelder dürfen fehlen). Ungültige Zeilen werden mit Zeilennummer und Fehlercode – ohne Wert – gemeldet und übersprungen, ebenso Zeilen, deren Aufbewahrungsfrist ab der ursprünglichen Einsendezeit bereits abgelaufen ist.
+**Rechte:** *Formulare verwalten* und *Einträge bearbeiten*; für die Rücknahme *Formulare verwalten* und *Einträge löschen*.
 
-Importierte Einträge erhalten den Status *gelesen* und die Einsendezeit aus der Datei. Es werden **keine** E-Mails und keine Connector-Aktionen ausgelöst. Ein erneuter Import derselben Datei erzeugt keine Duplikate.
+### Datenschutz vorab
 
-Hinweis: In dieser Version steht der Eintragsimport als Funktion für Entwickler und Werkzeuge bereit; eine eigene Oberfläche dafür folgt.
+- Für die Rechtsgrundlage der Altdaten (z. B. die damalige Einwilligung) sind Sie als Betreiber verantwortlich. Importieren Sie nur Daten, die Sie weiter speichern und verarbeiten dürfen.
+- Die **Aufbewahrungsfrist** des Formulars (90 Tage, 12 Monate oder manuell) wird ab der **ursprünglichen Einsendezeit** berechnet. Zeilen, deren Frist bereits abgelaufen ist, werden nicht importiert; die übrigen werden automatisch gelöscht, sobald ihre Frist endet.
+- Die Datei wird nur vorübergehend in einem geschützten Verzeichnis gespeichert und nach dem Import, beim Abbrechen, spätestens aber nach **einer Stunde** gelöscht. Ihr Speicherort erscheint nie in einer Adresse.
+
+### Schritt 1: Datei hochladen
+
+- CSV in **UTF-8** (mit oder ohne BOM), erste Zeile mit Spaltenüberschriften, eine Zeile je Einsendung; Trennzeichen **Komma oder Semikolon** wird automatisch erkannt. Werte mit Trennzeichen, Anführungszeichen oder Zeilenumbrüchen in Anführungszeichen (Excel-/RFC-4180-Stil).
+- Höchstens **5 MB** und **10 000 Zeilen**. Größere Bestände teilen Sie auf mehrere Dateien auf.
+- Mehrfachwerte (Checkboxen, Mehrfachauswahl) durch `|` trennen, z. B. `Web|App`. Optionen dürfen als Beschriftung oder Wert angegeben werden.
+- Dateien in anderer Kodierung (z. B. Windows-1252) werden abgelehnt – speichern Sie die Datei in Excel als „CSV UTF-8“.
+
+### Schritt 2: Spalten zuordnen
+
+Für jede Spalte wählen Sie das Zielfeld (mit Hinweis auf das erwartete Format) oder **„Ignorieren“**. Spalten mit gleichem Namen wie Feldbeschriftung oder -schlüssel sind vorbelegt. Eine Vorschau zeigt die ersten 5 Zeilen mit gekürzten Werten.
+
+**Einsendezeit:** Wählen Sie die Spalte mit dem Zeitpunkt der Einsendung und das Datumsformat – meist genügt „Automatisch erkennen“:
+
+| Format | Beispiele |
+|---|---|
+| ISO 8601 | `2026-03-01T10:15:00+01:00`, `2026-03-01 10:15:00` |
+| JJJJ-MM-TT | `2026-03-01`, `2026-03-01 10:15` |
+| TT.MM.JJJJ | `01.03.2026`, `1.3.2026 10:15`, `01.03.2026 10:15:30` |
+| TT/MM/JJJJ bzw. MM/TT/JJJJ | `13/01/2026`, `01/13/2026 10:15` – bei mehrdeutigen Werten gilt Tag/Monat; wählen Sie das Format sonst selbst |
+| Unix-Zeitstempel | `1767225600` |
+
+Zeiten ohne Zeitzonenangabe gelten in der **Zeitzone der Website** (*Einstellungen → Allgemein*) und werden in UTC gespeichert; reine Datumsangaben als 00:00 Uhr.
+
+### Schritt 3: Prüfen (Trockenlauf)
+
+Alle Zeilen werden geprüft, ohne etwas zu speichern. Sie sehen, wie viele Zeilen **gültig**, **ungültig**, **Duplikate** (bereits importiert) und **abgelaufen** sind. Ungültige Zeilen werden mit Zeilennummer (Kopfzeile = 1), Fehlercode und Feldschlüssel aufgeführt – **ohne** Werte. Pflichtfelder dürfen fehlen; ungültige Werte (z. B. `invalid_email`, `invalid_option`, `invalid_time`) führen zum Überspringen der Zeile. Bei Bedarf passen Sie die Zuordnung an und prüfen erneut.
+
+### Schritt 4: Importieren
+
+Der Import läuft in Schritten zu je 500 Zeilen und setzt sich automatisch fort; ein Fortschrittsbalken zeigt den Stand. Wird er unterbrochen (Browser geschlossen, Zeitüberschreitung), klicken Sie auf **„Fortsetzen“** – oder laden Sie die Datei nach Ablauf der Stunde einfach erneut hoch: bereits importierte Zeilen werden erkannt und übersprungen. Am Ende zeigt der **Importbericht** die Zahlen und einen Link zu den Einträgen.
+
+Importierte Einträge erhalten den Status *gelesen* und die Einsendezeit aus der Datei. Es werden **keine** E-Mails, keine Connector-Aktionen und keine „Eintrag erstellt“-Ereignisse ausgelöst. Werte werden **so gespeichert, wie sie in der Datei stehen** – auch Formeln (`=…`) oder HTML; in der Verwaltung werden sie stets maskiert angezeigt und beim CSV-Export gegen Formel-Injektion geschützt.
+
+### Import rückgängig machen
+
+Unter **„Bisherige Importe“** steht bei jedem Lauf **„Import rückgängig machen“**. Das löscht **genau die Einträge, die dieser Lauf angelegt hat**, endgültig – auch wenn sie danach bearbeitet wurden; andere Einträge bleiben unberührt. Möglich innerhalb von **7 Tagen** nach dem Import. Große Läufe werden in Schritten gelöscht.
+
+### Für Entwickler
+
+`FormCaptain\Import\ImportService::import_entries()` importiert weiterhin ohne Oberfläche in Formulare, die über den Formularimport angelegt wurden (bis 20 MB / 50 000 Zeilen, Spaltenzuordnung über Spaltenüberschriften). Nach jedem Schritt mit neuen Einträgen wird `form_captain_entries_imported_v1( $import_id, $form_id, $count )` ausgelöst.

@@ -236,6 +236,9 @@ final class ConsentWithdrawalTest extends TestCase {
 		$this->assertSame( 'confirmation_required', $this->page()->process_entry_action( array_diff_key( $request, array( 'confirm_withdrawal' => 1 ) ) + array( '_fc_nonce' => $nonce ) )->get_error_code() );
 		$this->assertSame( 'forbidden', $this->page()->process_entry_action( array_merge( $request, array( 'then' => 'delete', '_fc_nonce' => $nonce ) ) )->get_error_code() );
 		$this->assertSame( 'forbidden', $this->consent()->withdraw_as_current_user( $entry, 'delete' )->get_error_code() );
+		// Decision 2026-11-16: anonymizing is irreversible and needs the delete capability as well.
+		$this->assertSame( 'forbidden', $this->page()->process_entry_action( array_merge( $request, array( 'then' => 'anonymize', '_fc_nonce' => $nonce ) ) )->get_error_code() );
+		$this->assertSame( 'forbidden', $this->consent()->withdraw_as_current_user( $entry, 'anonymize' )->get_error_code() );
 		$this->assertSame( 'invalid_request', $this->page()->process_entry_action( array_merge( $request, array( 'then' => 'x', '_fc_nonce' => $nonce ) ) )->get_error_code() );
 		$this->assertCount( 0, $this->events, 'nothing happened yet' );
 		$this->assertEmpty( $this->entries()->find( $entry )['consent_withdrawn_gmt'] );

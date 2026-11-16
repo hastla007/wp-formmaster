@@ -81,8 +81,9 @@ final class EntryImportAdmin {
 
 			case self::ACTION_MAP:
 				$columns = array();
-				foreach ( (array) ( $_POST['fc_col'] ?? array() ) as $idx => $fid ) {
-					$columns[ (int) $idx ] = (string) preg_replace( '/[^a-z0-9_]/', '', strtolower( is_string( $fid ) ? wp_unslash( $fid ) : '' ) );
+				$raw     = isset( $_POST['fc_col'] ) && is_array( $_POST['fc_col'] ) ? map_deep( wp_unslash( $_POST['fc_col'] ), 'sanitize_key' ) : array();
+				foreach ( $raw as $idx => $fid ) {
+					$columns[ (int) $idx ] = is_string( $fid ) ? $fid : '';
 				}
 				$time_index  = isset( $_POST['fc_time_col'] ) && '' !== $_POST['fc_time_col'] ? (int) $_POST['fc_time_col'] : -1;
 				$time_format = isset( $_POST['fc_time_format'] ) ? sanitize_key( wp_unslash( $_POST['fc_time_format'] ) ) : 'auto';
@@ -541,7 +542,7 @@ final class EntryImportAdmin {
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"' . ( $auto ? ' data-fc-autosubmit="1"' : ' onsubmit="return window.confirm(this.dataset.confirm);"' ) . ' data-confirm="' . esc_attr__( 'Permanently delete all entries created by this import? This cannot be undone.', 'form-captain' ) . '">';
 		self::hidden( self::ACTION_REVERT, $form_id );
 		echo '<input type="hidden" name="fc_run" value="' . esc_attr( $run_id ) . '">';
-		submit_button( $label, $auto ? 'primary' : 'delete', 'submit', false );
+		submit_button( $label, $auto ? 'primary' : 'delete', 'submit', false, array( 'id' => 'fc-revert-' . $run_id ) );
 		echo '</form>';
 	}
 

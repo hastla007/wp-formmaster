@@ -6,6 +6,8 @@
  * import(): creates the form as a draft via FormService – never publishes, never touches
  * the source. import_entries(): separate step for documented CSV export files (profile
  * "Generic CSV"), idempotent via request_key, without mails, jobs or entry events.
+ * process_entries(): the engine behind it, also used batch-wise (dry run, offset/limit,
+ * run ID) by the admin entry import (EntryImportService / EntryImportAdmin).
  *
  * @package FormCaptain
  */
@@ -215,8 +217,8 @@ final class ImportService {
 		if ( is_wp_error( $stats ) ) {
 			return $stats;
 		}
-		$record    = (array) $this->record( $form_id );
-		$import_id = (string) $stats['import_id'];
+		$record                                = (array) $this->record( $form_id );
+		$import_id                             = (string) $stats['import_id'];
 		$record['entry_imports'][ $import_id ] = array(
 			'created_gmt' => Clock::now(),
 			'user_id'     => get_current_user_id(),

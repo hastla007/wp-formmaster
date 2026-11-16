@@ -22,4 +22,16 @@ Alle Werte sind Konstanten in `FormCaptain\Support\Limits` und über den Filter 
 | CSV-Export | Streaming in 500er-Batches, kein Speichern auf Disk | – |
 | Log-Aufbewahrung | 30 Tage | – |
 
+**CSV-Eintragsimport (Admin-Oberfläche)** – Klassenkonstanten in `FormCaptain\Import\EntryImportService`, nicht per Filter änderbar (das Entwickler-API `ImportService::import_entries()` erlaubt 20 MB / 50 000 Zeilen, `GenericCsv::MAX_BYTES`/`MAX_ROWS`):
+
+| Budget | Wert | Konstante |
+|---|---|---|
+| Dateigröße Upload | 5 MB | `MAX_BYTES` |
+| Datenzeilen je Datei (ohne Kopfzeile) | 10 000 | `MAX_ROWS` |
+| Zeilen je Import-Schritt (admin-post) | 500 | `BATCH` (= `GenericCsv::BATCH`) |
+| Lebensdauer Upload-Datei + Status-Transient | 1 h | `FILE_TTL` |
+| Vorschau | 5 Zeilen, Werte auf 40 Zeichen gekürzt | `PREVIEW_ROWS`, `PREVIEW_CHARS` |
+| Rücknahme eines Importlaufs möglich | 7 Tage | `REVERT_DAYS` |
+| Importprotokoll (`form_captain_entry_import_runs`) | 30 Tage, max. 50 Läufe, je Lauf max. 200 Zeilenbefunde | – |
+
 **Datenbanken:** MySQL 8.0+ und MariaDB 10.6+ (InnoDB). Ältere Versionen werden nicht getestet; MyISAM wird erkannt und im Systemstatus gewarnt.

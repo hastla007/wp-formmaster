@@ -143,7 +143,7 @@ final class EntriesPage {
 		if ( ! in_array( $then, ConsentService::THEN, true ) ) {
 			return new \WP_Error( 'invalid_request', __( 'Unknown follow-up action.', 'form-captain' ), array( 'status' => 400 ) );
 		}
-		if ( ! current_user_can( Capabilities::EDIT_ENTRIES ) || ( 'delete' === $then && ! current_user_can( Capabilities::DELETE_ENTRIES ) ) ) {
+		if ( ! current_user_can( Capabilities::EDIT_ENTRIES ) || ( in_array( $then, array( 'delete', 'anonymize' ), true ) && ! current_user_can( Capabilities::DELETE_ENTRIES ) ) ) {
 			return Errors::error( Errors::FORBIDDEN );
 		}
 		if ( empty( $request['confirm_withdrawal'] ) ) {
@@ -700,11 +700,11 @@ final class EntriesPage {
 		echo '<p class="description">' . esc_html__( 'Records that the person withdrew their consent. Open notifications and integration deliveries are cancelled and no new ones are sent.', 'form-captain' ) . '</p>';
 		echo '<fieldset><legend class="screen-reader-text">' . esc_html__( 'What should happen with the submission?', 'form-captain' ) . '</legend>';
 		$choices = array(
-			'keep'      => __( 'Keep the submission', 'form-captain' ),
-			'anonymize' => __( 'Anonymize personal data', 'form-captain' ),
+			'keep' => __( 'Keep the submission', 'form-captain' ),
 		);
 		if ( current_user_can( Capabilities::DELETE_ENTRIES ) ) {
-			$choices['delete'] = __( 'Delete the submission permanently', 'form-captain' );
+			$choices['anonymize'] = __( 'Anonymize personal data', 'form-captain' );
+			$choices['delete']    = __( 'Delete the submission permanently', 'form-captain' );
 		}
 		foreach ( $choices as $value => $label ) {
 			echo '<label for="fc-withdraw-' . esc_attr( $value . '-' . $id ) . '"><input type="radio" id="fc-withdraw-' . esc_attr( $value . '-' . $id ) . '" name="then" value="' . esc_attr( $value ) . '"' . checked( 'keep', $value, false ) . ' /> ' . esc_html( $label ) . '</label><br />';

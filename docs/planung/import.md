@@ -21,7 +21,7 @@ Der Leser für Typ A wird als Adapter `FormCaptain\Import\Source\TypeA` gekapsel
 |---|---|---|
 | A) Gleiche Installation | Formulare aus Beitragstyp der Quelle lesen | Quellplugin darf aktiv oder inaktiv sein; Daten werden nur gelesen |
 | B) Exportdatei der Quelle | WordPress-WXR-Export, der nur den Beitragstyp der Quelle enthält | Datei ≤ 5 MB, XML-Parser ohne externe Entitäten (XXE aus), keine Ausführung von Inhalten |
-| C) Entry-Exportdatei | CSV einer dokumentierten Exportquelle (Abschnitt 7) | Formular wurde bereits importiert; Formatprofil vorhanden |
+| C) Entry-Exportdatei | CSV einer dokumentierten Exportquelle (Abschnitt 7) | Formatprofil vorhanden; Entwickler-API: Formular wurde über diesen Import angelegt; Admin-Oberfläche (7a): beliebiges veröffentlichtes Formular |
 
 Keine anderen Formate, kein Direktzugriff auf Tabellen fremder Speichererweiterungen, kein Fernabruf über URL.
 
@@ -105,13 +105,25 @@ Wiederholter Import desselben Quellformulars: Standard „als neues Formular“;
 
 - Entry-Import erfolgt **nur** aus Dateien, deren Format in einem **Formatprofil** dokumentiert ist: Spaltenstruktur, Trennzeichen, Kodierung, Datumsformat, Zeitzone, Mehrfachwert-Trennung. Profile liegen versioniert im Code (`src/Import/Profiles/`), mit Testdatei. Ohne passendes Profil kein Entry-Import.
 - Mindestprofil v1: „Generisches CSV“ – UTF-8 (mit/ohne BOM), Kopfzeile, eine Zeile je Einsendung, Spalte für Einsendezeit (ISO 8601 oder `YYYY-MM-DD HH:MM:SS` + gewählte Zeitzone), Admin ordnet Spalten den Feldern des importierten Formulars zu.
-- Datei ≤ 20 MB, ≤ 50 000 Zeilen; Verarbeitung batchweise (500 Zeilen) über die Queue (Job-Typ `import.entries`), fortsetzbar.
+- Entwickler-API (`ImportService::import_entries()`): Datei ≤ 20 MB, ≤ 50 000 Zeilen, Verarbeitung in 500er-Transaktionen. Admin-Oberfläche: ≤ 5 MB, ≤ 10 000 Zeilen, 500 Zeilen je admin-post-Schritt (7a); eine Queue (Job-Typ `import.entries`) ist dafür nicht nötig, weil jeder Schritt dank `request_key` wiederholbar ist.
 - Jede Zeile durchläuft die Feldvalidierung des Zielschemas im Modus „Import“ (Pflichtfelder dürfen fehlen; ungültige Werte → Zeile übersprungen, Befund mit Zeilennummer, **ohne** Wert).
 - Importierte Entries: Status `read`, `created_gmt` aus Datei, `form_version_id` = Version beim Import, `source_url` = NULL, `user_id` = NULL, `context_json` = `{"import": "<import_id>"}`, `request_key` = SHA-256(`import_id` + Zeilennummer) → wiederholter Lauf erzeugt keine Duplikate. `expires_gmt` nach Retention ab **Original**-Einsendezeit; bereits abgelaufene Zeilen werden nicht importiert (Bericht: Anzahl).
 - Für importierte Entries werden **keine** Mails, Connector-Jobs oder öffentlichen `entry_created_v1`-Events ausgelöst; stattdessen ein Event `form_captain_entries_imported_v1(import_id, form_id, count)` (Vertragserweiterung, in `api-v1.md` zu ergänzen).
 - CSV-Formelzeichen in Werten bleiben als Text gespeichert; Export-Bereinigung greift wie bei allen Entries.
-- Rücknahme: „Import zurücknehmen“ löscht alle Entries mit diesem `import_id` über den regulären `EntryDeletionService` (hard delete), solange nicht bearbeitet; Recht `form_captain_delete_entries`.
-- Die hochgeladene Datei wird nur temporär im privaten Verzeichnis gehalten und nach Abschluss/Abbruch, spätestens nach 24 h, gelöscht.
+- Rücknahme (Produktentscheidung v1): „Import rückgängig machen“ löscht genau die Entries **eines Laufs** (`context_json.import_run`) über den regulären `EntryDeletionService` (hard delete, `reason = import_reverted`) – auch wenn sie inzwischen bearbeitet wurden –, nur innerhalb von 7 Tagen; Rechte `form_captain_manage_forms` + `form_captain_delete_entries`.
+- Die hochgeladene Datei wird nur temporär im privaten Verzeichnis gehalten und nach Abschluss/Abbruch, spätestens nach 1 h, gelöscht.
+
+## 7a. Oberfläche für den Eintragsimport (v1, umgesetzt)
+
+Einstieg: Formularübersicht → Zeilenaktion **„Einträge importieren“** bei veröffentlichten/pausierten Formularen oder Box **„Einträge aus einer CSV-Datei importieren“** im Importbereich. Seite: `admin.php?page=form-captain-forms&fc_entry_import=<Formular-ID>`. Code: `FormCaptain\Import\EntryImportAdmin` (UI, admin-post-Schritte `form_captain_form_entries_{upload,map,import,cancel,revert}` über `FormsPage::dispatch()`), `FormCaptain\Import\EntryImportService` (Datei, Status, Protokoll, Rücknahme), Engine `ImportService::process_entries()`.
+
+1. **Upload:** CSV UTF-8 mit/ohne BOM, Trennzeichen `,`/`;` aus der Kopfzeile erkannt, ≤ 5 MB / 10 000 Zeilen. Nur echte HTTP-Uploads (`is_uploaded_file`). Die Datei liegt mit Zufallsnamen in `uploads/form-captain-private/imports/` (`.htaccess` „deny“ + `index.php`); Pfad nie in URL oder HTML, nur der Dateiname im benutzergebundenen Status-Transient (`form_captain_eimp_<user>_<token>`, 1 h). Löschung: nach Abschluss/Abbruch, per Einzel-Cron-Event nach 1 h (`form_captain_entry_import_cleanup`) und stündlichem Sweep (`form_captain_hourly_cleanup`).
+2. **Spaltenzuordnung:** Spalte → Feld der veröffentlichten Version (mit Typ-Hinweis; `html`/`hidden` nicht zuordenbar), Spalten ignorieren, Spalte der Einsendezeit + Datumsformat (`GenericCsv::TIME_FORMATS`: `iso`, `ymd`, `dmy_dot`, `dmy_slash`, `mdy_slash`, `unix`; „automatisch“ prüft bis zu 200 Werte). Zeiten ohne Offset gelten in der Site-Zeitzone und werden in UTC gespeichert. Vorschau: 5 Zeilen, Werte auf 40 Zeichen gekürzt, nur im Upload-Transient.
+3. **Prüfung:** Trockenlauf über alle Zeilen (keine Schreibvorgänge): gültig / ungültig / Duplikat / abgelaufen, Befunde nur Zeilennummer + Fehlercode + Feldschlüssel.
+4. **Import:** 500 Zeilen je admin-post-Schritt, Fortsetzung automatisch (kleines Skript in `forms-admin.js`, Schaltfläche als Fallback). Neue Lauf-ID je Import (`context_json = {"import": <import_id>, "import_run": <run_id>}`); `request_key` bleibt SHA-256(`import_id`:Zeile), daher keine Duplikate bei Wiederholung, Abbruch oder erneutem Upload derselben Datei. Ergebnisbericht + Link zu den Einträgen.
+5. **Protokoll/Rücknahme:** Option `form_captain_entry_import_runs` (nur IDs, Zähler, Codes; 30 Tage, max. 50 Läufe). Rücknahme batchweise (500), nur ≤ 7 Tage.
+
+Tests: `tests/integration/Import/EntryImportUiTest.php`.
 
 ## 8. Originale nie löschen
 

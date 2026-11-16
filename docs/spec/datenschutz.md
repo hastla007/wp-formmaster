@@ -220,7 +220,7 @@ Erfasst ein Admin (oder Servercode) den Widerruf einer Einwilligung, läuft `For
 - `source`: `admin` (Default), `api`, `cli`, `privacy_request`, `system`; Unbekanntes → `admin`.
 - **Idempotent:** ein zweiter Aufruf setzt den Zeitpunkt nicht neu, storniert nichts erneut und feuert kein zweites Event; ein noch nicht ausgeführter Folgeschritt (`anonymize`/`delete`) wird nachgeholt.
 - **Keine neuen Jobs:** `OutboxPlanner` plant für widerrufene Entries nichts; „Admin-Benachrichtigung erneut senden“ wird mit `conflict` abgelehnt; `MailJobHandler` und `ConnectorRegistry::handle_job()` beenden trotzdem eingereihte Jobs mit `fail('consent_withdrawn')` (→ `dead`, keine Wiederholung); ausstehende `core.handoff`-Bestätigungen entfallen.
-- **Rechte:** `form_captain_read_entries` + `form_captain_edit_entries`; `then = delete` zusätzlich `form_captain_delete_entries`. Admin-Aktion mit Entry-gebundener Nonce und Pflicht-Bestätigung (Checkbox).
+- **Rechte:** `form_captain_read_entries` + `form_captain_edit_entries`; `then = anonymize` und `then = delete` zusätzlich `form_captain_delete_entries` (beides unumkehrbar; Entscheidung 16.11.2026). Admin-Aktion mit Entry-gebundener Nonce und Pflicht-Bestätigung (Checkbox).
 - **Sichtbarkeit:** Badge „Einwilligung widerrufen am …“ in Liste und Detail, Listenfilter `consent=withdrawn|active`, CSV-Spalte „Consent withdrawn“ (Datum, standardmäßig ausgewählt, abwählbar), Entry-DTO `consent_withdrawn`/`consent_withdrawn_gmt`.
 - **Fremdsysteme:** nur das Event; Connectoren entscheiden vertraglich (Referenz-Connector markiert sein Ticket als `consent_withdrawn`, löscht Daten nur bei Konfiguration). Keine ungefragte Remote-Löschung.
 

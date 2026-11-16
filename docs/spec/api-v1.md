@@ -28,7 +28,8 @@ Adapter registrieren sich ausschließlich in oder nach `form_captain_loaded_v1`.
 | `form_captain_form_updated_v1` | `array $form`, `string $change` (`saved`, `published`, `paused`, `unpublished`, `archived`) |
 | `form_captain_entry_created_v1` | `array $event` (Entry-Event, s. u.) |
 | `form_captain_entry_status_changed_v1` | `int $entry_id`, `string $old`, `string $new`, `int $form_id` |
-| `form_captain_entry_deleted_v1` | `int $entry_id`, `int $form_id`, `string $reason` (`manual`, `retention`, `erasure`, `anonymized`, `form_deleted`, `consent_withdrawn`) |
+| `form_captain_entry_deleted_v1` | `int $entry_id`, `int $form_id`, `string $reason` (`manual`, `retention`, `erasure`, `anonymized`, `form_deleted`, `consent_withdrawn`, `import_reverted`) |
+| `form_captain_entries_imported_v1` | `string $import_id`, `int $form_id`, `int $count` – nach jedem Import-Schritt mit neu angelegten Entries (CSV-Eintragsimport, `docs/planung/import.md` 7); für importierte Entries gibt es kein `entry_created_v1` |
 | `form_captain_consent_withdrawn_v1` | `int $entry_id`, `int $form_id`, `string $source` (`admin`, `api`, `cli`, `privacy_request`, `system`), `array $event` (4. Argument, optional per `accepted_args`; s. u.) |
 | `form_captain_notification_failed_v1` | `int $entry_id`, `int $form_id`, `string $job_type`, `string $error_code` |
 

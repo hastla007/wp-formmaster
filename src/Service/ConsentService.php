@@ -50,8 +50,9 @@ final class ConsentService {
 		if ( ! current_user_can( Capabilities::READ_ENTRIES ) || ! current_user_can( Capabilities::EDIT_ENTRIES ) ) {
 			return Errors::error( Errors::FORBIDDEN, __( 'You are not allowed to record a consent withdrawal.', 'form-captain' ) );
 		}
-		if ( 'delete' === $then && ! current_user_can( Capabilities::DELETE_ENTRIES ) ) {
-			return Errors::error( Errors::FORBIDDEN, __( 'You are not allowed to delete submissions.', 'form-captain' ) );
+		// Decision 2026-11-16: anonymizing is irreversible like deleting and needs the delete capability.
+		if ( in_array( $then, array( 'delete', 'anonymize' ), true ) && ! current_user_can( Capabilities::DELETE_ENTRIES ) ) {
+			return Errors::error( Errors::FORBIDDEN, __( 'You are not allowed to delete or anonymize submissions.', 'form-captain' ) );
 		}
 		return $this->withdraw( $entry_id, $source, $then );
 	}

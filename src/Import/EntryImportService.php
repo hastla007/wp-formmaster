@@ -293,7 +293,7 @@ final class EntryImportService {
 			return Errors::error( Errors::FORBIDDEN, __( 'You are not allowed to import entries.', 'form-captain' ) );
 		}
 		$state = $this->state( $token );
-		if ( ! $state || 'map' !== $state['step'] && 'check' !== $state['step'] ) {
+		if ( ! $state || ( 'map' !== $state['step'] && 'check' !== $state['step'] ) ) {
 			return Errors::error( 'import_expired', __( 'The upload has expired. Please upload the file again.', 'form-captain' ), array( 'status' => 410 ) );
 		}
 		$csv = $this->read_file( $state );

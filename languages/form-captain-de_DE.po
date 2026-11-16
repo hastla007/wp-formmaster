@@ -1,0 +1,5065 @@
+# German translation for Form Captain.
+# Copyright (C) 2026 Captain Suite
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Form Captain 1.0.0-dev\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/form-captain\n"
+"Last-Translator: Captain Suite\n"
+"Language-Team: Deutsch\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"POT-Creation-Date: 2026-11-16T06:42:56+00:00\n"
+"PO-Revision-Date: 2026-11-16 12:00+0000\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: form-captain\n"
+
+#. Plugin Name of the plugin
+#: form-captain.php:3
+#: src/Admin/DashboardPage.php:220
+#: src/Admin/Menu.php:57
+#: src/Admin/Menu.php:58
+#: src/Admin/Menu.php:78
+#: src/Admin/Menu.php:98
+#: src/Admin/SettingsPage.php:428
+#: src/Admin/SiteHealth.php:28
+#: src/Admin/SiteHealth.php:41
+#: src/Admin/SiteHealth.php:131
+#: src/Privacy/PrivacyIntegration.php:87
+#: assets/src/block-editor.js:100
+msgid "Form Captain"
+msgstr "Form Captain"
+
+#. Plugin URI of the plugin
+#: form-captain.php:4
+msgid "https://github.com/hastla007/wp-formmaster"
+msgstr "https://github.com/hastla007/wp-formmaster"
+
+#. Description of the plugin
+#: form-captain.php:5
+msgid "Build forms visually, manage submissions securely inside WordPress and connect them to the Captain Suite."
+msgstr "Erstellen Sie Formulare visuell, verwalten Sie Einsendungen sicher in WordPress und verbinden Sie sie mit der Captain Suite."
+
+#. Author of the plugin
+#: form-captain.php:9
+msgid "Captain Suite"
+msgstr "Captain Suite"
+
+#. translators: 1: WordPress version, 2: PHP version
+#: form-captain.php:38
+#, php-format
+msgid "Form Captain requires WordPress %1$s and PHP %2$s or newer. The plugin is inactive."
+msgstr "Form Captain benötigt WordPress %1$s und PHP %2$s oder neuer. Das Plugin ist inaktiv."
+
+#: src/Admin/AdminRest.php:135
+msgid "Please log in."
+msgstr "Bitte melden Sie sich an."
+
+#: src/Admin/AdminRest.php:141
+msgid "Application passwords are not accepted for these routes."
+msgstr "Anwendungspasswörter werden für diese Routen nicht akzeptiert."
+
+#: src/Admin/AdminRest.php:145
+#: src/Admin/DashboardPage.php:118
+#: src/Admin/DashboardPage.php:181
+#: src/Admin/FormsPage.php:322
+#: src/Import/EntryImportAdmin.php:237
+msgid "You are not allowed to do this."
+msgstr "Sie sind nicht berechtigt, dies zu tun."
+
+#: src/Admin/AdminRest.php:208
+msgid "Revision and schema are required."
+msgstr "Revision und Schema sind erforderlich."
+
+#: src/Admin/AdminRest.php:226
+msgid "Revision and actions are required."
+msgstr "Revision und Aktionen sind erforderlich."
+
+#: src/Admin/AdminRest.php:265
+#: src/Service/EntryService.php:83
+msgid "Unknown status."
+msgstr "Unbekannter Status."
+
+#: src/Admin/AdminRest.php:285
+#: src/Admin/AdminRest.php:313
+#: src/Admin/EditorPage.php:160
+#: src/Admin/EditorPage.php:217
+#: src/Admin/FormsPage.php:323
+#: src/Import/EntryImportAdmin.php:177
+#: src/Import/EntryImportService.php:201
+#: src/Service/FormService.php:159
+#: src/Service/FormService.php:212
+#: src/Service/FormService.php:304
+#: src/Service/FormService.php:327
+#: src/Service/FormService.php:371
+#: src/Service/FormService.php:408
+#: src/Service/FormService.php:443
+msgid "Form not found."
+msgstr "Formular nicht gefunden."
+
+#: src/Admin/DashboardPage.php:89
+msgid "Pass Captain"
+msgstr "Pass Captain"
+
+#: src/Admin/DashboardPage.php:90
+msgid "Voucher Captain"
+msgstr "Voucher Captain"
+
+#: src/Admin/DashboardPage.php:91
+msgid "Review Captain"
+msgstr "Review Captain"
+
+#: src/Admin/DashboardPage.php:92
+msgid "Affiliate Captain"
+msgstr "Affiliate Captain"
+
+#: src/Admin/DashboardPage.php:93
+msgid "License Captain"
+msgstr "License Captain"
+
+#: src/Admin/DashboardPage.php:94
+msgid "WooCommerce"
+msgstr "WooCommerce"
+
+#: src/Admin/DashboardPage.php:152
+msgid "You are not allowed to create pages."
+msgstr "Sie sind nicht berechtigt, Seiten zu erstellen."
+
+#: src/Admin/DashboardPage.php:205
+msgid "Need file uploads, multi-step forms or grouped conditions? They are available with Form Captain Pro – everything you build here keeps working without it."
+msgstr "Sie benötigen Datei-Uploads, mehrstufige Formulare oder gruppierte Bedingungen? Diese sind mit Form Captain Pro verfügbar – alles, was Sie hier erstellen, funktioniert auch ohne weiter."
+
+#: src/Admin/DashboardPage.php:206
+msgid "Tip: Form Captain Pro adds file uploads, multi-step forms and workflows. All features you use now stay free."
+msgstr "Tipp: Form Captain Pro ergänzt Datei-Uploads, mehrstufige Formulare und Workflows. Alle Funktionen, die Sie jetzt nutzen, bleiben kostenlos."
+
+#: src/Admin/DashboardPage.php:211
+msgid "Dismiss this hint"
+msgstr "Diesen Hinweis ausblenden"
+
+#: src/Admin/DashboardPage.php:218
+msgid "You are not allowed to access this page."
+msgstr "Sie sind nicht berechtigt, auf diese Seite zuzugreifen."
+
+#: src/Admin/DashboardPage.php:242
+msgid "Get started"
+msgstr "Erste Schritte"
+
+#. translators: 1: completed steps, 2: total steps
+#: src/Admin/DashboardPage.php:244
+#, php-format
+msgid "%1$d of %2$d steps completed. You can skip any step."
+msgstr "%1$d von %2$d Schritten erledigt. Sie können jeden Schritt überspringen."
+
+#: src/Admin/DashboardPage.php:248
+msgid "Create a form from a template"
+msgstr "Formular aus einer Vorlage erstellen"
+
+#: src/Admin/DashboardPage.php:261
+msgid "Check recipient and sender"
+msgstr "Empfänger und Absender prüfen"
+
+#. translators: %s: list of email addresses
+#: src/Admin/DashboardPage.php:268
+#, php-format
+msgid "Notifications go to: %s"
+msgstr "Benachrichtigungen gehen an: %s"
+
+#. translators: %s: sender email address
+#: src/Admin/DashboardPage.php:270
+#, php-format
+msgid "Sender: %s"
+msgstr "Absender: %s"
+
+#: src/Admin/DashboardPage.php:271
+msgid "Edit notification"
+msgstr "Benachrichtigung bearbeiten"
+
+#: src/Admin/DashboardPage.php:279
+msgid "Place the form on a page"
+msgstr "Formular auf einer Seite einfügen"
+
+#: src/Admin/DashboardPage.php:282
+#: src/Admin/Tables/FormsListTable.php:193
+msgid "Shortcode"
+msgstr "Shortcode"
+
+#: src/Admin/DashboardPage.php:282
+#: src/Admin/Tables/FormsListTable.php:195
+msgid "Copy"
+msgstr "Kopieren"
+
+#: src/Admin/DashboardPage.php:283
+msgid "Or add the “Form Captain” block to any page."
+msgstr "Oder fügen Sie den Block „Form Captain“ auf einer beliebigen Seite ein."
+
+#: src/Admin/DashboardPage.php:287
+msgid "Create a new draft page with this form"
+msgstr "Neue Entwurfsseite mit diesem Formular erstellen"
+
+#: src/Admin/DashboardPage.php:290
+msgid "Create a form first."
+msgstr "Erstellen Sie zuerst ein Formular."
+
+#: src/Admin/DashboardPage.php:295
+msgid "Send a test submission"
+msgstr "Test-Einsendung senden"
+
+#: src/Admin/DashboardPage.php:296
+msgid "Publish the form, open the page and submit it once. The entry and its email status then appear under Entries."
+msgstr "Veröffentlichen Sie das Formular, öffnen Sie die Seite und senden Sie es einmal ab. Der Eintrag und sein E-Mail-Status erscheinen dann unter Einträge."
+
+#: src/Admin/DashboardPage.php:298
+#: src/Import/EntryImportAdmin.php:536
+msgid "View entries"
+msgstr "Einträge anzeigen"
+
+#: src/Admin/DashboardPage.php:303
+msgid "Choose privacy and retention"
+msgstr "Datenschutz und Aufbewahrung wählen"
+
+#: src/Admin/DashboardPage.php:305
+#: src/Import/EntryImportAdmin.php:248
+#: src/Privacy/PrivacyIntegration.php:93
+#: src/Settings/SettingsSchema.php:104
+#: assets/src/editor.js:1130
+msgid "90 days"
+msgstr "90 Tage"
+
+#: src/Admin/DashboardPage.php:306
+#: src/Import/EntryImportAdmin.php:249
+#: src/Privacy/PrivacyIntegration.php:94
+#: assets/src/editor.js:1131
+msgid "12 months"
+msgstr "12 Monate"
+
+#: src/Admin/DashboardPage.php:307
+msgid "Manual deletion"
+msgstr "Manuelle Löschung"
+
+#. translators: %s: retention period
+#: src/Admin/DashboardPage.php:311
+#, php-format
+msgid "Entries are currently kept for: %s"
+msgstr "Einträge werden derzeit aufbewahrt für: %s"
+
+#: src/Admin/DashboardPage.php:313
+msgid "Open privacy settings"
+msgstr "Datenschutz-Einstellungen öffnen"
+
+#: src/Admin/DashboardPage.php:319
+msgid "Detect Captain Suite plugins (optional)"
+msgstr "Captain-Suite-Plugins erkennen (optional)"
+
+#. translators: %s: list of plugin names
+#: src/Admin/DashboardPage.php:323
+#, php-format
+msgid "Detected: %s. Adapters can be activated later under Integrations."
+msgstr "Erkannt: %s. Adapter können später unter Integrationen aktiviert werden."
+
+#: src/Admin/DashboardPage.php:325
+msgid "No Captain Suite plugins detected. Nothing to do."
+msgstr "Keine Captain-Suite-Plugins erkannt. Nichts zu tun."
+
+#: src/Admin/DashboardPage.php:333
+msgid "Hide setup checklist"
+msgstr "Einrichtungs-Checkliste ausblenden"
+
+#: src/Admin/DashboardPage.php:339
+msgid "(done)"
+msgstr "(erledigt)"
+
+#: src/Admin/DashboardPage.php:348
+msgid "Mark as done"
+msgstr "Als erledigt markieren"
+
+#: src/Admin/DashboardPage.php:352
+msgid "Overview"
+msgstr "Übersicht"
+
+#: src/Admin/DashboardPage.php:359
+msgid "active forms"
+msgstr "aktive Formulare"
+
+#: src/Admin/DashboardPage.php:362
+msgid "new entries"
+msgstr "neue Einträge"
+
+#: src/Admin/DashboardPage.php:369
+msgid "Recent forms"
+msgstr "Neueste Formulare"
+
+#: src/Admin/DashboardPage.php:371
+msgid "No forms yet."
+msgstr "Noch keine Formulare."
+
+#: src/Admin/DashboardPage.php:385
+#: src/Admin/EditorPage.php:173
+msgid "Create form"
+msgstr "Formular erstellen"
+
+#: src/Admin/DashboardPage.php:386
+#: src/Admin/EntriesPage.php:350
+msgid "All forms"
+msgstr "Alle Formulare"
+
+#: src/Admin/DashboardPage.php:389
+#: src/Admin/Menu.php:69
+#: src/Admin/Tables/FormsListTable.php:43
+msgid "Entries"
+msgstr "Einträge"
+
+#: src/Admin/DashboardPage.php:392
+#: src/Admin/IntegrationsPage.php:227
+#: src/Admin/Menu.php:70
+msgid "Integrations"
+msgstr "Integrationen"
+
+#: src/Admin/DashboardPage.php:395
+#: src/Admin/Menu.php:71
+#: assets/src/editor.js:1202
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: src/Admin/DashboardPage.php:397
+msgid "Quick actions"
+msgstr "Schnellaktionen"
+
+#: src/Admin/EditorPage.php:100
+msgid "Need file uploads, multi-step forms or grouped conditions? They are available with Form Captain Pro."
+msgstr "Sie benötigen Datei-Uploads, mehrstufige Formulare oder gruppierte Bedingungen? Diese sind mit Form Captain Pro verfügbar."
+
+#: src/Admin/EditorPage.php:107
+msgid "Invalid field."
+msgstr "Ungültiges Feld."
+
+#: src/Admin/EditorPage.php:108
+msgid "Unknown field type."
+msgstr "Unbekannter Feldtyp."
+
+#: src/Admin/EditorPage.php:109
+msgid "Invalid field ID."
+msgstr "Ungültige Feld-ID."
+
+#: src/Admin/EditorPage.php:110
+msgid "Field ID is used twice or was used before."
+msgstr "Die Feld-ID wird doppelt verwendet oder wurde bereits verwendet."
+
+#: src/Admin/EditorPage.php:111
+msgid "Key must start with a lowercase letter and contain only a–z, 0–9 and _ (max. 40)."
+msgstr "Der Schlüssel muss mit einem Kleinbuchstaben beginnen und darf nur a–z, 0–9 und _ enthalten (max. 40)."
+
+#: src/Admin/EditorPage.php:112
+msgid "This key is already used by another field."
+msgstr "Dieser Schlüssel wird bereits von einem anderen Feld verwendet."
+
+#: src/Admin/EditorPage.php:113
+msgid "Please enter a label."
+msgstr "Bitte geben Sie eine Bezeichnung ein."
+
+#: src/Admin/EditorPage.php:114
+msgid "Consent fields must never be pre-checked."
+msgstr "Einwilligungsfelder dürfen nie vorausgewählt sein."
+
+#: src/Admin/EditorPage.php:115
+msgid "Option values may only contain A–Z, a–z, 0–9, _ and - and need a label."
+msgstr "Optionswerte dürfen nur A–Z, a–z, 0–9, _ und - enthalten und benötigen eine Bezeichnung."
+
+#: src/Admin/EditorPage.php:116
+msgid "Option values must be unique."
+msgstr "Optionswerte müssen eindeutig sein."
+
+#: src/Admin/EditorPage.php:117
+msgid "Too many options."
+msgstr "Zu viele Optionen."
+
+#: src/Admin/EditorPage.php:118
+msgid "Add at least one option."
+msgstr "Fügen Sie mindestens eine Option hinzu."
+
+#: src/Admin/EditorPage.php:119
+msgid "Please enter the consent text."
+msgstr "Bitte geben Sie den Einwilligungstext ein."
+
+#: src/Admin/EditorPage.php:120
+msgid "Conditions may only refer to an earlier field that has a value."
+msgstr "Bedingungen dürfen sich nur auf ein vorheriges Feld mit Wert beziehen."
+
+#: src/Admin/EditorPage.php:121
+msgid "Invalid condition operator."
+msgstr "Ungültiger Bedingungsoperator."
+
+#: src/Admin/EditorPage.php:122
+msgid "Invalid pattern."
+msgstr "Ungültiges Muster."
+
+#: src/Admin/EditorPage.php:123
+#: src/Domain/SubmissionValidator.php:344
+msgid "Please enter a number."
+msgstr "Bitte geben Sie eine Zahl ein."
+
+#: src/Admin/EditorPage.php:124
+msgid "Minimum is greater than maximum."
+msgstr "Das Minimum ist größer als das Maximum."
+
+#: src/Admin/EditorPage.php:125
+msgid "Use YYYY-MM-DD or \"today\"."
+msgstr "Verwenden Sie JJJJ-MM-TT oder „today“."
+
+#: src/Admin/EditorPage.php:126
+msgid "Too many fields (maximum 100)."
+msgstr "Zu viele Felder (maximal 100)."
+
+#: src/Admin/EditorPage.php:127
+msgid "The form is too large."
+msgstr "Das Formular ist zu groß."
+
+#: src/Admin/EditorPage.php:128
+msgid "Add at least one input field before publishing."
+msgstr "Fügen Sie vor dem Veröffentlichen mindestens ein Eingabefeld hinzu."
+
+#: src/Admin/EditorPage.php:129
+msgid "One of the recipient addresses is invalid."
+msgstr "Eine der Empfängeradressen ist ungültig."
+
+#: src/Admin/EditorPage.php:130
+msgid "Enter at least one recipient or disable the notification."
+msgstr "Geben Sie mindestens einen Empfänger ein oder deaktivieren Sie die Benachrichtigung."
+
+#: src/Admin/EditorPage.php:131
+msgid "Reply-To must be an email field of this form."
+msgstr "Antwort-an muss ein E-Mail-Feld dieses Formulars sein."
+
+#: src/Admin/EditorPage.php:132
+msgid "Select at least one field."
+msgstr "Wählen Sie mindestens ein Feld aus."
+
+#: src/Admin/EditorPage.php:133
+msgid "Mark an email field as recipient of the confirmation email."
+msgstr "Markieren Sie ein E-Mail-Feld als Empfänger der Bestätigungs-E-Mail."
+
+#: src/Admin/EditorPage.php:134
+msgid "Please enter a subject."
+msgstr "Bitte geben Sie einen Betreff ein."
+
+#: src/Admin/EditorPage.php:135
+msgid "Choose a published page."
+msgstr "Wählen Sie eine veröffentlichte Seite."
+
+#: src/Admin/EditorPage.php:136
+msgid "Invalid email address."
+msgstr "Ungültige E-Mail-Adresse."
+
+#: src/Admin/EditorPage.php:137
+#: src/Admin/EditorPage.php:138
+msgid "Invalid action."
+msgstr "Ungültige Aktion."
+
+#: src/Admin/EditorPage.php:139
+msgid "This action is no longer available."
+msgstr "Diese Aktion ist nicht mehr verfügbar."
+
+#: src/Admin/EditorPage.php:140
+msgid "Invalid field mapping."
+msgstr "Ungültige Feldzuordnung."
+
+#: src/Admin/EditorPage.php:141
+msgid "Sensitive fields cannot be passed to actions."
+msgstr "Sensible Felder können nicht an Aktionen übergeben werden."
+
+#: src/Admin/EditorPage.php:142
+msgid "This field type cannot be used here."
+msgstr "Dieser Feldtyp kann hier nicht verwendet werden."
+
+#: src/Admin/EditorPage.php:143
+msgid "This value is required."
+msgstr "Dieser Wert ist erforderlich."
+
+#: src/Admin/EditorPage.php:151
+#: src/Admin/FormsPage.php:95
+#: src/Admin/FormsPage.php:212
+#: src/Import/ImportService.php:116
+msgid "You are not allowed to manage forms."
+msgstr "Sie sind nicht berechtigt, Formulare zu verwalten."
+
+#: src/Admin/EditorPage.php:160
+#: src/Admin/EditorPage.php:164
+#: src/Admin/Menu.php:68
+msgid "Edit form"
+msgstr "Formular bearbeiten"
+
+#: src/Admin/EditorPage.php:165
+msgid "Back to forms"
+msgstr "Zurück zu den Formularen"
+
+#: src/Admin/EditorPage.php:167
+msgid "Loading editor…"
+msgstr "Editor wird geladen …"
+
+#: src/Admin/EditorPage.php:168
+msgid "The form editor needs JavaScript."
+msgstr "Der Formular-Editor benötigt JavaScript."
+
+#: src/Admin/EditorPage.php:175
+msgid "Choose a template to start with. You can change every field afterwards."
+msgstr "Wählen Sie eine Vorlage als Ausgangspunkt. Sie können danach jedes Feld ändern."
+
+#: src/Admin/EditorPage.php:180
+msgid "Blank form"
+msgstr "Leeres Formular"
+
+#: src/Admin/EditorPage.php:181
+msgid "Start from scratch."
+msgstr "Ohne Vorlage beginnen."
+
+#. translators: %d: number of fields
+#: src/Admin/EditorPage.php:192
+#, php-format
+msgid "%d field"
+msgid_plural "%d fields"
+msgstr[0] "%d Feld"
+msgstr[1] "%d Felder"
+
+#: src/Admin/EditorPage.php:194
+msgid "Use this template"
+msgstr "Diese Vorlage verwenden"
+
+#: src/Admin/EditorPage.php:197
+msgid "You can also import a form definition (JSON) on the forms overview."
+msgstr "Sie können in der Formularübersicht auch eine Formulardefinition (JSON) importieren."
+
+#: src/Admin/EditorPage.php:197
+msgid "Go to forms"
+msgstr "Zu den Formularen"
+
+#: src/Admin/EditorPage.php:209
+msgid "You are not allowed to preview forms."
+msgstr "Sie sind nicht berechtigt, eine Vorschau von Formularen anzuzeigen."
+
+#: src/Admin/EditorPage.php:229
+msgid "The form renderer is not available."
+msgstr "Der Formular-Renderer ist nicht verfügbar."
+
+#: src/Admin/EditorPage.php:238
+msgid "Preview – submissions are disabled. Nothing is stored or sent."
+msgstr "Vorschau – Einsendungen sind deaktiviert. Es wird nichts gespeichert oder gesendet."
+
+#. translators: %s: form title
+#: src/Admin/EditorPage.php:241
+#, php-format
+msgid "Preview: %s"
+msgstr "Vorschau: %s"
+
+#: src/Admin/EditorPage.php:259
+#: src/Admin/SettingsPage.php:627
+#: src/Admin/Tables/FormsListTable.php:149
+#: assets/src/editor.js:1328
+#: assets/src/editor.js:1654
+msgid "Preview"
+msgstr "Vorschau"
+
+#: src/Admin/EntriesPage.php:78
+#: src/Admin/EntriesPage.php:104
+#: src/Export/CsvExporter.php:346
+msgid "Your session has expired. Please reload the page."
+msgstr "Ihre Sitzung ist abgelaufen. Bitte laden Sie die Seite neu."
+
+#: src/Admin/EntriesPage.php:107
+#: src/Admin/FormsPage.php:92
+msgid "Unknown action."
+msgstr "Unbekannte Aktion."
+
+#: src/Admin/EntriesPage.php:144
+#: src/Service/ConsentService.php:69
+msgid "Unknown follow-up action."
+msgstr "Unbekannte Folgeaktion."
+
+#: src/Admin/EntriesPage.php:150
+#: src/Admin/EntriesPage.php:264
+msgid "Please confirm the consent withdrawal."
+msgstr "Bitte bestätigen Sie den Widerruf der Einwilligung."
+
+#: src/Admin/EntriesPage.php:204
+msgid "You are not allowed to view submissions."
+msgstr "Sie sind nicht berechtigt, Einsendungen anzuzeigen."
+
+#: src/Admin/EntriesPage.php:230
+msgid "Status updated."
+msgstr "Status aktualisiert."
+
+#: src/Admin/EntriesPage.php:231
+msgid "Submission moved to the trash."
+msgstr "Einsendung in den Papierkorb verschoben."
+
+#: src/Admin/EntriesPage.php:232
+msgid "Submission restored."
+msgstr "Einsendung wiederhergestellt."
+
+#: src/Admin/EntriesPage.php:233
+msgid "Submission deleted permanently."
+msgstr "Einsendung endgültig gelöscht."
+
+#: src/Admin/EntriesPage.php:234
+msgid "Note added."
+msgstr "Notiz hinzugefügt."
+
+#: src/Admin/EntriesPage.php:235
+msgid "The message was queued and will be sent shortly."
+msgstr "Die Nachricht wurde in die Warteschlange gestellt und wird in Kürze gesendet."
+
+#: src/Admin/EntriesPage.php:236
+msgid "Consent withdrawal recorded. Open deliveries were cancelled."
+msgstr "Widerruf der Einwilligung erfasst. Offene Zustellungen wurden abgebrochen."
+
+#: src/Admin/EntriesPage.php:237
+msgid "Consent withdrawal recorded and the submission was deleted permanently."
+msgstr "Widerruf der Einwilligung erfasst und die Einsendung endgültig gelöscht."
+
+#. translators: 1: processed count, 2: skipped count
+#: src/Admin/EntriesPage.php:240
+#, php-format
+msgid "%1$s submissions processed, %2$s skipped."
+msgstr "%1$s Einsendungen verarbeitet, %2$s übersprungen."
+
+#: src/Admin/EntriesPage.php:258
+msgid "This action is not possible in the current state of the submission."
+msgstr "Diese Aktion ist im aktuellen Zustand der Einsendung nicht möglich."
+
+#: src/Admin/EntriesPage.php:259
+#: src/Integrations/CoreActions.php:342
+#: src/Service/ConsentService.php:74
+#: src/Service/EntryService.php:87
+#: src/Service/EntryService.php:105
+#: src/Service/EntryService.php:138
+#: src/Service/EntryService.php:153
+msgid "Submission not found."
+msgstr "Einsendung nicht gefunden."
+
+#: src/Admin/EntriesPage.php:260
+#: src/Admin/IntegrationsPage.php:85
+#: src/Admin/IntegrationsPage.php:98
+#: src/Service/EntryService.php:196
+msgid "Job not found."
+msgstr "Auftrag nicht gefunden."
+
+#: src/Admin/EntriesPage.php:261
+msgid "Only failed deliveries can be retried."
+msgstr "Nur fehlgeschlagene Zustellungen können erneut versucht werden."
+
+#: src/Admin/EntriesPage.php:262
+#: src/Service/EntryService.php:157
+msgid "Notes must contain between 1 and 5000 characters."
+msgstr "Notizen müssen zwischen 1 und 5000 Zeichen enthalten."
+
+#: src/Admin/EntriesPage.php:263
+msgid "Invalid request."
+msgstr "Ungültige Anfrage."
+
+#: src/Admin/EntriesPage.php:265
+#: src/Admin/FormsPage.php:339
+#: src/Import/EntryImportAdmin.php:240
+msgid "The action could not be completed."
+msgstr "Die Aktion konnte nicht abgeschlossen werden."
+
+#: src/Admin/EntriesPage.php:306
+msgid "Submissions"
+msgstr "Einsendungen"
+
+#: src/Admin/EntriesPage.php:308
+msgid "Export CSV"
+msgstr "CSV exportieren"
+
+#. translators: 1: number of submissions, 2: date
+#: src/Admin/EntriesPage.php:317
+#, php-format
+msgid "%1$s submissions will be deleted automatically on or after %2$s according to your retention setting. Export them now if you still need them."
+msgstr "%1$s Einsendungen werden gemäß Ihrer Aufbewahrungseinstellung ab dem %2$s automatisch gelöscht. Exportieren Sie sie jetzt, falls Sie sie noch benötigen."
+
+#: src/Admin/EntriesPage.php:321
+msgid "Show these submissions"
+msgstr "Diese Einsendungen anzeigen"
+
+#. translators: %s: number of days
+#: src/Admin/EntriesPage.php:327
+#, php-format
+msgid "Items in the trash are deleted permanently after %s days."
+msgstr "Einträge im Papierkorb werden nach %s Tagen endgültig gelöscht."
+
+#: src/Admin/EntriesPage.php:344
+msgid "Search submissions"
+msgstr "Einsendungen durchsuchen"
+
+#: src/Admin/EntriesPage.php:346
+msgid "Search"
+msgstr "Suchen"
+
+#: src/Admin/EntriesPage.php:349
+msgid "Filter by form"
+msgstr "Nach Formular filtern"
+
+#: src/Admin/EntriesPage.php:355
+#: src/Admin/EntriesPage.php:786
+msgid "From"
+msgstr "Von"
+
+#: src/Admin/EntriesPage.php:356
+#: src/Admin/EntriesPage.php:786
+msgid "To"
+msgstr "Bis"
+
+#: src/Admin/EntriesPage.php:357
+msgid "Filter by consent"
+msgstr "Nach Einwilligung filtern"
+
+#: src/Admin/EntriesPage.php:359
+msgid "Any consent state"
+msgstr "Beliebiger Einwilligungsstatus"
+
+#: src/Admin/EntriesPage.php:360
+#: src/Export/CsvExporter.php:51
+#: src/Integrations/ConnectorRegistry.php:453
+msgid "Consent withdrawn"
+msgstr "Einwilligung widerrufen"
+
+#: src/Admin/EntriesPage.php:361
+msgid "Consent not withdrawn"
+msgstr "Einwilligung nicht widerrufen"
+
+#: src/Admin/EntriesPage.php:363
+msgid "Filter"
+msgstr "Filtern"
+
+#: src/Admin/EntriesPage.php:386
+#: src/Admin/EntriesPage.php:742
+msgid "Back to submissions"
+msgstr "Zurück zu den Einsendungen"
+
+#: src/Admin/EntriesPage.php:388
+msgid "Submission not found"
+msgstr "Einsendung nicht gefunden"
+
+#. translators: %d: submission ID
+#: src/Admin/EntriesPage.php:401
+#, php-format
+msgid "Submission #%d"
+msgstr "Einsendung #%d"
+
+#: src/Admin/EntriesPage.php:403
+msgid "Personal data of this submission was anonymized."
+msgstr "Die personenbezogenen Daten dieser Einsendung wurden anonymisiert."
+
+#: src/Admin/EntriesPage.php:406
+msgid "No further messages or integration deliveries are sent for this submission."
+msgstr "Für diese Einsendung werden keine weiteren Nachrichten oder Integrationszustellungen gesendet."
+
+#. translators: %s: date
+#: src/Admin/EntriesPage.php:410
+#, php-format
+msgid "Will be deleted automatically on %s."
+msgstr "Wird am %s automatisch gelöscht."
+
+#: src/Admin/EntriesPage.php:417
+msgid "Answers"
+msgstr "Antworten"
+
+#: src/Admin/EntriesPage.php:432
+#: src/Admin/EntriesPage.php:442
+msgid "Field removed"
+msgstr "Feld entfernt"
+
+#: src/Admin/EntriesPage.php:435
+msgid "Sensitive"
+msgstr "Sensibel"
+
+#: src/Admin/EntriesPage.php:460
+msgid "Details"
+msgstr "Details"
+
+#: src/Admin/EntriesPage.php:461
+#: src/Admin/EntriesPage.php:752
+#: src/Admin/Tables/EntriesListTable.php:69
+#: src/Privacy/PrivacyIntegration.php:179
+#: assets/src/block-editor.js:72
+#: assets/src/block-editor.js:86
+msgid "Form"
+msgstr "Formular"
+
+#: src/Admin/EntriesPage.php:461
+#: src/Admin/Tables/EntriesListTable.php:238
+msgid "(deleted form)"
+msgstr "(gelöschtes Formular)"
+
+#: src/Admin/EntriesPage.php:463
+#: src/Export/CsvExporter.php:47
+msgid "Form version"
+msgstr "Formularversion"
+
+#: src/Admin/EntriesPage.php:465
+#: src/Admin/Tables/EntriesListTable.php:70
+msgid "Submitted"
+msgstr "Eingang"
+
+#: src/Admin/EntriesPage.php:466
+msgid "Last change"
+msgstr "Letzte Änderung"
+
+#: src/Admin/EntriesPage.php:467
+#: src/Admin/EntriesPage.php:536
+#: src/Admin/EntriesPage.php:780
+#: src/Admin/IntegrationsPage.php:360
+#: src/Admin/Tables/EntriesListTable.php:71
+#: src/Admin/Tables/FormsListTable.php:41
+#: src/Export/CsvExporter.php:46
+#: src/Import/EntryImportAdmin.php:566
+#: src/Privacy/PrivacyIntegration.php:187
+msgid "Status"
+msgstr "Status"
+
+#: src/Admin/EntriesPage.php:469
+msgid "Spam reason"
+msgstr "Spamgrund"
+
+#: src/Admin/EntriesPage.php:472
+#: src/Export/CsvExporter.php:48
+msgid "Source page"
+msgstr "Quellseite"
+
+#: src/Admin/EntriesPage.php:476
+msgid "Source post"
+msgstr "Quellbeitrag"
+
+#: src/Admin/EntriesPage.php:480
+msgid "User"
+msgstr "Benutzer"
+
+#: src/Admin/EntriesPage.php:484
+msgid "Context"
+msgstr "Kontext"
+
+#: src/Admin/EntriesPage.php:504
+msgid "Consent record"
+msgstr "Einwilligungsnachweis"
+
+#. translators: 1: date, 2: revision number
+#: src/Admin/EntriesPage.php:517
+#, php-format
+msgid "Consent given on %1$s, text revision %2$s"
+msgstr "Einwilligung erteilt am %1$s, Text-Revision %2$s"
+
+#: src/Admin/EntriesPage.php:519
+msgid "Consent not given"
+msgstr "Keine Einwilligung erteilt"
+
+#: src/Admin/EntriesPage.php:522
+msgid "Show wording"
+msgstr "Wortlaut anzeigen"
+
+#: src/Admin/EntriesPage.php:532
+msgid "Delivery status"
+msgstr "Versandstatus"
+
+#: src/Admin/EntriesPage.php:534
+msgid "No notifications or actions were queued for this submission."
+msgstr "Für diese Einsendung wurden keine Benachrichtigungen oder Aktionen eingeplant."
+
+#: src/Admin/EntriesPage.php:536
+msgid "Type"
+msgstr "Typ"
+
+#: src/Admin/EntriesPage.php:536
+#: src/Admin/IntegrationsPage.php:360
+msgid "Attempts"
+msgstr "Versuche"
+
+#: src/Admin/EntriesPage.php:536
+msgid "Last error"
+msgstr "Letzter Fehler"
+
+#: src/Admin/EntriesPage.php:536
+msgid "Updated"
+msgstr "Aktualisiert"
+
+#: src/Admin/EntriesPage.php:546
+msgid "Send again"
+msgstr "Erneut senden"
+
+#: src/Admin/EntriesPage.php:554
+msgid "Send admin notification again"
+msgstr "Admin-Benachrichtigung erneut senden"
+
+#: src/Admin/EntriesPage.php:563
+#: assets/src/editor.js:914
+msgid "Admin notification"
+msgstr "Admin-Benachrichtigung"
+
+#: src/Admin/EntriesPage.php:564
+msgid "Confirmation to submitter"
+msgstr "Bestätigung an die einsendende Person"
+
+#. translators: %s: action key
+#: src/Admin/EntriesPage.php:567
+#, php-format
+msgid "Integration: %s"
+msgstr "Integration: %s"
+
+#: src/Admin/EntriesPage.php:576
+msgid "Queued"
+msgstr "In Warteschlange"
+
+#: src/Admin/EntriesPage.php:577
+msgid "Sending"
+msgstr "Wird gesendet"
+
+#: src/Admin/EntriesPage.php:578
+msgid "Sent"
+msgstr "Gesendet"
+
+#: src/Admin/EntriesPage.php:579
+#: src/Admin/IntegrationsPage.php:176
+msgid "Failed – will retry"
+msgstr "Fehlgeschlagen – neuer Versuch folgt"
+
+#: src/Admin/EntriesPage.php:580
+msgid "Failed permanently"
+msgstr "Endgültig fehlgeschlagen"
+
+#: src/Admin/EntriesPage.php:581
+#: src/Admin/IntegrationsPage.php:178
+msgid "Cancelled"
+msgstr "Abgebrochen"
+
+#: src/Admin/EntriesPage.php:582
+#: src/Admin/IntegrationsPage.php:179
+#: src/Integrations/ConnectorRegistry.php:328
+msgid "Paused (connector disabled)"
+msgstr "Pausiert (Connector deaktiviert)"
+
+#: src/Admin/EntriesPage.php:593
+msgid "Internal notes"
+msgstr "Interne Notizen"
+
+#: src/Admin/EntriesPage.php:595
+msgid "No notes yet."
+msgstr "Noch keine Notizen."
+
+#: src/Admin/EntriesPage.php:600
+msgid "System"
+msgstr "System"
+
+#: src/Admin/EntriesPage.php:609
+msgid "New note"
+msgstr "Neue Notiz"
+
+#: src/Admin/EntriesPage.php:611
+msgid "Notes are included when the person requests a copy of their data. Write factually."
+msgstr "Notizen sind enthalten, wenn die Person eine Kopie ihrer Daten anfordert. Formulieren Sie sachlich."
+
+#: src/Admin/EntriesPage.php:612
+msgid "Add note"
+msgstr "Notiz hinzufügen"
+
+#. translators: 1: old status, 2: new status
+#: src/Admin/EntriesPage.php:624
+#, php-format
+msgid "Opened: status changed from %1$s to %2$s"
+msgstr "Geöffnet: Status von %1$s zu %2$s geändert"
+
+#. translators: 1: old status, 2: new status
+#: src/Admin/EntriesPage.php:626
+#, php-format
+msgid "Status changed from %1$s to %2$s"
+msgstr "Status von %1$s zu %2$s geändert"
+
+#. translators: %s: status
+#: src/Admin/EntriesPage.php:630
+#, php-format
+msgid "Restored from trash (%s)"
+msgstr "Aus dem Papierkorb wiederhergestellt (%s)"
+
+#: src/Admin/EntriesPage.php:633
+msgid "Delivery retried manually"
+msgstr "Zustellung manuell erneut versucht"
+
+#: src/Admin/EntriesPage.php:636
+msgid "Admin notification queued manually"
+msgstr "Admin-Benachrichtigung manuell eingeplant"
+
+#: src/Admin/EntriesPage.php:639
+msgid "Anonymized after consent withdrawal"
+msgstr "Nach Widerruf der Einwilligung anonymisiert"
+
+#: src/Admin/EntriesPage.php:642
+msgid "Consent withdrawal recorded"
+msgstr "Widerruf der Einwilligung erfasst"
+
+#: src/Admin/EntriesPage.php:650
+#: src/Import/EntryImportAdmin.php:566
+#: assets/src/editor.js:1316
+#: assets/src/editor.js:1683
+msgid "Actions"
+msgstr "Aktionen"
+
+#: src/Admin/EntriesPage.php:653
+#: src/Admin/Tables/EntriesListTable.php:167
+msgid "Not spam"
+msgstr "Kein Spam"
+
+#: src/Admin/EntriesPage.php:653
+msgid "Unarchive"
+msgstr "Archivierung aufheben"
+
+#: src/Admin/EntriesPage.php:653
+#: src/Admin/Tables/EntriesListTable.php:169
+msgid "Mark as read"
+msgstr "Als gelesen markieren"
+
+#: src/Admin/EntriesPage.php:654
+#: src/Admin/Tables/EntriesListTable.php:170
+#: src/Admin/Tables/FormsListTable.php:163
+msgid "Archive"
+msgstr "Archivieren"
+
+#: src/Admin/EntriesPage.php:655
+#: src/Admin/Tables/EntriesListTable.php:171
+msgid "Mark as spam"
+msgstr "Als Spam markieren"
+
+#: src/Admin/EntriesPage.php:665
+#: src/Admin/Tables/EntriesListTable.php:160
+msgid "Restore"
+msgstr "Wiederherstellen"
+
+#: src/Admin/EntriesPage.php:667
+#: src/Admin/Tables/EntriesListTable.php:175
+msgid "Move to trash"
+msgstr "In den Papierkorb"
+
+#: src/Admin/EntriesPage.php:672
+#: src/Admin/Tables/EntriesListTable.php:161
+#: src/Admin/Tables/EntriesListTable.php:177
+msgid "Delete permanently"
+msgstr "Endgültig löschen"
+
+#. translators: %s: number of submissions
+#: src/Admin/EntriesPage.php:676
+#, php-format
+msgid "Delete %s submissions permanently? This cannot be undone. Files and notes are deleted as well."
+msgstr "%s Einsendungen endgültig löschen? Dies kann nicht rückgängig gemacht werden. Dateien und Notizen werden ebenfalls gelöscht."
+
+#: src/Admin/EntriesPage.php:692
+#: src/Admin/EntriesPage.php:714
+msgid "Withdraw consent"
+msgstr "Einwilligung widerrufen"
+
+#: src/Admin/EntriesPage.php:700
+msgid "Records that the person withdrew their consent. Open notifications and integration deliveries are cancelled and no new ones are sent."
+msgstr "Erfasst, dass die Person ihre Einwilligung widerrufen hat. Offene Benachrichtigungen und Integrationszustellungen werden abgebrochen und keine neuen gesendet."
+
+#: src/Admin/EntriesPage.php:701
+msgid "What should happen with the submission?"
+msgstr "Was soll mit der Einsendung geschehen?"
+
+#: src/Admin/EntriesPage.php:703
+msgid "Keep the submission"
+msgstr "Einsendung behalten"
+
+#: src/Admin/EntriesPage.php:706
+msgid "Anonymize personal data"
+msgstr "Personenbezogene Daten anonymisieren"
+
+#: src/Admin/EntriesPage.php:707
+msgid "Delete the submission permanently"
+msgstr "Einsendung endgültig löschen"
+
+#: src/Admin/EntriesPage.php:713
+msgid "I confirm that the person withdrew their consent. This cannot be undone."
+msgstr "Ich bestätige, dass die Person ihre Einwilligung widerrufen hat. Dies kann nicht rückgängig gemacht werden."
+
+#: src/Admin/EntriesPage.php:741
+msgid "Export submissions"
+msgstr "Einsendungen exportieren"
+
+#: src/Admin/EntriesPage.php:744
+#: src/Export/CsvExporter.php:339
+msgid "You are not allowed to export submissions."
+msgstr "Sie sind nicht berechtigt, Einsendungen zu exportieren."
+
+#: src/Admin/EntriesPage.php:752
+msgid "Choose a form"
+msgstr "Formular wählen"
+
+#: src/Admin/EntriesPage.php:757
+msgid "Choose"
+msgstr "Auswählen"
+
+#: src/Admin/EntriesPage.php:760
+msgid "Columns depend on the form, so please choose one form first."
+msgstr "Die Spalten hängen vom Formular ab. Bitte wählen Sie daher zuerst ein Formular."
+
+#: src/Admin/EntriesPage.php:770
+msgid "Columns"
+msgstr "Spalten"
+
+#: src/Admin/EntriesPage.php:775
+msgid "Sensitive – only exported when selected"
+msgstr "Sensibel – wird nur exportiert, wenn ausgewählt"
+
+#: src/Admin/EntriesPage.php:784
+msgid "Without a selection, all active submissions are exported (no spam, no trash)."
+msgstr "Ohne Auswahl werden alle aktiven Einsendungen exportiert (kein Spam, kein Papierkorb)."
+
+#: src/Admin/EntriesPage.php:785
+msgid "Period"
+msgstr "Zeitraum"
+
+#: src/Admin/EntriesPage.php:787
+msgid "Format"
+msgstr "Format"
+
+#: src/Admin/EntriesPage.php:788
+msgid "Add UTF-8 byte order mark (recommended for Excel)"
+msgstr "UTF-8-Byte-Order-Mark hinzufügen (für Excel empfohlen)"
+
+#: src/Admin/EntriesPage.php:789
+msgid "Separator"
+msgstr "Trennzeichen"
+
+#: src/Admin/EntriesPage.php:791
+msgid "Download CSV"
+msgstr "CSV herunterladen"
+
+#: src/Admin/FormsPage.php:223
+#: src/Admin/Menu.php:67
+msgid "Forms"
+msgstr "Formulare"
+
+#: src/Admin/FormsPage.php:224
+msgid "Add new form"
+msgstr "Neues Formular hinzufügen"
+
+#: src/Admin/FormsPage.php:234
+msgid "Search forms"
+msgstr "Formulare durchsuchen"
+
+#: src/Admin/FormsPage.php:245
+msgid "Import form from JSON"
+msgstr "Formular aus JSON importieren"
+
+#: src/Admin/FormsPage.php:250
+msgid "Form definition (.json, max. 256 KB)"
+msgstr "Formulardefinition (.json, max. 256 KB)"
+
+#: src/Admin/FormsPage.php:252
+msgid "Only the form definition is imported – never entries, files or credentials. The form is created as a draft; connector actions stay disabled until you enable them."
+msgstr "Es wird nur die Formulardefinition importiert – niemals Einträge, Dateien oder Zugangsdaten. Das Formular wird als Entwurf angelegt; Connector-Aktionen bleiben deaktiviert, bis Sie sie aktivieren."
+
+#: src/Admin/FormsPage.php:253
+msgid "Import"
+msgstr "Importieren"
+
+#: src/Admin/FormsPage.php:280
+#: src/Import/EntryImportAdmin.php:525
+msgid "Import report"
+msgstr "Importbericht"
+
+#: src/Admin/FormsPage.php:281
+msgid "Open imported form"
+msgstr "Importiertes Formular öffnen"
+
+#: src/Admin/FormsPage.php:283
+msgid "Please check these notification recipients:"
+msgstr "Bitte prüfen Sie diese Benachrichtigungsempfänger:"
+
+#: src/Admin/FormsPage.php:284
+msgid "Cleaned values:"
+msgstr "Bereinigte Werte:"
+
+#: src/Admin/FormsPage.php:285
+msgid "Removed or reset values:"
+msgstr "Entfernte oder zurückgesetzte Werte:"
+
+#: src/Admin/FormsPage.php:307
+msgid "Form created."
+msgstr "Formular erstellt."
+
+#: src/Admin/FormsPage.php:308
+msgid "Form duplicated. The copy is a draft; connector actions are disabled."
+msgstr "Formular dupliziert. Die Kopie ist ein Entwurf; Connector-Aktionen sind deaktiviert."
+
+#: src/Admin/FormsPage.php:309
+msgid "Form deleted."
+msgstr "Formular gelöscht."
+
+#: src/Admin/FormsPage.php:310
+msgid "Form published."
+msgstr "Formular veröffentlicht."
+
+#: src/Admin/FormsPage.php:311
+msgid "Form paused. Visitors see the pause message."
+msgstr "Formular pausiert. Besucher sehen die Pausenmeldung."
+
+#: src/Admin/FormsPage.php:312
+msgid "Form resumed."
+msgstr "Formular fortgesetzt."
+
+#: src/Admin/FormsPage.php:313
+msgid "Form moved back to draft."
+msgstr "Formular zurück in den Entwurf gesetzt."
+
+#: src/Admin/FormsPage.php:314
+msgid "Form archived."
+msgstr "Formular archiviert."
+
+#: src/Admin/FormsPage.php:315
+msgid "Form restored as draft."
+msgstr "Formular als Entwurf wiederhergestellt."
+
+#: src/Admin/FormsPage.php:316
+msgid "Form imported as draft."
+msgstr "Formular als Entwurf importiert."
+
+#: src/Admin/FormsPage.php:317
+msgid "Step marked as done."
+msgstr "Schritt als erledigt markiert."
+
+#: src/Admin/FormsPage.php:318
+msgid "Draft page with your form created."
+msgstr "Entwurfsseite mit Ihrem Formular erstellt."
+
+#: src/Admin/FormsPage.php:321
+msgid "This action is not possible in the current state. Forms with entries can be archived instead of deleted."
+msgstr "Diese Aktion ist im aktuellen Zustand nicht möglich. Formulare mit Einträgen können statt gelöscht archiviert werden."
+
+#: src/Admin/FormsPage.php:324
+msgid "The form has errors. Open the editor to fix them before publishing."
+msgstr "Das Formular enthält Fehler. Öffnen Sie den Editor, um sie vor dem Veröffentlichen zu beheben."
+
+#: src/Admin/FormsPage.php:325
+#: src/Service/FormService.php:515
+msgid "This form was created with a newer version of Form Captain."
+msgstr "Dieses Formular wurde mit einer neueren Version von Form Captain erstellt."
+
+#: src/Admin/FormsPage.php:326
+#: src/Service/FormService.php:479
+msgid "The file is too large (maximum 256 KB)."
+msgstr "Die Datei ist zu groß (maximal 256 KB)."
+
+#: src/Admin/FormsPage.php:327
+msgid "Please upload a .json file."
+msgstr "Bitte laden Sie eine .json-Datei hoch."
+
+#: src/Admin/FormsPage.php:328
+msgid "Please choose a file to import."
+msgstr "Bitte wählen Sie eine Datei zum Importieren."
+
+#: src/Admin/FormsPage.php:329
+msgid "Please paste the form source to import."
+msgstr "Bitte fügen Sie den zu importierenden Formular-Quelltext ein."
+
+#: src/Admin/FormsPage.php:330
+msgid "The import preview has expired. Please start again."
+msgstr "Die Importvorschau ist abgelaufen. Bitte beginnen Sie erneut."
+
+#: src/Admin/FormsPage.php:331
+#: src/Import/ImportService.php:126
+msgid "The form cannot be imported. See the report for details."
+msgstr "Das Formular kann nicht importiert werden. Details finden Sie im Bericht."
+
+#: src/Admin/FormsPage.php:332
+#: src/Import/ImportService.php:126
+msgid "The form exceeds the limits (100 fields, 200 options) and was not imported."
+msgstr "Das Formular überschreitet die Grenzwerte (100 Felder, 200 Optionen) und wurde nicht importiert."
+
+#: src/Admin/FormsPage.php:333
+#: src/Service/FormService.php:98
+#: src/Service/FormService.php:387
+#: src/Service/FormService.php:544
+msgid "The form could not be saved."
+msgstr "Das Formular konnte nicht gespeichert werden."
+
+#: src/Admin/IntegrationsPage.php:47
+msgid "Connector activated. Its actions can now be enabled per form. Paused jobs continue automatically."
+msgstr "Connector aktiviert. Seine Aktionen können jetzt je Formular aktiviert werden. Pausierte Aufträge werden automatisch fortgesetzt."
+
+#: src/Admin/IntegrationsPage.php:50
+msgid "Connector deactivated. Its open jobs are paused and continue when you activate it again; no data is deleted in the target system."
+msgstr "Connector deaktiviert. Seine offenen Aufträge sind pausiert und werden bei erneuter Aktivierung fortgesetzt; im Zielsystem werden keine Daten gelöscht."
+
+#: src/Admin/IntegrationsPage.php:58
+msgid "Too many test runs. Please wait ten minutes."
+msgstr "Zu viele Testläufe. Bitte warten Sie zehn Minuten."
+
+#. translators: 1: status, 2: code
+#: src/Admin/IntegrationsPage.php:68
+#, php-format
+msgid "Test run finished with status \"%1$s\" (code: %2$s). No entry or job was created."
+msgstr "Testlauf mit Status „%1$s“ beendet (Code: %2$s). Es wurde kein Eintrag und kein Auftrag erstellt."
+
+#. translators: %s: list of field keys
+#: src/Admin/IntegrationsPage.php:73
+#, php-format
+msgid "Sample fields sent: %s"
+msgstr "Gesendete Beispielfelder: %s"
+
+#: src/Admin/IntegrationsPage.php:88
+msgid "Only failed, dead or cancelled jobs can be retried."
+msgstr "Nur fehlgeschlagene, endgültig fehlgeschlagene oder abgebrochene Aufträge können erneut versucht werden."
+
+#: src/Admin/IntegrationsPage.php:91
+msgid "Job queued again. It runs with the next worker run."
+msgstr "Auftrag erneut eingeplant. Er wird beim nächsten Worker-Lauf ausgeführt."
+
+#: src/Admin/IntegrationsPage.php:101
+msgid "This job cannot be cancelled."
+msgstr "Dieser Auftrag kann nicht abgebrochen werden."
+
+#: src/Admin/IntegrationsPage.php:104
+msgid "Job cancelled."
+msgstr "Auftrag abgebrochen."
+
+#: src/Admin/IntegrationsPage.php:111
+#: src/Admin/IntegrationsPage.php:220
+msgid "You are not allowed to manage integrations."
+msgstr "Sie sind nicht berechtigt, Integrationen zu verwalten."
+
+#: src/Admin/IntegrationsPage.php:162
+msgid "Active"
+msgstr "Aktiv"
+
+#: src/Admin/IntegrationsPage.php:163
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+#: src/Admin/IntegrationsPage.php:164
+msgid "Detected – not activated"
+msgstr "Erkannt – nicht aktiviert"
+
+#: src/Admin/IntegrationsPage.php:165
+msgid "Incompatible"
+msgstr "Inkompatibel"
+
+#: src/Admin/IntegrationsPage.php:166
+msgid "Plugin missing"
+msgstr "Plugin fehlt"
+
+#: src/Admin/IntegrationsPage.php:173
+msgid "Waiting"
+msgstr "Wartend"
+
+#: src/Admin/IntegrationsPage.php:174
+msgid "Running"
+msgstr "Läuft"
+
+#: src/Admin/IntegrationsPage.php:175
+msgid "Delivered"
+msgstr "Zugestellt"
+
+#: src/Admin/IntegrationsPage.php:177
+msgid "Dead-letter"
+msgstr "Dead-Letter"
+
+#: src/Admin/IntegrationsPage.php:198
+msgid "Connector missing: the job stays paused until the connector plugin is installed and activated again. You can cancel it here."
+msgstr "Connector fehlt: Der Auftrag bleibt pausiert, bis das Connector-Plugin wieder installiert und aktiviert ist. Sie können ihn hier abbrechen."
+
+#: src/Admin/IntegrationsPage.php:199
+msgid "The job does not run while the connector is disabled and continues automatically when you activate it. Attempts are not counted."
+msgstr "Der Auftrag läuft nicht, solange der Connector deaktiviert ist, und wird nach der Aktivierung automatisch fortgesetzt. Versuche werden nicht gezählt."
+
+#: src/Admin/IntegrationsPage.php:228
+msgid "Connectors are separate plugins that pass selected form data to other systems. Installed connectors stay disabled until you activate them. Connectors receive only the fields you map in a form – sensitive fields are blocked."
+msgstr "Connectors sind separate Plugins, die ausgewählte Formulardaten an andere Systeme übergeben. Installierte Connectors bleiben deaktiviert, bis Sie sie aktivieren. Connectors erhalten nur die Felder, die Sie in einem Formular zuordnen – sensible Felder sind gesperrt."
+
+#. translators: %s: licence status
+#: src/Admin/IntegrationsPage.php:233
+msgid "Form Captain Pro is active."
+msgstr "Form Captain Pro ist aktiv."
+
+#. translators: %s: licence status
+#: src/Admin/IntegrationsPage.php:233
+#, php-format
+msgid "Licence status: %s"
+msgstr "Lizenzstatus: %s"
+
+#. translators: %d: number of paused jobs
+#: src/Admin/IntegrationsPage.php:248
+#, php-format
+msgid "%d job is paused because its connector is missing."
+msgid_plural "%d jobs are paused because their connector is missing."
+msgstr[0] "%d Auftrag ist pausiert, weil sein Connector fehlt."
+msgstr[1] "%d Aufträge sind pausiert, weil ihr Connector fehlt."
+
+#: src/Admin/IntegrationsPage.php:251
+msgid "Show paused jobs"
+msgstr "Pausierte Aufträge anzeigen"
+
+#: src/Admin/IntegrationsPage.php:254
+msgid "Connectors"
+msgstr "Connectors"
+
+#: src/Admin/IntegrationsPage.php:256
+msgid "No connector is installed. Connectors are installed as separate WordPress plugins; see the developer guide docs/CONNECTORS.md for building one."
+msgstr "Es ist kein Connector installiert. Connectors werden als separate WordPress-Plugins installiert; wie Sie einen erstellen, beschreibt der Entwicklerleitfaden docs/CONNECTORS.md."
+
+#: src/Admin/IntegrationsPage.php:264
+msgid "Other form actions"
+msgstr "Weitere Formularaktionen"
+
+#: src/Admin/IntegrationsPage.php:284
+#: src/Import/ImportAdmin.php:139
+msgid "Key"
+msgstr "Schlüssel"
+
+#: src/Admin/IntegrationsPage.php:285
+msgid "Plugin version"
+msgstr "Plugin-Version"
+
+#. translators: %s: core contract version
+#: src/Admin/IntegrationsPage.php:287
+msgid "Contract"
+msgstr "Vertrag"
+
+#. translators: %s: core contract version
+#: src/Admin/IntegrationsPage.php:287
+#, php-format
+msgid "(Form Captain provides %s)"
+msgstr "(Form Captain stellt %s bereit)"
+
+#: src/Admin/IntegrationsPage.php:289
+msgid "Requirements"
+msgstr "Voraussetzungen"
+
+#: src/Admin/IntegrationsPage.php:289
+msgid "Met"
+msgstr "Erfüllt"
+
+#: src/Admin/IntegrationsPage.php:289
+msgid "Not met"
+msgstr "Nicht erfüllt"
+
+#: src/Admin/IntegrationsPage.php:294
+msgid "Capabilities"
+msgstr "Berechtigungen"
+
+#: src/Admin/IntegrationsPage.php:296
+msgid "Paused jobs"
+msgstr "Pausierte Aufträge"
+
+#: src/Admin/IntegrationsPage.php:306
+msgid "Deactivate this connector? Its open jobs are paused until you activate it again."
+msgstr "Diesen Connector deaktivieren? Seine offenen Aufträge sind pausiert, bis Sie ihn wieder aktivieren."
+
+#: src/Admin/IntegrationsPage.php:309
+msgid "Activate"
+msgstr "Aktivieren"
+
+#: src/Admin/IntegrationsPage.php:309
+msgid "Deactivate"
+msgstr "Deaktivieren"
+
+#: src/Admin/IntegrationsPage.php:315
+msgid "Form actions"
+msgstr "Formularaktionen"
+
+#: src/Admin/IntegrationsPage.php:315
+#: src/Admin/IntegrationsPage.php:360
+#: assets/src/editor.js:366
+msgid "Action"
+msgstr "Aktion"
+
+#: src/Admin/IntegrationsPage.php:315
+msgid "Mapped fields"
+msgstr "Zugeordnete Felder"
+
+#: src/Admin/IntegrationsPage.php:315
+msgid "Test"
+msgstr "Test"
+
+#: src/Admin/IntegrationsPage.php:319
+msgid "may be sensitive"
+msgstr "möglicherweise sensibel"
+
+#: src/Admin/IntegrationsPage.php:325
+msgid "Run test"
+msgstr "Test ausführen"
+
+#: src/Admin/IntegrationsPage.php:326
+msgid "Uses sample values in test mode. No entry, no job."
+msgstr "Verwendet im Testmodus Beispielwerte. Kein Eintrag, kein Auftrag."
+
+#: src/Admin/IntegrationsPage.php:328
+msgid "Activate the connector to run a test."
+msgstr "Aktivieren Sie den Connector, um einen Test auszuführen."
+
+#: src/Admin/IntegrationsPage.php:348
+msgid "Integration jobs"
+msgstr "Integrationsaufträge"
+
+#: src/Admin/IntegrationsPage.php:351
+#: src/Admin/Tables/EntriesListTable.php:119
+#: src/Admin/Tables/FormsListTable.php:97
+msgid "All"
+msgstr "Alle"
+
+#: src/Admin/IntegrationsPage.php:357
+msgid "No integration jobs yet. Jobs appear here after a form with an enabled action receives a submission."
+msgstr "Noch keine Integrationsaufträge. Aufträge erscheinen hier, sobald ein Formular mit aktivierter Aktion eine Einsendung erhält."
+
+#: src/Admin/IntegrationsPage.php:360
+msgid "Entry"
+msgstr "Eintrag"
+
+#: src/Admin/IntegrationsPage.php:360
+msgid "Last run / next step"
+msgstr "Letzter Lauf / nächster Schritt"
+
+#: src/Admin/IntegrationsPage.php:360
+msgid "Manage"
+msgstr "Verwalten"
+
+#: src/Admin/IntegrationsPage.php:366
+msgid "Remote ID:"
+msgstr "Remote-ID:"
+
+#: src/Admin/IntegrationsPage.php:375
+msgid "Retry"
+msgstr "Erneut versuchen"
+
+#: src/Admin/IntegrationsPage.php:378
+#: src/Import/ImportAdmin.php:167
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: src/Admin/Menu.php:66
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: src/Admin/Menu.php:99
+msgid "This area is not available yet."
+msgstr "Dieser Bereich ist noch nicht verfügbar."
+
+#: src/Admin/SettingsPage.php:76
+msgid "This section cannot be saved."
+msgstr "Dieser Bereich kann nicht gespeichert werden."
+
+#: src/Admin/SettingsPage.php:85
+msgid "Settings saved."
+msgstr "Einstellungen gespeichert."
+
+#: src/Admin/SettingsPage.php:88
+#: src/Admin/SettingsPage.php:121
+msgid "No changes."
+msgstr "Keine Änderungen."
+
+#: src/Admin/SettingsPage.php:95
+msgid "Deleting the plugin will now also delete all forms and submissions."
+msgstr "Beim Löschen des Plugins werden jetzt auch alle Formulare und Einsendungen gelöscht."
+
+#: src/Admin/SettingsPage.php:96
+msgid "Forms and submissions will be kept when the plugin is deleted."
+msgstr "Formulare und Einsendungen bleiben beim Löschen des Plugins erhalten."
+
+#: src/Admin/SettingsPage.php:102
+msgid "Some settings were not saved. Please check the highlighted fields."
+msgstr "Einige Einstellungen wurden nicht gespeichert. Bitte prüfen Sie die markierten Felder."
+
+#: src/Admin/SettingsPage.php:117
+#: src/Admin/SettingsPage.php:137
+msgid "Changing role permissions requires the capability to promote users."
+msgstr "Zum Ändern von Rollenrechten ist die Berechtigung zum Befördern von Benutzern erforderlich."
+
+#: src/Admin/SettingsPage.php:121
+msgid "Permissions saved."
+msgstr "Berechtigungen gespeichert."
+
+#. translators: 1: number of users who can read entries, 2: number of users who can export entries
+#: src/Admin/SettingsPage.php:127
+#, php-format
+msgid "%1$s users can read entries, %2$s users can export them."
+msgstr "%1$s Benutzer können Einträge lesen, %2$s Benutzer können sie exportieren."
+
+#: src/Admin/SettingsPage.php:140
+msgid "Permissions were reset: only administrators have access."
+msgstr "Die Berechtigungen wurden zurückgesetzt: Nur Administratoren haben Zugriff."
+
+#: src/Admin/SettingsPage.php:143
+msgid "This section cannot be reset."
+msgstr "Dieser Bereich kann nicht zurückgesetzt werden."
+
+#: src/Admin/SettingsPage.php:147
+msgid "The section was reset to the defaults. Other sections were not changed."
+msgstr "Der Bereich wurde auf die Standardwerte zurückgesetzt. Andere Bereiche wurden nicht geändert."
+
+#. translators: %s: number of submissions
+#: src/Admin/SettingsPage.php:164
+#, php-format
+msgid "Automatic deletion is off. %s submissions are kept until you delete them."
+msgstr "Die automatische Löschung ist deaktiviert. %s Einsendungen bleiben gespeichert, bis Sie sie löschen."
+
+#. translators: 1: number of submissions, 2: date
+#: src/Admin/SettingsPage.php:168
+#, php-format
+msgid "This change affects %1$s existing submissions. The earliest automatic deletion will be on %2$s. Submissions are never deleted sooner than 14 days after this change."
+msgstr "Diese Änderung betrifft %1$s vorhandene Einsendungen. Die früheste automatische Löschung erfolgt am %2$s. Einsendungen werden frühestens 14 Tage nach dieser Änderung gelöscht."
+
+#. translators: %s: number of forms
+#: src/Admin/SettingsPage.php:262
+#, php-format
+msgid "Defaults apply to new forms only. %s existing form keeps its own value."
+msgid_plural "Defaults apply to new forms only. %s existing forms keep their own values."
+msgstr[0] "Standardwerte gelten nur für neue Formulare. %s bestehendes Formular behält seinen eigenen Wert."
+msgstr[1] "Standardwerte gelten nur für neue Formulare. %s bestehende Formulare behalten ihre eigenen Werte."
+
+#: src/Admin/SettingsPage.php:274
+msgid "Too many test e-mails. Please wait ten minutes."
+msgstr "Zu viele Test-E-Mails. Bitte warten Sie zehn Minuten."
+
+#: src/Admin/SettingsPage.php:287
+msgid "Form Captain test e-mail"
+msgstr "Form-Captain-Test-E-Mail"
+
+#: src/Admin/SettingsPage.php:288
+msgid "This is a test e-mail from Form Captain. If you received it, your website can send e-mails. Form notifications use the same way of delivery."
+msgstr "Dies ist eine Test-E-Mail von Form Captain. Wenn Sie sie erhalten haben, kann Ihre Website E-Mails versenden. Formularbenachrichtigungen werden auf demselben Weg zugestellt."
+
+#: src/Admin/SettingsPage.php:294
+msgid "Test e-mail sent to your user e-mail address. If it does not arrive within a few minutes, check the spam folder and consider an SMTP plugin."
+msgstr "Test-E-Mail an die E-Mail-Adresse Ihres Benutzerkontos gesendet. Falls sie nicht innerhalb weniger Minuten ankommt, prüfen Sie den Spam-Ordner und erwägen Sie ein SMTP-Plugin."
+
+#: src/Admin/SettingsPage.php:297
+msgid "The test e-mail could not be sent. WordPress reported an error; an SMTP plugin usually solves delivery problems."
+msgstr "Die Test-E-Mail konnte nicht gesendet werden. WordPress hat einen Fehler gemeldet; ein SMTP-Plugin löst Zustellprobleme in der Regel."
+
+#: src/Admin/SettingsPage.php:316
+msgid "The signing key was renewed. The previous key was discarded immediately; open forms and links signed before are invalid."
+msgstr "Der Signaturschlüssel wurde erneuert. Der bisherige Schlüssel wurde sofort verworfen; zuvor signierte offene Formulare und Links sind ungültig."
+
+#: src/Admin/SettingsPage.php:317
+msgid "The signing key was renewed. The previous key stays valid for 26 hours."
+msgstr "Der Signaturschlüssel wurde erneuert. Der bisherige Schlüssel bleibt 26 Stunden gültig."
+
+#: src/Admin/SettingsPage.php:336
+msgid "You are not allowed to change Form Captain settings."
+msgstr "Sie sind nicht berechtigt, die Einstellungen von Form Captain zu ändern."
+
+#: src/Admin/SettingsPage.php:360
+msgid "Please confirm that you want to reset this section."
+msgstr "Bitte bestätigen Sie, dass Sie diesen Bereich zurücksetzen möchten."
+
+#: src/Admin/SettingsPage.php:373
+msgid "Please confirm the key renewal."
+msgstr "Bitte bestätigen Sie die Erneuerung des Schlüssels."
+
+#: src/Admin/SettingsPage.php:401
+msgid "Deleting this plugin will also delete all forms and submissions."
+msgstr "Beim Löschen dieses Plugins werden auch alle Formulare und Einsendungen gelöscht."
+
+#: src/Admin/SettingsPage.php:419
+msgid "You are not allowed to view Form Captain settings."
+msgstr "Sie sind nicht berechtigt, die Einstellungen von Form Captain anzuzeigen."
+
+#: src/Admin/SettingsPage.php:427
+msgid "Form Captain settings"
+msgstr "Form-Captain-Einstellungen"
+
+#: src/Admin/SettingsPage.php:429
+msgid "Settings sections"
+msgstr "Einstellungsbereiche"
+
+#: src/Admin/SettingsPage.php:480
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+#: src/Admin/SettingsPage.php:499
+#: assets/src/editor.js:1190
+msgid "Enabled"
+msgstr "Aktiviert"
+
+#: src/Admin/SettingsPage.php:544
+msgid "Submissions are deleted permanently 90 days after they were received."
+msgstr "Einsendungen werden 90 Tage nach Eingang endgültig gelöscht."
+
+#: src/Admin/SettingsPage.php:545
+msgid "Submissions are deleted permanently 12 months after they were received."
+msgstr "Einsendungen werden 12 Monate nach Eingang endgültig gelöscht."
+
+#: src/Admin/SettingsPage.php:546
+msgid "Submissions are kept until you delete them. Make sure you delete data you no longer need."
+msgstr "Einsendungen bleiben gespeichert, bis Sie sie löschen. Löschen Sie Daten, die Sie nicht mehr benötigen."
+
+#. translators: 1: number of submissions, 2: date
+#: src/Admin/SettingsPage.php:550
+#, php-format
+msgid "Affects %1$s submissions; earliest deletion on %2$s."
+msgstr "Betrifft %1$s Einsendungen; früheste Löschung am %2$s."
+
+#. translators: %s: number of submissions
+#: src/Admin/SettingsPage.php:552
+#, php-format
+msgid "Affects %s submissions; nothing is deleted automatically."
+msgstr "Betrifft %s Einsendungen; es wird nichts automatisch gelöscht."
+
+#. translators: %s: number of forms
+#: src/Admin/SettingsPage.php:559
+#, php-format
+msgid "%s form uses its own retention period and is not affected."
+msgid_plural "%s forms use their own retention period and are not affected."
+msgstr[0] "%s Formular verwendet eine eigene Aufbewahrungsfrist und ist nicht betroffen."
+msgstr[1] "%s Formulare verwenden eine eigene Aufbewahrungsfrist und sind nicht betroffen."
+
+#: src/Admin/SettingsPage.php:561
+msgid "I understand that changing the retention period schedules the deletion of existing submissions (never sooner than 14 days after this change)."
+msgstr "Mir ist bewusst, dass eine Änderung der Aufbewahrungsfrist die Löschung vorhandener Einsendungen einplant (frühestens 14 Tage nach dieser Änderung)."
+
+#. translators: %s: date
+#: src/Admin/SettingsPage.php:568
+#, php-format
+msgid "Confirmed on %s. Deleting the plugin will also delete all forms and submissions."
+msgstr "Bestätigt am %s. Beim Löschen des Plugins werden auch alle Formulare und Einsendungen gelöscht."
+
+#. translators: 1: number of forms, 2: number of submissions
+#: src/Admin/SettingsPage.php:573
+#, php-format
+msgid "When you delete the plugin, %1$s forms, %2$s submissions and all uploaded files will be removed permanently. Type DELETE to confirm."
+msgstr "Beim Löschen des Plugins werden %1$s Formulare, %2$s Einsendungen und alle hochgeladenen Dateien endgültig entfernt. Geben Sie LÖSCHEN ein, um zu bestätigen."
+
+#: src/Admin/SettingsPage.php:578
+msgid "Confirmation word"
+msgstr "Bestätigungswort"
+
+#: src/Admin/SettingsPage.php:583
+msgid "The sender domain differs from your website domain. Many mail servers reject or mark such messages as spam. Use an address of your own domain or configure SPF/DKIM with your mail provider."
+msgstr "Die Absenderdomain weicht von der Domain Ihrer Website ab. Viele Mailserver lehnen solche Nachrichten ab oder markieren sie als Spam. Verwenden Sie eine Adresse Ihrer eigenen Domain oder richten Sie SPF/DKIM bei Ihrem Mailanbieter ein."
+
+#. translators: 1: provider, 2: data, 3: purpose
+#: src/Admin/SettingsPage.php:590
+#, php-format
+msgid "%1$s will receive: %2$s. Purpose: %3$s. Update your privacy policy before enabling this service."
+msgstr "%1$s erhält: %2$s. Zweck: %3$s. Ergänzen Sie Ihre Datenschutzerklärung, bevor Sie diesen Dienst aktivieren."
+
+#: src/Admin/SettingsPage.php:597
+msgid "Provider privacy policy"
+msgstr "Datenschutzerklärung des Anbieters"
+
+#: src/Admin/SettingsPage.php:602
+msgid "I have read the data flow and updated the privacy policy."
+msgstr "Ich habe den Datenfluss gelesen und die Datenschutzerklärung ergänzt."
+
+#: src/Admin/SettingsPage.php:609
+msgid "Form-specific options such as recipients, reply-to, subject, confirmation message, redirect and actions are set in each form, not here. Form import/export is in the form list, CSV export in Entries."
+msgstr "Formularbezogene Optionen wie Empfänger, Antwort-an, Betreff, Bestätigungsmeldung, Weiterleitung und Aktionen stellen Sie im jeweiligen Formular ein, nicht hier. Formular-Import/-Export finden Sie in der Formularliste, den CSV-Export unter Einträge."
+
+#: src/Admin/SettingsPage.php:610
+msgid "Your theme styles forms by default. Base styles only use local CSS – no external fonts or files are loaded."
+msgstr "Standardmäßig gestaltet Ihr Theme die Formulare. Die Basisstile verwenden nur lokales CSS – es werden keine externen Schriften oder Dateien geladen."
+
+#: src/Admin/SettingsPage.php:611
+msgid "Form Captain sends e-mails with WordPress (wp_mail). It does not manage SMTP servers or mail passwords; use an SMTP plugin of your choice for reliable delivery."
+msgstr "Form Captain versendet E-Mails über WordPress (wp_mail). SMTP-Server oder Mail-Passwörter werden nicht verwaltet; nutzen Sie für eine zuverlässige Zustellung ein SMTP-Plugin Ihrer Wahl."
+
+#: src/Admin/SettingsPage.php:612
+msgid "Submissions are stored only in this WordPress database. Form Captain does not control backups. Deleted submissions remain in existing backups until those backups expire. After restoring a backup, expired submissions are deleted again automatically; repeat completed erasure requests."
+msgstr "Einsendungen werden nur in dieser WordPress-Datenbank gespeichert. Form Captain hat keinen Einfluss auf Backups. Gelöschte Einsendungen bleiben in vorhandenen Backups, bis diese ablaufen. Nach dem Einspielen eines Backups werden abgelaufene Einsendungen automatisch erneut gelöscht; wiederholen Sie bereits abgeschlossene Löschanfragen."
+
+#: src/Admin/SettingsPage.php:613
+msgid "Honeypot, minimum fill-in time and rate limiting work without cookies and without sending data to third parties."
+msgstr "Honeypot, Mindest-Ausfüllzeit und Rate-Limit funktionieren ohne Cookies und ohne Datenübermittlung an Dritte."
+
+#: src/Admin/SettingsPage.php:629
+#: src/Domain/Fields/FieldTypes.php:23
+#: src/Settings/SettingsSchema.php:39
+msgid "Email"
+msgstr "E-Mail"
+
+#: src/Admin/SettingsPage.php:629
+#: src/Frontend/Renderer.php:164
+msgid "Send"
+msgstr "Senden"
+
+#: src/Admin/SettingsPage.php:630
+msgid "Schematic preview. The real look depends on your theme."
+msgstr "Schematische Vorschau. Das tatsächliche Aussehen hängt von Ihrem Theme ab."
+
+#: src/Admin/SettingsPage.php:634
+msgid "Privacy policy text"
+msgstr "Text für die Datenschutzerklärung"
+
+#: src/Admin/SettingsPage.php:635
+msgid "Suggested text (not legal advice). It is also available in the WordPress privacy policy guide."
+msgstr "Textvorschlag (keine Rechtsberatung). Er ist auch im WordPress-Leitfaden für die Datenschutzerklärung verfügbar."
+
+#: src/Admin/SettingsPage.php:635
+msgid "Open the policy guide"
+msgstr "Leitfaden öffnen"
+
+#: src/Admin/SettingsPage.php:641
+msgid "Test e-mail"
+msgstr "Test-E-Mail"
+
+#: src/Admin/SettingsPage.php:645
+msgid "Sends a short test message to your own user e-mail address with the default sender."
+msgstr "Sendet eine kurze Testnachricht mit dem Standard-Absender an die E-Mail-Adresse Ihres Benutzerkontos."
+
+#: src/Admin/SettingsPage.php:646
+msgid "Send test e-mail"
+msgstr "Test-E-Mail senden"
+
+#: src/Admin/SettingsPage.php:652
+msgid "Reset this section"
+msgstr "Diesen Bereich zurücksetzen"
+
+#: src/Admin/SettingsPage.php:653
+msgid "Reset this section to the defaults?"
+msgstr "Diesen Bereich auf die Standardwerte zurücksetzen?"
+
+#. translators: %s: section name
+#: src/Admin/SettingsPage.php:657
+#, php-format
+msgid "Only the section \"%s\" is reset to the defaults. Other sections and existing forms keep their values."
+msgstr "Nur der Bereich „%s“ wird auf die Standardwerte zurückgesetzt. Andere Bereiche und bestehende Formulare behalten ihre Werte."
+
+#: src/Admin/SettingsPage.php:659
+msgid "Resetting sets the retention to 12 months and disables data deletion on uninstall. Existing submissions are rescheduled accordingly."
+msgstr "Das Zurücksetzen stellt die Aufbewahrung auf 12 Monate und deaktiviert die Datenlöschung bei der Deinstallation. Vorhandene Einsendungen werden entsprechend neu eingeplant."
+
+#: src/Admin/SettingsPage.php:662
+msgid "Only administrators keep access. All other roles lose their Form Captain permissions."
+msgstr "Nur Administratoren behalten den Zugriff. Alle anderen Rollen verlieren ihre Form-Captain-Berechtigungen."
+
+#: src/Admin/SettingsPage.php:664
+msgid "I understand the consequences."
+msgstr "Ich verstehe die Folgen."
+
+#: src/Admin/SettingsPage.php:665
+msgid "Reset section"
+msgstr "Bereich zurücksetzen"
+
+#: src/Admin/SettingsPage.php:672
+msgid "Choose which roles may use Form Captain. Entries can contain personal data – grant reading and exporting only to people who need it."
+msgstr "Legen Sie fest, welche Rollen Form Captain verwenden dürfen. Einträge können personenbezogene Daten enthalten – erlauben Sie Lesen und Exportieren nur Personen, die dies benötigen."
+
+#: src/Admin/SettingsPage.php:677
+msgid "Role"
+msgstr "Rolle"
+
+#. translators: %s: number of users
+#: src/Admin/SettingsPage.php:684
+#, php-format
+msgid "%s user"
+msgid_plural "%s users"
+msgstr[0] "%s Benutzer"
+msgstr[1] "%s Benutzer"
+
+#: src/Admin/SettingsPage.php:690
+msgid "always"
+msgstr "immer"
+
+#: src/Admin/SettingsPage.php:697
+msgid "Administrators always keep \"Manage settings\" so nobody can lock themselves out. Changing permissions also requires the WordPress capability to promote users."
+msgstr "Administratoren behalten immer „Einstellungen verwalten“, damit sich niemand aussperren kann. Zum Ändern von Berechtigungen ist zusätzlich das WordPress-Recht zum Befördern von Benutzern erforderlich."
+
+#: src/Admin/SettingsPage.php:698
+msgid "Save permissions"
+msgstr "Berechtigungen speichern"
+
+#: src/Admin/SettingsPage.php:706
+msgid "Read-only overview for troubleshooting. It never shows submitted values, e-mail addresses, IP addresses or secrets."
+msgstr "Nur lesende Übersicht zur Fehlersuche. Sie zeigt nie eingesendete Werte, E-Mail-Adressen, IP-Adressen oder Geheimnisse."
+
+#: src/Admin/SettingsPage.php:714
+msgid "No problems detected."
+msgstr "Keine Probleme erkannt."
+
+#: src/Admin/SettingsPage.php:717
+msgid "Environment"
+msgstr "Umgebung"
+
+#: src/Admin/SettingsPage.php:718
+msgid "Database"
+msgstr "Datenbank"
+
+#: src/Admin/SettingsPage.php:719
+msgid "Queue and cron"
+msgstr "Warteschlange und Cron"
+
+#: src/Admin/SettingsPage.php:720
+msgid "E-mail"
+msgstr "E-Mail"
+
+#: src/Admin/SettingsPage.php:721
+msgid "Integrations and Captain Suite"
+msgstr "Integrationen und Captain Suite"
+
+#: src/Admin/SettingsPage.php:731
+msgid "WP-Cron is disabled (DISABLE_WP_CRON). Run this command every minute from your system cron:"
+msgstr "WP-Cron ist deaktiviert (DISABLE_WP_CRON). Führen Sie diesen Befehl jede Minute über den System-Cron aus:"
+
+#: src/Admin/SettingsPage.php:733
+msgid "Recent errors"
+msgstr "Letzte Fehler"
+
+#: src/Admin/SettingsPage.php:735
+msgid "Time (UTC)"
+msgstr "Zeit (UTC)"
+
+#: src/Admin/SettingsPage.php:735
+msgid "Level"
+msgstr "Stufe"
+
+#: src/Admin/SettingsPage.php:735
+msgid "Code"
+msgstr "Code"
+
+#: src/Admin/SettingsPage.php:735
+msgid "Correlation ID"
+msgstr "Korrelations-ID"
+
+#: src/Admin/SettingsPage.php:741
+msgid "No warnings or errors recorded."
+msgstr "Keine Warnungen oder Fehler aufgezeichnet."
+
+#: src/Admin/SettingsPage.php:743
+#: src/Admin/SettingsPage.php:745
+msgid "Diagnostics report"
+msgstr "Diagnosebericht"
+
+#: src/Admin/SettingsPage.php:744
+msgid "Copy this report into a support request. It contains status data, error codes and correlation IDs only."
+msgstr "Kopieren Sie diesen Bericht in eine Support-Anfrage. Er enthält nur Statusdaten, Fehlercodes und Korrelations-IDs."
+
+#: src/Admin/SettingsPage.php:746
+msgid "Copy report"
+msgstr "Bericht kopieren"
+
+#: src/Admin/SettingsPage.php:748
+msgid "Signing key"
+msgstr "Signaturschlüssel"
+
+#: src/Admin/SettingsPage.php:749
+#: src/Admin/SettingsPage.php:754
+msgid "Renewing the signing key invalidates links and open forms older than 26 hours. Continue?"
+msgstr "Das Erneuern des Signaturschlüssels macht Links und offene Formulare ungültig, die älter als 26 Stunden sind. Fortfahren?"
+
+#: src/Admin/SettingsPage.php:752
+msgid "The signing key protects submission tokens and signed suite contexts. It is never displayed. Renew it if you suspect it was exposed."
+msgstr "Der Signaturschlüssel schützt Einsendungs-Tokens und signierte Suite-Kontexte. Er wird nie angezeigt. Erneuern Sie ihn, wenn Sie vermuten, dass er offengelegt wurde."
+
+#: src/Admin/SettingsPage.php:753
+msgid "Discard the previous key immediately (suspected compromise)"
+msgstr "Bisherigen Schlüssel sofort verwerfen (Verdacht auf Kompromittierung)"
+
+#: src/Admin/SettingsPage.php:755
+msgid "Renew signing key"
+msgstr "Signaturschlüssel erneuern"
+
+#: src/Admin/SiteHealth.php:45
+msgid "Open the Form Captain system status"
+msgstr "Form-Captain-Systemstatus öffnen"
+
+#: src/Admin/SiteHealth.php:55
+msgid "Notifications and integration jobs are processed in time."
+msgstr "Benachrichtigungen und Integrationsaufträge werden rechtzeitig verarbeitet."
+
+#. translators: 1: minutes the oldest job waits, 2: number of dead jobs
+#: src/Admin/SiteHealth.php:58
+#, php-format
+msgid "The oldest due job waits %1$d minutes; %2$d jobs failed permanently. Check WP-Cron or run \"wp form-captain jobs run\"."
+msgstr "Der älteste fällige Auftrag wartet seit %1$d Minuten; %2$d Aufträge sind endgültig fehlgeschlagen. Prüfen Sie WP-Cron oder führen Sie „wp form-captain jobs run“ aus."
+
+#. translators: %d: number of paused jobs
+#: src/Admin/SiteHealth.php:66
+#, php-format
+msgid "%d integration job is paused because its connector is disabled or missing (not counted as backlog)."
+msgid_plural "%d integration jobs are paused because their connector is disabled or missing (not counted as backlog)."
+msgstr[0] "%d Integrationsauftrag ist pausiert, weil sein Connector deaktiviert ist oder fehlt (zählt nicht als Rückstau)."
+msgstr[1] "%d Integrationsaufträge sind pausiert, weil ihr Connector deaktiviert ist oder fehlt (zählt nicht als Rückstau)."
+
+#: src/Admin/SiteHealth.php:70
+msgid "Form Captain queue is healthy"
+msgstr "Form-Captain-Warteschlange ist in Ordnung"
+
+#: src/Admin/SiteHealth.php:70
+msgid "Form Captain queue has a backlog"
+msgstr "Form-Captain-Warteschlange hat einen Rückstau"
+
+#: src/Admin/SiteHealth.php:78
+msgid "No Form Captain e-mail failed in the last 24 hours."
+msgstr "In den letzten 24 Stunden ist keine Form-Captain-E-Mail fehlgeschlagen."
+
+#. translators: 1: number of failed mails, 2: error codes
+#: src/Admin/SiteHealth.php:81
+#, php-format
+msgid "%1$d e-mail jobs failed in the last 24 hours (codes: %2$s). Send a test e-mail from the Form Captain settings and check your mail setup."
+msgstr "%1$d E-Mail-Aufträge sind in den letzten 24 Stunden fehlgeschlagen (Codes: %2$s). Senden Sie eine Test-E-Mail aus den Form-Captain-Einstellungen und prüfen Sie Ihre Mail-Konfiguration."
+
+#: src/Admin/SiteHealth.php:85
+msgid "Form Captain e-mails are delivered"
+msgstr "Form-Captain-E-Mails werden zugestellt"
+
+#: src/Admin/SiteHealth.php:85
+msgid "Form Captain e-mails failed recently"
+msgstr "Form-Captain-E-Mails sind kürzlich fehlgeschlagen"
+
+#: src/Admin/SiteHealth.php:95
+msgid "Form Captain background processing is scheduled"
+msgstr "Form-Captain-Hintergrundverarbeitung ist eingeplant"
+
+#: src/Admin/SiteHealth.php:96
+msgid "Form Captain background processing is not running"
+msgstr "Form-Captain-Hintergrundverarbeitung läuft nicht"
+
+#: src/Admin/SiteHealth.php:97
+msgid "The job worker is scheduled via WP-Cron or a system cron."
+msgstr "Der Auftrags-Worker ist über WP-Cron oder einen System-Cron eingeplant."
+
+#: src/Admin/SiteHealth.php:97
+msgid "The job worker is not scheduled or WP-Cron is disabled without a system cron. Run \"wp form-captain jobs run\" every minute."
+msgstr "Der Auftrags-Worker ist nicht eingeplant oder WP-Cron ist ohne System-Cron deaktiviert. Führen Sie „wp form-captain jobs run“ jede Minute aus."
+
+#: src/Admin/SiteHealth.php:108
+msgid "Form Captain database is up to date"
+msgstr "Form-Captain-Datenbank ist aktuell"
+
+#: src/Admin/SiteHealth.php:109
+msgid "Form Captain database needs attention"
+msgstr "Form-Captain-Datenbank erfordert Aufmerksamkeit"
+
+#: src/Admin/SiteHealth.php:110
+msgid "All tables exist and the schema version matches."
+msgstr "Alle Tabellen sind vorhanden und die Schemaversion stimmt überein."
+
+#: src/Admin/SiteHealth.php:110
+msgid "The schema version does not match or a table is missing. Reactivate the plugin; data is never deleted by this."
+msgstr "Die Schemaversion stimmt nicht überein oder eine Tabelle fehlt. Aktivieren Sie das Plugin erneut; dabei werden nie Daten gelöscht."
+
+#: src/Admin/SystemStatus.php:235
+msgid "The database schema is not up to date. Deactivate and activate Form Captain or check the error log."
+msgstr "Das Datenbankschema ist nicht aktuell. Deaktivieren und aktivieren Sie Form Captain oder prüfen Sie das Fehlerprotokoll."
+
+#: src/Admin/SystemStatus.php:239
+msgid "A Form Captain database table is missing."
+msgstr "Eine Form-Captain-Datenbanktabelle fehlt."
+
+#: src/Admin/SystemStatus.php:241
+msgid "Some Form Captain tables do not use InnoDB. Transactions are not available; integrity is checked here instead."
+msgstr "Einige Form-Captain-Tabellen verwenden nicht InnoDB. Transaktionen sind nicht verfügbar; die Integrität wird stattdessen hier geprüft."
+
+#: src/Admin/SystemStatus.php:245
+msgid "There are stored values without a submission. Run the cleanup."
+msgstr "Es gibt gespeicherte Werte ohne zugehörige Einsendung. Führen Sie die Bereinigung aus."
+
+#: src/Admin/SystemStatus.php:249
+msgid "Jobs are waiting longer than 15 minutes and WP-Cron is disabled. Run \"wp form-captain jobs run\" every minute from a system cron."
+msgstr "Aufträge warten länger als 15 Minuten und WP-Cron ist deaktiviert. Führen Sie „wp form-captain jobs run“ jede Minute über einen System-Cron aus."
+
+#: src/Admin/SystemStatus.php:250
+msgid "Jobs are waiting longer than 15 minutes. WP-Cron may not run reliably on this site; consider a system cron with \"wp form-captain jobs run\"."
+msgstr "Aufträge warten länger als 15 Minuten. WP-Cron läuft auf dieser Website möglicherweise nicht zuverlässig; erwägen Sie einen System-Cron mit „wp form-captain jobs run“."
+
+#: src/Admin/SystemStatus.php:253
+msgid "Some jobs failed permanently (dead-letter). Review them under Integrations or Entries and retry them."
+msgstr "Einige Aufträge sind endgültig fehlgeschlagen (Dead-Letter). Prüfen Sie sie unter Integrationen oder Einträge und versuchen Sie sie erneut."
+
+#: src/Admin/SystemStatus.php:256
+msgid "Some integration jobs are paused because their connector plugin is missing. Reinstall and activate the connector, or cancel the jobs under Integrations."
+msgstr "Einige Integrationsaufträge sind pausiert, weil ihr Connector-Plugin fehlt. Installieren und aktivieren Sie den Connector erneut oder brechen Sie die Aufträge unter Integrationen ab."
+
+#: src/Admin/SystemStatus.php:259
+msgid "It looks like older data was restored. Expired submissions will be cleaned up now. Please repeat erasure requests completed after the backup date."
+msgstr "Offenbar wurden ältere Daten wiederhergestellt. Abgelaufene Einsendungen werden jetzt bereinigt. Bitte wiederholen Sie Löschanfragen, die nach dem Backup-Datum abgeschlossen wurden."
+
+#: src/Admin/SystemStatus.php:262
+msgid "Some submissions could not be deleted by the cleanup three times in a row. Check the error log and delete them manually if needed."
+msgstr "Einige Einsendungen konnten von der Bereinigung dreimal hintereinander nicht gelöscht werden. Prüfen Sie das Fehlerprotokoll und löschen Sie sie bei Bedarf manuell."
+
+#: src/Admin/SystemStatus.php:265
+msgid "E-mails failed in the last 24 hours. Send a test e-mail and check your mail configuration (e.g. an SMTP plugin)."
+msgstr "In den letzten 24 Stunden sind E-Mails fehlgeschlagen. Senden Sie eine Test-E-Mail und prüfen Sie Ihre Mail-Konfiguration (z. B. ein SMTP-Plugin)."
+
+#: src/Admin/Tables/EntriesListTable.php:68
+msgid "Submission"
+msgstr "Einsendung"
+
+#: src/Admin/Tables/EntriesListTable.php:120
+#: src/Export/CsvExporter.php:325
+#: src/Privacy/PrivacyIntegration.php:264
+msgid "New"
+msgstr "Neu"
+
+#: src/Admin/Tables/EntriesListTable.php:121
+#: src/Export/CsvExporter.php:326
+#: src/Privacy/PrivacyIntegration.php:265
+msgid "Read"
+msgstr "Gelesen"
+
+#: src/Admin/Tables/EntriesListTable.php:122
+#: src/Admin/Tables/FormsListTable.php:101
+#: src/Admin/Tables/FormsListTable.php:137
+#: src/Export/CsvExporter.php:327
+#: src/Privacy/PrivacyIntegration.php:266
+#: assets/src/editor.js:1357
+msgid "Archived"
+msgstr "Archiviert"
+
+#: src/Admin/Tables/EntriesListTable.php:123
+#: src/Export/CsvExporter.php:328
+#: src/Privacy/PrivacyIntegration.php:267
+msgid "Spam"
+msgstr "Spam"
+
+#: src/Admin/Tables/EntriesListTable.php:124
+#: src/Export/CsvExporter.php:329
+#: src/Privacy/PrivacyIntegration.php:268
+msgid "Trash"
+msgstr "Papierkorb"
+
+#: src/Admin/Tables/EntriesListTable.php:149
+msgid "Expiring soon"
+msgstr "Läuft bald ab"
+
+#: src/Admin/Tables/EntriesListTable.php:194
+msgid "Select bulk action"
+msgstr "Mehrfachaktion auswählen"
+
+#: src/Admin/Tables/EntriesListTable.php:196
+msgid "Bulk actions"
+msgstr "Mehrfachaktionen"
+
+#: src/Admin/Tables/EntriesListTable.php:201
+msgid "Apply"
+msgstr "Übernehmen"
+
+#: src/Admin/Tables/EntriesListTable.php:205
+msgid "No submissions found."
+msgstr "Keine Einsendungen gefunden."
+
+#. translators: %d: submission ID
+#: src/Admin/Tables/EntriesListTable.php:214
+#, php-format
+msgid "Select submission #%d"
+msgstr "Einsendung #%d auswählen"
+
+#. translators: %s: date
+#: src/Admin/Tables/EntriesListTable.php:248
+#, php-format
+msgid "Deletion on %s"
+msgstr "Löschung am %s"
+
+#. translators: %s: date
+#: src/Admin/Tables/EntriesListTable.php:278
+#, php-format
+msgid "Consent withdrawn on %s"
+msgstr "Einwilligung widerrufen am %s"
+
+#: src/Admin/Tables/EntriesListTable.php:291
+msgid "Honeypot field filled"
+msgstr "Honeypot-Feld ausgefüllt"
+
+#: src/Admin/Tables/EntriesListTable.php:292
+msgid "Submitted too fast"
+msgstr "Zu schnell abgesendet"
+
+#: src/Admin/Tables/EntriesListTable.php:293
+msgid "Blocklist match"
+msgstr "Treffer in der Blockliste"
+
+#: src/Admin/Tables/FormsListTable.php:40
+msgid "Title"
+msgstr "Titel"
+
+#: src/Admin/Tables/FormsListTable.php:42
+msgid "Embed"
+msgstr "Einbinden"
+
+#: src/Admin/Tables/FormsListTable.php:44
+msgid "Last modified"
+msgstr "Zuletzt geändert"
+
+#: src/Admin/Tables/FormsListTable.php:98
+#: src/Admin/Tables/FormsListTable.php:135
+#: assets/src/editor.js:1355
+msgid "Published"
+msgstr "Veröffentlicht"
+
+#: src/Admin/Tables/FormsListTable.php:99
+msgid "Drafts"
+msgstr "Entwürfe"
+
+#: src/Admin/Tables/FormsListTable.php:100
+#: src/Admin/Tables/FormsListTable.php:136
+#: assets/src/editor.js:1356
+msgid "Paused"
+msgstr "Pausiert"
+
+#: src/Admin/Tables/FormsListTable.php:126
+msgid "No forms match your filter."
+msgstr "Keine Formulare entsprechen Ihrem Filter."
+
+#: src/Admin/Tables/FormsListTable.php:129
+msgid "You have not created a form yet. Start with a template – it takes less than a minute."
+msgstr "Sie haben noch kein Formular erstellt. Beginnen Sie mit einer Vorlage – das dauert weniger als eine Minute."
+
+#: src/Admin/Tables/FormsListTable.php:130
+msgid "Create your first form"
+msgstr "Erstes Formular erstellen"
+
+#: src/Admin/Tables/FormsListTable.php:138
+#: assets/src/editor.js:1354
+msgid "Draft"
+msgstr "Entwurf"
+
+#: src/Admin/Tables/FormsListTable.php:147
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: src/Admin/Tables/FormsListTable.php:148
+msgid "Duplicate"
+msgstr "Duplizieren"
+
+#: src/Admin/Tables/FormsListTable.php:149
+msgid "(opens in a new tab)"
+msgstr "(öffnet in einem neuen Tab)"
+
+#: src/Admin/Tables/FormsListTable.php:153
+#: assets/src/editor.js:1658
+msgid "Pause"
+msgstr "Pausieren"
+
+#: src/Admin/Tables/FormsListTable.php:156
+#: assets/src/editor.js:1661
+msgid "Resume"
+msgstr "Fortsetzen"
+
+#: src/Admin/Tables/FormsListTable.php:159
+msgid "Restore as draft"
+msgstr "Als Entwurf wiederherstellen"
+
+#: src/Admin/Tables/FormsListTable.php:165
+msgid "Export JSON"
+msgstr "JSON exportieren"
+
+#: src/Admin/Tables/FormsListTable.php:167
+#: src/Import/EntryImportAdmin.php:174
+msgid "Import entries"
+msgstr "Einträge importieren"
+
+#: src/Admin/Tables/FormsListTable.php:171
+msgid "Delete this form permanently?"
+msgstr "Dieses Formular endgültig löschen?"
+
+#: src/Admin/Tables/FormsListTable.php:171
+msgid "Delete"
+msgstr "Löschen"
+
+#. translators: %d: number of entries
+#: src/Admin/Tables/FormsListTable.php:176
+#, php-format
+msgid "Delete this form and its %d entry permanently? This cannot be undone."
+msgid_plural "Delete this form and all %d entries permanently? This cannot be undone."
+msgstr[0] "Dieses Formular und seinen %d Eintrag endgültig löschen? Dies kann nicht rückgängig gemacht werden."
+msgstr[1] "Dieses Formular und alle %d Einträge endgültig löschen? Dies kann nicht rückgängig gemacht werden."
+
+#: src/Admin/Tables/FormsListTable.php:179
+msgid "Delete with entries"
+msgstr "Mit Einträgen löschen"
+
+#: src/Admin/Tables/FormsListTable.php:196
+msgid "Or insert the “Form Captain” block in the block editor."
+msgstr "Oder fügen Sie im Block-Editor den Block „Form Captain“ ein."
+
+#: src/Api/ContractApi.php:44
+msgid "Form Captain is not ready yet. Call the contract API in or after form_captain_loaded_v1."
+msgstr "Form Captain ist noch nicht bereit. Rufen Sie die Contract-API in oder nach form_captain_loaded_v1 auf."
+
+#: src/Api/ContractApi.php:55
+#: src/Support/Errors.php:63
+msgid "This form is not available."
+msgstr "Dieses Formular ist nicht verfügbar."
+
+#: src/Api/ContractApi.php:103
+msgid "Unknown scope requested."
+msgstr "Unbekannter Bereich angefordert."
+
+#: src/Api/ContractApi.php:110
+msgid "You are not allowed to read this entry."
+msgstr "Sie sind nicht berechtigt, diesen Eintrag zu lesen."
+
+#: src/Api/ContractApi.php:113
+msgid "Reading sensitive values requires the export capability."
+msgstr "Zum Lesen sensibler Werte ist die Export-Berechtigung erforderlich."
+
+#: src/Api/ContractApi.php:117
+msgid "Entry not found."
+msgstr "Eintrag nicht gefunden."
+
+#: src/Api/ContractApi.php:190
+msgid "submit_v1 requires context \"source\" (plugin slug) and \"idempotency_key\" (max. 191 characters)."
+msgstr "submit_v1 erfordert den Kontext „source“ (Plugin-Slug) und „idempotency_key“ (max. 191 Zeichen)."
+
+#: src/Domain/Fields/FieldTypes.php:21
+msgid "Single line text"
+msgstr "Einzeiliger Text"
+
+#: src/Domain/Fields/FieldTypes.php:22
+msgid "Paragraph"
+msgstr "Absatz"
+
+#: src/Domain/Fields/FieldTypes.php:24
+#: src/Service/Templates.php:120
+msgid "Phone"
+msgstr "Telefon"
+
+#: src/Domain/Fields/FieldTypes.php:25
+msgid "Number"
+msgstr "Zahl"
+
+#: src/Domain/Fields/FieldTypes.php:26
+msgid "Dropdown"
+msgstr "Auswahlliste"
+
+#: src/Domain/Fields/FieldTypes.php:27
+msgid "Radio buttons"
+msgstr "Optionsfelder"
+
+#: src/Domain/Fields/FieldTypes.php:28
+msgid "Checkboxes"
+msgstr "Kontrollkästchen"
+
+#: src/Domain/Fields/FieldTypes.php:29
+#: src/Import/EntryImportAdmin.php:566
+msgid "Date"
+msgstr "Datum"
+
+#: src/Domain/Fields/FieldTypes.php:30
+msgid "Heading / HTML note"
+msgstr "Überschrift / HTML-Hinweis"
+
+#: src/Domain/Fields/FieldTypes.php:31
+msgid "Hidden value"
+msgstr "Versteckter Wert"
+
+#: src/Domain/Fields/FieldTypes.php:32
+#: assets/src/editor.js:199
+msgid "Consent"
+msgstr "Einwilligung"
+
+#: src/Domain/SubmissionValidator.php:330
+#: src/Frontend/Assets.php:82
+msgid "This field is required."
+msgstr "Dieses Feld ist erforderlich."
+
+#. translators: %d: maximum number of characters
+#: src/Domain/SubmissionValidator.php:334
+#, php-format
+msgid "Please enter at most %d characters."
+msgstr "Bitte geben Sie höchstens %d Zeichen ein."
+
+#: src/Domain/SubmissionValidator.php:335
+msgid "This value is too long."
+msgstr "Dieser Wert ist zu lang."
+
+#. translators: %d: minimum number of characters
+#: src/Domain/SubmissionValidator.php:338
+#, php-format
+msgid "Please enter at least %d characters."
+msgstr "Bitte geben Sie mindestens %d Zeichen ein."
+
+#: src/Domain/SubmissionValidator.php:340
+#: src/Frontend/Assets.php:83
+msgid "Please enter a valid email address."
+msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+
+#: src/Domain/SubmissionValidator.php:342
+msgid "Please enter a valid phone number (digits, spaces and + ( ) - / only)."
+msgstr "Bitte geben Sie eine gültige Telefonnummer ein (nur Ziffern, Leerzeichen und + ( ) - /)."
+
+#: src/Domain/SubmissionValidator.php:346
+msgid "This value is outside the allowed range."
+msgstr "Dieser Wert liegt außerhalb des zulässigen Bereichs."
+
+#: src/Domain/SubmissionValidator.php:348
+msgid "Please enter a value in the allowed steps."
+msgstr "Bitte geben Sie einen Wert in den zulässigen Schritten ein."
+
+#: src/Domain/SubmissionValidator.php:350
+msgid "Please enter a valid date (YYYY-MM-DD)."
+msgstr "Bitte geben Sie ein gültiges Datum ein (JJJJ-MM-TT)."
+
+#: src/Domain/SubmissionValidator.php:352
+#: src/Settings/SettingsSchema.php:312
+msgid "Please choose one of the offered options."
+msgstr "Bitte wählen Sie eine der angebotenen Optionen."
+
+#. translators: %d: minimum number of choices
+#: src/Domain/SubmissionValidator.php:355
+#, php-format
+msgid "Please choose at least %d options."
+msgstr "Bitte wählen Sie mindestens %d Optionen."
+
+#. translators: %d: maximum number of choices
+#: src/Domain/SubmissionValidator.php:358
+#, php-format
+msgid "Please choose at most %d options."
+msgstr "Bitte wählen Sie höchstens %d Optionen."
+
+#: src/Domain/SubmissionValidator.php:360
+msgid "Please confirm this checkbox to send the form."
+msgstr "Bitte bestätigen Sie dieses Kästchen, um das Formular zu senden."
+
+#: src/Domain/SubmissionValidator.php:362
+msgid "Please check the format of this field."
+msgstr "Bitte prüfen Sie das Format dieses Feldes."
+
+#: src/Domain/SubmissionValidator.php:364
+msgid "The submission contained data that does not belong to this form. Please reload the page."
+msgstr "Die Einsendung enthielt Daten, die nicht zu diesem Formular gehören. Bitte laden Sie die Seite neu."
+
+#: src/Domain/SubmissionValidator.php:368
+msgid "This value is not allowed."
+msgstr "Dieser Wert ist nicht zulässig."
+
+#: src/Export/CsvExporter.php:44
+msgid "Submission ID"
+msgstr "Einsendungs-ID"
+
+#: src/Export/CsvExporter.php:45
+msgid "Submitted at"
+msgstr "Eingegangen am"
+
+#. translators: %s: field label
+#: src/Export/CsvExporter.php:72
+#, php-format
+msgid "%s (removed)"
+msgstr "%s (entfernt)"
+
+#: src/Export/CsvExporter.php:240
+msgid "Please choose a form to export."
+msgstr "Bitte wählen Sie ein Formular für den Export."
+
+#: src/Export/CsvExporter.php:245
+msgid "Please choose at least one column."
+msgstr "Bitte wählen Sie mindestens eine Spalte."
+
+#: src/Export/CsvExporter.php:250
+msgid "This export is too large. Please narrow the date range."
+msgstr "Dieser Export ist zu groß. Bitte schränken Sie den Zeitraum ein."
+
+#: src/Export/CsvExporter.php:322
+msgid "Anonymized"
+msgstr "Anonymisiert"
+
+#: src/Export/CsvExporter.php:342
+msgid "Exports must be requested via POST."
+msgstr "Exporte müssen per POST angefordert werden."
+
+#: src/Export/CsvExporter.php:352
+msgid "Too many exports. Please wait a moment."
+msgstr "Zu viele Exporte. Bitte warten Sie einen Moment."
+
+#: src/Frontend/Assets.php:78
+msgid "Sending…"
+msgstr "Wird gesendet …"
+
+#: src/Frontend/Assets.php:79
+msgid "Please check the following fields:"
+msgstr "Bitte prüfen Sie die folgenden Felder:"
+
+#: src/Frontend/Assets.php:80
+msgid "The form could not be sent. Please check your connection and try again."
+msgstr "Das Formular konnte nicht gesendet werden. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+
+#: src/Frontend/Assets.php:81
+msgid "Preview: nothing was sent."
+msgstr "Vorschau: Es wurde nichts gesendet."
+
+#. translators: %s: field label
+#: src/Frontend/Assets.php:85
+#, php-format
+msgid "Additional field shown: %s"
+msgstr "Zusätzliches Feld angezeigt: %s"
+
+#. translators: %s: field label
+#: src/Frontend/Assets.php:87
+#, php-format
+msgid "Field hidden: %s"
+msgstr "Feld ausgeblendet: %s"
+
+#: src/Frontend/Renderer.php:51
+msgid "This form does not exist (anymore). Please choose another form."
+msgstr "Dieses Formular existiert nicht (mehr). Bitte wählen Sie ein anderes Formular."
+
+#: src/Frontend/Renderer.php:56
+#: src/Service/FormService.php:134
+#: src/Support/Errors.php:62
+msgid "This form is currently not accepting submissions."
+msgstr "Dieses Formular nimmt derzeit keine Einsendungen an."
+
+#: src/Frontend/Renderer.php:58
+msgid "This form is paused. Visitors see the message below instead of the form."
+msgstr "Dieses Formular ist pausiert. Besucher sehen statt des Formulars die folgende Meldung."
+
+#: src/Frontend/Renderer.php:66
+msgid "This form is archived and not shown to visitors."
+msgstr "Dieses Formular ist archiviert und wird Besuchern nicht angezeigt."
+
+#: src/Frontend/Renderer.php:67
+msgid "This form is not published yet and not shown to visitors."
+msgstr "Dieses Formular ist noch nicht veröffentlicht und wird Besuchern nicht angezeigt."
+
+#: src/Frontend/Renderer.php:89
+msgid "Preview – submissions are not saved."
+msgstr "Vorschau – Einsendungen werden nicht gespeichert."
+
+#. translators: %s: required marker (asterisk)
+#: src/Frontend/Renderer.php:152
+#, php-format
+msgid "Fields marked with %s are required."
+msgstr "Mit %s markierte Felder sind Pflichtfelder."
+
+#: src/Frontend/Renderer.php:205
+msgid "Leave this field empty"
+msgstr "Dieses Feld leer lassen"
+
+#: src/Frontend/Renderer.php:302
+msgid "Privacy policy"
+msgstr "Datenschutzerklärung"
+
+#: src/Frontend/Renderer.php:328
+msgid "— Please choose —"
+msgstr "— Bitte wählen —"
+
+#: src/Frontend/Renderer.php:408
+msgid "Form Captain:"
+msgstr "Form Captain:"
+
+#: src/Frontend/Renderer.php:408
+msgid "(Only visible to form managers.)"
+msgstr "(Nur für Formularverwalter sichtbar.)"
+
+#: src/Frontend/Shortcode.php:42
+msgid "Form Captain: The form in this shortcode does not exist (anymore)."
+msgstr "Form Captain: Das Formular in diesem Shortcode existiert nicht (mehr)."
+
+#: src/Http/RestController.php:165
+msgid "Unsupported request format."
+msgstr "Nicht unterstütztes Anfrageformat."
+
+#: src/Http/RestController.php:191
+msgid "Method not allowed."
+msgstr "Methode nicht erlaubt."
+
+#. translators: %s: maximum file size, e.g. "5 MB"
+#: src/Import/EntryImportAdmin.php:131
+#: src/Import/EntryImportAdmin.php:139
+#: src/Import/EntryImportService.php:208
+#: src/Import/ImportService.php:270
+#, php-format
+msgid "The file is too large (maximum %s)."
+msgstr "Die Datei ist zu groß (maximal %s)."
+
+#: src/Import/EntryImportAdmin.php:132
+msgid "Please choose a CSV file to import."
+msgstr "Bitte wählen Sie eine CSV-Datei zum Importieren."
+
+#: src/Import/EntryImportAdmin.php:135
+msgid "Please upload a .csv file."
+msgstr "Bitte laden Sie eine .csv-Datei hoch."
+
+#: src/Import/EntryImportAdmin.php:155
+msgid "Import entries from a CSV file"
+msgstr "Einträge aus einer CSV-Datei importieren"
+
+#: src/Import/EntryImportAdmin.php:157
+msgid "Entries can only be imported into a published form."
+msgstr "Einträge können nur in ein veröffentlichtes Formular importiert werden."
+
+#: src/Import/EntryImportAdmin.php:161
+msgid "Target form"
+msgstr "Zielformular"
+
+#: src/Import/EntryImportAdmin.php:166
+#: src/Import/EntryImportAdmin.php:519
+#: src/Import/EntryImportAdmin.php:552
+msgid "Continue"
+msgstr "Weiter"
+
+#: src/Import/EntryImportAdmin.php:175
+msgid "← Back to forms"
+msgstr "← Zurück zu den Formularen"
+
+#: src/Import/EntryImportAdmin.php:181
+#: src/Import/EntryImportService.php:197
+#: src/Import/EntryImportService.php:293
+#: src/Import/EntryImportService.php:345
+#: src/Import/ImportService.php:264
+msgid "You are not allowed to import entries."
+msgstr "Sie sind nicht berechtigt, Einträge zu importieren."
+
+#. translators: %s: form title
+#: src/Import/EntryImportAdmin.php:187
+#, php-format
+msgid "Target form: %s"
+msgstr "Zielformular: %s"
+
+#: src/Import/EntryImportAdmin.php:224
+msgid "Import finished."
+msgstr "Import abgeschlossen."
+
+#: src/Import/EntryImportAdmin.php:225
+msgid "Import cancelled. The uploaded file was deleted."
+msgstr "Import abgebrochen. Die hochgeladene Datei wurde gelöscht."
+
+#: src/Import/EntryImportAdmin.php:226
+msgid "Import reverted. The imported entries were deleted permanently."
+msgstr "Import zurückgenommen. Die importierten Einträge wurden endgültig gelöscht."
+
+#: src/Import/EntryImportAdmin.php:238
+#: src/Import/EntryImportService.php:349
+msgid "The upload has expired. Please upload the file again – rows imported before are recognised and skipped."
+msgstr "Der Upload ist abgelaufen. Bitte laden Sie die Datei erneut hoch – bereits importierte Zeilen werden erkannt und übersprungen."
+
+#: src/Import/EntryImportAdmin.php:250
+msgid "no automatic deletion"
+msgstr "keine automatische Löschung"
+
+#: src/Import/EntryImportAdmin.php:252
+msgid "Data protection"
+msgstr "Datenschutz"
+
+#: src/Import/EntryImportAdmin.php:253
+msgid "You are responsible for the legal basis of the imported data (for example consent given at the time). Only import data you are allowed to keep and process."
+msgstr "Sie sind für die Rechtsgrundlage der importierten Daten verantwortlich (z. B. eine damals erteilte Einwilligung). Importieren Sie nur Daten, die Sie aufbewahren und verarbeiten dürfen."
+
+#. translators: %s: retention period, e.g. "12 months"
+#: src/Import/EntryImportAdmin.php:257
+#, php-format
+msgid "Retention period of this form: %s. It is calculated from the original submission time – rows whose period has already expired are not imported, others are deleted automatically when it ends."
+msgstr "Aufbewahrungsfrist dieses Formulars: %s. Sie wird ab dem ursprünglichen Eingangszeitpunkt berechnet – Zeilen, deren Frist bereits abgelaufen ist, werden nicht importiert, alle anderen werden bei Fristende automatisch gelöscht."
+
+#: src/Import/EntryImportAdmin.php:261
+msgid "The file is stored only temporarily in a protected directory and deleted after the import, at the latest after one hour. No mails or connector actions are triggered."
+msgstr "Die Datei wird nur vorübergehend in einem geschützten Verzeichnis gespeichert und nach dem Import, spätestens nach einer Stunde, gelöscht. Es werden keine E-Mails oder Connector-Aktionen ausgelöst."
+
+#: src/Import/EntryImportAdmin.php:277
+msgid "Step 1 of 4: Upload CSV file"
+msgstr "Schritt 1 von 4: CSV-Datei hochladen"
+
+#: src/Import/EntryImportAdmin.php:279
+#: src/Import/EntryImportService.php:204
+#: src/Import/ImportService.php:278
+msgid "Please publish the form before importing entries."
+msgstr "Bitte veröffentlichen Sie das Formular, bevor Sie Einträge importieren."
+
+#. translators: 1: maximum file size, 2: maximum number of rows
+#: src/Import/EntryImportAdmin.php:289
+#, php-format
+msgid "CSV file (UTF-8, separator comma or semicolon, header row; max. %1$s and %2$s rows)"
+msgstr "CSV-Datei (UTF-8, Trennzeichen Komma oder Semikolon, Kopfzeile; max. %1$s und %2$s Zeilen)"
+
+#: src/Import/EntryImportAdmin.php:295
+msgid "One row per submission and a column with the submission time. Multiple values (checkboxes) are separated by \"|\". Nothing is imported before you have checked the mapping and the dry run."
+msgstr "Eine Zeile je Einsendung und eine Spalte mit dem Eingangszeitpunkt. Mehrere Werte (Kontrollkästchen) werden durch „|“ getrennt. Es wird nichts importiert, bevor Sie die Zuordnung und den Probelauf geprüft haben."
+
+#: src/Import/EntryImportAdmin.php:296
+msgid "Upload and continue"
+msgstr "Hochladen und weiter"
+
+#: src/Import/EntryImportAdmin.php:303
+msgid "Detect automatically"
+msgstr "Automatisch erkennen"
+
+#: src/Import/EntryImportAdmin.php:304
+msgid "ISO 8601 / YYYY-MM-DD HH:MM:SS"
+msgstr "ISO 8601 / JJJJ-MM-TT HH:MM:SS"
+
+#: src/Import/EntryImportAdmin.php:305
+msgid "YYYY-MM-DD [HH:MM[:SS]]"
+msgstr "JJJJ-MM-TT [HH:MM[:SS]]"
+
+#: src/Import/EntryImportAdmin.php:306
+msgid "DD.MM.YYYY [HH:MM[:SS]]"
+msgstr "TT.MM.JJJJ [HH:MM[:SS]]"
+
+#: src/Import/EntryImportAdmin.php:307
+msgid "DD/MM/YYYY [HH:MM[:SS]]"
+msgstr "TT/MM/JJJJ [HH:MM[:SS]]"
+
+#: src/Import/EntryImportAdmin.php:308
+msgid "MM/DD/YYYY [HH:MM[:SS]]"
+msgstr "MM/TT/JJJJ [HH:MM[:SS]]"
+
+#: src/Import/EntryImportAdmin.php:309
+msgid "Unix timestamp (seconds)"
+msgstr "Unix-Zeitstempel (Sekunden)"
+
+#: src/Import/EntryImportAdmin.php:332
+msgid "e-mail address"
+msgstr "E-Mail-Adresse"
+
+#: src/Import/EntryImportAdmin.php:333
+msgid "number"
+msgstr "Zahl"
+
+#: src/Import/EntryImportAdmin.php:334
+msgid "date YYYY-MM-DD"
+msgstr "Datum JJJJ-MM-TT"
+
+#: src/Import/EntryImportAdmin.php:335
+msgid "option label or value"
+msgstr "Optionsbezeichnung oder -wert"
+
+#: src/Import/EntryImportAdmin.php:336
+msgid "option labels or values, separated by |"
+msgstr "Optionsbezeichnungen oder -werte, getrennt durch |"
+
+#: src/Import/EntryImportAdmin.php:337
+msgid "consent: 1 or empty"
+msgstr "Einwilligung: 1 oder leer"
+
+#: src/Import/EntryImportAdmin.php:338
+msgid "phone number"
+msgstr "Telefonnummer"
+
+#: src/Import/EntryImportAdmin.php:339
+msgid "multi-line text"
+msgstr "mehrzeiliger Text"
+
+#: src/Import/EntryImportAdmin.php:340
+msgid "text"
+msgstr "Text"
+
+#: src/Import/EntryImportAdmin.php:353
+msgid "Step 2 of 4: Map columns"
+msgstr "Schritt 2 von 4: Spalten zuordnen"
+
+#. translators: 1: number of rows, 2: separator character
+#: src/Import/EntryImportAdmin.php:357
+#, php-format
+msgid "%1$s data rows, separator \"%2$s\"."
+msgstr "%1$s Datenzeilen, Trennzeichen „%2$s“."
+
+#: src/Import/EntryImportAdmin.php:383
+msgid "Column"
+msgstr "Spalte"
+
+#: src/Import/EntryImportAdmin.php:383
+msgid "Example values (shortened)"
+msgstr "Beispielwerte (gekürzt)"
+
+#: src/Import/EntryImportAdmin.php:383
+msgid "Import into"
+msgstr "Importieren in"
+
+#. translators: %d: column number
+#: src/Import/EntryImportAdmin.php:391
+#: src/Import/EntryImportAdmin.php:404
+#, php-format
+msgid "Column %d"
+msgstr "Spalte %d"
+
+#: src/Import/EntryImportAdmin.php:393
+msgid "– Ignore –"
+msgstr "– Ignorieren –"
+
+#: src/Import/EntryImportAdmin.php:401
+msgid "Submission time"
+msgstr "Eingangszeitpunkt"
+
+#: src/Import/EntryImportAdmin.php:402
+msgid "Column with the submission time"
+msgstr "Spalte mit dem Eingangszeitpunkt"
+
+#: src/Import/EntryImportAdmin.php:402
+msgid "– Please choose –"
+msgstr "– Bitte wählen –"
+
+#: src/Import/EntryImportAdmin.php:408
+msgid "Date format"
+msgstr "Datumsformat"
+
+#. translators: %s: date format
+#: src/Import/EntryImportAdmin.php:417
+#, php-format
+msgid "Detected: %s"
+msgstr "Erkannt: %s"
+
+#. translators: %s: time zone name
+#: src/Import/EntryImportAdmin.php:425
+#, php-format
+msgid "Times without an offset are read in the site time zone (%s) and stored in UTC."
+msgstr "Zeitangaben ohne Zeitzonenversatz werden in der Zeitzone der Website (%s) gelesen und in UTC gespeichert."
+
+#: src/Import/EntryImportAdmin.php:429
+msgid "Check all rows (dry run)"
+msgstr "Alle Zeilen prüfen (Probelauf)"
+
+#: src/Import/EntryImportAdmin.php:437
+msgid "Cancel and delete file"
+msgstr "Abbrechen und Datei löschen"
+
+#: src/Import/EntryImportAdmin.php:444
+msgid "Rows in file"
+msgstr "Zeilen in der Datei"
+
+#: src/Import/EntryImportAdmin.php:445
+msgid "Valid (will be imported)"
+msgstr "Gültig (wird importiert)"
+
+#: src/Import/EntryImportAdmin.php:445
+#: src/Import/EntryImportAdmin.php:566
+msgid "Imported"
+msgstr "Importiert"
+
+#: src/Import/EntryImportAdmin.php:446
+msgid "Invalid (skipped)"
+msgstr "Ungültig (übersprungen)"
+
+#: src/Import/EntryImportAdmin.php:447
+msgid "Duplicates (already imported, skipped)"
+msgstr "Duplikate (bereits importiert, übersprungen)"
+
+#: src/Import/EntryImportAdmin.php:448
+msgid "Retention period already expired (skipped)"
+msgstr "Aufbewahrungsfrist bereits abgelaufen (übersprungen)"
+
+#: src/Import/EntryImportAdmin.php:457
+msgid "Invalid rows"
+msgstr "Ungültige Zeilen"
+
+#: src/Import/EntryImportAdmin.php:458
+msgid "Row number in the file (header row = 1) and error code; values are not shown."
+msgstr "Zeilennummer in der Datei (Kopfzeile = 1) und Fehlercode; Werte werden nicht angezeigt."
+
+#: src/Import/EntryImportAdmin.php:459
+msgid "Row"
+msgstr "Zeile"
+
+#: src/Import/EntryImportAdmin.php:459
+msgid "Error code"
+msgstr "Fehlercode"
+
+#: src/Import/EntryImportAdmin.php:459
+#: assets/src/editor.js:377
+msgid "Field"
+msgstr "Feld"
+
+#: src/Import/EntryImportAdmin.php:465
+msgid "Only the first invalid rows are listed."
+msgstr "Es werden nur die ersten ungültigen Zeilen aufgeführt."
+
+#: src/Import/EntryImportAdmin.php:477
+msgid "Step 3 of 4: Check (dry run)"
+msgstr "Schritt 3 von 4: Prüfen (Probelauf)"
+
+#: src/Import/EntryImportAdmin.php:478
+msgid "All rows were checked. Nothing has been saved yet."
+msgstr "Alle Zeilen wurden geprüft. Es wurde noch nichts gespeichert."
+
+#. translators: %s: number of entries
+#: src/Import/EntryImportAdmin.php:487
+#, php-format
+msgid "Import %s entries"
+msgstr "%s Einträge importieren"
+
+#: src/Import/EntryImportAdmin.php:496
+msgid "No row can be imported. Please check the mapping or the file."
+msgstr "Keine Zeile kann importiert werden. Bitte prüfen Sie die Zuordnung oder die Datei."
+
+#: src/Import/EntryImportAdmin.php:498
+msgid "Change mapping"
+msgstr "Zuordnung ändern"
+
+#: src/Import/EntryImportAdmin.php:507
+msgid "Step 4 of 4: Importing"
+msgstr "Schritt 4 von 4: Import läuft"
+
+#. translators: 1: processed rows, 2: total rows
+#: src/Import/EntryImportAdmin.php:511
+#, php-format
+msgid "%1$s of %2$s rows processed"
+msgstr "%1$s von %2$s Zeilen verarbeitet"
+
+#: src/Import/EntryImportAdmin.php:516
+msgid "The import continues automatically. If it was interrupted, click \"Continue\" – rows already imported are not imported twice."
+msgstr "Der Import wird automatisch fortgesetzt. Falls er unterbrochen wurde, klicken Sie auf „Weiter“ – bereits importierte Zeilen werden nicht doppelt importiert."
+
+#. translators: %s: number of entries
+#: src/Import/EntryImportAdmin.php:530
+#, php-format
+msgid "This import was reverted; %s entries were deleted."
+msgstr "Dieser Import wurde zurückgenommen; %s Einträge wurden gelöscht."
+
+#: src/Import/EntryImportAdmin.php:537
+msgid "Import another file"
+msgstr "Weitere Datei importieren"
+
+#: src/Import/EntryImportAdmin.php:542
+msgid "Permanently delete all entries created by this import? This cannot be undone."
+msgstr "Alle durch diesen Import erstellten Einträge endgültig löschen? Dies kann nicht rückgängig gemacht werden."
+
+#: src/Import/EntryImportAdmin.php:550
+msgid "Reverting import"
+msgstr "Import wird zurückgenommen"
+
+#: src/Import/EntryImportAdmin.php:551
+msgid "The entries are deleted in batches. The process continues automatically."
+msgstr "Die Einträge werden schrittweise gelöscht. Der Vorgang wird automatisch fortgesetzt."
+
+#: src/Import/EntryImportAdmin.php:561
+msgid "interrupted / running"
+msgstr "unterbrochen / läuft"
+
+#: src/Import/EntryImportAdmin.php:562
+msgid "finished"
+msgstr "abgeschlossen"
+
+#: src/Import/EntryImportAdmin.php:563
+msgid "reverted"
+msgstr "zurückgenommen"
+
+#: src/Import/EntryImportAdmin.php:565
+msgid "Previous imports"
+msgstr "Bisherige Importe"
+
+#: src/Import/EntryImportAdmin.php:570
+msgid "Report"
+msgstr "Bericht"
+
+#: src/Import/EntryImportAdmin.php:572
+msgid "Revert import"
+msgstr "Import zurücknehmen"
+
+#. translators: %d: number of days
+#: src/Import/EntryImportAdmin.php:580
+#, php-format
+msgid "\"Revert import\" permanently deletes exactly the entries created by that import – also if they were edited afterwards. Possible within %d days."
+msgstr "„Import zurücknehmen“ löscht genau die durch diesen Import erstellten Einträge endgültig – auch wenn sie danach bearbeitet wurden. Möglich innerhalb von %d Tagen."
+
+#: src/Import/EntryImportService.php:98
+msgid "The upload directory is not available."
+msgstr "Das Upload-Verzeichnis ist nicht verfügbar."
+
+#: src/Import/EntryImportService.php:102
+msgid "The upload directory is not writable."
+msgstr "Das Upload-Verzeichnis ist nicht beschreibbar."
+
+#: src/Import/EntryImportService.php:176
+msgid "The uploaded file is no longer available. Please upload it again."
+msgstr "Die hochgeladene Datei ist nicht mehr verfügbar. Bitte laden Sie sie erneut hoch."
+
+#. translators: %s: maximum number of rows
+#: src/Import/EntryImportService.php:216
+#: src/Import/ImportService.php:286
+#, php-format
+msgid "The file has more than %s rows."
+msgstr "Die Datei hat mehr als %s Zeilen."
+
+#: src/Import/EntryImportService.php:219
+msgid "The file contains no data rows below the header row."
+msgstr "Die Datei enthält unterhalb der Kopfzeile keine Datenzeilen."
+
+#: src/Import/EntryImportService.php:229
+msgid "The file could not be stored temporarily."
+msgstr "Die Datei konnte nicht vorübergehend gespeichert werden."
+
+#: src/Import/EntryImportService.php:297
+msgid "The upload has expired. Please upload the file again."
+msgstr "Der Upload ist abgelaufen. Bitte laden Sie die Datei erneut hoch."
+
+#: src/Import/EntryImportService.php:307
+msgid "The date format of the submission time column was not recognised. Please choose it."
+msgstr "Das Datumsformat der Spalte mit dem Eingangszeitpunkt wurde nicht erkannt. Bitte wählen Sie es aus."
+
+#: src/Import/EntryImportService.php:466
+#: src/Service/FormService.php:415
+msgid "You are not allowed to delete entries."
+msgstr "Sie sind nicht berechtigt, Einträge zu löschen."
+
+#: src/Import/EntryImportService.php:470
+msgid "Import run not found."
+msgstr "Importlauf nicht gefunden."
+
+#. translators: %d: number of days
+#: src/Import/EntryImportService.php:474
+#, php-format
+msgid "An import can only be reverted within %d days."
+msgstr "Ein Import kann nur innerhalb von %d Tagen zurückgenommen werden."
+
+#: src/Import/ImportAdmin.php:87
+msgid "Import from another form format"
+msgstr "Aus einem anderen Formularformat importieren"
+
+#: src/Import/ImportAdmin.php:100
+#: assets/src/editor.js:1642
+msgid "Form title"
+msgstr "Formulartitel"
+
+#: src/Import/ImportAdmin.php:102
+msgid "Form source in shortcode form format type A (max. 256 KB)"
+msgstr "Formular-Quelltext im Shortcode-Formularformat Typ A (max. 256 KB)"
+
+#: src/Import/ImportAdmin.php:104
+msgid "The source is only analysed, never executed. You will see a preview with a conversion report before anything is saved. The form is created as a draft; the original form remains unchanged."
+msgstr "Der Quelltext wird nur analysiert, nie ausgeführt. Bevor etwas gespeichert wird, sehen Sie eine Vorschau mit Konvertierungsbericht. Das Formular wird als Entwurf angelegt; das Originalformular bleibt unverändert."
+
+#: src/Import/ImportAdmin.php:105
+msgid "Analyse and preview"
+msgstr "Analysieren und Vorschau"
+
+#: src/Import/ImportAdmin.php:114
+msgid "Complete"
+msgstr "Vollständig"
+
+#: src/Import/ImportAdmin.php:115
+msgid "With adjustments"
+msgstr "Mit Anpassungen"
+
+#: src/Import/ImportAdmin.php:116
+msgid "With losses"
+msgstr "Mit Verlusten"
+
+#: src/Import/ImportAdmin.php:117
+msgid "Not importable"
+msgstr "Nicht importierbar"
+
+#: src/Import/ImportAdmin.php:120
+msgid "taken over"
+msgstr "übernommen"
+
+#: src/Import/ImportAdmin.php:121
+msgid "adjusted"
+msgstr "angepasst"
+
+#: src/Import/ImportAdmin.php:122
+msgid "dropped"
+msgstr "verworfen"
+
+#: src/Import/ImportAdmin.php:123
+msgid "setting"
+msgstr "Einstellung"
+
+#: src/Import/ImportAdmin.php:126
+msgid "Preview and conversion report"
+msgstr "Vorschau und Konvertierungsbericht"
+
+#. translators: 1: total elements, 2: taken over, 3: adjusted, 4: dropped
+#: src/Import/ImportAdmin.php:131
+#, php-format
+msgid "Elements: %1$d – taken over: %2$d, adjusted: %3$d, dropped: %4$d"
+msgstr "Elemente: %1$d – übernommen: %2$d, angepasst: %3$d, verworfen: %4$d"
+
+#: src/Import/ImportAdmin.php:139
+msgid "Original tag"
+msgstr "Original-Tag"
+
+#: src/Import/ImportAdmin.php:139
+msgid "Target type"
+msgstr "Zieltyp"
+
+#: src/Import/ImportAdmin.php:139
+#: assets/src/editor.js:453
+msgid "Label"
+msgstr "Bezeichnung"
+
+#: src/Import/ImportAdmin.php:139
+msgid "Result"
+msgstr "Ergebnis"
+
+#: src/Import/ImportAdmin.php:144
+msgid "(text block)"
+msgstr "(Textblock)"
+
+#: src/Import/ImportAdmin.php:154
+msgid "Notes:"
+msgstr "Hinweise:"
+
+#: src/Import/ImportAdmin.php:160
+msgid "After the import: check recipients and consent text, test the form, then publish it and replace the old shortcode on your pages."
+msgstr "Nach dem Import: Prüfen Sie Empfänger und Einwilligungstext, testen Sie das Formular, veröffentlichen Sie es dann und ersetzen Sie den alten Shortcode auf Ihren Seiten."
+
+#: src/Import/ImportAdmin.php:166
+msgid "Import as draft"
+msgstr "Als Entwurf importieren"
+
+#: src/Import/ImportAdmin.php:170
+msgid "Back"
+msgstr "Zurück"
+
+#. translators: %s: list of error codes
+#: src/Import/ImportService.php:77
+#, php-format
+msgid "The converted form is not valid (%s)."
+msgstr "Das konvertierte Formular ist ungültig (%s)."
+
+#: src/Import/ImportService.php:119
+#: src/Import/ShortcodeFormatParser.php:68
+msgid "The form source is too large (maximum 256 KB)."
+msgstr "Der Formular-Quelltext ist zu groß (maximal 256 KB)."
+
+#: src/Import/ImportService.php:190
+#: src/Service/FormService.php:541
+msgid "Imported form"
+msgstr "Importiertes Formular"
+
+#. translators: %s: form title
+#: src/Import/ImportService.php:193
+#, php-format
+msgid "%s (Import)"
+msgstr "%s (Import)"
+
+#: src/Import/ImportService.php:274
+msgid "Entries can only be imported into a form that was imported before."
+msgstr "Einträge können nur in ein zuvor importiertes Formular importiert werden."
+
+#: src/Import/ImportService.php:440
+msgid "The column mapping refers to unknown columns or fields."
+msgstr "Die Spaltenzuordnung verweist auf unbekannte Spalten oder Felder."
+
+#: src/Import/ImportService.php:450
+msgid "Please map at least one field and the submission time column."
+msgstr "Bitte ordnen Sie mindestens ein Feld und die Spalte mit dem Eingangszeitpunkt zu."
+
+#: src/Import/ImportService.php:454
+msgid "Unknown date format."
+msgstr "Unbekanntes Datumsformat."
+
+#: src/Import/ImportService.php:459
+msgid "Unknown time zone."
+msgstr "Unbekannte Zeitzone."
+
+#: src/Import/ImportService.php:529
+#: src/Import/ImportService.php:554
+msgid "The file is empty or not UTF-8 encoded CSV."
+msgstr "Die Datei ist leer oder keine UTF-8-codierte CSV-Datei."
+
+#: src/Import/ShortcodeFormatParser.php:73
+msgid "The source was not valid UTF-8 and has been converted."
+msgstr "Der Quelltext war kein gültiges UTF-8 und wurde konvertiert."
+
+#: src/Import/ShortcodeFormatParser.php:82
+msgid "Scripts, styles or embedded objects were removed from the source."
+msgstr "Skripte, Stile oder eingebettete Objekte wurden aus dem Quelltext entfernt."
+
+#: src/Import/ShortcodeFormatParser.php:87
+msgid "The form source is empty."
+msgstr "Der Formular-Quelltext ist leer."
+
+#. translators: %d: maximum number of fields
+#: src/Import/ShortcodeFormatParser.php:97
+#, php-format
+msgid "The form has more than %d fields and cannot be imported (no partial import)."
+msgstr "Das Formular hat mehr als %d Felder und kann nicht importiert werden (kein Teilimport)."
+
+#: src/Import/ShortcodeFormatParser.php:99
+msgid "No supported input fields were found."
+msgstr "Es wurden keine unterstützten Eingabefelder gefunden."
+
+#: src/Import/ShortcodeFormatParser.php:259
+msgid "Malformed or nested tag ignored."
+msgstr "Fehlerhaftes oder verschachteltes Tag ignoriert."
+
+#: src/Import/ShortcodeFormatParser.php:266
+msgid "Closing tag without matching start tag ignored."
+msgstr "Schließendes Tag ohne passendes Start-Tag ignoriert."
+
+#: src/Import/ShortcodeFormatParser.php:274
+msgid "Button text is not taken over; Form Captain uses its own translated button text."
+msgstr "Der Schaltflächentext wird nicht übernommen; Form Captain verwendet einen eigenen übersetzten Schaltflächentext."
+
+#: src/Import/ShortcodeFormatParser.php:281
+msgid "The message area is provided by Form Captain automatically."
+msgstr "Der Meldungsbereich wird von Form Captain automatisch bereitgestellt."
+
+#: src/Import/ShortcodeFormatParser.php:383
+msgid "Disallowed HTML (attributes, tags or links) was removed from a text block."
+msgstr "Nicht erlaubtes HTML (Attribute, Tags oder Links) wurde aus einem Textblock entfernt."
+
+#: src/Import/ShortcodeFormatParser.php:436
+msgid "Exclusive checkboxes were converted to radio buttons."
+msgstr "Exklusive Kontrollkästchen wurden in Optionsfelder umgewandelt."
+
+#: src/Import/ShortcodeFormatParser.php:439
+msgid "URL field converted to a text field (no URL validation)."
+msgstr "URL-Feld in ein Textfeld umgewandelt (keine URL-Prüfung)."
+
+#: src/Import/ShortcodeFormatParser.php:442
+msgid "Slider converted to a number field."
+msgstr "Schieberegler in ein Zahlenfeld umgewandelt."
+
+#: src/Import/ShortcodeFormatParser.php:445
+msgid "Tag without name; a key was generated."
+msgstr "Tag ohne Namen; ein Schlüssel wurde erzeugt."
+
+#: src/Import/ShortcodeFormatParser.php:476
+msgid "Invalid CSS class removed."
+msgstr "Ungültige CSS-Klasse entfernt."
+
+#: src/Import/ShortcodeFormatParser.php:480
+msgid "The id: option is not taken over."
+msgstr "Die Option id: wird nicht übernommen."
+
+#: src/Import/ShortcodeFormatParser.php:483
+msgid "Dynamic default values (default:…) are not supported; the value stays empty."
+msgstr "Dynamische Standardwerte (default:…) werden nicht unterstützt; der Wert bleibt leer."
+
+#: src/Import/ShortcodeFormatParser.php:510
+msgid "Number of rows limited to 2–20."
+msgstr "Zeilenanzahl auf 2–20 begrenzt."
+
+#. translators: %d: maximum length
+#: src/Import/ShortcodeFormatParser.php:519
+#, php-format
+msgid "Maximum length limited to %d."
+msgstr "Maximallänge auf %d begrenzt."
+
+#: src/Import/ShortcodeFormatParser.php:530
+msgid "Length limits of phone fields are not taken over."
+msgstr "Längenbegrenzungen von Telefonfeldern werden nicht übernommen."
+
+#: src/Import/ShortcodeFormatParser.php:539
+msgid "Invalid number limit removed."
+msgstr "Ungültige Zahlengrenze entfernt."
+
+#: src/Import/ShortcodeFormatParser.php:545
+msgid "Contradictory number limits removed."
+msgstr "Widersprüchliche Zahlengrenzen entfernt."
+
+#: src/Import/ShortcodeFormatParser.php:558
+msgid "Relative date limits other than \"today\" are not supported."
+msgstr "Relative Datumsgrenzen außer „today“ werden nicht unterstützt."
+
+#: src/Import/ShortcodeFormatParser.php:568
+msgid "Input patterns are not taken over."
+msgstr "Eingabemuster werden nicht übernommen."
+
+#: src/Import/ShortcodeFormatParser.php:583
+msgid "The first option served as a prompt and was removed."
+msgstr "Die erste Option diente als Aufforderung und wurde entfernt."
+
+#: src/Import/ShortcodeFormatParser.php:589
+msgid "Selection field without options cannot be imported."
+msgstr "Ein Auswahlfeld ohne Optionen kann nicht importiert werden."
+
+#: src/Import/ShortcodeFormatParser.php:598
+msgid "Empty first entry: the field has no preselection."
+msgstr "Leerer erster Eintrag: Das Feld hat keine Vorauswahl."
+
+#: src/Import/ShortcodeFormatParser.php:602
+msgid "Free-text option (\"other\") is not supported."
+msgstr "Freitext-Option („other“) wird nicht unterstützt."
+
+#: src/Import/ShortcodeFormatParser.php:609
+msgid "Preselection not taken over."
+msgstr "Vorauswahl nicht übernommen."
+
+#: src/Import/ShortcodeFormatParser.php:612
+msgid "Radio buttons start without forced preselection."
+msgstr "Optionsfelder beginnen ohne erzwungene Vorauswahl."
+
+#: src/Import/ShortcodeFormatParser.php:615
+msgid "External option sources (data:…) are not supported."
+msgstr "Externe Optionsquellen (data:…) werden nicht unterstützt."
+
+#. translators: %s: list of option names
+#: src/Import/ShortcodeFormatParser.php:621
+#, php-format
+msgid "Options not taken over: %s"
+msgstr "Nicht übernommene Optionen: %s"
+
+#: src/Import/ShortcodeFormatParser.php:637
+msgid "Label derived from the surrounding text, placeholder or name – please check."
+msgstr "Bezeichnung aus umgebendem Text, Platzhalter oder Name abgeleitet – bitte prüfen."
+
+#: src/Import/ShortcodeFormatParser.php:641
+#: src/Import/ShortcodeFormatParser.php:705
+msgid "Label shortened to 190 characters."
+msgstr "Bezeichnung auf 190 Zeichen gekürzt."
+
+#: src/Import/ShortcodeFormatParser.php:646
+msgid "Single checkbox converted to a checkbox field with one option."
+msgstr "Einzelnes Kontrollkästchen in ein Kontrollkästchen-Feld mit einer Option umgewandelt."
+
+#: src/Import/ShortcodeFormatParser.php:682
+msgid "Tags inside the consent text were removed."
+msgstr "Tags im Einwilligungstext wurden entfernt."
+
+#: src/Import/ShortcodeFormatParser.php:685
+msgid "Consent is never preselected; the preselection was removed."
+msgstr "Einwilligungen sind nie vorausgewählt; die Vorauswahl wurde entfernt."
+
+#: src/Import/ShortcodeFormatParser.php:689
+msgid "Disallowed HTML was removed from the consent text."
+msgstr "Nicht erlaubtes HTML wurde aus dem Einwilligungstext entfernt."
+
+#: src/Import/ShortcodeFormatParser.php:695
+msgid "I agree."
+msgstr "Ich stimme zu."
+
+#: src/Import/ShortcodeFormatParser.php:696
+msgid "No consent text found; a placeholder text was inserted – please replace it."
+msgstr "Kein Einwilligungstext gefunden; ein Platzhaltertext wurde eingefügt – bitte ersetzen Sie ihn."
+
+#: src/Import/ShortcodeFormatParser.php:701
+msgid "Label derived from the consent text – please check."
+msgstr "Bezeichnung aus dem Einwilligungstext abgeleitet – bitte prüfen."
+
+#: src/Import/ShortcodeFormatParser.php:708
+msgid "Optional consent converted to a checkbox (a consent field is always required)."
+msgstr "Optionale Einwilligung in ein Kontrollkästchen umgewandelt (ein Einwilligungsfeld ist immer erforderlich)."
+
+#: src/Import/ShortcodeFormatParser.php:732
+msgid "Acceptance converted to a required consent field (never preselected, revision 1)."
+msgstr "Zustimmung in ein erforderliches Einwilligungsfeld umgewandelt (nie vorausgewählt, Revision 1)."
+
+#: src/Import/ShortcodeFormatParser.php:744
+msgid "File uploads are not supported in the free version (available in Pro). The field was not converted."
+msgstr "Datei-Uploads werden in der kostenlosen Version nicht unterstützt (verfügbar in Pro). Das Feld wurde nicht umgewandelt."
+
+#: src/Import/ShortcodeFormatParser.php:746
+msgid "Quiz fields are not supported; the field was removed."
+msgstr "Quiz-Felder werden nicht unterstützt; das Feld wurde entfernt."
+
+#: src/Import/ShortcodeFormatParser.php:748
+msgid "Spam protection of the source is not taken over; Form Captain uses honeypot, minimum time and rate limit."
+msgstr "Der Spamschutz der Quelle wird nicht übernommen; Form Captain verwendet Honeypot, Mindest-Ausfüllzeit und Rate-Limit."
+
+#: src/Import/ShortcodeFormatParser.php:750
+msgid "Unknown or unsupported tag (for example calculations or extensions); not converted."
+msgstr "Unbekanntes oder nicht unterstütztes Tag (z. B. Berechnungen oder Erweiterungen); nicht umgewandelt."
+
+#. translators: %d: maximum number of options
+#: src/Import/ShortcodeFormatParser.php:763
+#, php-format
+msgid "More than %d options – the form cannot be imported (no partial import)."
+msgstr "Mehr als %d Optionen – das Formular kann nicht importiert werden (kein Teilimport)."
+
+#: src/Import/ShortcodeFormatParser.php:783
+msgid "Option label shortened to 190 characters."
+msgstr "Optionsbezeichnung auf 190 Zeichen gekürzt."
+
+#: src/Import/ShortcodeFormatParser.php:804
+msgid "Stored option values were normalized (letters, digits, \"-\" and \"_\")."
+msgstr "Gespeicherte Optionswerte wurden normalisiert (Buchstaben, Ziffern, „-“ und „_“)."
+
+#: src/Import/ShortcodeFormatParser.php:888
+msgid "Field key normalized or made unique."
+msgstr "Feldschlüssel normalisiert oder eindeutig gemacht."
+
+#: src/Install/Capabilities.php:54
+msgid "Manage forms"
+msgstr "Formulare verwalten"
+
+#: src/Install/Capabilities.php:55
+msgid "Read entries"
+msgstr "Einträge lesen"
+
+#: src/Install/Capabilities.php:56
+msgid "Edit entry status and notes"
+msgstr "Status und Notizen von Einträgen bearbeiten"
+
+#: src/Install/Capabilities.php:57
+msgid "Export entries"
+msgstr "Einträge exportieren"
+
+#: src/Install/Capabilities.php:58
+msgid "Delete entries"
+msgstr "Einträge löschen"
+
+#: src/Install/Capabilities.php:59
+msgid "Manage settings"
+msgstr "Einstellungen verwalten"
+
+#: src/Install/Capabilities.php:60
+msgid "Manage integrations"
+msgstr "Integrationen verwalten"
+
+#: src/Integrations/ConnectorRegistry.php:172
+msgid "The registered object does not implement the connector interface or uses an invalid key."
+msgstr "Das registrierte Objekt implementiert die Connector-Schnittstelle nicht oder verwendet einen ungültigen Schlüssel."
+
+#: src/Integrations/ConnectorRegistry.php:191
+msgid "The connector key does not match the registered key."
+msgstr "Der Connector-Schlüssel stimmt nicht mit dem registrierten Schlüssel überein."
+
+#. translators: 1: contract version required by the connector, 2: contract version of Form Captain
+#: src/Integrations/ConnectorRegistry.php:196
+#, php-format
+msgid "The connector expects contract %1$s, Form Captain provides %2$s."
+msgstr "Der Connector erwartet Contract %1$s, Form Captain stellt %2$s bereit."
+
+#: src/Integrations/ConnectorRegistry.php:271
+msgid "This connector is not installed."
+msgstr "Dieser Connector ist nicht installiert."
+
+#: src/Integrations/ConnectorRegistry.php:277
+msgid "The connector requirements are not met."
+msgstr "Die Voraussetzungen des Connectors sind nicht erfüllt."
+
+#: src/Integrations/ConnectorRegistry.php:327
+msgid "Paused (connector missing)"
+msgstr "Pausiert (Connector fehlt)"
+
+#: src/Integrations/ConnectorRegistry.php:379
+msgid "The connector plugin is not active or was removed."
+msgstr "Das Connector-Plugin ist nicht aktiv oder wurde entfernt."
+
+#: src/Integrations/ConnectorRegistry.php:401
+msgid "Connector plugin missing"
+msgstr "Connector-Plugin fehlt"
+
+#: src/Integrations/ConnectorRegistry.php:402
+msgid "Install and activate the connector plugin, or remove the action from the form."
+msgstr "Installieren und aktivieren Sie das Connector-Plugin oder entfernen Sie die Aktion aus dem Formular."
+
+#: src/Integrations/ConnectorRegistry.php:405
+msgid "Connector disabled"
+msgstr "Connector deaktiviert"
+
+#: src/Integrations/ConnectorRegistry.php:406
+msgid "Activate the connector under Form Captain → Integrations. Paused jobs continue automatically."
+msgstr "Aktivieren Sie den Connector unter Form Captain → Integrationen. Pausierte Aufträge werden automatisch fortgesetzt."
+
+#: src/Integrations/ConnectorRegistry.php:409
+msgid "Incompatible contract version"
+msgstr "Inkompatible Contract-Version"
+
+#: src/Integrations/ConnectorRegistry.php:410
+msgid "Update the connector or Form Captain so that both support the same contract major version."
+msgstr "Aktualisieren Sie den Connector oder Form Captain, sodass beide dieselbe Contract-Hauptversion unterstützen."
+
+#: src/Integrations/ConnectorRegistry.php:413
+msgid "Requirements not met"
+msgstr "Voraussetzungen nicht erfüllt"
+
+#: src/Integrations/ConnectorRegistry.php:414
+msgid "Complete the connector configuration shown in its requirements."
+msgstr "Vervollständigen Sie die Connector-Konfiguration gemäß den angezeigten Voraussetzungen."
+
+#: src/Integrations/ConnectorRegistry.php:417
+msgid "Pro feature not available"
+msgstr "Pro-Funktion nicht verfügbar"
+
+#: src/Integrations/ConnectorRegistry.php:418
+msgid "This action needs Form Captain Pro with a valid licence. Renew or activate the licence, or disable the action."
+msgstr "Diese Aktion benötigt Form Captain Pro mit gültiger Lizenz. Verlängern oder aktivieren Sie die Lizenz oder deaktivieren Sie die Aktion."
+
+#: src/Integrations/ConnectorRegistry.php:421
+msgid "Workflow or action missing"
+msgstr "Workflow oder Aktion fehlt"
+
+#: src/Integrations/ConnectorRegistry.php:422
+msgid "The plugin that provided this action is inactive. Reactivate it or remove the action from the form."
+msgstr "Das Plugin, das diese Aktion bereitgestellt hat, ist inaktiv. Aktivieren Sie es erneut oder entfernen Sie die Aktion aus dem Formular."
+
+#: src/Integrations/ConnectorRegistry.php:425
+msgid "Action disabled in form"
+msgstr "Aktion im Formular deaktiviert"
+
+#: src/Integrations/ConnectorRegistry.php:426
+msgid "Enable the action in the form editor if it should run."
+msgstr "Aktivieren Sie die Aktion im Formular-Editor, wenn sie ausgeführt werden soll."
+
+#: src/Integrations/ConnectorRegistry.php:429
+msgid "Action removed from form"
+msgstr "Aktion aus dem Formular entfernt"
+
+#: src/Integrations/ConnectorRegistry.php:430
+msgid "No action needed. The job was stopped because the form no longer contains this action."
+msgstr "Keine Aktion erforderlich. Der Auftrag wurde gestoppt, weil das Formular diese Aktion nicht mehr enthält."
+
+#: src/Integrations/ConnectorRegistry.php:433
+msgid "Field mapping incomplete"
+msgstr "Feldzuordnung unvollständig"
+
+#: src/Integrations/ConnectorRegistry.php:434
+msgid "Map all required fields of the action in the form editor, then retry the job."
+msgstr "Ordnen Sie im Formular-Editor alle Pflichtfelder der Aktion zu und versuchen Sie den Auftrag dann erneut."
+
+#: src/Integrations/ConnectorRegistry.php:437
+msgid "Mapped field has the wrong type"
+msgstr "Zugeordnetes Feld hat den falschen Typ"
+
+#: src/Integrations/ConnectorRegistry.php:438
+msgid "Choose a field of a supported type in the action mapping, then retry the job."
+msgstr "Wählen Sie in der Aktionszuordnung ein Feld eines unterstützten Typs und versuchen Sie den Auftrag dann erneut."
+
+#: src/Integrations/ConnectorRegistry.php:441
+msgid "Sensitive field blocked"
+msgstr "Sensibles Feld gesperrt"
+
+#: src/Integrations/ConnectorRegistry.php:442
+msgid "Sensitive fields are never sent unless the action explicitly allows them. Map a different field."
+msgstr "Sensible Felder werden nie gesendet, sofern die Aktion dies nicht ausdrücklich erlaubt. Ordnen Sie ein anderes Feld zu."
+
+#: src/Integrations/ConnectorRegistry.php:445
+msgid "Entry deleted"
+msgstr "Eintrag gelöscht"
+
+#: src/Integrations/ConnectorRegistry.php:446
+msgid "No action needed. The entry was deleted before the job ran."
+msgstr "Keine Aktion erforderlich. Der Eintrag wurde gelöscht, bevor der Auftrag ausgeführt wurde."
+
+#: src/Integrations/ConnectorRegistry.php:449
+msgid "Entry anonymized"
+msgstr "Eintrag anonymisiert"
+
+#: src/Integrations/ConnectorRegistry.php:450
+msgid "No action needed. Personal data was removed before the job ran."
+msgstr "Keine Aktion erforderlich. Die personenbezogenen Daten wurden entfernt, bevor der Auftrag ausgeführt wurde."
+
+#: src/Integrations/ConnectorRegistry.php:454
+msgid "No action needed. The job was stopped because consent was withdrawn."
+msgstr "Keine Aktion erforderlich. Der Auftrag wurde gestoppt, weil die Einwilligung widerrufen wurde."
+
+#: src/Integrations/ConnectorRegistry.php:457
+msgid "Timeout"
+msgstr "Zeitüberschreitung"
+
+#: src/Integrations/ConnectorRegistry.php:458
+msgid "The target system did not answer in time. The job is retried automatically; check the target system if it keeps failing."
+msgstr "Das Zielsystem hat nicht rechtzeitig geantwortet. Der Auftrag wird automatisch erneut versucht; prüfen Sie das Zielsystem, falls der Fehler weiter auftritt."
+
+#: src/Integrations/ConnectorRegistry.php:461
+msgid "Connector error"
+msgstr "Connector-Fehler"
+
+#: src/Integrations/ConnectorRegistry.php:462
+msgid "The connector raised an error. The job is retried automatically; contact the connector vendor if it keeps failing."
+msgstr "Der Connector hat einen Fehler gemeldet. Der Auftrag wird automatisch erneut versucht; wenden Sie sich an den Anbieter des Connectors, falls der Fehler weiter auftritt."
+
+#: src/Integrations/ConnectorRegistry.php:465
+msgid "Invalid connector response"
+msgstr "Ungültige Connector-Antwort"
+
+#: src/Integrations/ConnectorRegistry.php:466
+msgid "The connector returned an invalid result. Update the connector plugin."
+msgstr "Der Connector hat ein ungültiges Ergebnis geliefert. Aktualisieren Sie das Connector-Plugin."
+
+#: src/Integrations/ConnectorRegistry.php:469
+msgid "Worker interrupted"
+msgstr "Worker unterbrochen"
+
+#: src/Integrations/ConnectorRegistry.php:470
+msgid "The job is retried automatically. If this repeats, check PHP time limits and the cron setup."
+msgstr "Der Auftrag wird automatisch erneut versucht. Wenn sich dies wiederholt, prüfen Sie die PHP-Zeitlimits und die Cron-Einrichtung."
+
+#: src/Integrations/ConnectorRegistry.php:473
+msgid "Queue delayed"
+msgstr "Warteschlange verzögert"
+
+#: src/Integrations/ConnectorRegistry.php:474
+msgid "Jobs are waiting longer than 15 minutes. Check WP-Cron or run \"wp form-captain jobs run\" from a system cron."
+msgstr "Aufträge warten länger als 15 Minuten. Prüfen Sie WP-Cron oder führen Sie „wp form-captain jobs run“ über einen System-Cron aus."
+
+#: src/Integrations/ConnectorRegistry.php:485
+msgid "Check the connector documentation for this code. You can retry the job once the cause is fixed."
+msgstr "Schlagen Sie diesen Code in der Dokumentation des Connectors nach. Sie können den Auftrag erneut versuchen, sobald die Ursache behoben ist."
+
+#: src/Integrations/ConnectorRegistry.php:498
+msgid "Actions can only be registered in or after form_captain_loaded_v1."
+msgstr "Aktionen können nur in oder nach form_captain_loaded_v1 registriert werden."
+
+#: src/Integrations/ConnectorRegistry.php:501
+msgid "Invalid action key. Expected \"connector.action\" in lowercase letters, digits and underscores."
+msgstr "Ungültiger Aktionsschlüssel. Erwartet wird „connector.action“ in Kleinbuchstaben, Ziffern und Unterstrichen."
+
+#: src/Integrations/ConnectorRegistry.php:504
+msgid "The action namespace \"core\" is reserved for built-in actions."
+msgstr "Der Aktions-Namensraum „core“ ist für integrierte Aktionen reserviert."
+
+#: src/Integrations/ConnectorRegistry.php:507
+msgid "An action with this key is already registered."
+msgstr "Eine Aktion mit diesem Schlüssel ist bereits registriert."
+
+#: src/Integrations/ConnectorRegistry.php:527
+msgid "The action definition needs a label."
+msgstr "Die Aktionsdefinition benötigt eine Bezeichnung."
+
+#: src/Integrations/ConnectorRegistry.php:531
+msgid "The action definition needs a contract constraint such as \"^1.0\"."
+msgstr "Die Aktionsdefinition benötigt eine Contract-Bedingung wie „^1.0“."
+
+#: src/Integrations/ConnectorRegistry.php:534
+msgid "The action expects an incompatible contract version."
+msgstr "Die Aktion erwartet eine inkompatible Contract-Version."
+
+#: src/Integrations/ConnectorRegistry.php:538
+msgid "Invalid connector key in action definition."
+msgstr "Ungültiger Connector-Schlüssel in der Aktionsdefinition."
+
+#: src/Integrations/ConnectorRegistry.php:543
+msgid "Every action setting needs a valid key."
+msgstr "Jede Aktionseinstellung benötigt einen gültigen Schlüssel."
+
+#: src/Integrations/ConnectorRegistry.php:558
+msgid "Every mapping entry needs a valid key."
+msgstr "Jeder Zuordnungseintrag benötigt einen gültigen Schlüssel."
+
+#: src/Integrations/ConnectorRegistry.php:857
+msgid "This action is not registered."
+msgstr "Diese Aktion ist nicht registriert."
+
+#: src/Integrations/ConnectorRegistry.php:893
+msgid "This is a test message from Form Captain."
+msgstr "Dies ist eine Testnachricht von Form Captain."
+
+#: src/Integrations/ConnectorRegistry.php:900
+msgid "Sample value"
+msgstr "Beispielwert"
+
+#: src/Integrations/CoreActions.php:94
+msgid "Additional admin notification"
+msgstr "Zusätzliche Admin-Benachrichtigung"
+
+#: src/Integrations/CoreActions.php:96
+msgid "Recipient address"
+msgstr "Empfängeradresse"
+
+#: src/Integrations/CoreActions.php:97
+msgid "Subject (optional)"
+msgstr "Betreff (optional)"
+
+#: src/Integrations/CoreActions.php:105
+msgid "Set submission status"
+msgstr "Status der Einsendung setzen"
+
+#: src/Integrations/CoreActions.php:107
+msgid "New status"
+msgstr "Neuer Status"
+
+#: src/Integrations/CoreActions.php:115
+msgid "Anonymize submission after a number of days"
+msgstr "Einsendung nach einer Anzahl von Tagen anonymisieren"
+
+#: src/Integrations/CoreActions.php:117
+msgid "Days after submission"
+msgstr "Tage nach Eingang"
+
+#: src/Integrations/CoreActions.php:125
+msgid "Hand over to another action after confirmation"
+msgstr "Nach Bestätigung an eine andere Aktion übergeben"
+
+#: src/Integrations/CoreActions.php:127
+msgid "Instance ID of the target action in this form"
+msgstr "Instanz-ID der Zielaktion in diesem Formular"
+
+#. translators: %s: label of the target action
+#: src/Integrations/CoreActions.php:261
+#, php-format
+msgid "Hand-over pending: \"%s\" runs only after an administrator confirms it in the submission details."
+msgstr "Übergabe ausstehend: „%s“ wird erst ausgeführt, wenn ein Administrator sie in den Einsendungsdetails bestätigt."
+
+#: src/Integrations/CoreActions.php:338
+#: src/Integrations/CoreActions.php:378
+msgid "You are not allowed to confirm hand-overs."
+msgstr "Sie sind nicht berechtigt, Übergaben zu bestätigen."
+
+#: src/Integrations/CoreActions.php:352
+msgid "There is no pending hand-over for this submission."
+msgstr "Für diese Einsendung gibt es keine ausstehende Übergabe."
+
+#: src/Integrations/CoreActions.php:411
+msgid "These hand-overs only run after you confirm them. Check the submission first."
+msgstr "Diese Übergaben werden erst ausgeführt, wenn Sie sie bestätigen. Prüfen Sie zuerst die Einsendung."
+
+#: src/Integrations/CoreActions.php:427
+msgid "Confirm hand-over"
+msgstr "Übergabe bestätigen"
+
+#: src/Integrations/CoreActions.php:429
+msgid "An administrator with the right to manage integrations has to confirm this hand-over."
+msgstr "Ein Administrator mit dem Recht „Integrationen verwalten“ muss diese Übergabe bestätigen."
+
+#: src/Integrations/CoreActions.php:435
+msgid "Pending hand-overs"
+msgstr "Ausstehende Übergaben"
+
+#: src/Jobs/Scheduler.php:71
+msgid "Every minute (Form Captain jobs)"
+msgstr "Jede Minute (Form-Captain-Aufträge)"
+
+#. translators: %s: form title placeholder
+#: src/Mail/MailBuilder.php:88
+#, php-format
+msgid "New submission: %s"
+msgstr "Neue Einsendung: %s"
+
+#. translators: 1: form title, 2: submission ID
+#: src/Mail/MailBuilder.php:98
+#, php-format
+msgid "A new submission was received via \"%1$s\" (#%2$d)."
+msgstr "Über „%1$s“ ist eine neue Einsendung eingegangen (#%2$d)."
+
+#: src/Mail/MailBuilder.php:111
+#: src/Mail/MailBuilder.php:112
+msgid "View submission in WordPress"
+msgstr "Einsendung in WordPress anzeigen"
+
+#. translators: %s: form title placeholder
+#: src/Mail/MailBuilder.php:151
+#, php-format
+msgid "Thank you for your message: %s"
+msgstr "Vielen Dank für Ihre Nachricht: %s"
+
+#: src/Mail/MailBuilder.php:157
+msgid "Thank you! We have received your message and will get back to you as soon as possible."
+msgstr "Vielen Dank! Wir haben Ihre Nachricht erhalten und melden uns so bald wie möglich bei Ihnen."
+
+#: src/Mail/MailBuilder.php:330
+msgid "Yes"
+msgstr "Ja"
+
+#: src/Mail/MailBuilder.php:330
+msgid "No"
+msgstr "Nein"
+
+#: src/Privacy/PrivacyIntegration.php:65
+#: src/Privacy/PrivacyIntegration.php:77
+msgid "Form Captain – form submissions"
+msgstr "Form Captain – Formular-Einsendungen"
+
+#: src/Privacy/PrivacyIntegration.php:95
+msgid "[retention period]"
+msgstr "[Aufbewahrungsfrist]"
+
+#. translators: %s: retention period
+#: src/Privacy/PrivacyIntegration.php:99
+#, php-format
+msgid "This website uses forms to receive enquiries. The data you enter is stored in our website database and used to process your request. It is deleted after %s unless longer storage is required. Form data is not passed to third parties unless stated in the form."
+msgstr "Diese Website nutzt Formulare zur Entgegennahme von Anfragen. Ihre Eingaben werden in der Datenbank der Website gespeichert und zur Bearbeitung Ihrer Anfrage verwendet. Sie werden nach %s gelöscht, sofern keine längere Speicherung erforderlich ist. Formulardaten werden nicht an Dritte weitergegeben, sofern dies im Formular nicht angegeben ist."
+
+#: src/Privacy/PrivacyIntegration.php:154
+msgid "Form submissions"
+msgstr "Formular-Einsendungen"
+
+#: src/Privacy/PrivacyIntegration.php:155
+msgid "Submissions you sent through forms on this website."
+msgstr "Einsendungen, die Sie über Formulare dieser Website gesendet haben."
+
+#: src/Privacy/PrivacyIntegration.php:183
+msgid "Received on"
+msgstr "Eingegangen am"
+
+#: src/Privacy/PrivacyIntegration.php:209
+msgid "Removed field"
+msgstr "Entferntes Feld"
+
+#. translators: %s: date and time of the note
+#: src/Privacy/PrivacyIntegration.php:223
+#, php-format
+msgid "Internal note (%s)"
+msgstr "Interne Notiz (%s)"
+
+#. translators: 1: date, 2: revision
+#: src/Privacy/PrivacyIntegration.php:244
+#, php-format
+msgid "Given on %1$s, revision %2$s"
+msgstr "Erteilt am %1$s, Revision %2$s"
+
+#: src/Privacy/PrivacyIntegration.php:249
+msgid "Not given"
+msgstr "Nicht erteilt"
+
+#. translators: %s: entry ID
+#: src/Privacy/PrivacyIntegration.php:297
+#, php-format
+msgid "Submission #%s could not be erased. Please try again or delete it manually."
+msgstr "Einsendung #%s konnte nicht gelöscht werden. Bitte versuchen Sie es erneut oder löschen Sie sie manuell."
+
+#. translators: %s: number of submissions
+#: src/Privacy/PrivacyIntegration.php:302
+#, php-format
+msgid "%s form submissions were anonymized."
+msgstr "%s Formular-Einsendungen wurden anonymisiert."
+
+#: src/Privacy/PrivacyIntegration.php:305
+msgid "Some submissions were sent to connected integrations. Data in those systems is not deleted automatically unless the integration supports it."
+msgstr "Einige Einsendungen wurden an verbundene Integrationen übertragen. Daten in diesen Systemen werden nur gelöscht, wenn die Integration dies unterstützt."
+
+#: src/Repository/FormRepository.php:113
+#: src/Service/FormService.php:162
+#: src/Service/FormService.php:215
+msgid "This form was changed by someone else in the meantime. Reload to see the latest version."
+msgstr "Dieses Formular wurde inzwischen von einer anderen Person geändert. Laden Sie neu, um die aktuelle Version zu sehen."
+
+#: src/Security/SignedContext.php:121
+msgid "This context purpose is already registered."
+msgstr "Dieser Kontextzweck ist bereits registriert."
+
+#: src/Security/SignedContext.php:126
+msgid "The context purpose definition is invalid."
+msgstr "Die Definition des Kontextzwecks ist ungültig."
+
+#: src/Security/SignedContext.php:435
+msgid "This form has expired. Please check your entries and send it again."
+msgstr "Dieses Formular ist abgelaufen. Bitte prüfen Sie Ihre Eingaben und senden Sie es erneut."
+
+#: src/Security/SignedContext.php:436
+msgid "This form could not be sent because its link is no longer valid. Please reload the page and try again."
+msgstr "Dieses Formular konnte nicht gesendet werden, weil sein Link nicht mehr gültig ist. Bitte laden Sie die Seite neu und versuchen Sie es erneut."
+
+#: src/Service/ConsentService.php:51
+msgid "You are not allowed to record a consent withdrawal."
+msgstr "Sie sind nicht berechtigt, einen Widerruf der Einwilligung zu erfassen."
+
+#: src/Service/ConsentService.php:55
+msgid "You are not allowed to delete or anonymize submissions."
+msgstr "Sie sind nicht berechtigt, Einsendungen zu löschen oder zu anonymisieren."
+
+#: src/Service/ConsentService.php:99
+msgid "The submission could not be anonymized."
+msgstr "Die Einsendung konnte nicht anonymisiert werden."
+
+#: src/Service/ConsentService.php:107
+msgid "The submission could not be deleted."
+msgstr "Die Einsendung konnte nicht gelöscht werden."
+
+#: src/Service/EntryService.php:59
+msgid "You are not allowed to change this submission."
+msgstr "Sie sind nicht berechtigt, diese Einsendung zu ändern."
+
+#: src/Service/EntryService.php:91
+msgid "This status change is not allowed."
+msgstr "Dieser Statuswechsel ist nicht erlaubt."
+
+#: src/Service/EntryService.php:94
+msgid "The status could not be changed."
+msgstr "Der Status konnte nicht geändert werden."
+
+#: src/Service/EntryService.php:108
+msgid "Only submissions in the trash can be restored."
+msgstr "Nur Einsendungen im Papierkorb können wiederhergestellt werden."
+
+#: src/Service/EntryService.php:112
+msgid "The restore period for this submission has expired."
+msgstr "Die Wiederherstellungsfrist für diese Einsendung ist abgelaufen."
+
+#: src/Service/EntryService.php:127
+msgid "You are not allowed to restore submissions."
+msgstr "Sie sind nicht berechtigt, Einsendungen wiederherzustellen."
+
+#: src/Service/EntryService.php:135
+msgid "You are not allowed to delete submissions."
+msgstr "Sie sind nicht berechtigt, Einsendungen zu löschen."
+
+#: src/Service/EntryService.php:150
+msgid "You are not allowed to add notes."
+msgstr "Sie sind nicht berechtigt, Notizen hinzuzufügen."
+
+#: src/Service/EntryService.php:199
+msgid "This job cannot be retried here."
+msgstr "Dieser Auftrag kann hier nicht erneut versucht werden."
+
+#: src/Service/EntryService.php:202
+msgid "Only failed jobs can be retried."
+msgstr "Nur fehlgeschlagene Aufträge können erneut versucht werden."
+
+#: src/Service/EntryService.php:221
+msgid "Notifications are not sent for spam or trashed submissions."
+msgstr "Für Spam oder Einsendungen im Papierkorb werden keine Benachrichtigungen gesendet."
+
+#: src/Service/EntryService.php:224
+msgid "Consent for this submission was withdrawn. No further messages are sent."
+msgstr "Die Einwilligung für diese Einsendung wurde widerrufen. Es werden keine weiteren Nachrichten gesendet."
+
+#: src/Service/EntryService.php:245
+msgid "Unknown bulk action."
+msgstr "Unbekannte Mehrfachaktion."
+
+#: src/Service/EntryService.php:249
+msgid "Select between 1 and 500 submissions."
+msgstr "Wählen Sie zwischen 1 und 500 Einsendungen aus."
+
+#: src/Service/FormService.php:47
+#: src/Service/FormService.php:973
+msgid "Untitled form"
+msgstr "Unbenanntes Formular"
+
+#: src/Service/FormService.php:62
+msgid "This template does not exist."
+msgstr "Diese Vorlage existiert nicht."
+
+#. translators: {form_title} is a placeholder and must not be translated.
+#: src/Service/FormService.php:120
+msgid "New submission: {form_title}"
+msgstr "Neue Einsendung: {form_title}"
+
+#: src/Service/FormService.php:131
+#: src/Service/SubmissionService.php:337
+#: src/Support/Errors.php:65
+msgid "Thank you! Your submission has been received."
+msgstr "Vielen Dank! Ihre Einsendung ist eingegangen."
+
+#: src/Service/FormService.php:307
+msgid "Archived forms cannot be published. Restore the form as a draft first."
+msgstr "Archivierte Formulare können nicht veröffentlicht werden. Stellen Sie das Formular zuerst als Entwurf wieder her."
+
+#: src/Service/FormService.php:311
+msgid "The form cannot be published until all errors are fixed."
+msgstr "Das Formular kann erst veröffentlicht werden, wenn alle Fehler behoben sind."
+
+#: src/Service/FormService.php:331
+msgid "This status change is not possible."
+msgstr "Dieser Statuswechsel ist nicht möglich."
+
+#. translators: %s: form title
+#: src/Service/FormService.php:384
+#, php-format
+msgid "%s (copy)"
+msgstr "%s (Kopie)"
+
+#: src/Service/FormService.php:412
+msgid "This form has entries. Archive it instead, or delete it together with its entries."
+msgstr "Dieses Formular enthält Einträge. Archivieren Sie es stattdessen oder löschen Sie es zusammen mit seinen Einträgen."
+
+#: src/Service/FormService.php:419
+msgid "Entries cannot be deleted right now. Archive the form instead."
+msgstr "Einträge können derzeit nicht gelöscht werden. Archivieren Sie stattdessen das Formular."
+
+#: src/Service/FormService.php:426
+msgid "Not all entries could be deleted. Please try again."
+msgstr "Nicht alle Einträge konnten gelöscht werden. Bitte versuchen Sie es erneut."
+
+#: src/Service/FormService.php:483
+msgid "The file is not a valid Form Captain form definition."
+msgstr "Die Datei ist keine gültige Form-Captain-Formulardefinition."
+
+#. translators: 1: field key, 2: property name
+#: src/Service/FormService.php:499
+#, php-format
+msgid "Field \"%1$s\": markup removed from %2$s."
+msgstr "Feld „%1$s“: Markup aus %2$s entfernt."
+
+#. translators: 1: field key, 2: property name
+#: src/Service/FormService.php:505
+#, php-format
+msgid "Field \"%1$s\": disallowed HTML removed from %2$s."
+msgstr "Feld „%1$s“: Nicht erlaubtes HTML aus %2$s entfernt."
+
+#: src/Service/FormService.php:518
+msgid "The form definition contains errors and was not imported."
+msgstr "Die Formulardefinition enthält Fehler und wurde nicht importiert."
+
+#. translators: %s: setting path
+#: src/Service/FormService.php:533
+#, php-format
+msgid "Invalid action configuration removed (%s)."
+msgstr "Ungültige Aktionskonfiguration entfernt (%s)."
+
+#. translators: 1: setting path, 2: error code
+#: src/Service/FormService.php:538
+#, php-format
+msgid "Setting %1$s was invalid and has been reset (%2$s)."
+msgstr "Die Einstellung %1$s war ungültig und wurde zurückgesetzt (%2$s)."
+
+#: src/Service/FormService.php:963
+msgid "The form definition is invalid."
+msgstr "Die Formulardefinition ist ungültig."
+
+#: src/Service/PreviewTokens.php:54
+#: src/Service/PreviewTokens.php:59
+msgid "This preview link is invalid or has expired."
+msgstr "Dieser Vorschaulink ist ungültig oder abgelaufen."
+
+#: src/Service/PreviewTokens.php:62
+msgid "This preview link belongs to another user."
+msgstr "Dieser Vorschaulink gehört einem anderen Benutzer."
+
+#: src/Service/Templates.php:104
+msgid "Contact"
+msgstr "Kontakt"
+
+#: src/Service/Templates.php:105
+msgid "Name, email and message – the classic contact form."
+msgstr "Name, E-Mail und Nachricht – das klassische Kontaktformular."
+
+#: src/Service/Templates.php:106
+msgid "Name"
+msgstr "Name"
+
+#: src/Service/Templates.php:107
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+#: src/Service/Templates.php:108
+msgid "We will reply to this address."
+msgstr "Wir antworten an diese Adresse."
+
+#: src/Service/Templates.php:109
+msgid "name@example.com"
+msgstr "name@example.com"
+
+#: src/Service/Templates.php:110
+#: assets/src/editor.js:948
+#: assets/src/editor.js:1004
+msgid "Subject"
+msgstr "Betreff"
+
+#: src/Service/Templates.php:111
+#: assets/src/editor.js:1008
+msgid "Message"
+msgstr "Nachricht"
+
+#: src/Service/Templates.php:112
+msgid "Privacy"
+msgstr "Datenschutz"
+
+#: src/Service/Templates.php:113
+msgid "I agree that my details will be stored to answer my request."
+msgstr "Ich bin damit einverstanden, dass meine Angaben zur Beantwortung meiner Anfrage gespeichert werden."
+
+#. translators: {form_title} is a placeholder and must not be translated.
+#: src/Service/Templates.php:115
+msgid "New message: {form_title}"
+msgstr "Neue Nachricht: {form_title}"
+
+#: src/Service/Templates.php:116
+msgid "Thank you! We will get back to you soon."
+msgstr "Vielen Dank! Wir melden uns in Kürze bei Ihnen."
+
+#: src/Service/Templates.php:117
+msgid "Quote request"
+msgstr "Angebotsanfrage"
+
+#: src/Service/Templates.php:118
+msgid "Collect project details for a quote."
+msgstr "Projektdetails für ein Angebot erfassen."
+
+#: src/Service/Templates.php:119
+msgid "Company"
+msgstr "Unternehmen"
+
+#: src/Service/Templates.php:121
+msgid "Service"
+msgstr "Leistung"
+
+#: src/Service/Templates.php:122
+msgid "Consulting"
+msgstr "Beratung"
+
+#: src/Service/Templates.php:123
+msgid "Implementation"
+msgstr "Umsetzung"
+
+#: src/Service/Templates.php:124
+msgid "Support and maintenance"
+msgstr "Support und Wartung"
+
+#: src/Service/Templates.php:125
+msgid "Other"
+msgstr "Sonstiges"
+
+#: src/Service/Templates.php:126
+msgid "Please describe the service"
+msgstr "Bitte beschreiben Sie die Leistung"
+
+#: src/Service/Templates.php:127
+msgid "Budget"
+msgstr "Budget"
+
+#: src/Service/Templates.php:128
+msgid "Up to 1,000"
+msgstr "Bis 1.000"
+
+#: src/Service/Templates.php:129
+msgid "1,000 to 5,000"
+msgstr "1.000 bis 5.000"
+
+#: src/Service/Templates.php:130
+msgid "More than 5,000"
+msgstr "Mehr als 5.000"
+
+#: src/Service/Templates.php:131
+msgid "Desired start"
+msgstr "Gewünschter Beginn"
+
+#: src/Service/Templates.php:132
+msgid "Project details"
+msgstr "Projektdetails"
+
+#: src/Service/Templates.php:133
+msgid "I agree that my details will be stored to prepare a quote."
+msgstr "Ich bin damit einverstanden, dass meine Angaben zur Erstellung eines Angebots gespeichert werden."
+
+#. translators: {form_title} is a placeholder and must not be translated.
+#: src/Service/Templates.php:135
+msgid "New quote request: {form_title}"
+msgstr "Neue Angebotsanfrage: {form_title}"
+
+#: src/Service/Templates.php:136
+msgid "Thank you for your request! We will send you a quote shortly."
+msgstr "Vielen Dank für Ihre Anfrage! Wir senden Ihnen in Kürze ein Angebot."
+
+#: src/Service/Templates.php:137
+msgid "Support request"
+msgstr "Support-Anfrage"
+
+#: src/Service/Templates.php:138
+msgid "Let customers describe a problem with priority and category."
+msgstr "Kunden ein Problem mit Priorität und Kategorie beschreiben lassen."
+
+#: src/Service/Templates.php:139
+msgid "Category"
+msgstr "Kategorie"
+
+#: src/Service/Templates.php:140
+msgid "Question"
+msgstr "Frage"
+
+#: src/Service/Templates.php:141
+msgid "Problem or error"
+msgstr "Problem oder Fehler"
+
+#: src/Service/Templates.php:142
+msgid "Account"
+msgstr "Konto"
+
+#: src/Service/Templates.php:143
+msgid "Priority"
+msgstr "Priorität"
+
+#: src/Service/Templates.php:144
+msgid "Low"
+msgstr "Niedrig"
+
+#: src/Service/Templates.php:145
+msgid "Normal"
+msgstr "Normal"
+
+#: src/Service/Templates.php:146
+msgid "High"
+msgstr "Hoch"
+
+#: src/Service/Templates.php:147
+msgid "Description"
+msgstr "Beschreibung"
+
+#: src/Service/Templates.php:148
+msgid "Please describe what happened and the steps to reproduce it."
+msgstr "Bitte beschreiben Sie, was passiert ist und wie sich das Problem nachvollziehen lässt."
+
+#: src/Service/Templates.php:149
+msgid "I agree that my details will be stored to process my support request."
+msgstr "Ich bin damit einverstanden, dass meine Angaben zur Bearbeitung meiner Support-Anfrage gespeichert werden."
+
+#. translators: {field:subject} is a placeholder and must not be translated.
+#: src/Service/Templates.php:151
+msgid "Support: {field:subject}"
+msgstr "Support: {field:subject}"
+
+#: src/Service/Templates.php:152
+msgid "Thank you! Your support request has been received."
+msgstr "Vielen Dank! Ihre Support-Anfrage ist eingegangen."
+
+#: src/Settings/SettingsSchema.php:37
+msgid "General"
+msgstr "Allgemein"
+
+#: src/Settings/SettingsSchema.php:38
+#: assets/src/editor.js:1112
+msgid "Appearance"
+msgstr "Darstellung"
+
+#: src/Settings/SettingsSchema.php:40
+msgid "Privacy & storage"
+msgstr "Datenschutz & Speicherung"
+
+#: src/Settings/SettingsSchema.php:41
+msgid "Spam protection"
+msgstr "Spamschutz"
+
+#: src/Settings/SettingsSchema.php:42
+msgid "Access & roles"
+msgstr "Zugriff & Rollen"
+
+#: src/Settings/SettingsSchema.php:43
+msgid "System status"
+msgstr "Systemstatus"
+
+#: src/Settings/SettingsSchema.php:60
+msgid "Initial setup completed"
+msgstr "Ersteinrichtung abgeschlossen"
+
+#: src/Settings/SettingsSchema.php:61
+msgid "Hides the setup assistant on the dashboard."
+msgstr "Blendet den Einrichtungsassistenten im Dashboard aus."
+
+#: src/Settings/SettingsSchema.php:65
+msgid "Show occasional hints about Form Captain Pro"
+msgstr "Gelegentlich Hinweise zu Form Captain Pro anzeigen"
+
+#: src/Settings/SettingsSchema.php:66
+msgid "Hints are rare and can be dismissed. Free features never depend on Pro."
+msgstr "Hinweise erscheinen selten und können ausgeblendet werden. Kostenlose Funktionen hängen nie von Pro ab."
+
+#: src/Settings/SettingsSchema.php:71
+msgid "Use theme styles (recommended)"
+msgstr "Theme-Stile verwenden (empfohlen)"
+
+#: src/Settings/SettingsSchema.php:72
+msgid "Form Captain base styles"
+msgstr "Form-Captain-Basisstile"
+
+#: src/Settings/SettingsSchema.php:74
+msgid "Form styling"
+msgstr "Formulargestaltung"
+
+#: src/Settings/SettingsSchema.php:75
+msgid "Theme styling only loads layout and error styles. Base styles add a neutral look without loading external fonts or files. Forms keep their own setting."
+msgstr "Bei Theme-Gestaltung werden nur Layout- und Fehlerstile geladen. Die Basisstile ergänzen ein neutrales Aussehen, ohne externe Schriften oder Dateien zu laden. Formulare behalten ihre eigene Einstellung."
+
+#: src/Settings/SettingsSchema.php:79
+msgid "Accent colour"
+msgstr "Akzentfarbe"
+
+#: src/Settings/SettingsSchema.php:80
+msgid "Used for buttons and focus outlines with base styles only."
+msgstr "Wird nur bei Basisstilen für Schaltflächen und Fokusrahmen verwendet."
+
+#: src/Settings/SettingsSchema.php:85
+msgid "Default sender name"
+msgstr "Standard-Absendername"
+
+#: src/Settings/SettingsSchema.php:86
+msgid "Copied into new forms. Existing forms keep their own value."
+msgstr "Wird in neue Formulare übernommen. Bestehende Formulare behalten ihren eigenen Wert."
+
+#: src/Settings/SettingsSchema.php:90
+msgid "Default sender address"
+msgstr "Standard-Absenderadresse"
+
+#: src/Settings/SettingsSchema.php:91
+msgid "Use an address of your website domain so that messages are not marked as spam."
+msgstr "Verwenden Sie eine Adresse der Domain Ihrer Website, damit Nachrichten nicht als Spam markiert werden."
+
+#: src/Settings/SettingsSchema.php:96
+msgid "HTML"
+msgstr "HTML"
+
+#: src/Settings/SettingsSchema.php:97
+msgid "Plain text"
+msgstr "Nur Text"
+
+#: src/Settings/SettingsSchema.php:99
+msgid "Email format"
+msgstr "E-Mail-Format"
+
+#: src/Settings/SettingsSchema.php:105
+msgid "12 months (recommended)"
+msgstr "12 Monate (empfohlen)"
+
+#: src/Settings/SettingsSchema.php:106
+msgid "Keep until deleted manually"
+msgstr "Bis zur manuellen Löschung aufbewahren"
+
+#: src/Settings/SettingsSchema.php:108
+msgid "Keep submissions for"
+msgstr "Einsendungen aufbewahren für"
+
+#: src/Settings/SettingsSchema.php:109
+msgid "Submissions are stored only in this WordPress database. Choose how long they are kept. You can change this later."
+msgstr "Einsendungen werden nur in dieser WordPress-Datenbank gespeichert. Wählen Sie, wie lange sie aufbewahrt werden. Sie können dies später ändern."
+
+#: src/Settings/SettingsSchema.php:115
+msgid "Delete trash and spam after (days)"
+msgstr "Papierkorb und Spam löschen nach (Tagen)"
+
+#: src/Settings/SettingsSchema.php:120
+msgid "Delete matching submissions completely"
+msgstr "Passende Einsendungen vollständig löschen"
+
+#: src/Settings/SettingsSchema.php:121
+msgid "Anonymize them (keep choices and consent records, remove personal values)"
+msgstr "Anonymisieren (Auswahlwerte und Einwilligungsnachweis behalten, persönliche Werte entfernen)"
+
+#: src/Settings/SettingsSchema.php:123
+msgid "Personal data erasure requests"
+msgstr "Anfragen zur Löschung personenbezogener Daten"
+
+#: src/Settings/SettingsSchema.php:124
+msgid "Applies when you process an erasure request under Tools → Erase Personal Data."
+msgstr "Gilt, wenn Sie unter Werkzeuge → Personenbezogene Daten löschen eine Löschanfrage bearbeiten."
+
+#: src/Settings/SettingsSchema.php:128
+msgid "Delete all Form Captain data when the plugin is deleted"
+msgstr "Alle Form-Captain-Daten löschen, wenn das Plugin gelöscht wird"
+
+#: src/Settings/SettingsSchema.php:129
+msgid "By default, forms and submissions are kept when the plugin is deleted."
+msgstr "Standardmäßig bleiben Formulare und Einsendungen beim Löschen des Plugins erhalten."
+
+#: src/Settings/SettingsSchema.php:134
+msgid "Uninstall deletion confirmed"
+msgstr "Löschung bei Deinstallation bestätigt"
+
+#: src/Settings/SettingsSchema.php:138
+msgid "Offer a link to the privacy policy page in consent texts"
+msgstr "In Einwilligungstexten einen Link zur Datenschutzerklärung anbieten"
+
+#: src/Settings/SettingsSchema.php:142
+msgid "Hidden honeypot field"
+msgstr "Verstecktes Honeypot-Feld"
+
+#: src/Settings/SettingsSchema.php:143
+msgid "Invisible for visitors, catches simple bots. No data leaves your site."
+msgstr "Für Besucher unsichtbar, fängt einfache Bots ab. Es verlassen keine Daten Ihre Website."
+
+#: src/Settings/SettingsSchema.php:149
+msgid "Minimum time to fill in a form (seconds)"
+msgstr "Mindestzeit zum Ausfüllen eines Formulars (Sekunden)"
+
+#: src/Settings/SettingsSchema.php:155
+msgid "Submissions per form and visitor in 10 minutes"
+msgstr "Einsendungen je Formular und Besucher in 10 Minuten"
+
+#: src/Settings/SettingsSchema.php:156
+msgid "Visitors are recognised by a daily changing pseudonymous hash, never by the stored IP address."
+msgstr "Besucher werden über einen täglich wechselnden pseudonymen Hash erkannt, nie über eine gespeicherte IP-Adresse."
+
+#: src/Settings/SettingsSchema.php:161
+msgid "Blocklist"
+msgstr "Blockliste"
+
+#: src/Settings/SettingsSchema.php:162
+msgid "One word or e-mail domain per line. Matching submissions are stored as spam."
+msgstr "Ein Wort oder eine E-Mail-Domain pro Zeile. Passende Einsendungen werden als Spam gespeichert."
+
+#: src/Settings/SettingsSchema.php:167
+msgid "External captcha"
+msgstr "Externes Captcha"
+
+#: src/Settings/SettingsSchema.php:168
+msgid "Form Captain does not include an external captcha. Extensions can add one; activation is opt-in and shows which data the provider receives."
+msgstr "Form Captain enthält kein externes Captcha. Erweiterungen können eines ergänzen; die Aktivierung erfolgt nur auf ausdrücklichen Wunsch und zeigt, welche Daten der Anbieter erhält."
+
+#: src/Settings/SettingsSchema.php:189
+msgid "None (recommended)"
+msgstr "Keines (empfohlen)"
+
+#: src/Settings/SettingsSchema.php:235
+msgid "Unknown settings section."
+msgstr "Unbekannter Einstellungsbereich."
+
+#: src/Settings/SettingsSchema.php:262
+msgid "Changing the retention period affects existing submissions. Please confirm the change."
+msgstr "Eine Änderung der Aufbewahrungsfrist betrifft vorhandene Einsendungen. Bitte bestätigen Sie die Änderung."
+
+#: src/Settings/SettingsSchema.php:273
+msgid "To delete all data on uninstall, type DELETE into the confirmation field."
+msgstr "Um bei der Deinstallation alle Daten zu löschen, geben Sie LÖSCHEN in das Bestätigungsfeld ein."
+
+#: src/Settings/SettingsSchema.php:281
+msgid "An external captcha sends visitor data to a third party. Confirm that you have read the data flow and updated your privacy policy."
+msgstr "Ein externes Captcha sendet Besucherdaten an Dritte. Bestätigen Sie, dass Sie den Datenfluss gelesen und Ihre Datenschutzerklärung ergänzt haben."
+
+#: src/Settings/SettingsSchema.php:294
+#: src/Settings/SettingsSchema.php:338
+msgid "Invalid value."
+msgstr "Ungültiger Wert."
+
+#: src/Settings/SettingsSchema.php:303
+msgid "Please enter a whole number."
+msgstr "Bitte geben Sie eine ganze Zahl ein."
+
+#. translators: 1: minimum, 2: maximum
+#: src/Settings/SettingsSchema.php:308
+#, php-format
+msgid "Please enter a number between %1$d and %2$d."
+msgstr "Bitte geben Sie eine Zahl zwischen %1$d und %2$d ein."
+
+#: src/Settings/SettingsSchema.php:315
+msgid "Please enter a colour in the format #RRGGBB."
+msgstr "Bitte geben Sie eine Farbe im Format #RRGGBB ein."
+
+#: src/Settings/SettingsSchema.php:318
+msgid "Please enter a valid e-mail address."
+msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein."
+
+#. translators: %d: maximum number of characters
+#: src/Settings/SettingsSchema.php:323
+#: src/Settings/SettingsSchema.php:333
+#, php-format
+msgid "Please use at most %d characters."
+msgstr "Bitte verwenden Sie höchstens %d Zeichen."
+
+#: src/Settings/SettingsSchema.php:326
+msgid "This field cannot be empty."
+msgstr "Dieses Feld darf nicht leer sein."
+
+#: src/Support/Errors.php:59
+msgid "Please check the highlighted fields."
+msgstr "Bitte prüfen Sie die markierten Felder."
+
+#: src/Support/Errors.php:60
+msgid "Too many submissions in a short time. Please try again in a few minutes."
+msgstr "Zu viele Einsendungen in kurzer Zeit. Bitte versuchen Sie es in einigen Minuten erneut."
+
+#: src/Support/Errors.php:61
+msgid "This form has expired. Please reload the page and submit again – your input is kept."
+msgstr "Dieses Formular ist abgelaufen. Bitte laden Sie die Seite neu und senden Sie es erneut ab – Ihre Eingaben bleiben erhalten."
+
+#: src/Support/Errors.php:64
+msgid "Your submission is too large. Please shorten your input."
+msgstr "Ihre Einsendung ist zu groß. Bitte kürzen Sie Ihre Eingaben."
+
+#: src/Support/Errors.php:66
+msgid "Your submission could not be saved right now. Please try again shortly."
+msgstr "Ihre Einsendung konnte gerade nicht gespeichert werden. Bitte versuchen Sie es in Kürze erneut."
+
+#: src/Support/Errors.php:67
+msgid "Something went wrong. Please try again later."
+msgstr "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut."
+
+#: assets/src/admin-settings.js:31
+msgid "Copied"
+msgstr "Kopiert"
+
+#: assets/src/block-editor.js:62
+msgid "— Select a form —"
+msgstr "— Formular auswählen —"
+
+#: assets/src/block-editor.js:91
+msgid "SEO: page title, meta description, headings and indexing rules are managed in WordPress or your SEO plugin (e.g. Yoast SEO). The form is embedded page content and does not replace helpful page content."
+msgstr "SEO: Seitentitel, Meta-Beschreibung, Überschriften und Indexierungsregeln werden in WordPress oder Ihrem SEO-Plugin (z. B. Yoast SEO) verwaltet. Das Formular ist eingebetteter Seiteninhalt und ersetzt keine hilfreichen Seiteninhalte."
+
+#: assets/src/block-editor.js:100
+msgid "No published forms found. Publish a form under Form Captain → Forms first."
+msgstr "Keine veröffentlichten Formulare gefunden. Veröffentlichen Sie zuerst ein Formular unter Form Captain → Formulare."
+
+#: assets/src/block-editor.js:100
+msgid "Choose a published form to embed."
+msgstr "Wählen Sie ein veröffentlichtes Formular zum Einbinden."
+
+#: assets/src/block-editor.js:110
+msgid "This form is no longer published (paused, archived or deleted). Visitors will not see a working form. Choose another form or publish it again."
+msgstr "Dieses Formular ist nicht mehr veröffentlicht (pausiert, archiviert oder gelöscht). Besucher sehen kein funktionierendes Formular. Wählen Sie ein anderes Formular oder veröffentlichen Sie es erneut."
+
+#: assets/src/editor.js:188
+msgid "Option 1"
+msgstr "Option 1"
+
+#: assets/src/editor.js:189
+msgid "Option 2"
+msgstr "Option 2"
+
+#: assets/src/editor.js:196
+msgid "Note text"
+msgstr "Hinweistext"
+
+#: assets/src/editor.js:201
+msgid "I agree that my details will be stored to process my request."
+msgstr "Ich bin damit einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage gespeichert werden."
+
+#: assets/src/editor.js:247
+msgid "Options"
+msgstr "Optionen"
+
+#: assets/src/editor.js:253
+#, js-format
+msgid "Label of option %d"
+msgstr "Bezeichnung von Option %d"
+
+#: assets/src/editor.js:271
+#, js-format
+msgid "Value of option %d"
+msgstr "Wert von Option %d"
+
+#: assets/src/editor.js:282
+#, js-format
+msgid "Move option %d up"
+msgstr "Option %d nach oben verschieben"
+
+#: assets/src/editor.js:292
+#, js-format
+msgid "Move option %d down"
+msgstr "Option %d nach unten verschieben"
+
+#: assets/src/editor.js:303
+#, js-format
+msgid "Remove option %d"
+msgstr "Option %d entfernen"
+
+#: assets/src/editor.js:319
+#, js-format
+msgid "Option %d"
+msgstr "Option %d"
+
+#: assets/src/editor.js:323
+msgid "Add option"
+msgstr "Option hinzufügen"
+
+#: assets/src/editor.js:336
+msgid "Conditions can refer to fields above this one. Add an input field before it to use a condition."
+msgstr "Bedingungen können sich auf Felder oberhalb dieses Feldes beziehen. Fügen Sie davor ein Eingabefeld hinzu, um eine Bedingung zu verwenden."
+
+#: assets/src/editor.js:353
+msgid "Condition"
+msgstr "Bedingung"
+
+#: assets/src/editor.js:355
+msgid "Show or hide this field depending on another field"
+msgstr "Dieses Feld abhängig von einem anderen Feld anzeigen oder ausblenden"
+
+#: assets/src/editor.js:369
+msgid "Show this field if"
+msgstr "Dieses Feld anzeigen, wenn"
+
+#: assets/src/editor.js:370
+msgid "Hide this field if"
+msgstr "Dieses Feld ausblenden, wenn"
+
+#: assets/src/editor.js:379
+#: assets/src/editor.js:408
+#: assets/src/editor.js:1085
+#: assets/src/editor.js:1220
+#: assets/src/editor.js:1294
+msgid "— Select —"
+msgstr "— Auswählen —"
+
+#: assets/src/editor.js:389
+msgid "Operator"
+msgstr "Operator"
+
+#: assets/src/editor.js:392
+msgid "equals"
+msgstr "ist gleich"
+
+#: assets/src/editor.js:393
+msgid "does not equal"
+msgstr "ist ungleich"
+
+#: assets/src/editor.js:394
+msgid "contains"
+msgstr "enthält"
+
+#: assets/src/editor.js:395
+msgid "is empty"
+msgstr "ist leer"
+
+#: assets/src/editor.js:396
+msgid "is not empty"
+msgstr "ist nicht leer"
+
+#: assets/src/editor.js:397
+msgid "is checked"
+msgstr "ist angehakt"
+
+#: assets/src/editor.js:406
+#: assets/src/editor.js:418
+#: assets/src/editor.js:554
+msgid "Value"
+msgstr "Wert"
+
+#: assets/src/editor.js:448
+#, js-format
+msgid "%s – settings"
+msgstr "%s – Einstellungen"
+
+#: assets/src/editor.js:453
+msgid "Label (internal)"
+msgstr "Bezeichnung (intern)"
+
+#: assets/src/editor.js:465
+msgid "Field key"
+msgstr "Feldschlüssel"
+
+#: assets/src/editor.js:466
+msgid "Used for export columns and email placeholders like {field:key}."
+msgstr "Wird für Exportspalten und E-Mail-Platzhalter wie {field:key} verwendet."
+
+#: assets/src/editor.js:478
+msgid "Required"
+msgstr "Pflichtfeld"
+
+#: assets/src/editor.js:490
+msgid "Content (HTML)"
+msgstr "Inhalt (HTML)"
+
+#: assets/src/editor.js:491
+msgid "Allowed: p, br, strong, em, b, i, ul, ol, li, a, h3, h4, span. Everything else is removed when saving."
+msgstr "Erlaubt: p, br, strong, em, b, i, ul, ol, li, a, h3, h4, span. Alles andere wird beim Speichern entfernt."
+
+#: assets/src/editor.js:504
+msgid "Consent text"
+msgstr "Einwilligungstext"
+
+#: assets/src/editor.js:505
+#, js-format
+msgid "Revision %d – changing the text creates a new revision, earlier entries keep their version."
+msgstr "Revision %d – eine Textänderung erzeugt eine neue Revision, frühere Einträge behalten ihre Version."
+
+#: assets/src/editor.js:517
+msgid "Link the privacy policy page"
+msgstr "Datenschutzerklärung verlinken"
+
+#: assets/src/editor.js:529
+msgid "Help text"
+msgstr "Hilfetext"
+
+#: assets/src/editor.js:542
+msgid "Placeholder"
+msgstr "Platzhalter"
+
+#: assets/src/editor.js:554
+msgid "Default value"
+msgstr "Standardwert"
+
+#: assets/src/editor.js:555
+msgid "Hidden values can be changed by visitors and are never trusted."
+msgstr "Versteckte Werte können von Besuchern geändert werden und gelten nie als vertrauenswürdig."
+
+#: assets/src/editor.js:582
+msgid "Allow multiple selections"
+msgstr "Mehrfachauswahl erlauben"
+
+#: assets/src/editor.js:596
+msgid "Minimum length"
+msgstr "Mindestlänge"
+
+#: assets/src/editor.js:599
+msgid "Maximum length"
+msgstr "Maximallänge"
+
+#: assets/src/editor.js:608
+msgid "Allowed characters"
+msgstr "Erlaubte Zeichen"
+
+#: assets/src/editor.js:611
+msgid "Any"
+msgstr "Beliebig"
+
+#: assets/src/editor.js:612
+msgid "Letters only"
+msgstr "Nur Buchstaben"
+
+#: assets/src/editor.js:613
+msgid "Letters and digits"
+msgstr "Buchstaben und Ziffern"
+
+#: assets/src/editor.js:614
+msgid "German postal code"
+msgstr "Deutsche Postleitzahl"
+
+#: assets/src/editor.js:623
+msgid "Rows"
+msgstr "Zeilen"
+
+#: assets/src/editor.js:631
+msgid "Send the confirmation email to this address"
+msgstr "Die Bestätigungs-E-Mail an diese Adresse senden"
+
+#: assets/src/editor.js:639
+msgid "Use for privacy requests (export/erase personal data)"
+msgstr "Für Datenschutzanfragen verwenden (personenbezogene Daten exportieren/löschen)"
+
+#: assets/src/editor.js:648
+msgid "Minimum"
+msgstr "Minimum"
+
+#: assets/src/editor.js:648
+msgid "Maximum"
+msgstr "Maximum"
+
+#: assets/src/editor.js:648
+msgid "Step"
+msgstr "Schrittweite"
+
+#: assets/src/editor.js:655
+msgid "Earliest date"
+msgstr "Frühestes Datum"
+
+#: assets/src/editor.js:655
+msgid "Latest date"
+msgstr "Spätestes Datum"
+
+#: assets/src/editor.js:660
+msgid "YYYY-MM-DD or \"today\""
+msgstr "JJJJ-MM-TT oder „today“"
+
+#: assets/src/editor.js:671
+msgid "Minimum choices"
+msgstr "Mindestanzahl Auswahlen"
+
+#: assets/src/editor.js:674
+msgid "Maximum choices"
+msgstr "Höchstanzahl Auswahlen"
+
+#: assets/src/editor.js:683
+msgid "Limits"
+msgstr "Grenzwerte"
+
+#: assets/src/editor.js:689
+msgid "CSS class"
+msgstr "CSS-Klasse"
+
+#: assets/src/editor.js:701
+msgid "Sensitive (not included in emails and connector actions by default)"
+msgstr "Sensibel (standardmäßig nicht in E-Mails und Connector-Aktionen enthalten)"
+
+#: assets/src/editor.js:763
+msgid "Add field"
+msgstr "Feld hinzufügen"
+
+#: assets/src/editor.js:784
+#: assets/src/editor.js:1679
+msgid "Fields"
+msgstr "Felder"
+
+#: assets/src/editor.js:785
+msgid "No fields yet. Add a field from the list."
+msgstr "Noch keine Felder. Fügen Sie ein Feld aus der Liste hinzu."
+
+#: assets/src/editor.js:814
+msgid "Drag to reorder"
+msgstr "Zum Neuordnen ziehen"
+
+#: assets/src/editor.js:826
+msgid "required"
+msgstr "Pflicht"
+
+#: assets/src/editor.js:827
+msgid "conditional"
+msgstr "bedingt"
+
+#: assets/src/editor.js:827
+#: assets/src/editor.js:978
+msgid "sensitive"
+msgstr "sensibel"
+
+#: assets/src/editor.js:828
+msgid "Needs attention"
+msgstr "Prüfung erforderlich"
+
+#: assets/src/editor.js:833
+#, js-format
+msgid "Move “%s” up"
+msgstr "„%s“ nach oben verschieben"
+
+#: assets/src/editor.js:836
+#, js-format
+msgid "Move “%s” down"
+msgstr "„%s“ nach unten verschieben"
+
+#: assets/src/editor.js:839
+#, js-format
+msgid "Duplicate “%s”"
+msgstr "„%s“ duplizieren"
+
+#: assets/src/editor.js:842
+#, js-format
+msgid "Remove “%s”"
+msgstr "„%s“ entfernen"
+
+#: assets/src/editor.js:874
+msgid "Select a field to edit its settings."
+msgstr "Wählen Sie ein Feld aus, um seine Einstellungen zu bearbeiten."
+
+#: assets/src/editor.js:915
+msgid "Send an email for every new entry"
+msgstr "Bei jedem neuen Eintrag eine E-Mail senden"
+
+#: assets/src/editor.js:923
+msgid "Recipients"
+msgstr "Empfänger"
+
+#: assets/src/editor.js:924
+#, js-format
+msgid "One address per line. {admin_email} stands for %s."
+msgstr "Eine Adresse pro Zeile. {admin_email} steht für %s."
+
+#: assets/src/editor.js:935
+msgid "Reply-To field"
+msgstr "Antwort-an-Feld"
+
+#: assets/src/editor.js:937
+msgid "None"
+msgstr "Keines"
+
+#: assets/src/editor.js:949
+#, js-format
+msgid "Placeholders: %s"
+msgstr "Platzhalter: %s"
+
+#: assets/src/editor.js:956
+msgid "Fields in the email"
+msgstr "Felder in der E-Mail"
+
+#: assets/src/editor.js:959
+msgid "All fields except sensitive ones"
+msgstr "Alle Felder außer sensiblen"
+
+#: assets/src/editor.js:960
+msgid "Only selected fields"
+msgstr "Nur ausgewählte Felder"
+
+#: assets/src/editor.js:974
+msgid "Selected fields"
+msgstr "Ausgewählte Felder"
+
+#: assets/src/editor.js:994
+msgid "Confirmation email to the visitor"
+msgstr "Bestätigungs-E-Mail an den Besucher"
+
+#: assets/src/editor.js:995
+msgid "Send a confirmation email"
+msgstr "Bestätigungs-E-Mail senden"
+
+#: assets/src/editor.js:1002
+msgid "Goes to the email field marked “Send the confirmation email to this address”."
+msgstr "Geht an das E-Mail-Feld, das mit „Die Bestätigungs-E-Mail an diese Adresse senden“ markiert ist."
+
+#: assets/src/editor.js:1014
+msgid "Include these answers (optional)"
+msgstr "Diese Antworten einfügen (optional)"
+
+#: assets/src/editor.js:1035
+msgid "Sender"
+msgstr "Absender"
+
+#: assets/src/editor.js:1036
+msgid "Copied from the global email settings when the form was created. Changes here only affect this form."
+msgstr "Beim Erstellen des Formulars aus den globalen E-Mail-Einstellungen übernommen. Änderungen hier betreffen nur dieses Formular."
+
+#: assets/src/editor.js:1038
+msgid "Sender name"
+msgstr "Absendername"
+
+#: assets/src/editor.js:1045
+msgid "Sender address"
+msgstr "Absenderadresse"
+
+#: assets/src/editor.js:1065
+msgid "After submitting"
+msgstr "Nach dem Absenden"
+
+#: assets/src/editor.js:1067
+msgid "Show"
+msgstr "Anzeigen"
+
+#: assets/src/editor.js:1070
+msgid "A message"
+msgstr "Eine Meldung"
+
+#: assets/src/editor.js:1071
+msgid "A page of this site"
+msgstr "Eine Seite dieser Website"
+
+#: assets/src/editor.js:1078
+msgid "Success message"
+msgstr "Erfolgsmeldung"
+
+#: assets/src/editor.js:1082
+msgid "Page"
+msgstr "Seite"
+
+#: assets/src/editor.js:1083
+msgid "Only published pages of this site can be chosen."
+msgstr "Es können nur veröffentlichte Seiten dieser Website gewählt werden."
+
+#: assets/src/editor.js:1103
+msgid "Pause message"
+msgstr "Pausenmeldung"
+
+#: assets/src/editor.js:1105
+msgid "Shown while the form is paused"
+msgstr "Wird angezeigt, solange das Formular pausiert ist"
+
+#: assets/src/editor.js:1114
+msgid "Styling"
+msgstr "Gestaltung"
+
+#: assets/src/editor.js:1117
+msgid "Use the theme styling"
+msgstr "Theme-Gestaltung verwenden"
+
+#: assets/src/editor.js:1118
+msgid "Use Form Captain base styling"
+msgstr "Form-Captain-Basisgestaltung verwenden"
+
+#: assets/src/editor.js:1124
+msgid "Retention"
+msgstr "Aufbewahrung"
+
+#: assets/src/editor.js:1126
+msgid "Keep entries of this form"
+msgstr "Einträge dieses Formulars aufbewahren"
+
+#: assets/src/editor.js:1129
+msgid "As in the global privacy settings"
+msgstr "Wie in den globalen Datenschutz-Einstellungen"
+
+#: assets/src/editor.js:1132
+msgid "Until deleted manually"
+msgstr "Bis zur manuellen Löschung"
+
+#: assets/src/editor.js:1160
+msgid "Actions pass new entries to connected plugins in the background. Only mapped, non-sensitive fields are transferred."
+msgstr "Aktionen übergeben neue Einträge im Hintergrund an verbundene Plugins. Übertragen werden nur zugeordnete, nicht sensible Felder."
+
+#: assets/src/editor.js:1163
+msgid "Changing actions requires the “Manage integrations” permission."
+msgstr "Zum Ändern von Aktionen ist die Berechtigung „Integrationen verwalten“ erforderlich."
+
+#: assets/src/editor.js:1170
+msgid "No connector actions are available. Activate a connector under Integrations first."
+msgstr "Es sind keine Connector-Aktionen verfügbar. Aktivieren Sie zuerst einen Connector unter Integrationen."
+
+#: assets/src/editor.js:1171
+msgid "Open integrations"
+msgstr "Integrationen öffnen"
+
+#: assets/src/editor.js:1187
+msgid "This action is currently not available (connector inactive or removed). It will not run."
+msgstr "Diese Aktion ist derzeit nicht verfügbar (Connector inaktiv oder entfernt). Sie wird nicht ausgeführt."
+
+#: assets/src/editor.js:1237
+msgid "Field mapping"
+msgstr "Feldzuordnung"
+
+#: assets/src/editor.js:1243
+msgid "— Not mapped —"
+msgstr "— Nicht zugeordnet —"
+
+#: assets/src/editor.js:1245
+msgid "sensitive – not allowed"
+msgstr "sensibel – nicht erlaubt"
+
+#: assets/src/editor.js:1281
+msgid "Remove action"
+msgstr "Aktion entfernen"
+
+#: assets/src/editor.js:1292
+msgid "Add action"
+msgstr "Aktion hinzufügen"
+
+#: assets/src/editor.js:1311
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: assets/src/editor.js:1316
+msgid "No actions configured for this form."
+msgstr "Für dieses Formular sind keine Aktionen konfiguriert."
+
+#: assets/src/editor.js:1331
+msgid "Preview size"
+msgstr "Vorschaugröße"
+
+#: assets/src/editor.js:1334
+msgid "Desktop"
+msgstr "Desktop"
+
+#: assets/src/editor.js:1337
+msgid "Mobile"
+msgstr "Mobil"
+
+#: assets/src/editor.js:1338
+msgid "Submissions are disabled in the preview."
+msgstr "Einsendungen sind in der Vorschau deaktiviert."
+
+#: assets/src/editor.js:1343
+msgid "Form preview"
+msgstr "Formularvorschau"
+
+#: assets/src/editor.js:1418
+msgid "The request failed."
+msgstr "Die Anfrage ist fehlgeschlagen."
+
+#: assets/src/editor.js:1500
+#, js-format
+msgid "Remove the field “%s”? Existing entries keep their values."
+msgstr "Das Feld „%s“ entfernen? Vorhandene Einträge behalten ihre Werte."
+
+#: assets/src/editor.js:1536
+msgid "Draft saved. Please fix the highlighted problems before publishing."
+msgstr "Entwurf gespeichert. Bitte beheben Sie vor dem Veröffentlichen die markierten Probleme."
+
+#: assets/src/editor.js:1537
+msgid "Saved."
+msgstr "Gespeichert."
+
+#: assets/src/editor.js:1561
+msgid "The form is live."
+msgstr "Das Formular ist live."
+
+#: assets/src/editor.js:1562
+msgid "The form is paused."
+msgstr "Das Formular ist pausiert."
+
+#: assets/src/editor.js:1563
+msgid "The form is a draft again."
+msgstr "Das Formular ist wieder ein Entwurf."
+
+#: assets/src/editor.js:1564
+msgid "Status changed."
+msgstr "Status geändert."
+
+#: assets/src/editor.js:1581
+msgid "Published. Changes are now live."
+msgstr "Veröffentlicht. Die Änderungen sind jetzt live."
+
+#: assets/src/editor.js:1610
+#, js-format
+msgid "Removed: %s"
+msgstr "Entfernt: %s"
+
+#: assets/src/editor.js:1613
+#, js-format
+msgid "Now required: %s"
+msgstr "Jetzt Pflichtfeld: %s"
+
+#: assets/src/editor.js:1616
+#, js-format
+msgid "Options removed from %1$s: %2$s"
+msgstr "Aus %1$s entfernte Optionen: %2$s"
+
+#: assets/src/editor.js:1619
+#, js-format
+msgid "Type changed: %s"
+msgstr "Typ geändert: %s"
+
+#: assets/src/editor.js:1624
+msgid "Saved changes are not live yet. Publish to apply them. Existing entries keep the version they were submitted with."
+msgstr "Gespeicherte Änderungen sind noch nicht live. Veröffentlichen Sie, um sie zu übernehmen. Vorhandene Einträge behalten die Version, mit der sie eingesendet wurden."
+
+#: assets/src/editor.js:1655
+msgid "Save draft"
+msgstr "Entwurf speichern"
+
+#: assets/src/editor.js:1655
+msgid "Saved"
+msgstr "Gespeichert"
+
+#: assets/src/editor.js:1671
+msgid "Publish"
+msgstr "Veröffentlichen"
+
+#: assets/src/editor.js:1671
+msgid "Publish changes"
+msgstr "Änderungen veröffentlichen"
+
+#: assets/src/editor.js:1674
+msgid "Publishing is possible once all problems are fixed and the form has at least one input field."
+msgstr "Veröffentlichen ist möglich, sobald alle Probleme behoben sind und das Formular mindestens ein Eingabefeld enthält."
+
+#: assets/src/editor.js:1675
+msgid "Shortcode:"
+msgstr "Shortcode:"
+
+#: assets/src/editor.js:1680
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#: assets/src/editor.js:1681
+msgid "Confirmation"
+msgstr "Bestätigung"
+
+#: assets/src/editor.js:1682
+msgid "Form settings"
+msgstr "Formular-Einstellungen"
+
+#: assets/src/editor.js:1708
+msgid "Reload latest version (discards your changes)"
+msgstr "Neueste Version laden (verwirft Ihre Änderungen)"

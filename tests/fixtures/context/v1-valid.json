@@ -1,0 +1,18 @@
+{
+	"description": "Test vector from docs/spec/suite-kontext.md section 7. Test values only.",
+	"auth_salt": "TEST-AUTH-SALT",
+	"secret": "TEST-PLUGIN-SECRET",
+	"home_url": "https://example.org",
+	"k_ctx_hex": "0082b215a7aa555a47639f1d99facdaaa0afa0f44d806326da49c090d459cf09",
+	"site": "f68ae56830868d27726ceadfdb0a3e12",
+	"payload": {
+		"purpose": "pass.event_registration",
+		"form_id": 42,
+		"ref_type": "event",
+		"ref_id": "1187",
+		"site": "f68ae56830868d27726ceadfdb0a3e12",
+		"exp": 1795348800,
+		"nonce": "q7Vf3kL0bX9cT2mWz8sYhA"
+	},
+	"context": "eyJwdXJwb3NlIjoicGFzcy5ldmVudF9yZWdpc3RyYXRpb24iLCJmb3JtX2lkIjo0MiwicmVmX3R5cGUiOiJldmVudCIsInJlZl9pZCI6IjExODciLCJzaXRlIjoiZjY4YWU1NjgzMDg2OGQyNzcyNmNlYWRmZGIwYTNlMTIiLCJleHAiOjE3OTUzNDg4MDAsIm5vbmNlIjoicTdWZjNrTDBiWDljVDJtV3o4c1loQSJ9.3Bem2h-sL6mNXOuPPI1swRN_T__3D-jdh5BXXkergos"
+}

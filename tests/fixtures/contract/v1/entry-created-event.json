@@ -1,0 +1,12 @@
+{
+	"contract": "1.0.0",
+	"entry_id": 123,
+	"form_id": 7,
+	"form_public_id": "a1b2c3d4e5f6g7h8",
+	"form_version": 3,
+	"status": "new",
+	"created_gmt": "2026-11-16T10:00:00Z",
+	"request_id": "9f1c2e3d4b5a69788796a5b4c3d2e1f0",
+	"context": { "ref_type": "event", "ref_id": "42" },
+	"values": { "email": "person@example.org" }
+}

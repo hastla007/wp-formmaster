@@ -1,0 +1,22 @@
+{
+	"template_key": "support",
+	"template_version": "1.0.0",
+	"title": "Support request",
+	"description": "Let customers describe a problem with priority and category.",
+	"schema": {
+		"schema_version": 1,
+		"fields": [
+			{ "id": "f_spname01", "type": "text", "key": "name", "label": "Name", "required": true },
+			{ "id": "f_spmail01", "type": "email", "key": "email", "label": "Email address", "required": true, "placeholder": "name@example.com", "privacy_lookup": true },
+			{ "id": "f_spcat001", "type": "select", "key": "category", "label": "Category", "required": true, "options": [ { "value": "question", "label": "Question" }, { "value": "bug", "label": "Problem or error" }, { "value": "account", "label": "Account" }, { "value": "other", "label": "Other" } ] },
+			{ "id": "f_spprio01", "type": "radio", "key": "priority", "label": "Priority", "required": true, "default": "normal", "options": [ { "value": "low", "label": "Low" }, { "value": "normal", "label": "Normal" }, { "value": "high", "label": "High" } ] },
+			{ "id": "f_spsubj01", "type": "text", "key": "subject", "label": "Subject", "required": true },
+			{ "id": "f_spdesc01", "type": "textarea", "key": "description", "label": "Description", "required": true, "help": "Please describe what happened and the steps to reproduce it.", "rows": 8 },
+			{ "id": "f_spcons01", "type": "consent", "key": "consent", "label": "Privacy", "required": true, "consent_text": "I agree that my details will be stored to process my support request.", "privacy_link": true, "consent_revision": 1 }
+		]
+	},
+	"settings": {
+		"notification": { "enabled": true, "to": [ "{admin_email}" ], "reply_to_field": "f_spmail01", "subject": "Support: {field:subject}", "fields": "all_non_sensitive" },
+		"confirmation": { "type": "message", "message": "Thank you! Your support request has been received.", "page_id": 0 }
+	}
+}

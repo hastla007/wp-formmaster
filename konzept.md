@@ -73,17 +73,17 @@ Die Produktanforderungen werden ohne Namen, Domains oder Links konkurrierender F
 
 Preis- und Funktionsentscheidungen werden aus eigenem Leistungsumfang, Supportkosten, Site-Limits, Kundenbedarf und Wartungsaufwand begründet. Fremde Wettbewerbermarken, Preislisten und URLs werden in diesen Projektdateien nicht geführt. Offizielle technische Plattformdokumentation darf für tatsächlich benötigte APIs weiterhin verlinkt werden.
 
-### Vorgeschlagene Form-Captain-Pro-Preise zum Start
+### Form-Captain-Pro-Preise zum Start (entschieden 16.11.2026)
 
 | Tarif | Jahrespreis (EUR, zzgl. USt.) | Live-Sites | Support |
 |---|---:|---:|---|
-| **Solo** | 49 € | 1 | Standard |
-| **Studio** | 99 € | 5 | Standard |
-| **Agency** | 199 € | 25 | Priorisiert |
+| **Solo** | 59 € | 1 | Standard |
+| **Studio** | 129 € | 5 | Standard |
+| **Agency** | 249 € | 25 | Priorisiert |
 
 Alle Tarife enthalten denselben Pro-Funktionsumfang, Updates und Support während der aktiven Laufzeit. Site-Limits zählen Live-Installationen; pro Live-Site ist eine Staging-Aktivierung enthalten, Development-Aktivierungen zählen nicht zum Limit, analog zum vorhandenen License Captain-Modell. Keine Lifetime-Lizenz und keine kostenpflichtigen Einzel-Add-ons zum Start. Preise nicht mit künstlichem „Normalpreis/Rabatt“-Doppelpreis vermarkten. Die Lizenz läuft 12 Monate und verlängert sich zum beim Kauf angezeigten Tarif, sofern im Checkout transparent zugestimmt wurde. Preisänderungen betreffen künftige Verlängerungen nur nach vorheriger Information und im Rahmen der Shopbedingungen.
 
-**Begründung:** Der Einstieg liegt nahe an einem bekannten 1-Site-Preisanker, die 5-Site-Stufe deckt kleine Agenturen ab und 25 Sites bilden einen klaren Agency-Tier. Die geringere Startposition gegenüber etablierten Produkten berücksichtigt den kleineren Funktions- und Supportumfang zum Launch. Preise nach den ersten 6 Monaten anhand von Conversion, Supportkosten und Verlängerungsquote neu bewerten; bis dahin keine zusätzliche Tarifstufe einführen.
+**Begründung:** Entscheidung vom 16.11.2026 (docs/ENTSCHEIDUNGEN.md #9): etwas höhere Startpreise als ursprünglich vorgeschlagen (49/99/199 €), um Supportaufwand und Pflege abzudecken. Der Einstieg liegt nahe an einem bekannten 1-Site-Preisanker, die 5-Site-Stufe deckt kleine Agenturen ab und 25 Sites bilden einen klaren Agency-Tier. Die geringere Startposition gegenüber etablierten Produkten berücksichtigt den kleineren Funktions- und Supportumfang zum Launch. Preise nach den ersten 6 Monaten anhand von Conversion, Supportkosten und Verlängerungsquote neu bewerten; bis dahin keine zusätzliche Tarifstufe einführen.
 
 
 ## 4. Funktionsumfang
@@ -627,7 +627,7 @@ flowchart TD
     G --> H["WooCommerce zeigt Status und Entry-Referenz"]
 ¤¤¤
 
-Die Antwort bleibt im Form-Captain-Entry; Checkout und Zahlungsstatus bleiben bei WooCommerce. „Vor Bearbeitung erforderlich“ zeigt dem Verkäufer eine offene Aufgabe an, ändert aber in v1 weder Bestellstatus noch Downloadrechte. Die Fragebogen-Version wird pro Bestellposition eingefroren; kostenlose, von WooCommerce abgeschlossene Bestellungen können einbezogen werden, Teilrückerstattungen anderer Positionen ändern den Fragebogenstatus nicht.
+Die Antwort bleibt im Form-Captain-Entry; Checkout und Zahlungsstatus bleiben bei WooCommerce. „Vor Bearbeitung erforderlich“ zeigt dem Verkäufer eine offene Aufgabe an, ändert aber in v1 weder Bestellstatus noch Downloadrechte. Die Fragebogen-Version wird pro Bestellposition eingefroren; kostenlose, von WooCommerce abgeschlossene Bestellungen können einbezogen werden, Teilrückerstattungen anderer Positionen ändern den Fragebogenstatus nicht. Konzeptansichten: Abschnitt 13.9.
 
 ## 13. UI-Mockups: Konzeptansichten der Seiten
 
@@ -671,3 +671,15 @@ Die folgenden SVGs sind **illustrative Mockups des geplanten Produkts**, keine S
 - Frontend-Formulare erben Theme-Stile kontrolliert; der Block-/Shortcode-Output lädt keine unnötigen Drittanbieterressourcen.
 - In den Integrationsansichten sind „vorhandene Kern-API“, „geplanter Adapter“, „Pro-Verbindung“ und „nicht verbunden“ deutlich unterschiedliche Zustände.
 - Vor Implementierung der Oberfläche werden diese Ansichten in echte WordPress-Seiten, leere Zustände, Berechtigungsfälle und responsive Varianten übersetzt.
+
+### 13.9 WooCommerce-Käuferfragebogen (Pro)
+
+Konzeptansichten zum Pro-Modul aus Abschnitt 12.9 (P8-85). Sie zeigen den geplanten Ablauf; die Umsetzung erfolgt im Add-on form-captain-pro.
+
+![Produkteditor: Käuferfragebogen zuordnen](docs/visuals/woocommerce-produkt.svg)
+
+![Käuferhinweis vor dem Kauf](docs/visuals/woocommerce-kaeuferhinweis.svg)
+
+![Fragebogenstatus je Bestellposition im Auftrag](docs/visuals/woocommerce-auftrag.svg)
+
+![Sichere Käuferansicht im Kundenkonto](docs/visuals/woocommerce-kaeuferansicht.svg)

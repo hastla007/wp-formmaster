@@ -1,0 +1,5 @@
+# False positive (generic-api-key): test action key "fake.secret" next to the
+# placeholder action id "a_0123456789" in a fixture; no credential involved.
+# The action was renamed to "fake.sensitive" afterwards; this entry only covers
+# the historical commit that gitleaks still scans on this branch.
+89043631c18f79c68599756aa1cb002ebb990755:tests/integration/Contract/ConnectorJobTest.php:generic-api-key:125

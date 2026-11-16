@@ -1,0 +1,12 @@
+/vendor/
+/node_modules/
+/build/
+/dist/
+/tests/e2e/test-results/
+/tests/e2e/playwright-report/
+.phpunit.result.cache
+.phpunit.cache/
+*.log
+.DS_Store
+/tools/phpstan/vendor/
+/tools/phpstan/composer.lock

@@ -1,0 +1,11 @@
+includes:
+	- ~/.composer/vendor/szepeviktor/phpstan-wordpress/extension.neon
+parameters:
+	level: 6
+	paths:
+		- form-captain.php
+		- includes
+		- src
+	bootstrapFiles:
+		- tests/phpstan-bootstrap.php
+	treatPhpDocTypesAsCertain: false

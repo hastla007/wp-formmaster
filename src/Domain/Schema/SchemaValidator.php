@@ -201,8 +201,8 @@ final class SchemaValidator {
 		switch ( $type ) {
 			case 'text':
 			case 'textarea':
-				$cap              = 'text' === $type ? Limits::get( 'text_max' ) : Limits::get( 'textarea_max' );
-				$default          = 'text' === $type ? 190 : 5000;
+				$cap               = 'text' === $type ? Limits::get( 'text_max' ) : Limits::get( 'textarea_max' );
+				$default           = 'text' === $type ? 190 : 5000;
 				$out['max_length'] = max( 1, min( $cap, (int) ( $rules['max_length'] ?? $default ) ) );
 				$out['min_length'] = max( 0, min( $out['max_length'], (int) ( $rules['min_length'] ?? 0 ) ) );
 				if ( 'text' === $type && ! empty( $rules['pattern'] ) ) {

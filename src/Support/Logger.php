@@ -31,14 +31,14 @@ final class Logger {
 	 */
 	public static function redact( string $message ): string {
 		$patterns = array(
-			'/[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}/i'               => '[email]',
-			'/\b(?:\d{1,3}\.){3}\d{1,3}\b/'                              => '[ip]',
-			'/\b(?:[0-9a-f]{1,4}:){2,7}[0-9a-f]{1,4}\b/i'                => '[ip]',
-			'/\b(?:bearer|token|secret|key|password)\s*[=:]\s*\S+/i'     => '[secret]',
-			'/\b[A-Za-z0-9_\-]{32,}\b/'                                  => '[redacted]',
-			'/\b\d{7,}\b/'                                               => '[number]',
+			'/[A-Z0-9._%+\-]+@[A-Z0-9.\-]+\.[A-Z]{2,}/i'  => '[email]',
+			'/\b(?:\d{1,3}\.){3}\d{1,3}\b/'               => '[ip]',
+			'/\b(?:[0-9a-f]{1,4}:){2,7}[0-9a-f]{1,4}\b/i' => '[ip]',
+			'/\b(?:bearer|token|secret|key|password)\s*[=:]\s*\S+/i' => '[secret]',
+			'/\b[A-Za-z0-9_\-]{32,}\b/'                   => '[redacted]',
+			'/\b\d{7,}\b/'                                => '[number]',
 		);
-		$out = preg_replace( array_keys( $patterns ), array_values( $patterns ), $message );
+		$out      = preg_replace( array_keys( $patterns ), array_values( $patterns ), $message );
 		return mb_substr( (string) $out, 0, 255 );
 	}
 

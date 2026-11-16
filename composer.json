@@ -39,7 +39,7 @@
   "scripts": {
     "lint": "bin/lint.sh",
     "phpcs": "phpcs",
-    "phpstan": "bin/phpstan.sh",
+    "phpstan": "phpstan analyse --memory-limit=1G -c phpstan.neon.dist",
     "test:unit": "phpunit -c phpunit-unit.xml.dist",
     "test:integration": "phpunit -c phpunit.xml.dist",
     "test": [

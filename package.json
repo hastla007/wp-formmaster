@@ -1,0 +1,13 @@
+{
+  "name": "form-captain",
+  "private": true,
+  "license": "GPL-2.0-or-later",
+  "scripts": {
+    "build": "node bin/build-assets.mjs",
+    "build:check": "node bin/build-assets.mjs --check",
+    "e2e": "playwright test -c tests/e2e/playwright.config.js --trace off"
+  },
+  "devDependencies": {
+    "esbuild": "0.24.2"
+  }
+}

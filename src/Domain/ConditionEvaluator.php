@@ -28,9 +28,9 @@ final class ConditionEvaluator {
 				$visible[ $id ] = true;
 				continue;
 			}
-			$ref   = (string) $condition['field'];
-			$value = ( $visible[ $ref ] ?? false ) ? ( $values[ $ref ] ?? '' ) : '';
-			$match = self::matches( (string) $condition['operator'], $value, (string) ( $condition['value'] ?? '' ) );
+			$ref            = (string) $condition['field'];
+			$value          = ( $visible[ $ref ] ?? false ) ? ( $values[ $ref ] ?? '' ) : '';
+			$match          = self::matches( (string) $condition['operator'], $value, (string) ( $condition['value'] ?? '' ) );
 			$visible[ $id ] = 'hide' === ( $condition['action'] ?? 'show' ) ? ! $match : $match;
 		}
 		/** Pro extension point for grouped conditions. */

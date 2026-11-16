@@ -100,7 +100,7 @@ final class Migrator {
 				$name  = Tables::name( $table );
 				$found = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $name ) ) );
 				if ( $found !== $name ) {
-					throw new \RuntimeException( 'missing_table:' . $table );
+					throw new \RuntimeException( 'missing_table:' . esc_html( $table ) );
 				}
 			}
 		}
@@ -121,8 +121,8 @@ final class Migrator {
 			'orphan_values'     => 0,
 		);
 		foreach ( Tables::ALL as $table ) {
-			$name                         = Tables::name( $table );
-			$engine                       = $wpdb->get_var( $wpdb->prepare( 'SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s', $name ) );
+			$name                        = Tables::name( $table );
+			$engine                      = $wpdb->get_var( $wpdb->prepare( 'SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = %s', $name ) );
 			$report['engines'][ $table ] = $engine ? (string) $engine : 'missing';
 		}
 		$values                  = Tables::name( Tables::ENTRY_VALUES );

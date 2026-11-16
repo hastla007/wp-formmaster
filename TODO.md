@@ -331,7 +331,7 @@ Diese Aufgaben erweitern Phase 8 um zwei echte Kundenfälle. Sie ändern nicht d
 ### Phase 9 – Launch, Betrieb und spätere Erweiterungen
 
 - [ ] **P9-01 – Produkt- und Preisangaben finalisieren.** Form-Captain-Pro-Tarife, 1/5/25-Site-Limits, Supportumfang, Verlängerung und Shopprodukte mit License Captain und captain-pro abgleichen.
-- [ ] **P9-02 – Support- und Fehlerprozess festlegen.** Supportkanal, Systemstatus-Export, Datenschutz beim Supportdump, Fehler-Triage und Sicherheitskontakt dokumentieren.
+- [ ] **P9-02 – Support- und Fehlerprozess festlegen.** Supportkanal, Systemstatus-Export, Datenschutz beim Supportdump, Fehler-Triage und Sicherheitskontakt dokumentieren. *Stand 16.11.2026: dokumentiert in docs/BETRIEB.md Abschnitt 2 und `SECURITY.md` (Kanäle, Diagnosebericht gegen den Code geprüft, Triage, Datenschutz, Meldeablauf, `security.txt`-Vorlage). Offen nur noch beim Inhaber: konkrete Sicherheitsadresse und Pro-Support-Adresse; danach abhaken.*
 - [x] **P9-03 – Release-Checkliste durchführen.** Versionsnummer, Changelog, ZIP-Prüfsumme, Upgrade-Test, Lizenz-/Entitlementtest, Datenbackup und Rollbackplan vor jedem Release bestätigen.
 - [ ] **P9-04 – Nutzungsfeedback nach Free-Launch auswerten.** Abbruchraten im Setup, häufige Feldtypen, Mailprobleme und Supportanfragen datensparsam erfassen; keine Submission-Inhalte als Telemetrie senden.
 - [x] **P9-05 – Import aus einem verbreiteten Shortcode-Formularformat nach v1 spezifizieren.** Feld-/Regelzuordnung, nicht unterstützte Funktionen, Vorschau und Konvertierungsbericht festlegen.

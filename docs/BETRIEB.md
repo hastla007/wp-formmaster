@@ -103,30 +103,30 @@ Ein Backup enthält Jobs im Zustand zum Sicherungszeitpunkt. Jobs, die nach dem 
 - Privacy-Löschanfragen, die **nach** dem Backup-Datum abgeschlossen wurden, muss der Betreiber erneut ausführen (Werkzeuge → Personenbezogene Daten löschen), weil kein Schattenregister gelöschter Personen existiert (DS-B-04).
 - Empfehlung im Handbuch: Backup-Aufbewahrung des Hosters nicht länger als die kürzeste Retention-Einstellung plus Papierkorbfrist wählen.
 
-## 2. Support- und Fehlerprozess (P9-02 – Entwurf)
+## 2. Support- und Fehlerprozess (P9-02)
 
 > **Status: entschieden 16.11.2026** (docs/ENTSCHEIDUNGEN.md #12, #13, #15): Free-Support im WordPress.org-Forum, Pro-Support per Ticket über E-Mail mit tarifabhängiger Antwortzeit; Sicherheitsmeldungen an eine eigene `security@…`-Adresse (konkrete Adresse noch einzutragen, Platzhalter `[SECURITY-KONTAKT]`). Nach einem Backup-Restore warnt der Systemstatus; erneutes Ausführen von Löschungen ist Betreiberpflicht.
 
 ### 2.1 Kanäle
 
-| Kanal | Für | Entscheidung offen |
+| Kanal | Für | Stand |
 |---|---|---|
-| WordPress.org-Supportforum | Free-Fragen, öffentlich | Betreuung, Antwortziel |
-| `[PRO-SUPPORT-KANAL]` (Ticketsystem/E-Mail) | Pro-Kunden je Tarif (Standard / priorisiert) | Werkzeug, Reaktionszeiten je Tarif |
-| `[SECURITY-KONTAKT]` | vertrauliche Sicherheitsmeldungen | Adresse, PGP-Schlüssel, `security.txt`, Offenlegungsfrist |
-| GitHub-Issues | Entwickler/Vertrag (`api-v1.md`), keine Kundendaten | öffentlich ja/nein |
+| WordPress.org-Supportforum | Free-Fragen, öffentlich | **entschieden** (Nr. 12); Antwortziel: werktags innerhalb von 3 Werktagen (Vorschlag, intern) |
+| Ticket per E-Mail `[PRO-SUPPORT-KANAL]` | Pro-Kunden je Tarif: Solo/Studio Standard, Agency priorisiert | **entschieden** (Nr. 12); Adresse und veröffentlichte Antwortzeiten folgen mit dem Pro-Verkaufsstart |
+| `[SECURITY-KONTAKT]` (eigene `security@…`-Adresse) | vertrauliche Sicherheitsmeldungen | **entschieden** (Nr. 15); konkrete Adresse offen. Richtlinie: `SECURITY.md`, Vorlage `security.txt` in 2.6 |
+| GitHub-Issues | Entwickler/Vertrag (`api-v1.md`), keine Kundendaten | Repository derzeit privat; keine Kundenanfragen über Issues |
 
 Im Forum und in Issues niemals Systemstatus-Berichte mit Site-URL oder Entries anfordern; nur den Diagnosebericht nach 2.2.
 
 ### 2.2 Systemstatus-Diagnosebericht (ohne PII)
 
-Erzeugt über *Form Captain → Einstellungen → Systemstatus → Diagnose kopieren* (Recht `form_captain_manage_settings`) bzw. `wp form-captain status --format=json`.
+Erzeugt über *Form Captain → Einstellungen → Systemstatus*, Schaltfläche „Copy report“ / „Bericht kopieren“ (Recht `form_captain_manage_settings`), bzw. `wp form-captain status` (Textformat, identischer Inhalt; `SystemStatus::report_text()`).
 
 **Enthalten:** Plugin-/Pro-Version, Vertrag-Version, WP-/PHP-/DB-Version, Datenbank-Engine je Tabelle, Schemaversion und Migrationszustand (Fehlercode, ohne `detail` mit Pfaden), Anzahl Formulare je Status, Anzahl Entries je Status (gerundet auf 10er), Queue-Zähler je Typ/Status, ältester fälliger Job (Alter in Minuten), Anzahl `dead` letzte 7 Tage je Fehlercode, Cron-Modus (WP-Cron/deaktiviert/System-Cron), letzter Worker- und Cleanup-Lauf (Zeitstempel), Mailtransport erkannt (wp_mail/SMTP-Plugin aktiv ja/nein), letzte 20 Fehlercodes aus `fc_log` mit Korrelations-ID und Zeit, aktive Suite-Plugins mit Version, Multisite ja/nein, Sprache.
 
 **Nicht enthalten:** Site-URL/Domain (optional per Checkbox, Standard aus), Formulartitel, Feldlabels, Feldwerte, E-Mail-Adressen (auch nicht die Absenderadresse – nur „Domain passt zur Site: ja/nein“), Benutzernamen, IP/IP-Hashes, Tokens, `form_captain_secret`, Webhook-/Connector-Secrets, Lizenzschlüssel (nur Status), `last_error_message`-Freitexte.
 
-Prüfung: AC-125/AC-140 und P5-22 gelten auch für den Bericht; Testfall „100 Einsendungen, Bericht nach Werten/E-Mail/IP durchsuchen → keine Treffer“.
+Prüfung: AC-125/AC-140 und P5-22 gelten auch für den Bericht; automatisiert in `tests/integration/Admin/SystemStatusTest.php::test_report_contains_no_personal_data` (Bericht nach Werten, E-Mail-Adressen und IP durchsuchen → keine Treffer).
 
 ### 2.3 Korrelations-IDs
 
@@ -159,7 +159,18 @@ Ablauf: Eingang → Diagnosebericht + Korrelations-ID anfordern → reproduziere
 3. Fix auf privatem Branch, Regressionstest, Release nach `RELEASE.md`; Changelog „Sicherheit“ ohne Exploit-Details.
 4. Koordinierte Veröffentlichung, Credit nach Wunsch des Meldenden; WordPress.org-Plugin-Team informieren, falls Verzeichnisaktion nötig.
 
-**Entscheidung durch Produktverantwortliche:** Sicherheitskontakt, Offenlegungsfrist, Teilnahme an einem Disclosure-Programm.
+Fristen (Vorschlag in `SECURITY.md`, bis zur Bestätigung durch die Produktverantwortung): Eingangsbestätigung binnen 3 Werktagen, Ersteinschätzung binnen 10 Werktagen, Offenlegung spätestens 90 Tage nach Eingang oder nach dem Fix-Release.
+
+**Vorlage `/.well-known/security.txt`** (RFC 9116) für die Produktwebsite, nach Eintragen der Adresse:
+
+```
+Contact: mailto:[SECURITY-KONTAKT]
+Expires: [Datum in höchstens 12 Monaten, ISO 8601]
+Preferred-Languages: de, en
+Policy: [URL der veröffentlichten SECURITY.md]
+```
+
+**Noch offen (Produktverantwortung):** konkrete Adresse, optional PGP-Schlüssel, Bestätigung der Fristen, Teilnahme an einem Disclosure-Programm.
 
 ## 3. Release- und Rollback-Übung (P9-12)
 

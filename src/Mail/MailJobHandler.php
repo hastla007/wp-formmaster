@@ -1,11 +1,10 @@
 <?php
 /**
- * Queue handlers for `mail.admin` and `mail.confirmation` (P4-07, P4-08, P4-18, P8-20).
+ * Queue handlers for `mail.admin` and `mail.confirmation` (P4-07, P4-08, P4-18).
  *
  * Entry and values are loaded fresh right before delivery; deleted, trashed, spam or
- * anonymized entries are never mailed. Native wp_mail() delivery stays the default;
- * an extension may take over a single message explicitly via the internal filter
- * `form_captain_mail_handoff` (return 'handled'); anything else falls back to wp_mail().
+ * anonymized entries are never mailed. The core always delivers its own mails via
+ * wp_mail(); there is no hand-over of mails to a workflow (owner decision F-12 / D10).
  * Duplicate deliveries are prevented by the job's idempotency key and row claim.
  *
  * @package FormCaptain
@@ -106,12 +105,6 @@ final class MailJobHandler {
 
 		if ( 'confirmation' === $kind && ! $this->receipt_allowed( (string) $mail['to'][0] ) ) {
 			return JobResult::fail( 'receipt_rate_limited', 'Too many confirmations to this recipient' );
-		}
-
-		// Explicit per-message hand-over to a workflow extension (P8-20); native mail is the fallback.
-		$handoff = apply_filters( 'form_captain_mail_handoff', null, 'mail.' . $kind, $entry_id, (int) $entry['form_id'], (string) ( $job['idempotency_key'] ?? '' ) );
-		if ( 'handled' === $handoff ) {
-			return JobResult::success( array( 'handoff' => true ) );
 		}
 
 		$error = '';

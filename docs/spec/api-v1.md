@@ -198,4 +198,13 @@ Für Uploads, Mehrschritt-Formulare und erweiterte Bedingungen/Routing (P7-07, P
 | `form_captain_confirmation_v1` | Filter | `array $confirmation` (Form wie `settings.confirmation`), `array $form`, `int $entry_id`, `array $values` (geprüfte Werte, Feld-ID → Wert; bei Doppelversand die gespeicherten) → Bestätigung | Bedingte Bestätigung. Eine Seite muss veröffentlicht und intern sein, sonst bleibt es bei der Meldung. |
 | `form_captain_display_value_v1` | Filter | `string $display`, `array $field`, `string\|array $value` → Klartext | Nur Erweiterungs-Feldtypen. Gilt für Admin-Detail, CSV und Mail. HTML wird entfernt, die Aufrufer escapen. |
 
+**Einstellungen im Formular-Editor:** Filter `form_captain_editor_extensions_v1` (`array $panels` → Panels).
+
+- **Panel:** `key` (`^[a-z][a-z0-9_]{1,40}$`, eindeutig), `scope` (`field` oder `form`), `label`, `description`, `types` (Feldtypen, für die das Panel erscheint; leer = alle), `controls`, `messages` (Fehlercode → Text; Meldungen des Kerns haben Vorrang).
+- **Control:** `key`, `type` (`text`, `textarea`, `number`, `checkbox`, `select` mit `options`, `rules`, `json`), `label`, `help`.
+- **Speicherort:** Der Editor speichert den Wert unter `field.x[<control key>]` bzw. `settings.x[<control key>]`. Prüfung und Fehler (`x.<key>…`) kommen von `form_captain_normalize_field_v1` / `form_captain_normalize_form_settings_v1`.
+- **`rules`:** eine Gruppe `{ action, match, rules: [ { field, operator, value } ] }` auf frühere Felder; im Formular-Scope ohne `action`.
+- **`json`:** für Strukturen ohne eigenes Bedienelement.
+- **Bereinigung:** Unbekannte Typen, doppelte Schlüssel und Panels ohne Controls verwirft der Kern; Texte werden von HTML befreit. Test: `ExtensionPointsTest::test_editor_extension_panels_are_cleaned`.
+
 **Dateien:** Formulareingaben heißen `fc[<field_id>]`. REST-Einsendung (`multipart/form-data`) und admin-post geben `$_FILES` über `FormCaptain\Support\UploadedFiles::by_field()` als `field_id → Datei` an den Validator weiter (höchstens 20 Dateien, eine je Feld). Der Kern verschiebt, speichert oder öffnet hochgeladene Dateien nie. Ablage, Prüfung, Quarantäne und Löschung (`form_captain_delete_entry_files_v1`) liegen bei der Erweiterung.

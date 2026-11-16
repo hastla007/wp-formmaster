@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Form Captain 1.0.0-dev\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-formmaster\n"
-"POT-Creation-Date: 2026-11-16T11:33:50+00:00\n"
+"POT-Creation-Date: 2026-11-16T12:38:52+00:00\n"
 "PO-Revision-Date: 2026-11-16 12:00+0000\n"
 "Last-Translator: Captain Suite\n"
 "Language-Team: Deutsch (Österreich)\n"
@@ -107,7 +107,7 @@ msgid "Unknown status."
 msgstr "Unbekannter Status."
 
 #: src/Admin/AdminRest.php:285 src/Admin/AdminRest.php:313
-#: src/Admin/EditorPage.php:159 src/Admin/EditorPage.php:216
+#: src/Admin/EditorPage.php:228 src/Admin/EditorPage.php:285
 #: src/Admin/FormsPage.php:323 src/Import/EntryImportAdmin.php:183
 #: src/Import/EntryImportService.php:211 src/Service/FormService.php:159
 #: src/Service/FormService.php:212 src/Service/FormService.php:304
@@ -252,12 +252,12 @@ msgstr "Datenschutz und Aufbewahrung wählen"
 
 #: src/Admin/DashboardPage.php:305 src/Import/EntryImportAdmin.php:254
 #: src/Privacy/PrivacyIntegration.php:93 src/Settings/SettingsSchema.php:104
-#: assets/src/editor.js:1130
+#: assets/src/editor.js:1369
 msgid "90 days"
 msgstr "90 Tage"
 
 #: src/Admin/DashboardPage.php:306 src/Import/EntryImportAdmin.php:255
-#: src/Privacy/PrivacyIntegration.php:94 assets/src/editor.js:1131
+#: src/Privacy/PrivacyIntegration.php:94 assets/src/editor.js:1370
 msgid "12 months"
 msgstr "12 Monate"
 
@@ -322,7 +322,7 @@ msgstr "Neueste Formulare"
 msgid "No forms yet."
 msgstr "Noch keine Formulare."
 
-#: src/Admin/DashboardPage.php:385 src/Admin/EditorPage.php:172
+#: src/Admin/DashboardPage.php:385 src/Admin/EditorPage.php:241
 msgid "Create form"
 msgstr "Formular erstellen"
 
@@ -341,7 +341,7 @@ msgid "Integrations"
 msgstr "Integrationen"
 
 #: src/Admin/DashboardPage.php:395 src/Admin/Menu.php:71
-#: assets/src/editor.js:1202
+#: assets/src/editor.js:1450
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -349,7 +349,7 @@ msgstr "Einstellungen"
 msgid "Quick actions"
 msgstr "Schnellaktionen"
 
-#: src/Admin/EditorPage.php:99
+#: src/Admin/EditorPage.php:101
 msgid ""
 "Need file uploads, multi-step forms or grouped conditions? They are "
 "available with Form Captain Pro."
@@ -357,23 +357,23 @@ msgstr ""
 "Sie benötigen Datei-Uploads, mehrstufige Formulare oder gruppierte "
 "Bedingungen? Diese sind mit Form Captain Pro verfügbar."
 
-#: src/Admin/EditorPage.php:106
+#: src/Admin/EditorPage.php:175
 msgid "Invalid field."
 msgstr "Ungültiges Feld."
 
-#: src/Admin/EditorPage.php:107
+#: src/Admin/EditorPage.php:176
 msgid "Unknown field type."
 msgstr "Unbekannter Feldtyp."
 
-#: src/Admin/EditorPage.php:108
+#: src/Admin/EditorPage.php:177
 msgid "Invalid field ID."
 msgstr "Ungültige Feld-ID."
 
-#: src/Admin/EditorPage.php:109
+#: src/Admin/EditorPage.php:178
 msgid "Field ID is used twice or was used before."
 msgstr "Die Feld-ID wird doppelt verwendet oder wurde bereits verwendet."
 
-#: src/Admin/EditorPage.php:110
+#: src/Admin/EditorPage.php:179
 msgid ""
 "Key must start with a lowercase letter and contain only a–z, 0–9 and _ (max. "
 "40)."
@@ -381,215 +381,215 @@ msgstr ""
 "Der Schlüssel muss mit einem Kleinbuchstaben beginnen und darf nur a–z, 0–9 "
 "und _ enthalten (max. 40)."
 
-#: src/Admin/EditorPage.php:111
+#: src/Admin/EditorPage.php:180
 msgid "This key is already used by another field."
 msgstr "Dieser Schlüssel wird bereits von einem anderen Feld verwendet."
 
-#: src/Admin/EditorPage.php:112
+#: src/Admin/EditorPage.php:181
 msgid "Please enter a label."
 msgstr "Bitte geben Sie eine Bezeichnung ein."
 
-#: src/Admin/EditorPage.php:113
+#: src/Admin/EditorPage.php:182
 msgid "Consent fields must never be pre-checked."
 msgstr "Einwilligungsfelder dürfen nie vorausgewählt sein."
 
-#: src/Admin/EditorPage.php:114
+#: src/Admin/EditorPage.php:183
 msgid "Option values may only contain A–Z, a–z, 0–9, _ and - and need a label."
 msgstr ""
 "Optionswerte dürfen nur A–Z, a–z, 0–9, _ und - enthalten und benötigen eine "
 "Bezeichnung."
 
-#: src/Admin/EditorPage.php:115
+#: src/Admin/EditorPage.php:184
 msgid "Option values must be unique."
 msgstr "Optionswerte müssen eindeutig sein."
 
-#: src/Admin/EditorPage.php:116
+#: src/Admin/EditorPage.php:185
 msgid "Too many options."
 msgstr "Zu viele Optionen."
 
-#: src/Admin/EditorPage.php:117
+#: src/Admin/EditorPage.php:186
 msgid "Add at least one option."
 msgstr "Fügen Sie mindestens eine Option hinzu."
 
-#: src/Admin/EditorPage.php:118
+#: src/Admin/EditorPage.php:187
 msgid "Please enter the consent text."
 msgstr "Bitte geben Sie den Einwilligungstext ein."
 
-#: src/Admin/EditorPage.php:119
+#: src/Admin/EditorPage.php:188
 msgid "Conditions may only refer to an earlier field that has a value."
 msgstr "Bedingungen dürfen sich nur auf ein vorheriges Feld mit Wert beziehen."
 
-#: src/Admin/EditorPage.php:120
+#: src/Admin/EditorPage.php:189
 msgid "Invalid condition operator."
 msgstr "Ungültiger Bedingungsoperator."
 
-#: src/Admin/EditorPage.php:121
+#: src/Admin/EditorPage.php:190
 msgid "Invalid pattern."
 msgstr "Ungültiges Muster."
 
-#: src/Admin/EditorPage.php:122 src/Domain/SubmissionValidator.php:344
+#: src/Admin/EditorPage.php:191 src/Domain/SubmissionValidator.php:386
 msgid "Please enter a number."
 msgstr "Bitte geben Sie eine Zahl ein."
 
-#: src/Admin/EditorPage.php:123
+#: src/Admin/EditorPage.php:192
 msgid "Minimum is greater than maximum."
 msgstr "Das Minimum ist größer als das Maximum."
 
-#: src/Admin/EditorPage.php:124
+#: src/Admin/EditorPage.php:193
 msgid "Use YYYY-MM-DD or \"today\"."
 msgstr "Verwenden Sie JJJJ-MM-TT oder „today“."
 
-#: src/Admin/EditorPage.php:125
+#: src/Admin/EditorPage.php:194
 msgid "Too many fields (maximum 100)."
 msgstr "Zu viele Felder (maximal 100)."
 
-#: src/Admin/EditorPage.php:126
+#: src/Admin/EditorPage.php:195
 msgid "The form is too large."
 msgstr "Das Formular ist zu groß."
 
-#: src/Admin/EditorPage.php:127
+#: src/Admin/EditorPage.php:196
 msgid "Add at least one input field before publishing."
 msgstr "Fügen Sie vor dem Veröffentlichen mindestens ein Eingabefeld hinzu."
 
-#: src/Admin/EditorPage.php:128
+#: src/Admin/EditorPage.php:197
 msgid "One of the recipient addresses is invalid."
 msgstr "Eine der Empfängeradressen ist ungültig."
 
-#: src/Admin/EditorPage.php:129
+#: src/Admin/EditorPage.php:198
 msgid "Enter at least one recipient or disable the notification."
 msgstr ""
 "Geben Sie mindestens einen Empfänger ein oder deaktivieren Sie die "
 "Benachrichtigung."
 
-#: src/Admin/EditorPage.php:130
+#: src/Admin/EditorPage.php:199
 msgid "Reply-To must be an email field of this form."
 msgstr "Antwort-an muss ein E-Mail-Feld dieses Formulars sein."
 
-#: src/Admin/EditorPage.php:131
+#: src/Admin/EditorPage.php:200
 msgid "Select at least one field."
 msgstr "Wählen Sie mindestens ein Feld aus."
 
-#: src/Admin/EditorPage.php:132
+#: src/Admin/EditorPage.php:201
 msgid "Mark an email field as recipient of the confirmation email."
 msgstr "Markieren Sie ein E-Mail-Feld als Empfänger der Bestätigungs-E-Mail."
 
-#: src/Admin/EditorPage.php:133
+#: src/Admin/EditorPage.php:202
 msgid "Please enter a subject."
 msgstr "Bitte geben Sie einen Betreff ein."
 
-#: src/Admin/EditorPage.php:134
+#: src/Admin/EditorPage.php:203
 msgid "Choose a published page."
 msgstr "Wählen Sie eine veröffentlichte Seite."
 
-#: src/Admin/EditorPage.php:135
+#: src/Admin/EditorPage.php:204
 msgid "Invalid email address."
 msgstr "Ungültige E-Mail-Adresse."
 
-#: src/Admin/EditorPage.php:136 src/Admin/EditorPage.php:137
+#: src/Admin/EditorPage.php:205 src/Admin/EditorPage.php:206
 msgid "Invalid action."
 msgstr "Ungültige Aktion."
 
-#: src/Admin/EditorPage.php:138
+#: src/Admin/EditorPage.php:207
 msgid "This action is no longer available."
 msgstr "Diese Aktion ist nicht mehr verfügbar."
 
-#: src/Admin/EditorPage.php:139
+#: src/Admin/EditorPage.php:208
 msgid "Invalid field mapping."
 msgstr "Ungültige Feldzuordnung."
 
-#: src/Admin/EditorPage.php:140
+#: src/Admin/EditorPage.php:209
 msgid "Sensitive fields cannot be passed to actions."
 msgstr "Sensible Felder können nicht an Aktionen übergeben werden."
 
-#: src/Admin/EditorPage.php:141
+#: src/Admin/EditorPage.php:210
 msgid "This field type cannot be used here."
 msgstr "Dieser Feldtyp kann hier nicht verwendet werden."
 
-#: src/Admin/EditorPage.php:142
+#: src/Admin/EditorPage.php:211
 msgid "This value is required."
 msgstr "Dieser Wert ist erforderlich."
 
-#: src/Admin/EditorPage.php:150 src/Admin/FormsPage.php:95
+#: src/Admin/EditorPage.php:219 src/Admin/FormsPage.php:95
 #: src/Admin/FormsPage.php:212 src/Import/ImportService.php:116
 msgid "You are not allowed to manage forms."
 msgstr "Sie sind nicht berechtigt, Formulare zu verwalten."
 
-#: src/Admin/EditorPage.php:159 src/Admin/EditorPage.php:163
+#: src/Admin/EditorPage.php:228 src/Admin/EditorPage.php:232
 #: src/Admin/Menu.php:68
 msgid "Edit form"
 msgstr "Formular bearbeiten"
 
-#: src/Admin/EditorPage.php:164
+#: src/Admin/EditorPage.php:233
 msgid "Back to forms"
 msgstr "Zurück zu den Formularen"
 
-#: src/Admin/EditorPage.php:166
+#: src/Admin/EditorPage.php:235
 msgid "Loading editor…"
 msgstr "Editor wird geladen …"
 
-#: src/Admin/EditorPage.php:167
+#: src/Admin/EditorPage.php:236
 msgid "The form editor needs JavaScript."
 msgstr "Der Formular-Editor benötigt JavaScript."
 
-#: src/Admin/EditorPage.php:174
+#: src/Admin/EditorPage.php:243
 msgid "Choose a template to start with. You can change every field afterwards."
 msgstr ""
 "Wählen Sie eine Vorlage als Ausgangspunkt. Sie können danach jedes Feld "
 "ändern."
 
-#: src/Admin/EditorPage.php:179
+#: src/Admin/EditorPage.php:248
 msgid "Blank form"
 msgstr "Leeres Formular"
 
-#: src/Admin/EditorPage.php:180
+#: src/Admin/EditorPage.php:249
 msgid "Start from scratch."
 msgstr "Ohne Vorlage beginnen."
 
 #. translators: %d: number of fields
-#: src/Admin/EditorPage.php:191
+#: src/Admin/EditorPage.php:260
 #, php-format
 msgid "%d field"
 msgid_plural "%d fields"
 msgstr[0] "%d Feld"
 msgstr[1] "%d Felder"
 
-#: src/Admin/EditorPage.php:193
+#: src/Admin/EditorPage.php:262
 msgid "Use this template"
 msgstr "Diese Vorlage verwenden"
 
-#: src/Admin/EditorPage.php:196
+#: src/Admin/EditorPage.php:265
 msgid "You can also import a form definition (JSON) on the forms overview."
 msgstr ""
 "Sie können in der Formularübersicht auch eine Formulardefinition (JSON) "
 "importieren."
 
-#: src/Admin/EditorPage.php:196
+#: src/Admin/EditorPage.php:265
 msgid "Go to forms"
 msgstr "Zu den Formularen"
 
-#: src/Admin/EditorPage.php:208
+#: src/Admin/EditorPage.php:277
 msgid "You are not allowed to preview forms."
 msgstr "Sie sind nicht berechtigt, eine Vorschau von Formularen anzuzeigen."
 
-#: src/Admin/EditorPage.php:228
+#: src/Admin/EditorPage.php:297
 msgid "The form renderer is not available."
 msgstr "Der Formular-Renderer ist nicht verfügbar."
 
-#: src/Admin/EditorPage.php:237
+#: src/Admin/EditorPage.php:306
 msgid "Preview – submissions are disabled. Nothing is stored or sent."
 msgstr ""
 "Vorschau – Einsendungen sind deaktiviert. Es wird nichts gespeichert oder "
 "gesendet."
 
 #. translators: %s: form title
-#: src/Admin/EditorPage.php:240
+#: src/Admin/EditorPage.php:309
 #, php-format
 msgid "Preview: %s"
 msgstr "Vorschau: %s"
 
-#: src/Admin/EditorPage.php:258 src/Admin/SettingsPage.php:631
-#: src/Admin/Tables/FormsListTable.php:151 assets/src/editor.js:1328
-#: assets/src/editor.js:1654
+#: src/Admin/EditorPage.php:327 src/Admin/SettingsPage.php:631
+#: src/Admin/Tables/FormsListTable.php:151 assets/src/editor.js:1576
+#: assets/src/editor.js:1902
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -900,7 +900,7 @@ msgstr "Letzter Fehler"
 msgid "Updated"
 msgstr "Aktualisiert"
 
-#: src/Admin/EntriesPage.php:547 assets/src/editor.js:937
+#: src/Admin/EntriesPage.php:547 assets/src/editor.js:1176
 msgid "None"
 msgstr "Keines"
 
@@ -912,7 +912,7 @@ msgstr "Erneut senden"
 msgid "Send admin notification again"
 msgstr "Admin-Benachrichtigung erneut senden"
 
-#: src/Admin/EntriesPage.php:567 assets/src/editor.js:914
+#: src/Admin/EntriesPage.php:567 assets/src/editor.js:1153
 msgid "Admin notification"
 msgstr "Admin-Benachrichtigung"
 
@@ -1018,7 +1018,7 @@ msgid "Consent withdrawal recorded"
 msgstr "Widerruf der Einwilligung erfasst"
 
 #: src/Admin/EntriesPage.php:654 src/Import/EntryImportAdmin.php:575
-#: assets/src/editor.js:1316 assets/src/editor.js:1683
+#: assets/src/editor.js:1564 assets/src/editor.js:1931
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -1542,7 +1542,7 @@ msgid "Form actions"
 msgstr "Formularaktionen"
 
 #: src/Admin/IntegrationsPage.php:315 src/Admin/IntegrationsPage.php:360
-#: assets/src/editor.js:366
+#: assets/src/editor.js:366 assets/src/editor.js:476
 msgid "Action"
 msgstr "Aktion"
 
@@ -1797,7 +1797,7 @@ msgstr "Einstellungsbereiche"
 msgid "Save changes"
 msgstr "Änderungen speichern"
 
-#: src/Admin/SettingsPage.php:503 assets/src/editor.js:1190
+#: src/Admin/SettingsPage.php:503 assets/src/editor.js:1438
 msgid "Enabled"
 msgstr "Aktiviert"
 
@@ -1957,7 +1957,7 @@ msgstr ""
 msgid "Email"
 msgstr "E-Mail"
 
-#: src/Admin/SettingsPage.php:633 src/Frontend/Renderer.php:164
+#: src/Admin/SettingsPage.php:633 src/Frontend/Renderer.php:167
 msgid "Send"
 msgstr "Senden"
 
@@ -2305,7 +2305,10 @@ msgid ""
 "The database was set up by a newer Form Captain version (schema %d). "
 "Reinstall the newer version or restore a backup from before the update. No "
 "data was changed."
-msgstr "Die Datenbank wurde von einer neueren Form-Captain-Version angelegt (Schema %d). Installieren Sie die neuere Version wieder oder spielen Sie ein Backup von vor dem Update ein. Es wurden keine Daten verändert."
+msgstr ""
+"Die Datenbank wurde von einer neueren Form-Captain-Version angelegt (Schema "
+"%d). Installieren Sie die neuere Version wieder oder spielen Sie ein Backup "
+"von vor dem Update ein. Es wurden keine Daten verändert."
 
 #. translators: 1: current schema version, 2: target schema version
 #: src/Admin/SystemStatus.php:254
@@ -2315,7 +2318,12 @@ msgid ""
 "user may create and alter tables (CREATE, ALTER, INDEX), then open any Form "
 "Captain page again; the update resumes automatically. Submissions are still "
 "saved."
-msgstr "Das Datenbank-Update von Schema %1$d auf %2$d ist fehlgeschlagen. Stellen Sie sicher, dass der Datenbankbenutzer Tabellen anlegen und ändern darf (CREATE, ALTER, INDEX), und öffnen Sie danach erneut eine Form-Captain-Seite; das Update wird automatisch fortgesetzt. Einsendungen werden weiterhin gespeichert."
+msgstr ""
+"Das Datenbank-Update von Schema %1$d auf %2$d ist fehlgeschlagen. Stellen "
+"Sie sicher, dass der Datenbankbenutzer Tabellen anlegen und ändern darf "
+"(CREATE, ALTER, INDEX), und öffnen Sie danach erneut eine Form-Captain-"
+"Seite; das Update wird automatisch fortgesetzt. Einsendungen werden "
+"weiterhin gespeichert."
 
 #: src/Admin/SystemStatus.php:259
 msgid ""
@@ -2420,7 +2428,7 @@ msgstr "Gelesen"
 #: src/Admin/Tables/EntriesListTable.php:124
 #: src/Admin/Tables/FormsListTable.php:103
 #: src/Admin/Tables/FormsListTable.php:139 src/Export/CsvExporter.php:331
-#: src/Privacy/PrivacyIntegration.php:266 assets/src/editor.js:1357
+#: src/Privacy/PrivacyIntegration.php:266 assets/src/editor.js:1605
 msgid "Archived"
 msgstr "Archiviert"
 
@@ -2497,7 +2505,7 @@ msgid "Last modified"
 msgstr "Zuletzt geändert"
 
 #: src/Admin/Tables/FormsListTable.php:100
-#: src/Admin/Tables/FormsListTable.php:137 assets/src/editor.js:1355
+#: src/Admin/Tables/FormsListTable.php:137 assets/src/editor.js:1603
 msgid "Published"
 msgstr "Veröffentlicht"
 
@@ -2506,7 +2514,7 @@ msgid "Drafts"
 msgstr "Entwürfe"
 
 #: src/Admin/Tables/FormsListTable.php:102
-#: src/Admin/Tables/FormsListTable.php:138 assets/src/editor.js:1356
+#: src/Admin/Tables/FormsListTable.php:138 assets/src/editor.js:1604
 msgid "Paused"
 msgstr "Pausiert"
 
@@ -2526,7 +2534,7 @@ msgstr ""
 msgid "Create your first form"
 msgstr "Erstes Formular erstellen"
 
-#: src/Admin/Tables/FormsListTable.php:140 assets/src/editor.js:1354
+#: src/Admin/Tables/FormsListTable.php:140 assets/src/editor.js:1602
 msgid "Draft"
 msgstr "Entwurf"
 
@@ -2542,11 +2550,11 @@ msgstr "Duplizieren"
 msgid "(opens in a new tab)"
 msgstr "(öffnet in einem neuen Tab)"
 
-#: src/Admin/Tables/FormsListTable.php:155 assets/src/editor.js:1658
+#: src/Admin/Tables/FormsListTable.php:155 assets/src/editor.js:1906
 msgid "Pause"
 msgstr "Pausieren"
 
-#: src/Admin/Tables/FormsListTable.php:158 assets/src/editor.js:1661
+#: src/Admin/Tables/FormsListTable.php:158 assets/src/editor.js:1909
 msgid "Resume"
 msgstr "Fortsetzen"
 
@@ -2671,73 +2679,73 @@ msgstr "Versteckter Wert"
 msgid "Consent"
 msgstr "Einwilligung"
 
-#: src/Domain/SubmissionValidator.php:330 src/Frontend/Assets.php:82
+#: src/Domain/SubmissionValidator.php:372 src/Frontend/Assets.php:82
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
 
 #. translators: %d: maximum number of characters
-#: src/Domain/SubmissionValidator.php:334
+#: src/Domain/SubmissionValidator.php:376
 #, php-format
 msgid "Please enter at most %d characters."
 msgstr "Bitte geben Sie höchstens %d Zeichen ein."
 
-#: src/Domain/SubmissionValidator.php:335
+#: src/Domain/SubmissionValidator.php:377
 msgid "This value is too long."
 msgstr "Dieser Wert ist zu lang."
 
 #. translators: %d: minimum number of characters
-#: src/Domain/SubmissionValidator.php:338
+#: src/Domain/SubmissionValidator.php:380
 #, php-format
 msgid "Please enter at least %d characters."
 msgstr "Bitte geben Sie mindestens %d Zeichen ein."
 
-#: src/Domain/SubmissionValidator.php:340 src/Frontend/Assets.php:83
+#: src/Domain/SubmissionValidator.php:382 src/Frontend/Assets.php:83
 msgid "Please enter a valid email address."
 msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein."
 
-#: src/Domain/SubmissionValidator.php:342
+#: src/Domain/SubmissionValidator.php:384
 msgid "Please enter a valid phone number (digits, spaces and + ( ) - / only)."
 msgstr ""
 "Bitte geben Sie eine gültige Telefonnummer ein (nur Ziffern, Leerzeichen und "
 "+ ( ) - /)."
 
-#: src/Domain/SubmissionValidator.php:346
+#: src/Domain/SubmissionValidator.php:388
 msgid "This value is outside the allowed range."
 msgstr "Dieser Wert liegt außerhalb des zulässigen Bereichs."
 
-#: src/Domain/SubmissionValidator.php:348
+#: src/Domain/SubmissionValidator.php:390
 msgid "Please enter a value in the allowed steps."
 msgstr "Bitte geben Sie einen Wert in den zulässigen Schritten ein."
 
-#: src/Domain/SubmissionValidator.php:350
+#: src/Domain/SubmissionValidator.php:392
 msgid "Please enter a valid date (YYYY-MM-DD)."
 msgstr "Bitte geben Sie ein gültiges Datum ein (JJJJ-MM-TT)."
 
-#: src/Domain/SubmissionValidator.php:352 src/Settings/SettingsSchema.php:312
+#: src/Domain/SubmissionValidator.php:394 src/Settings/SettingsSchema.php:312
 msgid "Please choose one of the offered options."
 msgstr "Bitte wählen Sie eine der angebotenen Optionen."
 
 #. translators: %d: minimum number of choices
-#: src/Domain/SubmissionValidator.php:355
+#: src/Domain/SubmissionValidator.php:397
 #, php-format
 msgid "Please choose at least %d options."
 msgstr "Bitte wählen Sie mindestens %d Optionen."
 
 #. translators: %d: maximum number of choices
-#: src/Domain/SubmissionValidator.php:358
+#: src/Domain/SubmissionValidator.php:400
 #, php-format
 msgid "Please choose at most %d options."
 msgstr "Bitte wählen Sie höchstens %d Optionen."
 
-#: src/Domain/SubmissionValidator.php:360
+#: src/Domain/SubmissionValidator.php:402
 msgid "Please confirm this checkbox to send the form."
 msgstr "Bitte bestätigen Sie dieses Kästchen, um das Formular zu senden."
 
-#: src/Domain/SubmissionValidator.php:362
+#: src/Domain/SubmissionValidator.php:404
 msgid "Please check the format of this field."
 msgstr "Bitte prüfen Sie das Format dieses Feldes."
 
-#: src/Domain/SubmissionValidator.php:364
+#: src/Domain/SubmissionValidator.php:406
 msgid ""
 "The submission contained data that does not belong to this form. Please "
 "reload the page."
@@ -2745,7 +2753,7 @@ msgstr ""
 "Die Einsendung enthielt Daten, die nicht zu diesem Formular gehören. Bitte "
 "laden Sie die Seite neu."
 
-#: src/Domain/SubmissionValidator.php:368
+#: src/Domain/SubmissionValidator.php:412
 msgid "This value is not allowed."
 msgstr "Dieser Wert ist nicht zulässig."
 
@@ -2817,61 +2825,61 @@ msgstr "Zusätzliches Feld angezeigt: %s"
 msgid "Field hidden: %s"
 msgstr "Feld ausgeblendet: %s"
 
-#: src/Frontend/Renderer.php:51
+#: src/Frontend/Renderer.php:53
 msgid "This form does not exist (anymore). Please choose another form."
 msgstr ""
 "Dieses Formular existiert nicht (mehr). Bitte wählen Sie ein anderes "
 "Formular."
 
-#: src/Frontend/Renderer.php:56 src/Service/FormService.php:134
+#: src/Frontend/Renderer.php:58 src/Service/FormService.php:134
 #: src/Support/Errors.php:62
 msgid "This form is currently not accepting submissions."
 msgstr "Dieses Formular nimmt derzeit keine Einsendungen an."
 
-#: src/Frontend/Renderer.php:58
+#: src/Frontend/Renderer.php:60
 msgid ""
 "This form is paused. Visitors see the message below instead of the form."
 msgstr ""
 "Dieses Formular ist pausiert. Besucher sehen statt des Formulars die "
 "folgende Meldung."
 
-#: src/Frontend/Renderer.php:66
+#: src/Frontend/Renderer.php:68
 msgid "This form is archived and not shown to visitors."
 msgstr "Dieses Formular ist archiviert und wird Besuchern nicht angezeigt."
 
-#: src/Frontend/Renderer.php:67
+#: src/Frontend/Renderer.php:69
 msgid "This form is not published yet and not shown to visitors."
 msgstr ""
 "Dieses Formular ist noch nicht veröffentlicht und wird Besuchern nicht "
 "angezeigt."
 
-#: src/Frontend/Renderer.php:89
+#: src/Frontend/Renderer.php:91
 msgid "Preview – submissions are not saved."
 msgstr "Vorschau – Einsendungen werden nicht gespeichert."
 
 #. translators: %s: required marker (asterisk)
-#: src/Frontend/Renderer.php:152
+#: src/Frontend/Renderer.php:155
 #, php-format
 msgid "Fields marked with %s are required."
 msgstr "Mit %s markierte Felder sind Pflichtfelder."
 
-#: src/Frontend/Renderer.php:205
+#: src/Frontend/Renderer.php:208
 msgid "Leave this field empty"
 msgstr "Dieses Feld leer lassen"
 
-#: src/Frontend/Renderer.php:302
+#: src/Frontend/Renderer.php:310
 msgid "Privacy policy"
 msgstr "Datenschutzerklärung"
 
-#: src/Frontend/Renderer.php:328
+#: src/Frontend/Renderer.php:336
 msgid "— Please choose —"
 msgstr "— Bitte wählen —"
 
-#: src/Frontend/Renderer.php:408
+#: src/Frontend/Renderer.php:477
 msgid "Form Captain:"
 msgstr "Form Captain:"
 
-#: src/Frontend/Renderer.php:408
+#: src/Frontend/Renderer.php:477
 msgid "(Only visible to form managers.)"
 msgstr "(Nur für Formularverwalter sichtbar.)"
 
@@ -2879,11 +2887,11 @@ msgstr "(Nur für Formularverwalter sichtbar.)"
 msgid "Form Captain: The form in this shortcode does not exist (anymore)."
 msgstr "Form Captain: Das Formular in diesem Shortcode existiert nicht (mehr)."
 
-#: src/Http/RestController.php:165
+#: src/Http/RestController.php:166
 msgid "Unsupported request format."
 msgstr "Nicht unterstütztes Anfrageformat."
 
-#: src/Http/RestController.php:191
+#: src/Http/RestController.php:193
 msgid "Method not allowed."
 msgstr "Methode nicht erlaubt."
 
@@ -3212,6 +3220,7 @@ msgid "Error code"
 msgstr "Fehlercode"
 
 #: src/Import/EntryImportAdmin.php:468 assets/src/editor.js:377
+#: assets/src/editor.js:503
 msgid "Field"
 msgstr "Feld"
 
@@ -3383,7 +3392,7 @@ msgstr "Ein Import kann nur innerhalb von %d Tagen zurückgenommen werden."
 msgid "Import from another form format"
 msgstr "Aus einem anderen Formularformat importieren"
 
-#: src/Import/ImportAdmin.php:100 assets/src/editor.js:1642
+#: src/Import/ImportAdmin.php:100 assets/src/editor.js:1890
 msgid "Form title"
 msgstr "Formulartitel"
 
@@ -3455,7 +3464,7 @@ msgstr "Original-Tag"
 msgid "Target type"
 msgstr "Zieltyp"
 
-#: src/Import/ImportAdmin.php:139 assets/src/editor.js:453
+#: src/Import/ImportAdmin.php:139 assets/src/editor.js:681
 msgid "Label"
 msgstr "Bezeichnung"
 
@@ -4217,28 +4226,28 @@ msgid "Every minute (Form Captain jobs)"
 msgstr "Jede Minute (Form-Captain-Aufträge)"
 
 #. translators: %s: form title placeholder
-#: src/Mail/MailBuilder.php:88
+#: src/Mail/MailBuilder.php:95
 #, php-format
 msgid "New submission: %s"
 msgstr "Neue Einsendung: %s"
 
 #. translators: 1: form title, 2: submission ID
-#: src/Mail/MailBuilder.php:98
+#: src/Mail/MailBuilder.php:105
 #, php-format
 msgid "A new submission was received via \"%1$s\" (#%2$d)."
 msgstr "Über „%1$s“ ist eine neue Einsendung eingegangen (#%2$d)."
 
-#: src/Mail/MailBuilder.php:111 src/Mail/MailBuilder.php:112
+#: src/Mail/MailBuilder.php:118 src/Mail/MailBuilder.php:119
 msgid "View submission in WordPress"
 msgstr "Einsendung in WordPress anzeigen"
 
 #. translators: %s: form title placeholder
-#: src/Mail/MailBuilder.php:151
+#: src/Mail/MailBuilder.php:158
 #, php-format
 msgid "Thank you for your message: %s"
 msgstr "Vielen Dank für Ihre Nachricht: %s"
 
-#: src/Mail/MailBuilder.php:157
+#: src/Mail/MailBuilder.php:164
 msgid ""
 "Thank you! We have received your message and will get back to you as soon as "
 "possible."
@@ -4246,11 +4255,11 @@ msgstr ""
 "Vielen Dank! Wir haben Ihre Nachricht erhalten und melden uns so bald wie "
 "möglich bei Ihnen."
 
-#: src/Mail/MailBuilder.php:330
+#: src/Mail/MailBuilder.php:337
 msgid "Yes"
 msgstr "Ja"
 
-#: src/Mail/MailBuilder.php:330
+#: src/Mail/MailBuilder.php:337
 msgid "No"
 msgstr "Nein"
 
@@ -4442,7 +4451,7 @@ msgstr "Unbekannte Mehrfachaktion."
 msgid "Select between 1 and 500 submissions."
 msgstr "Wählen Sie zwischen 1 und 500 Einsendungen aus."
 
-#: src/Service/FormService.php:47 src/Service/FormService.php:968
+#: src/Service/FormService.php:47 src/Service/FormService.php:991
 msgid "Untitled form"
 msgstr "Unbenanntes Formular"
 
@@ -4455,7 +4464,7 @@ msgstr "Diese Vorlage existiert nicht."
 msgid "New submission: {form_title}"
 msgstr "Neue Einsendung: {form_title}"
 
-#: src/Service/FormService.php:131 src/Service/SubmissionService.php:340
+#: src/Service/FormService.php:131 src/Service/SubmissionService.php:351
 #: src/Support/Errors.php:65
 msgid "Thank you! Your submission has been received."
 msgstr "Vielen Dank! Ihre Einsendung ist eingegangen."
@@ -4526,7 +4535,7 @@ msgstr "Ungültige Aktionskonfiguration entfernt (%s)."
 msgid "Setting %1$s was invalid and has been reset (%2$s)."
 msgstr "Die Einstellung %1$s war ungültig und wurde zurückgesetzt (%2$s)."
 
-#: src/Service/FormService.php:958
+#: src/Service/FormService.php:981
 msgid "The form definition is invalid."
 msgstr "Die Formulardefinition ist ungültig."
 
@@ -4562,12 +4571,12 @@ msgstr "Wir antworten an diese Adresse."
 msgid "name@example.com"
 msgstr "name@example.com"
 
-#: src/Service/Templates.php:110 assets/src/editor.js:948
-#: assets/src/editor.js:1004
+#: src/Service/Templates.php:110 assets/src/editor.js:1187
+#: assets/src/editor.js:1243
 msgid "Subject"
 msgstr "Betreff"
 
-#: src/Service/Templates.php:111 assets/src/editor.js:1008
+#: src/Service/Templates.php:111 assets/src/editor.js:1247
 msgid "Message"
 msgstr "Nachricht"
 
@@ -4734,7 +4743,7 @@ msgstr "Vielen Dank! Ihre Support-Anfrage ist eingegangen."
 msgid "General"
 msgstr "Allgemein"
 
-#: src/Settings/SettingsSchema.php:38 assets/src/editor.js:1112
+#: src/Settings/SettingsSchema.php:38 assets/src/editor.js:1351
 msgid "Appearance"
 msgstr "Darstellung"
 
@@ -5151,77 +5160,106 @@ msgstr "Bedingung"
 msgid "Show or hide this field depending on another field"
 msgstr "Dieses Feld abhängig von einem anderen Feld anzeigen oder ausblenden"
 
-#: assets/src/editor.js:369
+#: assets/src/editor.js:369 assets/src/editor.js:479
 msgid "Show this field if"
 msgstr "Dieses Feld anzeigen, wenn"
 
-#: assets/src/editor.js:370
+#: assets/src/editor.js:370 assets/src/editor.js:480
 msgid "Hide this field if"
 msgstr "Dieses Feld ausblenden, wenn"
 
-#: assets/src/editor.js:379 assets/src/editor.js:408 assets/src/editor.js:1085
-#: assets/src/editor.js:1220 assets/src/editor.js:1294
+#: assets/src/editor.js:379 assets/src/editor.js:408 assets/src/editor.js:1324
+#: assets/src/editor.js:1468 assets/src/editor.js:1542
 msgid "— Select —"
 msgstr "— Auswählen —"
 
-#: assets/src/editor.js:389
+#: assets/src/editor.js:389 assets/src/editor.js:513
 msgid "Operator"
 msgstr "Operator"
 
-#: assets/src/editor.js:392
+#: assets/src/editor.js:392 assets/src/editor.js:434
 msgid "equals"
 msgstr "ist gleich"
 
-#: assets/src/editor.js:393
+#: assets/src/editor.js:393 assets/src/editor.js:435
 msgid "does not equal"
 msgstr "ist ungleich"
 
-#: assets/src/editor.js:394
+#: assets/src/editor.js:394 assets/src/editor.js:436
 msgid "contains"
 msgstr "enthält"
 
-#: assets/src/editor.js:395
+#: assets/src/editor.js:395 assets/src/editor.js:437
 msgid "is empty"
 msgstr "ist leer"
 
-#: assets/src/editor.js:396
+#: assets/src/editor.js:396 assets/src/editor.js:438
 msgid "is not empty"
 msgstr "ist nicht leer"
 
-#: assets/src/editor.js:397
+#: assets/src/editor.js:397 assets/src/editor.js:439
 msgid "is checked"
 msgstr "ist angehakt"
 
-#: assets/src/editor.js:406 assets/src/editor.js:418 assets/src/editor.js:554
+#: assets/src/editor.js:406 assets/src/editor.js:418 assets/src/editor.js:522
+#: assets/src/editor.js:782
 msgid "Value"
 msgstr "Wert"
 
-#: assets/src/editor.js:448
+#: assets/src/editor.js:449
+msgid "Rules can refer to fields above this one. Add an input field before it first."
+msgstr "Regeln können sich auf Felder oberhalb dieses Feldes beziehen. Fügen Sie zuerst davor ein Eingabefeld hinzu."
+
+#: assets/src/editor.js:487
+msgid "Match"
+msgstr "Übereinstimmung"
+
+#: assets/src/editor.js:490
+msgid "all rules (AND)"
+msgstr "alle Regeln (UND)"
+
+#: assets/src/editor.js:491
+msgid "at least one rule (OR)"
+msgstr "mindestens eine Regel (ODER)"
+
+#: assets/src/editor.js:537
+msgid "Remove rule"
+msgstr "Regel entfernen"
+
+#: assets/src/editor.js:546
+msgid "Add rule"
+msgstr "Regel hinzufügen"
+
+#: assets/src/editor.js:582
+msgid "This is not valid JSON yet; the last valid value is kept."
+msgstr "Das ist noch kein gültiges JSON; der letzte gültige Wert bleibt erhalten."
+
+#: assets/src/editor.js:676
 msgid "%s – settings"
 msgstr "%s – Einstellungen"
 
-#: assets/src/editor.js:453
+#: assets/src/editor.js:681
 msgid "Label (internal)"
 msgstr "Bezeichnung (intern)"
 
-#: assets/src/editor.js:465
+#: assets/src/editor.js:693
 msgid "Field key"
 msgstr "Feldschlüssel"
 
-#: assets/src/editor.js:466
+#: assets/src/editor.js:694
 msgid "Used for export columns and email placeholders like {field:key}."
 msgstr ""
 "Wird für Exportspalten und E-Mail-Platzhalter wie {field:key} verwendet."
 
-#: assets/src/editor.js:478
+#: assets/src/editor.js:706
 msgid "Required"
 msgstr "Pflichtfeld"
 
-#: assets/src/editor.js:490
+#: assets/src/editor.js:718
 msgid "Content (HTML)"
 msgstr "Inhalt (HTML)"
 
-#: assets/src/editor.js:491
+#: assets/src/editor.js:719
 msgid ""
 "Allowed: p, br, strong, em, b, i, ul, ol, li, a, h3, h4, span. Everything "
 "else is removed when saving."
@@ -5229,11 +5267,11 @@ msgstr ""
 "Erlaubt: p, br, strong, em, b, i, ul, ol, li, a, h3, h4, span. Alles andere "
 "wird beim Speichern entfernt."
 
-#: assets/src/editor.js:504
+#: assets/src/editor.js:732
 msgid "Consent text"
 msgstr "Einwilligungstext"
 
-#: assets/src/editor.js:505
+#: assets/src/editor.js:733
 msgid ""
 "Revision %d – changing the text creates a new revision, earlier entries keep "
 "their version."
@@ -5241,231 +5279,231 @@ msgstr ""
 "Revision %d – eine Textänderung erzeugt eine neue Revision, frühere Einträge "
 "behalten ihre Version."
 
-#: assets/src/editor.js:517
+#: assets/src/editor.js:745
 msgid "Link the privacy policy page"
 msgstr "Datenschutzerklärung verlinken"
 
-#: assets/src/editor.js:529
+#: assets/src/editor.js:757
 msgid "Help text"
 msgstr "Hilfetext"
 
-#: assets/src/editor.js:542
+#: assets/src/editor.js:770
 msgid "Placeholder"
 msgstr "Platzhalter"
 
-#: assets/src/editor.js:554
+#: assets/src/editor.js:782
 msgid "Default value"
 msgstr "Standardwert"
 
-#: assets/src/editor.js:555
+#: assets/src/editor.js:783
 msgid "Hidden values can be changed by visitors and are never trusted."
 msgstr ""
 "Versteckte Werte können von Besuchern geändert werden und gelten nie als "
 "vertrauenswürdig."
 
-#: assets/src/editor.js:582
+#: assets/src/editor.js:810
 msgid "Allow multiple selections"
 msgstr "Mehrfachauswahl erlauben"
 
-#: assets/src/editor.js:596
+#: assets/src/editor.js:824
 msgid "Minimum length"
 msgstr "Mindestlänge"
 
-#: assets/src/editor.js:599
+#: assets/src/editor.js:827
 msgid "Maximum length"
 msgstr "Maximallänge"
 
-#: assets/src/editor.js:608
+#: assets/src/editor.js:836
 msgid "Allowed characters"
 msgstr "Erlaubte Zeichen"
 
-#: assets/src/editor.js:611
+#: assets/src/editor.js:839
 msgid "Any"
 msgstr "Beliebig"
 
-#: assets/src/editor.js:612
+#: assets/src/editor.js:840
 msgid "Letters only"
 msgstr "Nur Buchstaben"
 
-#: assets/src/editor.js:613
+#: assets/src/editor.js:841
 msgid "Letters and digits"
 msgstr "Buchstaben und Ziffern"
 
-#: assets/src/editor.js:614
+#: assets/src/editor.js:842
 msgid "German postal code"
 msgstr "Deutsche Postleitzahl"
 
-#: assets/src/editor.js:623
+#: assets/src/editor.js:851
 msgid "Rows"
 msgstr "Zeilen"
 
-#: assets/src/editor.js:631
+#: assets/src/editor.js:859
 msgid "Send the confirmation email to this address"
 msgstr "Die Bestätigungs-E-Mail an diese Adresse senden"
 
-#: assets/src/editor.js:639
+#: assets/src/editor.js:867
 msgid "Use for privacy requests (export/erase personal data)"
 msgstr ""
 "Für Datenschutzanfragen verwenden (personenbezogene Daten exportieren/"
 "löschen)"
 
-#: assets/src/editor.js:648
+#: assets/src/editor.js:876
 msgid "Minimum"
 msgstr "Minimum"
 
-#: assets/src/editor.js:648
+#: assets/src/editor.js:876
 msgid "Maximum"
 msgstr "Maximum"
 
-#: assets/src/editor.js:648
+#: assets/src/editor.js:876
 msgid "Step"
 msgstr "Schrittweite"
 
-#: assets/src/editor.js:655
+#: assets/src/editor.js:883
 msgid "Earliest date"
 msgstr "Frühestes Datum"
 
-#: assets/src/editor.js:655
+#: assets/src/editor.js:883
 msgid "Latest date"
 msgstr "Spätestes Datum"
 
-#: assets/src/editor.js:660
+#: assets/src/editor.js:888
 msgid "YYYY-MM-DD or \"today\""
 msgstr "JJJJ-MM-TT oder „today“"
 
-#: assets/src/editor.js:671
+#: assets/src/editor.js:899
 msgid "Minimum choices"
 msgstr "Mindestanzahl Auswahlen"
 
-#: assets/src/editor.js:674
+#: assets/src/editor.js:902
 msgid "Maximum choices"
 msgstr "Höchstanzahl Auswahlen"
 
-#: assets/src/editor.js:683
+#: assets/src/editor.js:911
 msgid "Limits"
 msgstr "Grenzwerte"
 
-#: assets/src/editor.js:689
+#: assets/src/editor.js:917
 msgid "CSS class"
 msgstr "CSS-Klasse"
 
-#: assets/src/editor.js:701
+#: assets/src/editor.js:929
 msgid "Sensitive (not included in emails and connector actions by default)"
 msgstr ""
 "Sensibel (standardmäßig nicht in E-Mails und Connector-Aktionen enthalten)"
 
-#: assets/src/editor.js:763
+#: assets/src/editor.js:1002
 msgid "Add field"
 msgstr "Feld hinzufügen"
 
-#: assets/src/editor.js:784 assets/src/editor.js:1679
+#: assets/src/editor.js:1023 assets/src/editor.js:1927
 msgid "Fields"
 msgstr "Felder"
 
-#: assets/src/editor.js:785
+#: assets/src/editor.js:1024
 msgid "No fields yet. Add a field from the list."
 msgstr "Noch keine Felder. Fügen Sie ein Feld aus der Liste hinzu."
 
-#: assets/src/editor.js:814
+#: assets/src/editor.js:1053
 msgid "Drag to reorder"
 msgstr "Zum Neuordnen ziehen"
 
-#: assets/src/editor.js:826
+#: assets/src/editor.js:1065
 msgid "required"
 msgstr "Pflicht"
 
-#: assets/src/editor.js:827
+#: assets/src/editor.js:1066
 msgid "conditional"
 msgstr "bedingt"
 
-#: assets/src/editor.js:827 assets/src/editor.js:978
+#: assets/src/editor.js:1066 assets/src/editor.js:1217
 msgid "sensitive"
 msgstr "sensibel"
 
-#: assets/src/editor.js:828
+#: assets/src/editor.js:1067
 msgid "Needs attention"
 msgstr "Prüfung erforderlich"
 
-#: assets/src/editor.js:833
+#: assets/src/editor.js:1072
 msgid "Move “%s” up"
 msgstr "„%s“ nach oben verschieben"
 
-#: assets/src/editor.js:836
+#: assets/src/editor.js:1075
 msgid "Move “%s” down"
 msgstr "„%s“ nach unten verschieben"
 
-#: assets/src/editor.js:839
+#: assets/src/editor.js:1078
 msgid "Duplicate “%s”"
 msgstr "„%s“ duplizieren"
 
-#: assets/src/editor.js:842
+#: assets/src/editor.js:1081
 msgid "Remove “%s”"
 msgstr "„%s“ entfernen"
 
-#: assets/src/editor.js:874
+#: assets/src/editor.js:1113
 msgid "Select a field to edit its settings."
 msgstr "Wählen Sie ein Feld aus, um seine Einstellungen zu bearbeiten."
 
-#: assets/src/editor.js:915
+#: assets/src/editor.js:1154
 msgid "Send an email for every new entry"
 msgstr "Bei jedem neuen Eintrag eine E-Mail senden"
 
-#: assets/src/editor.js:923
+#: assets/src/editor.js:1162
 msgid "Recipients"
 msgstr "Empfänger"
 
-#: assets/src/editor.js:924
+#: assets/src/editor.js:1163
 msgid "One address per line. {admin_email} stands for %s."
 msgstr "Eine Adresse pro Zeile. {admin_email} steht für %s."
 
-#: assets/src/editor.js:935
+#: assets/src/editor.js:1174
 msgid "Reply-To field"
 msgstr "Antwort-an-Feld"
 
-#: assets/src/editor.js:949
+#: assets/src/editor.js:1188
 msgid "Placeholders: %s"
 msgstr "Platzhalter: %s"
 
-#: assets/src/editor.js:956
+#: assets/src/editor.js:1195
 msgid "Fields in the email"
 msgstr "Felder in der E-Mail"
 
-#: assets/src/editor.js:959
+#: assets/src/editor.js:1198
 msgid "All fields except sensitive ones"
 msgstr "Alle Felder außer sensiblen"
 
-#: assets/src/editor.js:960
+#: assets/src/editor.js:1199
 msgid "Only selected fields"
 msgstr "Nur ausgewählte Felder"
 
-#: assets/src/editor.js:974
+#: assets/src/editor.js:1213
 msgid "Selected fields"
 msgstr "Ausgewählte Felder"
 
-#: assets/src/editor.js:994
+#: assets/src/editor.js:1233
 msgid "Confirmation email to the visitor"
 msgstr "Bestätigungs-E-Mail an den Besucher"
 
-#: assets/src/editor.js:995
+#: assets/src/editor.js:1234
 msgid "Send a confirmation email"
 msgstr "Bestätigungs-E-Mail senden"
 
-#: assets/src/editor.js:1002
+#: assets/src/editor.js:1241
 msgid ""
 "Goes to the email field marked “Send the confirmation email to this address”."
 msgstr ""
 "Geht an das E-Mail-Feld, das mit „Die Bestätigungs-E-Mail an diese Adresse "
 "senden“ markiert ist."
 
-#: assets/src/editor.js:1014
+#: assets/src/editor.js:1253
 msgid "Include these answers (optional)"
 msgstr "Diese Antworten einfügen (optional)"
 
-#: assets/src/editor.js:1035
+#: assets/src/editor.js:1274
 msgid "Sender"
 msgstr "Absender"
 
-#: assets/src/editor.js:1036
+#: assets/src/editor.js:1275
 msgid ""
 "Copied from the global email settings when the form was created. Changes "
 "here only affect this form."
@@ -5473,79 +5511,79 @@ msgstr ""
 "Beim Erstellen des Formulars aus den globalen E-Mail-Einstellungen "
 "übernommen. Änderungen hier betreffen nur dieses Formular."
 
-#: assets/src/editor.js:1038
+#: assets/src/editor.js:1277
 msgid "Sender name"
 msgstr "Absendername"
 
-#: assets/src/editor.js:1045
+#: assets/src/editor.js:1284
 msgid "Sender address"
 msgstr "Absenderadresse"
 
-#: assets/src/editor.js:1065
+#: assets/src/editor.js:1304
 msgid "After submitting"
 msgstr "Nach dem Absenden"
 
-#: assets/src/editor.js:1067
+#: assets/src/editor.js:1306
 msgid "Show"
 msgstr "Anzeigen"
 
-#: assets/src/editor.js:1070
+#: assets/src/editor.js:1309
 msgid "A message"
 msgstr "Eine Meldung"
 
-#: assets/src/editor.js:1071
+#: assets/src/editor.js:1310
 msgid "A page of this site"
 msgstr "Eine Seite dieser Website"
 
-#: assets/src/editor.js:1078
+#: assets/src/editor.js:1317
 msgid "Success message"
 msgstr "Erfolgsmeldung"
 
-#: assets/src/editor.js:1082
+#: assets/src/editor.js:1321
 msgid "Page"
 msgstr "Seite"
 
-#: assets/src/editor.js:1083
+#: assets/src/editor.js:1322
 msgid "Only published pages of this site can be chosen."
 msgstr "Es können nur veröffentlichte Seiten dieser Website gewählt werden."
 
-#: assets/src/editor.js:1103
+#: assets/src/editor.js:1342
 msgid "Pause message"
 msgstr "Pausenmeldung"
 
-#: assets/src/editor.js:1105
+#: assets/src/editor.js:1344
 msgid "Shown while the form is paused"
 msgstr "Wird angezeigt, solange das Formular pausiert ist"
 
-#: assets/src/editor.js:1114
+#: assets/src/editor.js:1353
 msgid "Styling"
 msgstr "Gestaltung"
 
-#: assets/src/editor.js:1117
+#: assets/src/editor.js:1356
 msgid "Use the theme styling"
 msgstr "Theme-Gestaltung verwenden"
 
-#: assets/src/editor.js:1118
+#: assets/src/editor.js:1357
 msgid "Use Form Captain base styling"
 msgstr "Form-Captain-Basisgestaltung verwenden"
 
-#: assets/src/editor.js:1124
+#: assets/src/editor.js:1363
 msgid "Retention"
 msgstr "Aufbewahrung"
 
-#: assets/src/editor.js:1126
+#: assets/src/editor.js:1365
 msgid "Keep entries of this form"
 msgstr "Einträge dieses Formulars aufbewahren"
 
-#: assets/src/editor.js:1129
+#: assets/src/editor.js:1368
 msgid "As in the global privacy settings"
 msgstr "Wie in den globalen Datenschutz-Einstellungen"
 
-#: assets/src/editor.js:1132
+#: assets/src/editor.js:1371
 msgid "Until deleted manually"
 msgstr "Bis zur manuellen Löschung"
 
-#: assets/src/editor.js:1160
+#: assets/src/editor.js:1408
 msgid ""
 "Actions pass new entries to connected plugins in the background. Only "
 "mapped, non-sensitive fields are transferred."
@@ -5553,13 +5591,13 @@ msgstr ""
 "Aktionen übergeben neue Einträge im Hintergrund an verbundene Plugins. "
 "Übertragen werden nur zugeordnete, nicht sensible Felder."
 
-#: assets/src/editor.js:1163
+#: assets/src/editor.js:1411
 msgid "Changing actions requires the “Manage integrations” permission."
 msgstr ""
 "Zum Ändern von Aktionen ist die Berechtigung „Integrationen verwalten“ "
 "erforderlich."
 
-#: assets/src/editor.js:1170
+#: assets/src/editor.js:1418
 msgid ""
 "No connector actions are available. Activate a connector under Integrations "
 "first."
@@ -5567,11 +5605,11 @@ msgstr ""
 "Es sind keine Connector-Aktionen verfügbar. Aktivieren Sie zuerst einen "
 "Connector unter Integrationen."
 
-#: assets/src/editor.js:1171
+#: assets/src/editor.js:1419
 msgid "Open integrations"
 msgstr "Integrationen öffnen"
 
-#: assets/src/editor.js:1187
+#: assets/src/editor.js:1435
 msgid ""
 "This action is currently not available (connector inactive or removed). It "
 "will not run."
@@ -5579,109 +5617,109 @@ msgstr ""
 "Diese Aktion ist derzeit nicht verfügbar (Connector inaktiv oder entfernt). "
 "Sie wird nicht ausgeführt."
 
-#: assets/src/editor.js:1237
+#: assets/src/editor.js:1485
 msgid "Field mapping"
 msgstr "Feldzuordnung"
 
-#: assets/src/editor.js:1243
+#: assets/src/editor.js:1491
 msgid "— Not mapped —"
 msgstr "— Nicht zugeordnet —"
 
-#: assets/src/editor.js:1245
+#: assets/src/editor.js:1493
 msgid "sensitive – not allowed"
 msgstr "sensibel – nicht erlaubt"
 
-#: assets/src/editor.js:1281
+#: assets/src/editor.js:1529
 msgid "Remove action"
 msgstr "Aktion entfernen"
 
-#: assets/src/editor.js:1292
+#: assets/src/editor.js:1540
 msgid "Add action"
 msgstr "Aktion hinzufügen"
 
-#: assets/src/editor.js:1311
+#: assets/src/editor.js:1559
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: assets/src/editor.js:1316
+#: assets/src/editor.js:1564
 msgid "No actions configured for this form."
 msgstr "Für dieses Formular sind keine Aktionen konfiguriert."
 
-#: assets/src/editor.js:1331
+#: assets/src/editor.js:1579
 msgid "Preview size"
 msgstr "Vorschaugröße"
 
-#: assets/src/editor.js:1334
+#: assets/src/editor.js:1582
 msgid "Desktop"
 msgstr "Desktop"
 
-#: assets/src/editor.js:1337
+#: assets/src/editor.js:1585
 msgid "Mobile"
 msgstr "Mobil"
 
-#: assets/src/editor.js:1338
+#: assets/src/editor.js:1586
 msgid "Submissions are disabled in the preview."
 msgstr "Einsendungen sind in der Vorschau deaktiviert."
 
-#: assets/src/editor.js:1343
+#: assets/src/editor.js:1591
 msgid "Form preview"
 msgstr "Formularvorschau"
 
-#: assets/src/editor.js:1418
+#: assets/src/editor.js:1666
 msgid "The request failed."
 msgstr "Die Anfrage ist fehlgeschlagen."
 
-#: assets/src/editor.js:1500
+#: assets/src/editor.js:1748
 msgid "Remove the field “%s”? Existing entries keep their values."
 msgstr "Das Feld „%s“ entfernen? Vorhandene Einträge behalten ihre Werte."
 
-#: assets/src/editor.js:1536
+#: assets/src/editor.js:1784
 msgid "Draft saved. Please fix the highlighted problems before publishing."
 msgstr ""
 "Entwurf gespeichert. Bitte beheben Sie vor dem Veröffentlichen die "
 "markierten Probleme."
 
-#: assets/src/editor.js:1537
+#: assets/src/editor.js:1785
 msgid "Saved."
 msgstr "Gespeichert."
 
-#: assets/src/editor.js:1561
+#: assets/src/editor.js:1809
 msgid "The form is live."
 msgstr "Das Formular ist live."
 
-#: assets/src/editor.js:1562
+#: assets/src/editor.js:1810
 msgid "The form is paused."
 msgstr "Das Formular ist pausiert."
 
-#: assets/src/editor.js:1563
+#: assets/src/editor.js:1811
 msgid "The form is a draft again."
 msgstr "Das Formular ist wieder ein Entwurf."
 
-#: assets/src/editor.js:1564
+#: assets/src/editor.js:1812
 msgid "Status changed."
 msgstr "Status geändert."
 
-#: assets/src/editor.js:1581
+#: assets/src/editor.js:1829
 msgid "Published. Changes are now live."
 msgstr "Veröffentlicht. Die Änderungen sind jetzt live."
 
-#: assets/src/editor.js:1610
+#: assets/src/editor.js:1858
 msgid "Removed: %s"
 msgstr "Entfernt: %s"
 
-#: assets/src/editor.js:1613
+#: assets/src/editor.js:1861
 msgid "Now required: %s"
 msgstr "Jetzt Pflichtfeld: %s"
 
-#: assets/src/editor.js:1616
+#: assets/src/editor.js:1864
 msgid "Options removed from %1$s: %2$s"
 msgstr "Aus %1$s entfernte Optionen: %2$s"
 
-#: assets/src/editor.js:1619
+#: assets/src/editor.js:1867
 msgid "Type changed: %s"
 msgstr "Typ geändert: %s"
 
-#: assets/src/editor.js:1624
+#: assets/src/editor.js:1872
 msgid ""
 "Saved changes are not live yet. Publish to apply them. Existing entries keep "
 "the version they were submitted with."
@@ -5690,23 +5728,23 @@ msgstr ""
 "übernehmen. Vorhandene Einträge behalten die Version, mit der sie "
 "eingesendet wurden."
 
-#: assets/src/editor.js:1655
+#: assets/src/editor.js:1903
 msgid "Save draft"
 msgstr "Entwurf speichern"
 
-#: assets/src/editor.js:1655
+#: assets/src/editor.js:1903
 msgid "Saved"
 msgstr "Gespeichert"
 
-#: assets/src/editor.js:1671
+#: assets/src/editor.js:1919
 msgid "Publish"
 msgstr "Veröffentlichen"
 
-#: assets/src/editor.js:1671
+#: assets/src/editor.js:1919
 msgid "Publish changes"
 msgstr "Änderungen veröffentlichen"
 
-#: assets/src/editor.js:1674
+#: assets/src/editor.js:1922
 msgid ""
 "Publishing is possible once all problems are fixed and the form has at least "
 "one input field."
@@ -5714,23 +5752,23 @@ msgstr ""
 "Veröffentlichen ist möglich, sobald alle Probleme behoben sind und das "
 "Formular mindestens ein Eingabefeld enthält."
 
-#: assets/src/editor.js:1675
+#: assets/src/editor.js:1923
 msgid "Shortcode:"
 msgstr "Shortcode:"
 
-#: assets/src/editor.js:1680
+#: assets/src/editor.js:1928
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
-#: assets/src/editor.js:1681
+#: assets/src/editor.js:1929
 msgid "Confirmation"
 msgstr "Bestätigung"
 
-#: assets/src/editor.js:1682
+#: assets/src/editor.js:1930
 msgid "Form settings"
 msgstr "Formular-Einstellungen"
 
-#: assets/src/editor.js:1708
+#: assets/src/editor.js:1956
 msgid "Reload latest version (discards your changes)"
 msgstr "Neueste Version laden (verwirft Ihre Änderungen)"
 

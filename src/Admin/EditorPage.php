@@ -82,6 +82,7 @@ final class EditorPage {
 				'title' => '' !== $page->post_title ? $page->post_title : '#' . $page->ID,
 			);
 		}
+		$ext = self::extensions();
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'fields';
 		return array(
@@ -95,8 +96,76 @@ final class EditorPage {
 			'integrationsUrl' => admin_url( 'admin.php?page=form-captain-integrations' ),
 			'adminEmail'      => (string) get_option( 'admin_email' ),
 			'initialTab'      => in_array( $tab, array( 'fields', 'notifications', 'confirmation', 'settings', 'actions' ), true ) ? $tab : 'fields',
-			'messages'        => self::error_messages(),
+			'messages'        => self::error_messages() + $ext['messages'], // Core messages win.
+			'extensions'      => $ext['panels'],
 			'proHint'         => DashboardPage::should_show_pro_hint() ? __( 'Need file uploads, multi-step forms or grouped conditions? They are available with Form Captain Pro.', 'form-captain' ) : '',
+		);
+	}
+
+	/** Control types the editor can show for extensions (contract 1.1.0). */
+	private const EXTENSION_CONTROLS = array( 'text', 'textarea', 'number', 'checkbox', 'select', 'rules', 'json' );
+
+	/**
+	 * Panels of extensions (filter form_captain_editor_extensions_v1), cleaned for the editor.
+	 * Each panel: key, scope (field|form), label, description, types (field types; empty = all),
+	 * controls (key, type, label, help, options), messages (error code => text).
+	 *
+	 * @return array{panels:array<int,array<string,mixed>>,messages:array<string,string>}
+	 */
+	public static function extensions(): array {
+		$panels   = array();
+		$messages = array();
+		$seen     = array();
+		foreach ( (array) apply_filters( 'form_captain_editor_extensions_v1', array() ) as $p ) {
+			$key = is_array( $p ) ? (string) ( $p['key'] ?? '' ) : '';
+			if ( ! preg_match( '/^[a-z][a-z0-9_]{1,40}$/', $key ) || isset( $seen[ $key ] ) || ! in_array( $p['scope'] ?? '', array( 'field', 'form' ), true ) ) {
+				continue;
+			}
+			$controls = array();
+			foreach ( (array) ( $p['controls'] ?? array() ) as $c ) {
+				$ckey = is_array( $c ) ? (string) ( $c['key'] ?? '' ) : '';
+				$type = is_array( $c ) ? (string) ( $c['type'] ?? 'text' ) : '';
+				if ( ! preg_match( '/^[a-z][a-z0-9_]{1,40}$/', $ckey ) || ! in_array( $type, self::EXTENSION_CONTROLS, true ) ) {
+					continue;
+				}
+				$options = array();
+				foreach ( (array) ( $c['options'] ?? array() ) as $o ) {
+					if ( is_array( $o ) && isset( $o['value'] ) ) {
+						$options[] = array(
+							'value' => (string) $o['value'],
+							'label' => wp_strip_all_tags( (string) ( $o['label'] ?? $o['value'] ) ),
+						);
+					}
+				}
+				$controls[] = array(
+					'key'     => $ckey,
+					'type'    => $type,
+					'label'   => wp_strip_all_tags( (string) ( $c['label'] ?? $ckey ) ),
+					'help'    => wp_strip_all_tags( (string) ( $c['help'] ?? '' ) ),
+					'options' => $options,
+				);
+			}
+			if ( ! $controls ) {
+				continue;
+			}
+			$seen[ $key ] = true;
+			$panels[]     = array(
+				'key'         => $key,
+				'scope'       => (string) $p['scope'],
+				'label'       => wp_strip_all_tags( (string) ( $p['label'] ?? $key ) ),
+				'description' => wp_strip_all_tags( (string) ( $p['description'] ?? '' ) ),
+				'types'       => array_values( array_filter( array_map( 'strval', (array) ( $p['types'] ?? array() ) ), static fn( string $t ): bool => (bool) preg_match( '/^[a-z_]{2,30}$/', $t ) ) ),
+				'controls'    => $controls,
+			);
+			foreach ( (array) ( $p['messages'] ?? array() ) as $code => $text ) {
+				if ( is_string( $code ) && preg_match( '/^[a-z][a-z0-9_]{1,40}$/', $code ) && ! isset( $messages[ $code ] ) ) {
+					$messages[ $code ] = wp_strip_all_tags( (string) $text );
+				}
+			}
+		}
+		return array(
+			'panels'   => $panels,
+			'messages' => $messages,
 		);
 	}
 

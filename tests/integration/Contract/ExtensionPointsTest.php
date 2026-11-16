@@ -191,4 +191,42 @@ final class ExtensionPointsTest extends TestCase {
 		$this->assertSame( 'cv.pdf (12 KB)', MailBuilder::display_value( array( 'type' => 'demo_file' ), 'ref:abc123' ) );
 		$this->assertSame( 'plain', MailBuilder::display_value( array( 'type' => 'text' ), 'plain' ), 'core types are not filtered' );
 	}
+
+	public function test_editor_extension_panels_are_cleaned(): void {
+		$this->hook(
+			'form_captain_editor_extensions_v1',
+			static fn( array $p ): array => array_merge(
+				$p,
+				array(
+					array(
+						'key'      => 'logic',
+						'scope'    => 'field',
+						'label'    => '<b>Grouped conditions</b>',
+						'types'    => array( 'text', 'Bad Type' ),
+						'controls' => array(
+							array( 'key' => 'condition_group', 'type' => 'rules', 'label' => 'Show by rules' ),
+							array( 'key' => 'evil', 'type' => 'script' ),
+							array( 'key' => 'mode', 'type' => 'select', 'options' => array( array( 'value' => 'a', 'label' => '<i>A</i>' ) ) ),
+						),
+						'messages' => array( 'too_many_rules' => 'At most 10 rules.', 'Bad Code' => 'x', 'required' => 'override attempt' ),
+					),
+					array( 'key' => 'logic', 'scope' => 'form', 'controls' => array( array( 'key' => 'dup', 'type' => 'text' ) ) ),
+					array( 'key' => 'nocontrols', 'scope' => 'form', 'controls' => array() ),
+					array( 'key' => 'routing', 'scope' => 'site', 'controls' => array( array( 'key' => 'routing', 'type' => 'json' ) ) ),
+				)
+			)
+		);
+		$ext = \FormCaptain\Admin\EditorPage::extensions();
+		$this->assertCount( 1, $ext['panels'], 'duplicate key, no controls and unknown scope are dropped' );
+		$panel = $ext['panels'][0];
+		$this->assertSame( 'Grouped conditions', $panel['label'] );
+		$this->assertSame( array( 'text' ), $panel['types'] );
+		$this->assertSame( array( 'condition_group', 'mode' ), array_column( $panel['controls'], 'key' ), 'unknown control types are dropped' );
+		$this->assertSame( 'A', $panel['controls'][1]['options'][0]['label'] );
+		$this->assertSame( 'At most 10 rules.', $ext['messages']['too_many_rules'] );
+		$this->assertArrayNotHasKey( 'Bad Code', $ext['messages'] );
+		$boot = $this->plugin()->get( \FormCaptain\Admin\EditorPage::class )->bootstrap( 0 );
+		$this->assertNotSame( 'override attempt', $boot['messages']['required'], 'core messages win' );
+		$this->assertSame( 'logic', $boot['extensions'][0]['key'] );
+	}
 }

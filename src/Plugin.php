@@ -66,7 +66,13 @@ final class Plugin {
 	}
 
 	private function init(): void {
-		load_plugin_textdomain( 'form-captain', false, dirname( plugin_basename( FORM_CAPTAIN_FILE ) ) . '/languages' );
+		add_action(
+			'init',
+			static function (): void {
+				load_plugin_textdomain( 'form-captain', false, dirname( plugin_basename( FORM_CAPTAIN_FILE ) ) . '/languages' );
+			},
+			1
+		);
 		Activator::maybe_upgrade();
 		$this->register_default_services();
 		foreach ( self::MODULES as $module ) {

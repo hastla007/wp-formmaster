@@ -453,6 +453,10 @@ final class Renderer {
 		if ( ! is_string( $control ) || '' === $control ) {
 			return '';
 		}
+		if ( ! FieldTypes::has_value( (string) $field['type'] ) ) {
+			// Types without a value (e.g. a step boundary) get no label, help or error element.
+			return '<div' . self::attrs( $wrap ) . '>' . $control . '</div>';
+		}
 		$star  = $required ? ' <span class="fc-required" aria-hidden="true">*</span>' : '';
 		$label = '<label class="fc-label" for="' . esc_attr( $uid ) . '">' . esc_html( (string) ( $field['label'] ?? '' ) ) . $star . '</label>';
 		$help  = '' !== (string) ( $field['help'] ?? '' ) ? '<p class="fc-help" id="' . esc_attr( $help_id ) . '">' . esc_html( (string) $field['help'] ) . '</p>' : '';

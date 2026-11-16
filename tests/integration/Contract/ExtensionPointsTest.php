@@ -255,4 +255,19 @@ final class ExtensionPointsTest extends TestCase {
 		$this->assertSame( $before, (int) $GLOBALS['wpdb']->get_var( 'SELECT COUNT(*) FROM ' . \FormCaptain\Database\Tables::name( \FormCaptain\Database\Tables::ENTRIES ) ), 'nothing is saved' );
 		$this->assertInstanceOf( \WP_Error::class, form_captain_validate_v1( 999999, array() ) );
 	}
+
+	public function test_extension_type_without_value_has_no_label(): void {
+		$this->hook( 'form_captain_field_types_v1', static fn( array $t ): array => $t + array( 'demo_break' => array( 'label' => 'Break', 'has_value' => false ) ) );
+		FieldTypes::reset();
+		$this->hook( 'form_captain_render_field_v1', static fn( $h, array $f ): string => 'demo_break' === $f['type'] ? '<h3 class="demo-step">Step 2</h3>' : (string) $h, 10, 2 );
+		$form = $this->create_published_form(
+			array(
+				array( 'id' => 'f_name01', 'type' => 'text', 'key' => 'name', 'label' => 'Name' ),
+				array( 'id' => 'f_brk001', 'type' => 'demo_break', 'key' => 'brk', 'label' => 'Step 2' ),
+			)
+		);
+		$html = $this->plugin()->get( Renderer::class )->render( $form );
+		$this->assertStringContainsString( '<h3 class="demo-step">Step 2</h3>', $html );
+		$this->assertDoesNotMatchRegularExpression( '/<label[^>]+for="[^"]*f_brk001"/', $html );
+	}
 }

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-16T11:15:44+00:00\n"
+"POT-Creation-Date: 2026-11-16T11:33:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: form-captain\n"
@@ -205,12 +205,12 @@ msgid "Place the form on a page"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:282
-#: src/Admin/Tables/FormsListTable.php:193
+#: src/Admin/Tables/FormsListTable.php:195
 msgid "Shortcode"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:282
-#: src/Admin/Tables/FormsListTable.php:195
+#: src/Admin/Tables/FormsListTable.php:197
 msgid "Copy"
 msgstr ""
 
@@ -330,7 +330,7 @@ msgstr ""
 
 #: src/Admin/DashboardPage.php:389
 #: src/Admin/Menu.php:69
-#: src/Admin/Tables/FormsListTable.php:43
+#: src/Admin/Tables/FormsListTable.php:45
 msgid "Entries"
 msgstr ""
 
@@ -577,7 +577,7 @@ msgstr ""
 
 #: src/Admin/EditorPage.php:258
 #: src/Admin/SettingsPage.php:631
-#: src/Admin/Tables/FormsListTable.php:149
+#: src/Admin/Tables/FormsListTable.php:151
 #: assets/src/editor.js:1328
 #: assets/src/editor.js:1654
 msgid "Preview"
@@ -723,12 +723,12 @@ msgid "Filter by form"
 msgstr ""
 
 #: src/Admin/EntriesPage.php:358
-#: src/Admin/EntriesPage.php:789
+#: src/Admin/EntriesPage.php:790
 msgid "From"
 msgstr ""
 
 #: src/Admin/EntriesPage.php:359
-#: src/Admin/EntriesPage.php:789
+#: src/Admin/EntriesPage.php:790
 msgid "To"
 msgstr ""
 
@@ -755,7 +755,7 @@ msgid "Filter"
 msgstr ""
 
 #: src/Admin/EntriesPage.php:389
-#: src/Admin/EntriesPage.php:745
+#: src/Admin/EntriesPage.php:746
 msgid "Back to submissions"
 msgstr ""
 
@@ -801,8 +801,8 @@ msgid "Details"
 msgstr ""
 
 #: src/Admin/EntriesPage.php:464
-#: src/Admin/EntriesPage.php:755
-#: src/Admin/Tables/EntriesListTable.php:69
+#: src/Admin/EntriesPage.php:756
+#: src/Admin/Tables/EntriesListTable.php:71
 #: src/Privacy/PrivacyIntegration.php:179
 #: assets/src/block-editor.js:72
 #: assets/src/block-editor.js:86
@@ -810,7 +810,7 @@ msgid "Form"
 msgstr ""
 
 #: src/Admin/EntriesPage.php:464
-#: src/Admin/Tables/EntriesListTable.php:238
+#: src/Admin/Tables/EntriesListTable.php:240
 msgid "(deleted form)"
 msgstr ""
 
@@ -820,7 +820,7 @@ msgid "Form version"
 msgstr ""
 
 #: src/Admin/EntriesPage.php:468
-#: src/Admin/Tables/EntriesListTable.php:70
+#: src/Admin/Tables/EntriesListTable.php:72
 msgid "Submitted"
 msgstr ""
 
@@ -830,10 +830,10 @@ msgstr ""
 
 #: src/Admin/EntriesPage.php:470
 #: src/Admin/EntriesPage.php:539
-#: src/Admin/EntriesPage.php:783
+#: src/Admin/EntriesPage.php:784
 #: src/Admin/IntegrationsPage.php:360
-#: src/Admin/Tables/EntriesListTable.php:71
-#: src/Admin/Tables/FormsListTable.php:41
+#: src/Admin/Tables/EntriesListTable.php:73
+#: src/Admin/Tables/FormsListTable.php:43
 #: src/Export/CsvExporter.php:46
 #: src/Import/EntryImportAdmin.php:575
 #: src/Privacy/PrivacyIntegration.php:187
@@ -904,252 +904,257 @@ msgstr ""
 msgid "Updated"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:549
+#: src/Admin/EntriesPage.php:547
+#: assets/src/editor.js:937
+msgid "None"
+msgstr ""
+
+#: src/Admin/EntriesPage.php:550
 msgid "Send again"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:557
+#: src/Admin/EntriesPage.php:558
 msgid "Send admin notification again"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:566
+#: src/Admin/EntriesPage.php:567
 #: assets/src/editor.js:914
 msgid "Admin notification"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:567
+#: src/Admin/EntriesPage.php:568
 msgid "Confirmation to submitter"
 msgstr ""
 
 #. translators: %s: action key
-#: src/Admin/EntriesPage.php:570
+#: src/Admin/EntriesPage.php:571
 #, php-format
 msgid "Integration: %s"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:579
+#: src/Admin/EntriesPage.php:580
 msgid "Queued"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:580
+#: src/Admin/EntriesPage.php:581
 msgid "Sending"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:581
+#: src/Admin/EntriesPage.php:582
 msgid "Sent"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:582
+#: src/Admin/EntriesPage.php:583
 #: src/Admin/IntegrationsPage.php:176
 msgid "Failed – will retry"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:583
+#: src/Admin/EntriesPage.php:584
 msgid "Failed permanently"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:584
+#: src/Admin/EntriesPage.php:585
 #: src/Admin/IntegrationsPage.php:178
 msgid "Cancelled"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:585
+#: src/Admin/EntriesPage.php:586
 #: src/Admin/IntegrationsPage.php:179
 #: src/Integrations/ConnectorRegistry.php:332
 msgid "Paused (connector disabled)"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:596
+#: src/Admin/EntriesPage.php:597
 msgid "Internal notes"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:598
+#: src/Admin/EntriesPage.php:599
 msgid "No notes yet."
 msgstr ""
 
-#: src/Admin/EntriesPage.php:603
+#: src/Admin/EntriesPage.php:604
 msgid "System"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:612
+#: src/Admin/EntriesPage.php:613
 msgid "New note"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:614
+#: src/Admin/EntriesPage.php:615
 msgid "Notes are included when the person requests a copy of their data. Write factually."
 msgstr ""
 
-#: src/Admin/EntriesPage.php:615
+#: src/Admin/EntriesPage.php:616
 msgid "Add note"
 msgstr ""
 
 #. translators: 1: old status, 2: new status
-#: src/Admin/EntriesPage.php:627
+#: src/Admin/EntriesPage.php:628
 #, php-format
 msgid "Opened: status changed from %1$s to %2$s"
 msgstr ""
 
 #. translators: 1: old status, 2: new status
-#: src/Admin/EntriesPage.php:629
+#: src/Admin/EntriesPage.php:630
 #, php-format
 msgid "Status changed from %1$s to %2$s"
 msgstr ""
 
 #. translators: %s: status
-#: src/Admin/EntriesPage.php:633
+#: src/Admin/EntriesPage.php:634
 #, php-format
 msgid "Restored from trash (%s)"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:636
+#: src/Admin/EntriesPage.php:637
 msgid "Delivery retried manually"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:639
+#: src/Admin/EntriesPage.php:640
 msgid "Admin notification queued manually"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:642
+#: src/Admin/EntriesPage.php:643
 msgid "Anonymized after consent withdrawal"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:645
+#: src/Admin/EntriesPage.php:646
 msgid "Consent withdrawal recorded"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:653
+#: src/Admin/EntriesPage.php:654
 #: src/Import/EntryImportAdmin.php:575
 #: assets/src/editor.js:1316
 #: assets/src/editor.js:1683
 msgid "Actions"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:656
-#: src/Admin/Tables/EntriesListTable.php:167
+#: src/Admin/EntriesPage.php:657
+#: src/Admin/Tables/EntriesListTable.php:169
 msgid "Not spam"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:656
+#: src/Admin/EntriesPage.php:657
 msgid "Unarchive"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:656
-#: src/Admin/Tables/EntriesListTable.php:169
+#: src/Admin/EntriesPage.php:657
+#: src/Admin/Tables/EntriesListTable.php:171
 msgid "Mark as read"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:657
-#: src/Admin/Tables/EntriesListTable.php:170
-#: src/Admin/Tables/FormsListTable.php:163
+#: src/Admin/EntriesPage.php:658
+#: src/Admin/Tables/EntriesListTable.php:172
+#: src/Admin/Tables/FormsListTable.php:165
 msgid "Archive"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:658
-#: src/Admin/Tables/EntriesListTable.php:171
+#: src/Admin/EntriesPage.php:659
+#: src/Admin/Tables/EntriesListTable.php:173
 msgid "Mark as spam"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:668
-#: src/Admin/Tables/EntriesListTable.php:160
+#: src/Admin/EntriesPage.php:669
+#: src/Admin/Tables/EntriesListTable.php:162
 msgid "Restore"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:670
-#: src/Admin/Tables/EntriesListTable.php:175
+#: src/Admin/EntriesPage.php:671
+#: src/Admin/Tables/EntriesListTable.php:177
 msgid "Move to trash"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:675
-#: src/Admin/Tables/EntriesListTable.php:161
-#: src/Admin/Tables/EntriesListTable.php:177
+#: src/Admin/EntriesPage.php:676
+#: src/Admin/Tables/EntriesListTable.php:163
+#: src/Admin/Tables/EntriesListTable.php:179
 msgid "Delete permanently"
 msgstr ""
 
 #. translators: %s: number of submissions
-#: src/Admin/EntriesPage.php:679
+#: src/Admin/EntriesPage.php:680
 #, php-format
 msgid "Delete %s submissions permanently? This cannot be undone. Files and notes are deleted as well."
 msgstr ""
 
-#: src/Admin/EntriesPage.php:695
-#: src/Admin/EntriesPage.php:717
+#: src/Admin/EntriesPage.php:696
+#: src/Admin/EntriesPage.php:718
 msgid "Withdraw consent"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:703
+#: src/Admin/EntriesPage.php:704
 msgid "Records that the person withdrew their consent. Open notifications and integration deliveries are cancelled and no new ones are sent."
 msgstr ""
 
-#: src/Admin/EntriesPage.php:704
+#: src/Admin/EntriesPage.php:705
 msgid "What should happen with the submission?"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:706
+#: src/Admin/EntriesPage.php:707
 msgid "Keep the submission"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:709
+#: src/Admin/EntriesPage.php:710
 msgid "Anonymize personal data"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:710
+#: src/Admin/EntriesPage.php:711
 msgid "Delete the submission permanently"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:716
+#: src/Admin/EntriesPage.php:717
 msgid "I confirm that the person withdrew their consent. This cannot be undone."
 msgstr ""
 
-#: src/Admin/EntriesPage.php:744
+#: src/Admin/EntriesPage.php:745
 msgid "Export submissions"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:747
+#: src/Admin/EntriesPage.php:748
 #: src/Export/CsvExporter.php:344
 msgid "You are not allowed to export submissions."
 msgstr ""
 
-#: src/Admin/EntriesPage.php:755
+#: src/Admin/EntriesPage.php:756
 msgid "Choose a form"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:760
+#: src/Admin/EntriesPage.php:761
 msgid "Choose"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:763
+#: src/Admin/EntriesPage.php:764
 msgid "Columns depend on the form, so please choose one form first."
 msgstr ""
 
-#: src/Admin/EntriesPage.php:773
+#: src/Admin/EntriesPage.php:774
 msgid "Columns"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:778
+#: src/Admin/EntriesPage.php:779
 msgid "Sensitive – only exported when selected"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:787
+#: src/Admin/EntriesPage.php:788
 msgid "Without a selection, all active submissions are exported (no spam, no trash)."
 msgstr ""
 
-#: src/Admin/EntriesPage.php:788
+#: src/Admin/EntriesPage.php:789
 msgid "Period"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:790
+#: src/Admin/EntriesPage.php:791
 msgid "Format"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:791
+#: src/Admin/EntriesPage.php:792
 msgid "Add UTF-8 byte order mark (recommended for Excel)"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:792
+#: src/Admin/EntriesPage.php:793
 msgid "Separator"
 msgstr ""
 
-#: src/Admin/EntriesPage.php:794
+#: src/Admin/EntriesPage.php:795
 msgid "Download CSV"
 msgstr ""
 
@@ -1521,8 +1526,8 @@ msgid "Integration jobs"
 msgstr ""
 
 #: src/Admin/IntegrationsPage.php:351
-#: src/Admin/Tables/EntriesListTable.php:119
-#: src/Admin/Tables/FormsListTable.php:97
+#: src/Admin/Tables/EntriesListTable.php:121
+#: src/Admin/Tables/FormsListTable.php:99
 msgid "All"
 msgstr ""
 
@@ -2057,238 +2062,250 @@ msgstr ""
 msgid "The schema version does not match or a table is missing. Reactivate the plugin; data is never deleted by this."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:244
-msgid "The database schema is not up to date. Deactivate and activate Form Captain or check the error log."
-msgstr ""
-
+#. translators: %d: installed database schema version
 #: src/Admin/SystemStatus.php:248
-msgid "A Form Captain database table is missing."
+#, php-format
+msgid "The database was set up by a newer Form Captain version (schema %d). Reinstall the newer version or restore a backup from before the update. No data was changed."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:250
-msgid "Some Form Captain tables do not use InnoDB. Transactions are not available; integrity is checked here instead."
-msgstr ""
-
+#. translators: 1: current schema version, 2: target schema version
 #: src/Admin/SystemStatus.php:254
-msgid "There are stored values without a submission. Run the cleanup."
-msgstr ""
-
-#: src/Admin/SystemStatus.php:258
-msgid "Jobs are waiting longer than 15 minutes and WP-Cron is disabled. Run \"wp form-captain jobs run\" every minute from a system cron."
+#, php-format
+msgid "The database update from schema %1$d to %2$d failed. Make sure the database user may create and alter tables (CREATE, ALTER, INDEX), then open any Form Captain page again; the update resumes automatically. Submissions are still saved."
 msgstr ""
 
 #: src/Admin/SystemStatus.php:259
-msgid "Jobs are waiting longer than 15 minutes. WP-Cron may not run reliably on this site; consider a system cron with \"wp form-captain jobs run\"."
+msgid "The database schema is not up to date. Deactivate and activate Form Captain or check the error log."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:262
-msgid "Some jobs failed permanently (dead-letter). Review them under Integrations or Entries and retry them."
+#: src/Admin/SystemStatus.php:264
+msgid "A Form Captain database table is missing."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:265
-msgid "Some integration jobs are paused because their connector plugin is missing. Reinstall and activate the connector, or cancel the jobs under Integrations."
+#: src/Admin/SystemStatus.php:266
+msgid "Some Form Captain tables do not use InnoDB. Transactions are not available; integrity is checked here instead."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:268
-msgid "It looks like older data was restored. Expired submissions will be cleaned up now. Please repeat erasure requests completed after the backup date."
-msgstr ""
-
-#: src/Admin/SystemStatus.php:271
-msgid "Some submissions could not be deleted by the cleanup three times in a row. Check the error log and delete them manually if needed."
+#: src/Admin/SystemStatus.php:270
+msgid "There are stored values without a submission. Run the cleanup."
 msgstr ""
 
 #: src/Admin/SystemStatus.php:274
+msgid "Jobs are waiting longer than 15 minutes and WP-Cron is disabled. Run \"wp form-captain jobs run\" every minute from a system cron."
+msgstr ""
+
+#: src/Admin/SystemStatus.php:275
+msgid "Jobs are waiting longer than 15 minutes. WP-Cron may not run reliably on this site; consider a system cron with \"wp form-captain jobs run\"."
+msgstr ""
+
+#: src/Admin/SystemStatus.php:278
+msgid "Some jobs failed permanently (dead-letter). Review them under Integrations or Entries and retry them."
+msgstr ""
+
+#: src/Admin/SystemStatus.php:281
+msgid "Some integration jobs are paused because their connector plugin is missing. Reinstall and activate the connector, or cancel the jobs under Integrations."
+msgstr ""
+
+#: src/Admin/SystemStatus.php:284
+msgid "It looks like older data was restored. Expired submissions will be cleaned up now. Please repeat erasure requests completed after the backup date."
+msgstr ""
+
+#: src/Admin/SystemStatus.php:287
+msgid "Some submissions could not be deleted by the cleanup three times in a row. Check the error log and delete them manually if needed."
+msgstr ""
+
+#: src/Admin/SystemStatus.php:290
 msgid "E-mails failed in the last 24 hours. Send a test e-mail and check your mail configuration (e.g. an SMTP plugin)."
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:68
+#: src/Admin/Tables/EntriesListTable.php:70
 msgid "Submission"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:120
+#: src/Admin/Tables/EntriesListTable.php:122
 #: src/Export/CsvExporter.php:329
 #: src/Privacy/PrivacyIntegration.php:264
 msgid "New"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:121
+#: src/Admin/Tables/EntriesListTable.php:123
 #: src/Export/CsvExporter.php:330
 #: src/Privacy/PrivacyIntegration.php:265
 msgid "Read"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:122
-#: src/Admin/Tables/FormsListTable.php:101
-#: src/Admin/Tables/FormsListTable.php:137
+#: src/Admin/Tables/EntriesListTable.php:124
+#: src/Admin/Tables/FormsListTable.php:103
+#: src/Admin/Tables/FormsListTable.php:139
 #: src/Export/CsvExporter.php:331
 #: src/Privacy/PrivacyIntegration.php:266
 #: assets/src/editor.js:1357
 msgid "Archived"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:123
+#: src/Admin/Tables/EntriesListTable.php:125
 #: src/Export/CsvExporter.php:332
 #: src/Privacy/PrivacyIntegration.php:267
 msgid "Spam"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:124
+#: src/Admin/Tables/EntriesListTable.php:126
 #: src/Export/CsvExporter.php:333
 #: src/Privacy/PrivacyIntegration.php:268
 msgid "Trash"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:149
+#: src/Admin/Tables/EntriesListTable.php:151
 msgid "Expiring soon"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:194
+#: src/Admin/Tables/EntriesListTable.php:196
 msgid "Select bulk action"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:196
+#: src/Admin/Tables/EntriesListTable.php:198
 msgid "Bulk actions"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:201
+#: src/Admin/Tables/EntriesListTable.php:203
 msgid "Apply"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:205
+#: src/Admin/Tables/EntriesListTable.php:207
 msgid "No submissions found."
 msgstr ""
 
 #. translators: %d: submission ID
-#: src/Admin/Tables/EntriesListTable.php:214
+#: src/Admin/Tables/EntriesListTable.php:216
 #, php-format
 msgid "Select submission #%d"
 msgstr ""
 
 #. translators: %s: date
-#: src/Admin/Tables/EntriesListTable.php:248
+#: src/Admin/Tables/EntriesListTable.php:250
 #, php-format
 msgid "Deletion on %s"
 msgstr ""
 
 #. translators: %s: date
-#: src/Admin/Tables/EntriesListTable.php:278
+#: src/Admin/Tables/EntriesListTable.php:280
 #, php-format
 msgid "Consent withdrawn on %s"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:291
+#: src/Admin/Tables/EntriesListTable.php:293
 msgid "Honeypot field filled"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:292
+#: src/Admin/Tables/EntriesListTable.php:294
 msgid "Submitted too fast"
 msgstr ""
 
-#: src/Admin/Tables/EntriesListTable.php:293
+#: src/Admin/Tables/EntriesListTable.php:295
 msgid "Blocklist match"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:40
+#: src/Admin/Tables/FormsListTable.php:42
 msgid "Title"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:42
+#: src/Admin/Tables/FormsListTable.php:44
 msgid "Embed"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:44
+#: src/Admin/Tables/FormsListTable.php:46
 msgid "Last modified"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:98
-#: src/Admin/Tables/FormsListTable.php:135
+#: src/Admin/Tables/FormsListTable.php:100
+#: src/Admin/Tables/FormsListTable.php:137
 #: assets/src/editor.js:1355
 msgid "Published"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:99
+#: src/Admin/Tables/FormsListTable.php:101
 msgid "Drafts"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:100
-#: src/Admin/Tables/FormsListTable.php:136
+#: src/Admin/Tables/FormsListTable.php:102
+#: src/Admin/Tables/FormsListTable.php:138
 #: assets/src/editor.js:1356
 msgid "Paused"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:126
+#: src/Admin/Tables/FormsListTable.php:128
 msgid "No forms match your filter."
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:129
+#: src/Admin/Tables/FormsListTable.php:131
 msgid "You have not created a form yet. Start with a template – it takes less than a minute."
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:130
+#: src/Admin/Tables/FormsListTable.php:132
 msgid "Create your first form"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:138
+#: src/Admin/Tables/FormsListTable.php:140
 #: assets/src/editor.js:1354
 msgid "Draft"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:147
+#: src/Admin/Tables/FormsListTable.php:149
 msgid "Edit"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:148
+#: src/Admin/Tables/FormsListTable.php:150
 msgid "Duplicate"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:149
+#: src/Admin/Tables/FormsListTable.php:151
 msgid "(opens in a new tab)"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:153
+#: src/Admin/Tables/FormsListTable.php:155
 #: assets/src/editor.js:1658
 msgid "Pause"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:156
+#: src/Admin/Tables/FormsListTable.php:158
 #: assets/src/editor.js:1661
 msgid "Resume"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:159
+#: src/Admin/Tables/FormsListTable.php:161
 msgid "Restore as draft"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:165
+#: src/Admin/Tables/FormsListTable.php:167
 msgid "Export JSON"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:167
+#: src/Admin/Tables/FormsListTable.php:169
 #: src/Import/EntryImportAdmin.php:180
 msgid "Import entries"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:171
+#: src/Admin/Tables/FormsListTable.php:173
 msgid "Delete this form permanently?"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:171
+#: src/Admin/Tables/FormsListTable.php:173
 msgid "Delete"
 msgstr ""
 
 #. translators: %d: number of entries
-#: src/Admin/Tables/FormsListTable.php:176
+#: src/Admin/Tables/FormsListTable.php:178
 #, php-format
 msgid "Delete this form and its %d entry permanently? This cannot be undone."
 msgid_plural "Delete this form and all %d entries permanently? This cannot be undone."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Admin/Tables/FormsListTable.php:179
+#: src/Admin/Tables/FormsListTable.php:181
 msgid "Delete with entries"
 msgstr ""
 
-#: src/Admin/Tables/FormsListTable.php:196
+#: src/Admin/Tables/FormsListTable.php:198
 msgid "Or insert the “Form Captain” block in the block editor."
 msgstr ""
 
@@ -4790,10 +4807,6 @@ msgstr ""
 
 #: assets/src/editor.js:935
 msgid "Reply-To field"
-msgstr ""
-
-#: assets/src/editor.js:937
-msgid "None"
 msgstr ""
 
 #: assets/src/editor.js:949

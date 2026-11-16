@@ -49,6 +49,20 @@ final class SystemStatusTest extends TestCase {
 		$this->assertStringNotContainsString( 'secret.person', (string) wp_json_encode( apply_filters( 'debug_information', array() )['form-captain'] ?? array() ) );
 	}
 
+	/** P9-12: the schema problem tells the admin what to do for a failed migration and for a downgrade. */
+	public function test_schema_problem_messages_name_the_cause(): void {
+		update_option( 'form_captain_migration_state', array( 'target' => 2, 'started_gmt' => '2026-01-01 00:00:00', 'error' => 'migration_failed', 'detail' => 'missing_column:entries.consent_withdrawn_gmt' ), false );
+		$problems = $this->status()->problems();
+		$this->assertStringContainsString( 'ALTER', $problems['schema'] );
+		$this->assertStringContainsString( 'Submissions are still saved', $problems['schema'] );
+
+		update_option( 'form_captain_migration_state', array( 'error' => 'schema_newer_than_plugin', 'installed' => 9 ), false );
+		$problems = $this->status()->problems();
+		$this->assertStringContainsString( 'newer Form Captain version (schema', $problems['schema'] );
+		$this->assertStringNotContainsString( 'Deactivate', $problems['schema'] );
+		delete_option( 'form_captain_migration_state' );
+	}
+
 	public function test_queue_delay_is_reported(): void {
 		$jobs = $this->plugin()->get( JobRepository::class );
 		$jobs->enqueue( 'mail.admin', 'status:delay:' . uniqid(), array() );

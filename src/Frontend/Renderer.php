@@ -72,6 +72,16 @@ final class Renderer {
 		}
 
 		$version = $preview ? $this->loader->working( $form ) : $this->loader->published( $form );
+		if ( ! $preview && '' !== (string) ( $args['context'] ?? '' ) ) {
+			// A signed context may bind the form to an earlier published version (contract 1.1.0).
+			$pin = $this->contexts->pinned_version_of( (string) $args['context'], $form );
+			if ( $pin > 0 && $pin !== (int) ( $version['version_no'] ?? 0 ) ) {
+				$version = $this->loader->version( $form, $pin );
+				if ( null === $version ) {
+					return '';
+				}
+			}
+		}
 		$fields  = $version['fields'] ?? array();
 		$mode    = (string) ( $form['settings']['appearance']['mode'] ?? Settings::get( 'appearance.mode' ) );
 		$mode    = 'base' === $mode ? 'base' : 'inherit';

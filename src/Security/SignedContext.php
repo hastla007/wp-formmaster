@@ -225,6 +225,9 @@ final class SignedContext {
 		if ( ! empty( $d['marks_verified'] ) && ! isset( $d['submit_check'] ) ) {
 			return 'context_purpose_invalid';
 		}
+		if ( isset( $d['version_for'] ) && ( ! is_callable( $d['version_for'] ) || ! isset( $d['submit_check'] ) ) ) {
+			return 'context_purpose_invalid';
+		}
 		return null;
 	}
 
@@ -418,6 +421,42 @@ final class SignedContext {
 			&& is_string( $p['site'] ) && preg_match( '/^[0-9a-f]{32}$/', $p['site'] )
 			&& is_int( $p['exp'] )
 			&& is_string( $p['nonce'] ) && preg_match( '/^[A-Za-z0-9_-]{22}$/', $p['nonce'] );
+	}
+
+	/**
+	 * Form version a verified context is bound to (contract 1.1.0, optional `version_for` of the
+	 * purpose): the owner of the purpose answers from its own data, e.g. the version a buyer bought
+	 * with. Never from the request.
+	 *
+	 * @param array<string,mixed> $context Verified context (purpose, ref_type, ref_id).
+	 * @param int                 $form_id Form.
+	 * @return int Version number, 0 = the published version.
+	 */
+	public function pinned_version( array $context, int $form_id ): int {
+		$def = $this->purposes()[ (string) ( $context['purpose'] ?? '' ) ] ?? null;
+		if ( ! is_array( $def ) || ! isset( $def['version_for'] ) || ! is_callable( $def['version_for'] ) ) {
+			return 0;
+		}
+		try {
+			$no = call_user_func( $def['version_for'], (string) ( $context['ref_type'] ?? '' ), (string) ( $context['ref_id'] ?? '' ), $form_id );
+		} catch ( \Throwable $e ) {
+			return 0;
+		}
+		return is_int( $no ) && $no > 0 ? $no : 0;
+	}
+
+	/**
+	 * Version for rendering with a signed context value (checked like a submission, nothing consumed).
+	 *
+	 * @param array<string,mixed> $form Form row.
+	 * @return int Version number, 0 = the published version.
+	 */
+	public function pinned_version_of( string $value, array $form ): int {
+		if ( '' === $value || ! self::accepted_purposes( $form ) ) {
+			return 0;
+		}
+		$res = $this->verify( $value, $form );
+		return ! empty( $res['ok'] ) && is_array( $res['context'] ?? null ) ? $this->pinned_version( $res['context'], (int) $form['id'] ) : 0;
 	}
 
 	/** Maps internal codes to the three public codes (spec 5). */

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace FormCaptain\Tests\Integration\Frontend;
 
 use FormCaptain\Repository\EntryRepository;
+use FormCaptain\Repository\FormRepository;
 use FormCaptain\Security\SignedContext;
 use FormCaptain\Service\SubmissionService;
 use FormCaptain\Support\Clock;
@@ -167,6 +168,67 @@ final class SignedContextTest extends FrontendTestCase {
 		$this->assertSame( '1:2', $this->plugin()->get( EntryRepository::class )->find( (int) $res['entry_id'] )['context']['ref_id'] );
 		remove_filter( 'form_captain_accepted_context_purposes_v1', $filter, 10 );
 		$this->assertSame( array(), SignedContext::accepted_purposes( $form ) );
+	}
+
+	public function test_version_for_binds_render_and_submission_to_an_earlier_version(): void {
+		$this->ctx()->register_purpose(
+			'shop.bought_version',
+			array(
+				'owner'        => 'shop',
+				'contract'     => '^1.0',
+				'label'        => 'Bought version',
+				'ref_types'    => array( 'order_item' ),
+				'default_ttl'  => 3600,
+				'max_ttl'      => 3600,
+				'single_use'   => false,
+				'issuance'     => array( 'render' ),
+				'submit_check' => static fn() => true,
+				'version_for'  => static fn( $type, $ref ) => '1:1' === $ref ? 1 : ( '1:9' === $ref ? 9 : 0 ),
+			)
+		);
+		$this->assertTrue( is_wp_error( $this->ctx()->register_purpose( 'shop.bad_pin', array( 'owner' => 'shop', 'contract' => '^1.0', 'label' => 'x', 'ref_types' => array( 'x' ), 'default_ttl' => 60, 'max_ttl' => 60, 'single_use' => false, 'issuance' => 'render', 'version_for' => static fn() => 1 ) ) ), 'version_for needs a submit_check' );
+
+		$form = $this->form( array( 'shop.bought_version' ) );
+		$repo = $this->plugin()->get( FormRepository::class );
+		// Version 2 adds a required field.
+		$repo->publish_version(
+			(int) $form['id'],
+			array(
+				'schema_version' => 1,
+				'fields'         => array(
+					array( 'id' => 'f_name01', 'type' => 'text', 'key' => 'name', 'label' => 'Name', 'required' => true ),
+					array( 'id' => 'f_mail01', 'type' => 'email', 'key' => 'email', 'label' => 'E-Mail', 'required' => true ),
+					array( 'id' => 'f_size01', 'type' => 'text', 'key' => 'size', 'label' => 'Size', 'required' => true ),
+				),
+			)
+		);
+		$form = $repo->find( (int) $form['id'] );
+		$this->plugin()->get( \FormCaptain\Service\FormSchemaLoader::class )->flush();
+
+		$bound = $this->ctx()->sign( 'shop.bought_version', (int) $form['id'], 'order_item', '1:1' );
+		$html  = $this->plugin()->get( \FormCaptain\Frontend\Renderer::class )->render( $form, array( 'context' => $bound['context'] ) );
+		$this->assertStringNotContainsString( 'f_size01', $html, 'rendered in version 1' );
+		$this->assertStringContainsString( 'f_size01', $this->plugin()->get( \FormCaptain\Frontend\Renderer::class )->render( $form ), 'without context: current version' );
+
+		$raw            = $this->payload( $form, $this->valid_fields() );
+		$raw['_fc_ctx'] = $bound['context'];
+		$res            = $this->plugin()->get( SubmissionService::class )->submit( $form, $raw );
+		$this->assertTrue( $res['success'], wp_json_encode( $res ) );
+		$entry = $this->plugin()->get( EntryRepository::class )->find( (int) $res['entry_id'] );
+		global $wpdb;
+		$no = (int) $wpdb->get_var( $wpdb->prepare( "SELECT version_no FROM {$wpdb->prefix}fc_form_versions WHERE id = %d", (int) $entry['form_version_id'] ) ); // phpcs:ignore WordPress.DB
+		$this->assertSame( 1, $no, 'stored against version 1' );
+
+		$current        = $this->ctx()->sign( 'shop.bought_version', (int) $form['id'], 'order_item', '2:2' );
+		$raw            = $this->payload( $form, $this->valid_fields() );
+		$raw['_fc_ctx'] = $current['context'];
+		$this->assertFalse( $this->plugin()->get( SubmissionService::class )->submit( $form, $raw )['success'], 'unbound context: version 2 requires the new field' );
+
+		$missing        = $this->ctx()->sign( 'shop.bought_version', (int) $form['id'], 'order_item', '1:9' );
+		$raw            = $this->payload( $form, $this->valid_fields() );
+		$raw['_fc_ctx'] = $missing['context'];
+		$this->assertSame( 'invalid_context', $this->plugin()->get( SubmissionService::class )->submit( $form, $raw )['code'] ?? '', 'a missing bound version never falls back to another one' );
+		$this->assertSame( '', $this->plugin()->get( \FormCaptain\Frontend\Renderer::class )->render( $form, array( 'context' => $missing['context'] ) ) );
 	}
 
 	public function test_form_without_purposes_ignores_context(): void {

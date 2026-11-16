@@ -47,6 +47,29 @@ final class FormSchemaLoader {
 	}
 
 	/**
+	 * A published snapshot of a form by its number (versions bound by a signed context).
+	 *
+	 * @param array<string,mixed> $form
+	 * @return array{version_id:int,version_no:int,fields:array<int,array<string,mixed>>}|null
+	 */
+	public function version( array $form, int $version_no ): ?array {
+		foreach ( $this->forms->versions_for( (int) $form['id'] ) as $version ) {
+			if ( (int) $version['version_no'] === $version_no ) {
+				$id = (int) $version['id'];
+				if ( ! isset( $this->cache[ $id ] ) ) {
+					$this->cache[ $id ] = array(
+						'version_id' => $id,
+						'version_no' => $version_no,
+						'fields'     => $this->normalize( $version['schema'] ),
+					);
+				}
+				return $this->cache[ $id ];
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Working (draft) schema for previews.
 	 *
 	 * @param array<string,mixed> $form

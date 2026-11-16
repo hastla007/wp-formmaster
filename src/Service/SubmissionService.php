@@ -147,6 +147,16 @@ final class SubmissionService {
 				return $fail( $ctx_result['public_code'], $extra );
 			}
 			$context = $ctx_result['context'] ?? null;
+			// The purpose may bind the context to the version it was given for (e.g. bought with).
+			$pin = is_array( $context ) ? $this->contexts->pinned_version( $context, (int) $form['id'] ) : 0;
+			if ( $pin > 0 && $pin !== (int) $version['version_no'] ) {
+				$pinned = $this->loader->version( $form, $pin );
+				if ( null === $pinned ) {
+					return $fail( Errors::INVALID_CONTEXT, array( 'message' => SignedContext::public_message( Errors::INVALID_CONTEXT ) ) );
+				}
+				$version = $pinned;
+				$fields  = $version['fields'];
+			}
 		}
 
 		// 6. Field validation (P3-05, P3-07).

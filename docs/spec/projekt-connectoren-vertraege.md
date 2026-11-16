@@ -6,7 +6,7 @@
 - ~~Bestätigung von P8-41~~ **bestätigt am 16.11.2026** am Code (boatingschool `main` d152f21, `routes/commerce.php`): `/api/commerce/v1` hat nur Katalog (`GET /catalog`), Shopkonten (`/accounts…`), Bestellpositionen (`/orders/lines…`) und Chargen (`/batches…`), keinen Lead- oder Interessenten-Eingang. Der Lead-Endpunkt muss also neu und getrennt entstehen (A.1);
 - P8-51: Anwendungsfall Kursfrage.
 
-**Bezug:** konzept.md „Pilot-Connectoren“ und 12.8, docs/CONNECTORS.md (Ergebnisse, Idempotenz, Retry), docs/spec/suite-kontext.md, Entscheidung Nr. 17 (Lizenz über Form Captain Pro, TODO P8-90).
+**Bezug:** konzept.md „Pilot-Connectoren“ und 12.8, docs/CONNECTORS.md (Ergebnisse, Idempotenz, Retry), docs/spec/suite-kontext.md, Entscheidung Nr. 17 (endgültig 16.11.2026: jeder Connector ein eigenes Produkt mit eigenem Präfix, nicht Teil von Form Captain Pro; TODO P8-88, P8-89).
 
 ---
 

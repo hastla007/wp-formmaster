@@ -64,11 +64,25 @@ Use a system cron job or run `wp form-captain jobs run`. As a fallback, opening 
 
 12 months by default. You can choose 90 days, 12 months or manual deletion under **Settings → Privacy & storage**. Deleting the plugin keeps your data unless you explicitly opt in to deleting it.
 
+= Does Form Captain support multisite? =
+
+Not in version 1.0. The plugin can be activated on individual sites of a network, but network activation and network-wide settings are not supported yet.
+
+= Who can see submissions? =
+
+Form Captain uses its own capabilities (manage forms, read entries, edit entries, export, delete, configure). Administrators receive all of them on activation; editors do not get access to entries automatically. You can grant capabilities per role under **Settings → Access & roles**.
+
+= How do I export submissions? =
+
+Open **Form Captain → Entries**, filter as needed and choose **Export CSV**. Values that a spreadsheet would interpret as formulas are neutralised.
+
 = Does it work with WooCommerce? =
 
 Yes. The free plugin does not interfere with cart, checkout, orders or HPOS.
 
 == Support ==
+
+
 
 Support for the free plugin is provided in the WordPress.org support forum. Customers of Form Captain Pro receive support by email ticket with response times according to their plan.
 
@@ -76,14 +90,24 @@ Support for the free plugin is provided in the WordPress.org support forum. Cust
 
 Form Captain stores the data your visitors enter into your forms in your WordPress database. It does not store IP addresses; for rate limiting only a short-lived, salted hash is kept. It integrates with the WordPress personal data export and erasure tools and suggests text for your privacy policy. No data is sent to the plugin authors.
 
+== External services ==
+
+Form Captain does not connect to any external service. It loads no remote fonts, scripts or images and sends no telemetry. The free plugin contains no captcha provider; an extension that adds one must be enabled explicitly and states which data the provider receives. Integrations (connectors) are separate plugins and are inactive until you enable them.
+
+== Source code and build ==
+
+The human-readable JavaScript and CSS sources are included in the plugin under `assets/src`. The files in `assets/build` are generated from them with esbuild: run `npm ci && npm run build` in the plugin directory. The development repository is https://github.com/hastla007/wp-formmaster.
+
 == Screenshots ==
 
 1. Dashboard with setup checklist
-2. Form editor with field palette, canvas and field settings
-3. Entries list with status filters
-4. Entry detail with delivery status and notes
-5. Settings: privacy and storage
-6. Accessible form on the front end
+2. Forms overview
+3. Form editor with field palette, canvas and field settings
+4. Published form in the default theme
+5. Entries list with status filters
+6. Entry detail with delivery status and notes
+7. Settings: privacy and storage
+8. System status
 
 == Changelog ==
 

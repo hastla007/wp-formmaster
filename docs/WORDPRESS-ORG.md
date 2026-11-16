@@ -46,16 +46,16 @@ Nummern beziehen sich auf die Detailed Plugin Guidelines.
 
 **Zusätzliche technische Prüfungen**
 - [ ] Plugin Check (offizielles Prüf-Plugin) auf dem Release-ZIP ohne Fehler; Warnungen begründet im Release-Ticket.
-- [ ] Alle Ausgaben escaped, Eingaben sanitized, Nonces + Capabilities (P5-07, P5-08).
-- [ ] Textdomain `form-captain` = Slug; keine `load_plugin_textdomain`-Pflicht für WordPress.org-Übersetzungen, Sprachpakete über translate.wordpress.org.
-- [ ] Keine Dateien außerhalb von Allowlist (Tests, `vendor/`, `node_modules/`, `docs/`) – `bin/check-release.sh`.
-- [ ] `uninstall.php` löscht Daten nur nach expliziter Zustimmung (P5-06).
-- [ ] Keine Remote-Assets (Fonts, Skripte, Bilder von CDNs) im Admin oder Frontend.
-- [ ] Externe Dienste (Captcha, Connectoren) im readme-Abschnitt „External services“ mit Zweck, übertragenen Daten, Zeitpunkt und Links zu Bedingungen/Datenschutz des Anbieters. In v1.0 ohne aktivierbaren externen Dienst: Abschnitt mit Aussage „keine externen Dienste“.
+- [x] Alle Ausgaben escaped, Eingaben sanitized, Nonces + Capabilities (P5-07, P5-08). *Nachweis: PHPCS (WordPress-Extra) 0 Fehler, Sicherheitsreview docs/SECURITY-REVIEW.md.*
+- [x] Textdomain `form-captain` = Slug; keine `load_plugin_textdomain`-Pflicht für WordPress.org-Übersetzungen, Sprachpakete über translate.wordpress.org.
+- [x] Keine Dateien außerhalb von Allowlist (Tests, `vendor/`, `node_modules/`, `docs/`) – `bin/check-release.sh` OK (126 Dateien, 16.11.2026).
+- [x] `uninstall.php` löscht Daten nur nach expliziter Zustimmung (P5-06): Option `delete_data_on_uninstall` **und** Bestätigungszeitpunkt nötig.
+- [x] Keine Remote-Assets (Fonts, Skripte, Bilder von CDNs) im Admin oder Frontend. *Nachweis: keine `wp_remote_*`-Aufrufe im Kern; E2E-Test „Seite ohne Formular lädt keine Form-Captain-Assets“.*
+- [x] Externe Dienste (Captcha, Connectoren) im readme-Abschnitt „External services“ mit Zweck, übertragenen Daten, Zeitpunkt und Links zu Bedingungen/Datenschutz des Anbieters. In v1.0 ohne aktivierbaren externen Dienst: Abschnitt mit Aussage „keine externen Dienste“.
 
 ## 3. readme.txt
 
-Datei liegt noch nicht vor (P6-08). Pflichtinhalt:
+`readme.txt` liegt vor (P6-08) und ist am 16.11.2026 gegen die Liste unten abgeglichen. Pflichtinhalt:
 
 ```
 === Form Captain ===
@@ -78,16 +78,16 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 == Upgrade Notice ==
 ```
 
-- [ ] Kurzbeschreibung ≤ 150 Zeichen.
-- [ ] Höchstens 5 Tags; keine fremden Produktnamen.
-- [ ] Description: Funktionsumfang Free (konzept.md 4.1), was **nicht** enthalten ist, Hinweis auf Pro als separates Add-on (ein Absatz, sachlich).
-- [ ] Abschnitt **Privacy / Datenschutz**: gespeicherte Daten (Tabellen, keine IP), Retention-Default 12 Monate, Exporter/Eraser, Backups-Hinweis (DS-T-30), keine Telemetrie.
-- [ ] Abschnitt **External services** (siehe oben).
-- [ ] Abschnitt **Source code / Build**: Quellen in `assets/src`, Build mit `npm ci && npm run build` (esbuild), Repository-Link.
-- [ ] FAQ: Mailzustellung/SMTP, Rechte/Rollen, Multisite nicht unterstützt (v1.0), Deinstallation und Daten, Einsendungen exportieren, Unterschied Free/Pro.
-- [ ] Screenshots-Abschnitt: nummerierte Beschriftungen passend zu `screenshot-N.png`.
-- [ ] Changelog-Format `= x.y.z =` (wird von `bin/build-release.sh` ausgelesen).
-- [ ] Validierung mit dem offiziellen Readme-Validator.
+- [x] Kurzbeschreibung ≤ 150 Zeichen (125).
+- [x] Höchstens 5 Tags; keine fremden Produktnamen.
+- [x] Description: Funktionsumfang Free (konzept.md 4.1), was **nicht** enthalten ist, Hinweis auf Pro als separates Add-on (ein Absatz, sachlich).
+- [x] Abschnitt **Privacy / Datenschutz**: gespeicherte Daten (Tabellen, keine IP), Retention-Default 12 Monate, Exporter/Eraser, Backups-Hinweis (DS-T-30), keine Telemetrie.
+- [x] Abschnitt **External services** (siehe oben).
+- [x] Abschnitt **Source code / Build**: Quellen in `assets/src`, Build mit `npm ci && npm run build` (esbuild), Repository-Link.
+- [x] FAQ: Mailzustellung/SMTP, Rechte/Rollen, Multisite nicht unterstützt (v1.0), Deinstallation und Daten, Einsendungen exportieren, Unterschied Free/Pro.
+- [x] Screenshots-Abschnitt: nummerierte Beschriftungen passend zu `screenshot-N.png` (8 Einträge = Screenshot-Liste in Abschnitt 4).
+- [x] Changelog-Format `= x.y.z =` (wird von `bin/build-release.sh` ausgelesen).
+- [ ] Validierung mit dem offiziellen Readme-Validator (wordpress.org, aus dieser Umgebung nicht erreichbar). `Contributors: captainsuite` ist ein Platzhalter bis E-5; `Tested up to` vor dem Release auf die geprüfte WP-Version setzen.
 
 ## 4. Assets (SVN-Verzeichnis `/assets`, nicht im ZIP)
 

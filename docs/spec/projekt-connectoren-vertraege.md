@@ -3,7 +3,7 @@
 **Status:** **Entwurf** vom 16.11.2026 (P8-42, P8-52), aus Sicht von Form Captain. Verbindlich wird der Vertrag erst, wenn ihn das jeweilige Projekt-Repository übernimmt und versioniert (dort P8-44 bzw. P8-53).
 **Voraussetzungen:**
 - Freigabe des Inhabers für die Pilot-Connectoren;
-- Bestätigung von P8-41: `/api/commerce/v1` hat keinen Lead-Eingang. Das ist hier nur aus konzept.md übernommen; der Code von BoatingSchool wurde nicht gelesen;
+- ~~Bestätigung von P8-41~~ **bestätigt am 16.11.2026** am Code (boatingschool `main` d152f21, `routes/commerce.php`): `/api/commerce/v1` hat nur Katalog (`GET /catalog`), Shopkonten (`/accounts…`), Bestellpositionen (`/orders/lines…`) und Chargen (`/batches…`), keinen Lead- oder Interessenten-Eingang. Der Lead-Endpunkt muss also neu und getrennt entstehen (A.1);
 - P8-51: Anwendungsfall Kursfrage.
 
 **Bezug:** konzept.md „Pilot-Connectoren“ und 12.8, docs/CONNECTORS.md (Ergebnisse, Idempotenz, Retry), docs/spec/suite-kontext.md, Entscheidung Nr. 17 (Lizenz über Form Captain Pro, TODO P8-90).

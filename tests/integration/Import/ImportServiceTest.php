@@ -42,6 +42,7 @@ SRC;
 
 	public function tear_down(): void {
 		unset( $_REQUEST['_wpnonce'], $_POST['fc_type_a_source'], $_POST['fc_type_a_title'], $_POST['fc_type_a_token'], $_GET['fc_type_a'] );
+		Clock::freeze( null );
 		parent::tear_down();
 	}
 
@@ -191,6 +192,9 @@ SRC;
 
 	public function test_entry_import_is_validated_idempotent_and_silent(): void {
 		global $wpdb;
+		// The CSV fixture and the assertions both derive times from "now"; freeze it so a
+		// second boundary between them cannot make the comparison flaky.
+		Clock::freeze( time() );
 		$form    = $this->imported_published_form();
 		$mapping = array( 'Name' => 'your_name', 'Mail' => 'your_email', 'Anliegen' => 'anliegen', 'Themen' => $form['ids']['themen'], 'Nachricht' => 'message' );
 		$jobs    = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . Tables::name( Tables::JOBS ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared

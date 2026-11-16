@@ -93,7 +93,7 @@ Zusätzlich: `detail_code` (nur bei vertrauenswürdigen PHP-Aufrufen, z. B. gena
 
 ## Fehlercodes (stabil)
 
-`forbidden`, `invalid_nonce`, `invalid_token`, `form_not_found`, `form_not_accepting`, `validation_failed`, `rate_limited`, `spam_suspected`, `payload_too_large`, `too_many_fields`, `storage_failed`, `schema_invalid`, `schema_unsupported`, `revision_conflict`, `incompatible_contract`, `connector_disabled`, `connector_not_found`, `invalid_context`, `context_expired`, `context_replayed`, `job_not_found`, `entry_not_found`, `not_ready`, `context_purpose_unknown`, `conflict`, `job_not_retryable`, `method_not_allowed`, `export_too_large`, `internal_error`.
+`forbidden`, `invalid_nonce`, `invalid_token`, `form_not_found`, `form_not_accepting`, `validation_failed`, `rate_limited`, `spam_suspected`, `payload_too_large`, `too_many_fields`, `storage_failed`, `schema_invalid`, `schema_unsupported`, `revision_conflict`, `incompatible_contract`, `connector_disabled`, `connector_not_found`, `invalid_context`, `context_expired`, `context_replayed`, `job_not_found`, `entry_not_found`, `not_ready`, `context_purpose_unknown`, `invalid_scope`, `invalid_request`, `conflict`, `job_not_retryable`, `method_not_allowed`, `export_too_large`, `internal_error`.
 
 ## Formularaktionen und Connectoren
 
@@ -117,7 +117,7 @@ Zusätzlich: `detail_code` (nur bei vertrauenswürdigen PHP-Aufrufen, z. B. gena
 Callback-Signatur: `function( array $job ): array` mit
 
 ```php
-$job = ['form_id', 'entry_id', 'idempotency_key', 'settings' => [...], 'values' => [mapping_key => value], 'context' => [...], 'test_mode' => bool]
+$job = ['form_id', 'entry_id', 'idempotency_key', 'action_key', 'instance_id', 'attempt', 'settings' => [...], 'values' => [mapping_key => value], 'context' => [...], 'test_mode' => bool]
 ```
 
 Rückgabe: `['status' => 'success'|'retry'|'fail', 'code' => '…', 'message' => '…', 'remote_id' => '…']`. Exceptions werden als `retry` mit Code `exception` gewertet.

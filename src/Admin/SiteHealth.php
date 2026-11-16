@@ -49,9 +49,9 @@ final class SiteHealth {
 
 	/** @return array<string,mixed> */
 	public function test_queue(): array {
-		$d     = $this->status->collect();
-		$ok    = ! $d['queue']['delayed'] && 0 === (int) ( $d['queue']['counts']['dead'] ?? 0 );
-		$desc  = $ok
+		$d    = $this->status->collect();
+		$ok   = ! $d['queue']['delayed'] && 0 === (int) ( $d['queue']['counts']['dead'] ?? 0 );
+		$desc = $ok
 			? __( 'Notifications and integration jobs are processed in time.', 'form-captain' )
 			: sprintf(
 				/* translators: 1: minutes the oldest job waits, 2: number of dead jobs */

@@ -19,6 +19,9 @@ use FormCaptainReferenceConnector\Reference_Connector;
 require_once __DIR__ . '/ConnectorContractAssertions.php';
 require_once __DIR__ . '/FakeConnector.php';
 
+/**
+ * @group two-plugin
+ */
 final class ReferenceConnectorTest extends TestCase {
 
 	use ConnectorContractAssertions;

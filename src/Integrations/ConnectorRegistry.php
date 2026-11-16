@@ -203,9 +203,9 @@ final class ConnectorRegistry {
 		return version_compare( implode( '.', $parts ), implode( '.', $required ), '>=' );
 	}
 
-	/* ---------------------------------------------------------------------
-	 * Opt-in state (P8-26)
-	 * ------------------------------------------------------------------ */
+	// ---------------------------------------------------------------------
+	// Opt-in state (P8-26)
+	// ---------------------------------------------------------------------
 
 	/** @return array<string,array<string,mixed>> */
 	private function optins(): array {
@@ -299,13 +299,14 @@ final class ConnectorRegistry {
 				}
 			}
 			++$page;
-		} while ( count( $list['items'] ) === 200 && $page < 50 );
+			$more = 200 === count( $list['items'] );
+		} while ( $more && $page < 50 );
 		return $count;
 	}
 
-	/* ---------------------------------------------------------------------
-	 * Listing / diagnostics (P8-04, P8-10, P8-31)
-	 * ------------------------------------------------------------------ */
+	// ---------------------------------------------------------------------
+	// Listing / diagnostics (P8-04, P8-10, P8-31)
+	// ---------------------------------------------------------------------
 
 	/**
 	 * All connectors known to the site, including missing ones that still have an opt-in record.
@@ -443,9 +444,9 @@ final class ConnectorRegistry {
 		return __( 'Check the connector documentation for this code. You can retry the job once the cause is fixed.', 'form-captain' );
 	}
 
-	/* ---------------------------------------------------------------------
-	 * Action registry (form_captain_register_action_v1)
-	 * ------------------------------------------------------------------ */
+	// ---------------------------------------------------------------------
+	// Action registry (form_captain_register_action_v1)
+	// ---------------------------------------------------------------------
 
 	/**
 	 * @param array<string,mixed> $definition
@@ -584,7 +585,7 @@ final class ConnectorRegistry {
 	public function actions_for_editor(): array {
 		$out = array();
 		foreach ( $this->actions() as $key => $def ) {
-			$reason = $this->unavailable_reason( $key );
+			$reason    = $this->unavailable_reason( $key );
 			$connector = null !== $def['connector'] ? (string) ( $this->seen[ $def['connector'] ]['label'] ?? $def['connector'] ) : '';
 			$out[]     = array(
 				'key'             => $key,
@@ -602,9 +603,9 @@ final class ConnectorRegistry {
 		return $out;
 	}
 
-	/* ---------------------------------------------------------------------
-	 * Execution (P8-03, P8-28…P8-30)
-	 * ------------------------------------------------------------------ */
+	// ---------------------------------------------------------------------
+	// Execution (P8-03, P8-28…P8-30)
+	// ---------------------------------------------------------------------
 
 	/**
 	 * Job handler for `connector.action`.

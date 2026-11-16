@@ -48,7 +48,7 @@ final class SystemStatus {
 		}
 
 		return array(
-			'environment' => array(
+			'environment'   => array(
 				'form_captain' => FORM_CAPTAIN_VERSION,
 				'contract'     => FORM_CAPTAIN_CONTRACT_VERSION,
 				'wordpress'    => (string) get_bloginfo( 'version' ),
@@ -58,7 +58,7 @@ final class SystemStatus {
 				'intl'         => class_exists( 'Normalizer' ),
 				'wp_debug'     => defined( 'WP_DEBUG' ) && WP_DEBUG,
 			),
-			'schema'      => array(
+			'schema'        => array(
 				'installed'     => (int) $integrity['installed_version'],
 				'target'        => (int) $integrity['target_version'],
 				'ok'            => (int) $integrity['installed_version'] === (int) $integrity['target_version'] && empty( $state['error'] ),
@@ -66,33 +66,33 @@ final class SystemStatus {
 				'engines'       => (array) $integrity['engines'],
 				'orphan_values' => (int) $integrity['orphan_values'],
 			),
-			'queue'       => array(
-				'counts'           => (array) $health['counts'],
-				'oldest_due_gmt'   => $health['oldest_due_gmt'],
-				'oldest_due_age_s' => (int) $health['oldest_due_age_s'],
-				'delayed'          => (int) $health['oldest_due_age_s'] > self::QUEUE_WARN_SECONDS,
-				'wp_cron_disabled' => $cron_off,
-				'next_worker_run'  => self::next_run( Scheduler::HOOK_JOBS ),
-				'next_cleanup_run' => self::next_run( Scheduler::HOOK_CLEANUP ),
-				'last_cleanup'     => self::option_time( 'form_captain_last_cleanup_at' ),
-				'last_cleanup_run' => self::cleanup_stats(),
-				'cleanup_failures' => (int) $this->retention( 'persistent_failures', 0 ),
+			'queue'         => array(
+				'counts'            => (array) $health['counts'],
+				'oldest_due_gmt'    => $health['oldest_due_gmt'],
+				'oldest_due_age_s'  => (int) $health['oldest_due_age_s'],
+				'delayed'           => (int) $health['oldest_due_age_s'] > self::QUEUE_WARN_SECONDS,
+				'wp_cron_disabled'  => $cron_off,
+				'next_worker_run'   => self::next_run( Scheduler::HOOK_JOBS ),
+				'next_cleanup_run'  => self::next_run( Scheduler::HOOK_CLEANUP ),
+				'last_cleanup'      => self::option_time( 'form_captain_last_cleanup_at' ),
+				'last_cleanup_run'  => self::cleanup_stats(),
+				'cleanup_failures'  => (int) $this->retention( 'persistent_failures', 0 ),
 				'restore_suspected' => (bool) $this->retention( 'restore_suspected', false ),
-				'cli_command'      => 'wp form-captain jobs run',
+				'cli_command'       => 'wp form-captain jobs run',
 			),
-			'mail'        => array(
+			'mail'          => array(
 				'failed_24h'   => $this->jobs->error_summary( 'mail.', $since ),
 				'log_24h'      => $this->log_codes( 'mail', $since ),
 				'domain_match' => ! SettingsSchema::from_domain_mismatch(),
 				'format'       => (string) Settings::get( 'email.format' ),
 			),
-			'integrations' => array(
+			'integrations'  => array(
 				'connectors' => $connectors,
 				'failed_24h' => $this->jobs->error_summary( 'connector.', $since ),
 				'suite'      => self::suite_plugins(),
 				'pro_active' => (bool) apply_filters( 'form_captain_pro_active', false ),
 			),
-			'settings'    => array(
+			'settings'      => array(
 				'retention'        => (string) Settings::get( 'privacy.retention' ),
 				'trash_days'       => (int) Settings::get( 'privacy.trash_days' ),
 				'erasure_mode'     => (string) Settings::get( 'privacy.erasure_mode' ),

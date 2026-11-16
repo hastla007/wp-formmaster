@@ -56,7 +56,7 @@ final class ContractApi {
 		}
 		$version = $form['published_version_id'] ? $this->forms->find_version( (int) $form['published_version_id'] ) : null;
 		$schema  = $version['schema'] ?? $form['schema'];
-		$fields = array();
+		$fields  = array();
 		foreach ( (array) ( $schema['fields'] ?? array() ) as $field ) {
 			if ( ! is_array( $field ) || ! isset( $field['id'] ) ) {
 				continue;
@@ -71,13 +71,13 @@ final class ContractApi {
 				}
 			}
 			$fields[] = array(
-				'id'       => (string) $field['id'],
-				'key'      => (string) ( $field['key'] ?? '' ),
-				'type'     => (string) ( $field['type'] ?? '' ),
-				'label'    => (string) ( $field['label'] ?? '' ),
-				'required' => ! empty( $field['required'] ),
+				'id'        => (string) $field['id'],
+				'key'       => (string) ( $field['key'] ?? '' ),
+				'type'      => (string) ( $field['type'] ?? '' ),
+				'label'     => (string) ( $field['label'] ?? '' ),
+				'required'  => ! empty( $field['required'] ),
 				'sensitive' => ! empty( $field['sensitive'] ),
-				'options'  => $options,
+				'options'   => $options,
 			);
 		}
 		return array(
@@ -116,9 +116,9 @@ final class ContractApi {
 		if ( ! $entry ) {
 			return new \WP_Error( 'entry_not_found', __( 'Entry not found.', 'form-captain' ) );
 		}
-		$version = $this->forms->find_version( (int) $entry['form_version_id'] );
-		$ctx     = is_array( $entry['context'] ) ? $entry['context'] : null;
-		$out     = array(
+		$version        = $this->forms->find_version( (int) $entry['form_version_id'] );
+		$ctx            = is_array( $entry['context'] ) ? $entry['context'] : null;
+		$out            = array(
 			'contract'       => FORM_CAPTAIN_CONTRACT_VERSION,
 			'entry_id'       => (int) $entry['id'],
 			'form_id'        => (int) $entry['form_id'],

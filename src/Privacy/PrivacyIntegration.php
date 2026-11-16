@@ -127,7 +127,7 @@ final class PrivacyIntegration {
 	private function matching_ids( string $email, int $limit, int $offset ): array {
 		$this->form_cache    = array();
 		$this->version_cache = array();
-		$email = self::normalize_email( $email );
+		$email               = self::normalize_email( $email );
 		if ( '' === $email ) {
 			return array();
 		}
@@ -188,7 +188,7 @@ final class PrivacyIntegration {
 				'value' => self::status_label( (string) $entry['status'] ),
 			),
 		);
-		$known = array();
+		$known   = array();
 		foreach ( (array) ( $schema['fields'] ?? array() ) as $field ) {
 			$id = (string) ( $field['id'] ?? '' );
 			if ( '' === $id || 'html' === ( $field['type'] ?? '' ) ) {

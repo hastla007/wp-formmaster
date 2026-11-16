@@ -111,7 +111,7 @@ final class IntegrationsPage {
 	public function handle_toggle(): void {
 		$key = isset( $_POST['connector'] ) ? sanitize_key( wp_unslash( $_POST['connector'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 		$this->guard( 'form_captain_connector_' . $key );
-		$this->redirect( $this->toggle( $key, ! empty( $_POST['enable'] ) ) );
+		$this->redirect( $this->toggle( $key, ! empty( $_POST['enable'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- checked in guard().
 	}
 
 	public function handle_test(): void {

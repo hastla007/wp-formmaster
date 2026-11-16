@@ -60,9 +60,9 @@ final class SettingsPage {
 		wp_set_script_translations( 'form-captain-admin-settings', 'form-captain', FORM_CAPTAIN_DIR . 'languages' );
 	}
 
-	/* ---------------------------------------------------------------------
-	 * Actions (testable without redirects)
-	 * ------------------------------------------------------------------ */
+	// ---------------------------------------------------------------------
+	// Actions (testable without redirects)
+	// ---------------------------------------------------------------------
 
 	/**
 	 * @param array<string,mixed> $input
@@ -327,9 +327,9 @@ final class SettingsPage {
 		}
 	}
 
-	/* ---------------------------------------------------------------------
-	 * admin-post handlers
-	 * ------------------------------------------------------------------ */
+	// ---------------------------------------------------------------------
+	// admin-post handlers
+	// ---------------------------------------------------------------------
 
 	private function guard( string $nonce_action ): void {
 		if ( ! current_user_can( Capabilities::MANAGE_SETTINGS ) ) {
@@ -346,9 +346,9 @@ final class SettingsPage {
 	public function handle_save(): void {
 		$tab = self::posted_tab();
 		$this->guard( 'form_captain_settings_' . $tab );
-		$input = isset( $_POST['settings'] ) && is_array( $_POST['settings'] ) ? wp_unslash( $_POST['settings'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by SettingsSchema.
+		$input = isset( $_POST['settings'] ) && is_array( $_POST['settings'] ) ? wp_unslash( $_POST['settings'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing -- nonce checked in guard(); sanitized by SettingsSchema.
 		if ( 'access' === $tab ) {
-			$input = array( 'roles' => isset( $_POST['roles'] ) && is_array( $_POST['roles'] ) ? wp_unslash( $_POST['roles'] ) : array() ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- only keys/booleans are read.
+			$input = array( 'roles' => isset( $_POST['roles'] ) && is_array( $_POST['roles'] ) ? wp_unslash( $_POST['roles'] ) : array() ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Missing -- nonce checked in guard(); only keys/booleans are read.
 		}
 		$this->redirect( $tab, $this->save_tab( $tab, (array) $input ) );
 	}
@@ -356,7 +356,7 @@ final class SettingsPage {
 	public function handle_reset(): void {
 		$tab = self::posted_tab();
 		$this->guard( 'form_captain_reset_' . $tab );
-		if ( empty( $_POST['confirm_reset'] ) ) {
+		if ( empty( $_POST['confirm_reset'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- checked in guard().
 			$this->redirect( $tab, self::notice( 'error', array( __( 'Please confirm that you want to reset this section.', 'form-captain' ) ) ) );
 		}
 		$this->redirect( $tab, $this->reset_tab( $tab ) );
@@ -369,10 +369,10 @@ final class SettingsPage {
 
 	public function handle_rotate_secret(): void {
 		$this->guard( 'form_captain_rotate_secret' );
-		if ( empty( $_POST['confirm_rotate'] ) ) {
+		if ( empty( $_POST['confirm_rotate'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- checked in guard().
 			$this->redirect( 'status', self::notice( 'error', array( __( 'Please confirm the key renewal.', 'form-captain' ) ) ) );
 		}
-		$this->redirect( 'status', $this->rotate_secret( ! empty( $_POST['discard_previous'] ) ) );
+		$this->redirect( 'status', $this->rotate_secret( ! empty( $_POST['discard_previous'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- checked in guard().
 	}
 
 	/** @param array{type:string,messages:string[],errors?:array<string,string>} $notice */
@@ -401,9 +401,9 @@ final class SettingsPage {
 		echo '<tr class="plugin-update-tr active"><td colspan="4" class="plugin-update colspanchange"><div class="notice inline notice-warning notice-alt"><p>' . esc_html__( 'Deleting this plugin will also delete all forms and submissions.', 'form-captain' ) . '</p></div></td></tr>';
 	}
 
-	/* ---------------------------------------------------------------------
-	 * Rendering
-	 * ------------------------------------------------------------------ */
+	// ---------------------------------------------------------------------
+	// Rendering
+	// ---------------------------------------------------------------------
 
 	private static function current_tab(): string {
 		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'general'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -489,10 +489,10 @@ final class SettingsPage {
 	 * @param array<string,mixed> $def
 	 */
 	private function render_field( string $tab, string $key, array $def, mixed $value, string $error ): void {
-		$id    = 'fc-' . $tab . '-' . str_replace( '_', '-', $key );
-		$name  = 'settings[' . $key . ']';
-		$aria  = $error ? ' aria-invalid="true" aria-describedby="' . esc_attr( $id ) . '-error"' : '';
-		$help  = (string) ( $def['help'] ?? '' );
+		$id   = 'fc-' . $tab . '-' . str_replace( '_', '-', $key );
+		$name = 'settings[' . $key . ']';
+		$aria = $error ? ' aria-invalid="true" aria-describedby="' . esc_attr( $id ) . '-error"' : '';
+		$help = (string) ( $def['help'] ?? '' );
 		echo '<tr id="fc-' . esc_attr( $tab . '-' . $key ) . '"><th scope="row"><label for="' . esc_attr( $id ) . '">' . esc_html( (string) $def['label'] ) . '</label></th><td>';
 		switch ( $def['type'] ) {
 			case 'bool':

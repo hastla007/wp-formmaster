@@ -83,8 +83,32 @@ jobs:
       - run: composer install --no-interaction --no-progress
       - run: bin/install-wp-tests.sh "$WP_VERSION"
       - run: WP_CORE_DIR="$PWD/vendor/wordpress/$WP_VERSION" vendor/bin/phpunit
-      - name: Two-plugin contract tests (core + reference connector)
+      - name: Two-plugin contract tests (core + reference connector loaded as plugin)
         run: FC_LOAD_REFERENCE_CONNECTOR=1 WP_CORE_DIR="$PWD/vendor/wordpress/$WP_VERSION" vendor/bin/phpunit --group two-plugin
+
+  e2e:
+    name: Browser E2E (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [ chromium, firefox, webkit ]
+    services:
+      database:
+        image: mariadb:10.11
+        env: { MARIADB_ROOT_PASSWORD: root, MARIADB_DATABASE: wp_e2e, MARIADB_USER: wp, MARIADB_PASSWORD: wp }
+        ports: [ '3306:3306' ]
+        options: --health-cmd="healthcheck.sh --connect" --health-interval=10s --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.3', extensions: mysqli }
+      - uses: actions/setup-node@v4
+        with: { node-version: '22', cache: npm }
+      - run: npm ci && npm install --no-save playwright@1 && npx playwright install --with-deps ${{ matrix.browser }}
+      - run: sudo apt-get install -y mariadb-client
+      - run: E2E_DB_HOST=127.0.0.1:3306 bin/e2e-site.sh start
+      - run: E2E_BROWSERS=${{ matrix.browser }} npm run e2e
 
   release:
     name: Release ZIP check

@@ -92,14 +92,14 @@ final class Commands {
 		);
 		return array_map(
 			static fn( array $j ): array => array(
-				'id'           => (int) $j['id'],
-				'type'         => (string) $j['type'],
-				'status'       => (string) $j['status'],
-				'attempts'     => $j['attempts'] . '/' . $j['max_attempts'],
-				'entry_id'     => (string) ( $j['entry_id'] ?? '' ),
-				'error'        => (string) ( $j['last_error_code'] ?? '' ),
-				'run_after'    => (string) $j['run_after_gmt'],
-				'updated'      => (string) $j['updated_gmt'],
+				'id'        => (int) $j['id'],
+				'type'      => (string) $j['type'],
+				'status'    => (string) $j['status'],
+				'attempts'  => $j['attempts'] . '/' . $j['max_attempts'],
+				'entry_id'  => (string) ( $j['entry_id'] ?? '' ),
+				'error'     => (string) ( $j['last_error_code'] ?? '' ),
+				'run_after' => (string) $j['run_after_gmt'],
+				'updated'   => (string) $j['updated_gmt'],
 			),
 			$list['items']
 		);

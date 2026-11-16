@@ -169,7 +169,7 @@ final class SettingsSchema {
 			),
 		);
 		foreach ( $out as $path => $def ) {
-			list( $group, $key )    = explode( '.', $path, 2 );
+			list( $group, $key )     = explode( '.', $path, 2 );
 			$out[ $path ]['default'] = $d[ $group ][ $key ] ?? null;
 			$out[ $path ]['tab']     = $group;
 			$out[ $path ]['group']   = $group;

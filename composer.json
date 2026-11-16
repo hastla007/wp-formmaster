@@ -17,10 +17,7 @@
   "autoload": {
     "psr-4": {
       "FormCaptain\\": "src/"
-    },
-    "files": [
-      "includes/functions.php"
-    ]
+    }
   },
   "autoload-dev": {
     "psr-4": {

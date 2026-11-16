@@ -10,6 +10,8 @@ declare(strict_types=1);
 use FormCaptain\Api\ContractApi;
 use FormCaptain\Plugin;
 
+defined( 'ABSPATH' ) || exit;
+
 if ( ! function_exists( 'form_captain_contract_version' ) ) {
 
 	function form_captain_contract_version(): string {

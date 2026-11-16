@@ -16,6 +16,8 @@ use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
 use FormCaptain\Support\Clock;
 
+defined( 'ABSPATH' ) || exit;
+
 if ( ! class_exists( '\WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }

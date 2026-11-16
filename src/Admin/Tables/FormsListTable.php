@@ -14,6 +14,8 @@ use FormCaptain\Import\EntryImportAdmin;
 use FormCaptain\Install\Capabilities;
 use FormCaptain\Repository\FormRepository;
 
+defined( 'ABSPATH' ) || exit;
+
 if ( ! class_exists( '\WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
 }

@@ -45,13 +45,23 @@ Nummern beziehen sich auf die Detailed Plugin Guidelines.
 | 18 | Verzeichnis kann Plugins entfernen/ändern | Supportpflicht ernst nehmen | – |
 
 **Zusätzliche technische Prüfungen**
-- [ ] Plugin Check (offizielles Prüf-Plugin) auf dem Release-ZIP ohne Fehler; Warnungen begründet im Release-Ticket.
+- [x] Plugin Check (offizielles Prüf-Plugin) auf dem Release-ZIP ohne Fehler; Warnungen begründet im Release-Ticket. *Lauf 16.11.2026 mit Plugin Check 2.2.0 auf `form-captain-1.0.0.zip` (Version im Header auf 1.0.0 gesetzt, WP 6.8.3): **0 Fehler**, 68 Warnungen. Behoben: fehlender `ABSPATH`-Schutz in drei Dateien (deshalb steht `includes/functions.php` nicht mehr im Composer-Autoload; das Plugin lädt sie selbst). Beim Dev-Build meldet Plugin Check erwartbar „Stable tag mismatch“ (1.0.0 ≠ 1.0.0-dev). Begründung der verbleibenden Warnungen in Abschnitt 2.1.*
 - [x] Alle Ausgaben escaped, Eingaben sanitized, Nonces + Capabilities (P5-07, P5-08). *Nachweis: PHPCS (WordPress-Extra) 0 Fehler, Sicherheitsreview docs/SECURITY-REVIEW.md.*
 - [x] Textdomain `form-captain` = Slug; keine `load_plugin_textdomain`-Pflicht für WordPress.org-Übersetzungen, Sprachpakete über translate.wordpress.org.
 - [x] Keine Dateien außerhalb von Allowlist (Tests, `vendor/`, `node_modules/`, `docs/`) – `bin/check-release.sh` OK (126 Dateien, 16.11.2026).
 - [x] `uninstall.php` löscht Daten nur nach expliziter Zustimmung (P5-06): Option `delete_data_on_uninstall` **und** Bestätigungszeitpunkt nötig.
 - [x] Keine Remote-Assets (Fonts, Skripte, Bilder von CDNs) im Admin oder Frontend. *Nachweis: keine `wp_remote_*`-Aufrufe im Kern; E2E-Test „Seite ohne Formular lädt keine Form-Captain-Assets“.*
 - [x] Externe Dienste (Captcha, Connectoren) im readme-Abschnitt „External services“ mit Zweck, übertragenen Daten, Zeitpunkt und Links zu Bedingungen/Datenschutz des Anbieters. In v1.0 ohne aktivierbaren externen Dienst: Abschnitt mit Aussage „keine externen Dienste“.
+
+### 2.1 Verbleibende Plugin-Check-Warnungen (begründet)
+
+| Anzahl | Code | Begründung |
+|---:|---|---|
+| 43 | `PluginCheck.Security.DirectDB.UnescapedDBParameter` | Tabellennamen aus `$wpdb->prefix` und festen Konstanten (`Database\Tables`), WHERE-Fragmente aus festen Spaltennamen mit Platzhaltern; Werte gehen immer über `$wpdb->prepare()`. Kein Benutzerwert fließt ungeprüft in SQL (Sicherheitsreview docs/SECURITY-REVIEW.md). |
+| 13 | `WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber` / `UnfinishedPrepare` | Fehlalarm: WHERE-Klauseln mit Platzhaltern werden dynamisch zusammengesetzt und die Parameter als Array übergeben (`EntryRepository`, `FormRepository`, `JobRepository`); der Sniff kann die Platzhalter im Variableninhalt nicht zählen. Abgedeckt durch Integrationstests der Filter. |
+| 10 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` / `NoCaching` | Eigene Tabellen (Migrator, Logger) ohne WordPress-API; Caching ist bei Migrations- und Schreibabfragen nicht sinnvoll. |
+| 1 | `load_plugin_textdomain` | Das Plugin liefert de_DE/de_AT selbst aus, bevor Sprachpakete auf translate.wordpress.org existieren. Nach Freigabe der Übersetzungen dort kann der Aufruf entfallen. |
+| 1 | `set_time_limit()` | Nur beim CSV-Export großer Datenmengen, mit `function_exists`-Prüfung; der Export läuft zusätzlich in Stapeln. |
 
 ## 3. readme.txt
 

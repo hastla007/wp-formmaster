@@ -241,4 +241,18 @@ final class ExtensionPointsTest extends TestCase {
 		$too_big    = $controller->process( $post, array( 'CONTENT_LENGTH' => 5 * $limit + $limit + 1 ), $files );
 		$this->assertSame( 'payload_too_large', $too_big['result']['code'], 'the form fields alone are still limited' );
 	}
+
+	public function test_validate_without_saving_for_intermediate_steps(): void {
+		$form   = $this->create_published_form();
+		$before = (int) $GLOBALS['wpdb']->get_var( 'SELECT COUNT(*) FROM ' . \FormCaptain\Database\Tables::name( \FormCaptain\Database\Tables::ENTRIES ) );
+		$step   = form_captain_validate_v1( (int) $form['id'], array( 'f_name01' => 'Ada' ), array( 'f_name01' ) );
+		$this->assertSame( array( 'valid' => true, 'errors' => array(), 'codes' => array() ), $step, 'the required e-mail of a later step is not reported' );
+		$bad = form_captain_validate_v1( (string) $form['public_id'], array( 'email' => 'not-an-email' ), array( 'f_mail01' ) );
+		$this->assertFalse( $bad['valid'] );
+		$this->assertSame( 'invalid_email', $bad['codes']['f_mail01'], 'field keys are accepted' );
+		$all = form_captain_validate_v1( (int) $form['id'], array() );
+		$this->assertArrayHasKey( 'f_name01', $all['errors'] );
+		$this->assertSame( $before, (int) $GLOBALS['wpdb']->get_var( 'SELECT COUNT(*) FROM ' . \FormCaptain\Database\Tables::name( \FormCaptain\Database\Tables::ENTRIES ) ), 'nothing is saved' );
+		$this->assertInstanceOf( \WP_Error::class, form_captain_validate_v1( 999999, array() ) );
+	}
 }

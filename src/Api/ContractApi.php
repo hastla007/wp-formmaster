@@ -164,6 +164,47 @@ final class ContractApi {
 	}
 
 	/**
+	 * Checks values against the published version of a form without saving anything
+	 * (contract 1.1.0; for intermediate steps of multi-step forms, P7-07). No entry, no mail,
+	 * no event, no spam or rate-limit counting. Only errors of the fields in $only are returned
+	 * (empty = all fields); other fields are checked for conditions only.
+	 *
+	 * @param array<string,mixed> $values field ID or key => value
+	 * @param string[]            $only   field IDs whose errors are wanted
+	 * @return array{valid:bool,errors:array<string,string>,codes:array<string,string>}|\WP_Error
+	 */
+	public function validate( int|string $form_id, array $values, array $only = array() ): array|\WP_Error {
+		if ( ! self::ready() ) {
+			return self::not_ready();
+		}
+		$form = $this->forms->resolve( $form_id );
+		if ( ! $form || 'published' !== $form['status'] ) {
+			return new \WP_Error( 'form_not_found', __( 'This form is not available.', 'form-captain' ) );
+		}
+		$version = $this->plugin->get( \FormCaptain\Service\FormSchemaLoader::class )->published( $form );
+		if ( null === $version ) {
+			return new \WP_Error( 'form_not_found', __( 'This form is not available.', 'form-captain' ) );
+		}
+		$result = $this->plugin->get( \FormCaptain\Domain\SubmissionValidator::class )->validate(
+			$version['fields'],
+			$values,
+			array(
+				'today'       => wp_date( 'Y-m-d' ),
+				'accept_keys' => true,
+				'form'        => $form,
+			)
+		);
+		$only   = array_values( array_filter( array_map( 'strval', $only ) ) );
+		$errors = $only ? array_intersect_key( $result['errors'], array_flip( $only ) ) : $result['errors'];
+		$codes  = $only ? array_intersect_key( $result['codes'], array_flip( $only ) ) : $result['codes'];
+		return array(
+			'valid'  => ! $errors,
+			'errors' => $errors,
+			'codes'  => $codes,
+		);
+	}
+
+	/**
 	 * @param array<string,mixed> $payload field key or field id => value
 	 * @param array<string,mixed> $context source, idempotency_key, signed_context, user_id
 	 * @return array<string,mixed> result object

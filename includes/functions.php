@@ -41,6 +41,17 @@ if ( ! function_exists( 'form_captain_contract_version' ) ) {
 	}
 
 	/**
+	 * Checks values against the published form without saving (contract 1.1.0).
+	 *
+	 * @param array<string,mixed> $values field ID or key => value
+	 * @param string[]            $only   field IDs whose errors are wanted (empty = all)
+	 * @return array{valid:bool,errors:array<string,string>,codes:array<string,string>}|WP_Error
+	 */
+	function form_captain_validate_v1( int|string $form_id, array $values, array $only = array() ): array|WP_Error {
+		return Plugin::instance()->get( ContractApi::class )->validate( $form_id, $values, $only );
+	}
+
+	/**
 	 * @param array<string,mixed> $definition
 	 */
 	function form_captain_register_action_v1( string $key, array $definition, callable $callback ): true|WP_Error {

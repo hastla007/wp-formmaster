@@ -82,6 +82,7 @@ form_captain_register_action_v1( string $key, array $definition, callable $callb
 form_captain_get_render_v1( int|string $form_id, array $args = [] ): string
 form_captain_sign_context_v1( string $purpose, int $form_id, string $ref_type, string $ref_id, int $ttl = 0 ): array
 form_captain_register_context_purpose_v1( string $purpose, array $definition ): true|WP_Error
+form_captain_validate_v1( int|string $form_id, array $values, array $only = [] ): array|WP_Error // seit 1.1.0: prüft gegen die veröffentlichte Version, speichert nichts; nur Fehler der Felder in $only (leer = alle); Rückgabe {valid, errors, codes}
 ```
 
 Signierter Suite-Kontext: siehe [`suite-kontext.md`](suite-kontext.md).

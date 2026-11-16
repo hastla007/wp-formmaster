@@ -150,8 +150,11 @@ final class ReferenceConnectorTest extends TestCase {
 
 	public function test_deactivated_connector_does_not_deliver(): void {
 		list( , , $id ) = $this->submission();
-		$this->assertSame( 'failed', $this->run_job( $id ) );
-		$this->assertSame( 'connector_disabled', $this->plugin()->get( JobRepository::class )->find( $id )['last_error_code'] );
+		$this->assertSame( 'paused', $this->run_job( $id ), 'A job of a not activated connector is parked, not retried' );
+		$job = $this->plugin()->get( JobRepository::class )->find( $id );
+		$this->assertSame( 'paused', $job['status'] );
+		$this->assertSame( 'connector_disabled', $job['last_error_code'] );
+		$this->assertSame( 0, $job['attempts'], 'The parked attempt is not counted' );
 		$this->assertCount( 0, $this->tickets() );
 	}
 

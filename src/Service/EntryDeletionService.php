@@ -22,7 +22,7 @@ use FormCaptain\Support\Logger;
 
 final class EntryDeletionService {
 
-	public const REASONS = array( 'manual', 'retention', 'erasure', 'anonymized', 'form_deleted' );
+	public const REASONS = array( 'manual', 'retention', 'erasure', 'anonymized', 'form_deleted', 'consent_withdrawn', 'import_reverted' );
 
 	public function __construct(
 		private EntryRepository $entries,

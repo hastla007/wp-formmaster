@@ -43,7 +43,7 @@ final class EntriesListTable extends \WP_List_Table {
 	private array $values = array();
 
 	/**
-	 * @param array{form_id:int,status:string,search:string,date_from:string,date_to:string,paged:int} $filters
+	 * @param array{form_id:int,status:string,search:string,date_from:string,date_to:string,paged:int,consent?:string} $filters
 	 */
 	public function __construct(
 		private EntryRepository $entries,
@@ -89,6 +89,9 @@ final class EntriesListTable extends \WP_List_Table {
 				$ids = array( 0 );
 			}
 			$args['ids'] = $ids;
+		}
+		if ( in_array( $this->filters['consent'] ?? '', array( 'withdrawn', 'active' ), true ) ) {
+			$args['consent'] = $this->filters['consent'];
 		}
 		if ( $this->filters['date_from'] ) {
 			$args['date_from'] = get_gmt_from_date( $this->filters['date_from'] . ' 00:00:00' );
@@ -253,7 +256,29 @@ final class EntriesListTable extends \WP_List_Table {
 		if ( 'spam' === $item['status'] && ! empty( $item['spam_reason'] ) ) {
 			$out .= '<br /><span class="description">' . esc_html( self::spam_reason_label( (string) $item['spam_reason'] ) ) . '</span>';
 		}
+		$badge = self::consent_withdrawn_badge( $item );
+		if ( '' !== $badge ) {
+			$out .= '<br />' . $badge;
+		}
 		return $out;
+	}
+
+	/**
+	 * Escaped badge "Consent withdrawn on …" or '' when consent was not withdrawn.
+	 *
+	 * @param array<string,mixed> $entry
+	 */
+	public static function consent_withdrawn_badge( array $entry ): string {
+		if ( empty( $entry['consent_withdrawn_gmt'] ) ) {
+			return '';
+		}
+		return '<span class="fc-badge fc-badge-warning fc-consent-withdrawn">' . esc_html(
+			sprintf(
+				/* translators: %s: date */
+				__( 'Consent withdrawn on %s', 'form-captain' ),
+				get_date_from_gmt( (string) $entry['consent_withdrawn_gmt'], (string) get_option( 'date_format' ) )
+			)
+		) . '</span>';
 	}
 
 	/** @param array<string,mixed> $item */

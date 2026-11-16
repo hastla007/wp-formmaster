@@ -68,6 +68,7 @@ final class SystemStatus {
 			),
 			'queue'         => array(
 				'counts'            => (array) $health['counts'],
+				'paused'            => (int) ( $health['counts']['paused'] ?? 0 ),
 				'oldest_due_gmt'    => $health['oldest_due_gmt'],
 				'oldest_due_age_s'  => (int) $health['oldest_due_age_s'],
 				'delayed'           => (int) $health['oldest_due_age_s'] > self::QUEUE_WARN_SECONDS,
@@ -88,6 +89,7 @@ final class SystemStatus {
 			),
 			'integrations'  => array(
 				'connectors' => $connectors,
+				'paused'     => $this->paused_by_connector(),
 				'failed_24h' => $this->jobs->error_summary( 'connector.', $since ),
 				'suite'      => self::suite_plugins(),
 				'pro_active' => (bool) apply_filters( 'form_captain_pro_active', false ),
@@ -107,6 +109,23 @@ final class SystemStatus {
 			),
 			'recent_errors' => $this->recent_errors(),
 		);
+	}
+
+	/**
+	 * Paused connector jobs per connector key; jobs whose connector is no longer registered are
+	 * counted under `missing`.
+	 *
+	 * @return array<string,int>
+	 */
+	private function paused_by_connector(): array {
+		$out = array();
+		foreach ( $this->jobs->paused_by_action() as $action_key => $count ) {
+			$job    = array( 'payload' => array( 'action_key' => (string) $action_key ) );
+			$action = $this->registry->action( (string) $action_key );
+			$key    = 'connector_not_found' === $this->registry->paused_reason( $job ) ? 'missing' : (string) ( $action['connector'] ?? 'missing' );
+			$out[ $key ] = ( $out[ $key ] ?? 0 ) + (int) $count;
+		}
+		return $out;
 	}
 
 	/** Calls a RetentionService method (agent C) when available. */
@@ -232,6 +251,9 @@ final class SystemStatus {
 		}
 		if ( (int) ( $d['queue']['counts']['dead'] ?? 0 ) > 0 ) {
 			$out['dead'] = __( 'Some jobs failed permanently (dead-letter). Review them under Integrations or Entries and retry them.', 'form-captain' );
+		}
+		if ( ! empty( $d['integrations']['paused']['missing'] ) ) {
+			$out['paused_missing'] = __( 'Some integration jobs are paused because their connector plugin is missing. Reinstall and activate the connector, or cancel the jobs under Integrations.', 'form-captain' );
 		}
 		if ( ! empty( $d['queue']['restore_suspected'] ) ) {
 			$out['restore'] = __( 'It looks like older data was restored. Expired submissions will be cleaned up now. Please repeat erasure requests completed after the backup date.', 'form-captain' );

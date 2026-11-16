@@ -139,19 +139,20 @@ final class ConnectorJobTest extends TestCase {
 		$this->assertSame( 'mapping_type_mismatch', $this->job( $id )['last_error_code'] );
 	}
 
-	public function test_disabled_connector_keeps_jobs_until_dead_and_requeues_on_activation(): void {
+	public function test_disabled_connector_pauses_jobs_and_resumes_on_activation(): void {
 		$form  = $this->form_with_action( array( 'email' => 'f_mail01' ) );
 		$entry = $this->entry( $form );
 		$id    = $this->enqueue_action_job( $form, $entry, 'fake.send', 'a_0123456789', 2 );
 		$this->registry()->deactivate( 'fake' );
-		$this->assertSame( 'failed', $this->run_job( $id ) );
+		$this->assertSame( 'paused', $this->job( $id )['status'] );
 		$this->assertSame( 'connector_disabled', $this->job( $id )['last_error_code'] );
 		Clock::freeze( time() + 7 * HOUR_IN_SECONDS );
-		$this->assertSame( 'dead', $this->run_job( $id ) );
+		$this->assertNull( $this->run_job( $id ), 'Paused jobs cannot be claimed' );
+		$this->assertSame( 'paused', $this->job( $id )['status'], 'Paused jobs never expire' );
 		$this->assertCount( 0, $this->fake->calls, 'Disabled connectors never run' );
 		$this->as_admin();
 		$this->assertTrue( $this->registry()->activate( 'fake' ) );
-		$this->assertSame( 'pending', $this->job( $id )['status'], 'Dead connector_disabled jobs are re-queued on activation' );
+		$this->assertSame( 'pending', $this->job( $id )['status'], 'Paused jobs are resumed on activation' );
 		$this->assertSame( 'succeeded', $this->run_job( $id ) );
 	}
 

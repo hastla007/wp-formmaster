@@ -8,9 +8,13 @@
  * - Form actions are registered with form_captain_register_action_v1() and executed exclusively by
  *   the outbox worker (job type `connector.action`), never inside the submission request.
  *
- * Deactivation semantics (P8-32): open jobs are not cancelled. They stay in the queue and the handler
- * answers `retry` with code `connector_disabled` until the attempts are exhausted (dead-letter). When
- * the connector is activated again, dead jobs that died with `connector_disabled` are re-queued.
+ * Deactivation semantics (P8-32): open jobs are neither cancelled nor retried. Deactivating a connector
+ * moves its pending/failed `connector.action` jobs to `paused` (code `connector_disabled`, attempts
+ * unchanged); the worker never claims paused jobs and they never expire. Activating the connector
+ * again resumes them (paused → pending, due now). A job that is claimed while its connector is
+ * disabled (race) goes back to `paused` without counting the attempt. If the connector plugin is
+ * removed, its paused jobs stay paused ("connector missing") until it returns and is activated, or an
+ * administrator cancels them under Integrations.
  *
  * @package FormCaptain
  */
@@ -273,15 +277,55 @@ final class ConnectorRegistry {
 			return new \WP_Error( 'requirements_not_met', implode( ' ', $this->seen[ $key ]['requirements']['messages'] ) ?: __( 'The connector requirements are not met.', 'form-captain' ) );
 		}
 		$this->store_optin( $key, true );
-		$requeued = $this->requeue_disabled_jobs( $key );
-		Logger::log( 'info', 'connector_activated', $key . ' requeued=' . $requeued );
+		$resumed = $this->plugin->get( JobRepository::class )->resume_for_connector( $key, $this->action_keys_for( $key ) );
+		Logger::log( 'info', 'connector_activated', $key . ' resumed=' . $resumed );
 		return true;
 	}
 
 	public function deactivate( string $key ): bool {
 		$this->store_optin( $key, false );
-		Logger::log( 'info', 'connector_deactivated', $key );
+		$paused = $this->plugin->get( JobRepository::class )->pause_for_connector( $key, $this->action_keys_for( $key ) );
+		Logger::log( 'info', 'connector_deactivated', $key . ' paused=' . $paused );
 		return true;
+	}
+
+	/**
+	 * Action keys registered for a connector (empty for missing connectors and for `core`).
+	 *
+	 * @return string[]
+	 */
+	public function action_keys_for( string $key ): array {
+		$this->collect();
+		$out = array();
+		foreach ( $this->actions as $action_key => $action ) {
+			if ( $key === $action['definition']['connector'] ) {
+				$out[] = (string) $action_key;
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * Why a paused job is paused: 'connector_disabled' when its action is registered by a known
+	 * connector, 'connector_not_found' when the action/connector is no longer registered.
+	 *
+	 * @param array<string,mixed> $job hydrated job
+	 */
+	public function paused_reason( array $job ): string {
+		$this->collect();
+		$action = $this->actions[ (string) ( $job['payload']['action_key'] ?? '' ) ] ?? null;
+		if ( null === $action || null === $action['definition']['connector'] ) {
+			return 'connector_not_found';
+		}
+		$state = $this->state( (string) $action['definition']['connector'] );
+		return ( '' === $state || self::STATE_MISSING === $state ) ? 'connector_not_found' : 'connector_disabled';
+	}
+
+	/** Translated status label for a paused job (Integrations, entry detail). */
+	public function paused_label( array $job ): string {
+		return 'connector_not_found' === $this->paused_reason( $job )
+			? __( 'Paused (connector missing)', 'form-captain' )
+			: __( 'Paused (connector disabled)', 'form-captain' );
 	}
 
 	/** Removes the stored opt-in of a connector that is no longer installed. */
@@ -299,28 +343,6 @@ final class ConnectorRegistry {
 			'user_id'     => get_current_user_id(),
 		);
 		update_option( self::OPTION, $opt, false );
-	}
-
-	/** Re-queues dead jobs of this connector that died only because it was disabled. */
-	private function requeue_disabled_jobs( string $key ): int {
-		$jobs  = $this->plugin->get( JobRepository::class );
-		$count = 0;
-		$page  = 1;
-		do {
-			$list = $jobs->list( array( 'status' => 'dead', 'type_prefix' => self::JOB_TYPE, 'per_page' => 200, 'page' => $page ) );
-			foreach ( $list['items'] as $job ) {
-				if ( 'connector_disabled' !== ( $job['last_error_code'] ?? '' ) ) {
-					continue;
-				}
-				$action = $this->actions[ (string) ( $job['payload']['action_key'] ?? '' ) ] ?? null;
-				if ( $action && $key === $action['definition']['connector'] && $jobs->retry( (int) $job['id'] ) ) {
-					++$count;
-				}
-			}
-			++$page;
-			$more = 200 === count( $list['items'] );
-		} while ( $more && $page < 50 );
-		return $count;
 	}
 
 	// ---------------------------------------------------------------------
@@ -381,7 +403,7 @@ final class ConnectorRegistry {
 			),
 			'connector_disabled'    => array(
 				'label' => __( 'Connector disabled', 'form-captain' ),
-				'next'  => __( 'Activate the connector under Form Captain → Integrations. Waiting jobs are retried automatically.', 'form-captain' ),
+				'next'  => __( 'Activate the connector under Form Captain → Integrations. Paused jobs continue automatically.', 'form-captain' ),
 			),
 			'incompatible_contract' => array(
 				'label' => __( 'Incompatible contract version', 'form-captain' ),
@@ -643,6 +665,11 @@ final class ConnectorRegistry {
 		if ( null === $action ) {
 			// Provider plugin may be temporarily inactive: keep retrying, then dead-letter (no lost jobs).
 			return JobResult::retry( 'action_not_found', 'Action ' . $action_key . ' is not registered' );
+		}
+		$connector = $action['definition']['connector'];
+		if ( null !== $connector && in_array( $this->state( (string) $connector ), array( self::STATE_DISABLED, self::STATE_DETECTED ), true ) ) {
+			// Connector disabled (or never activated) while the job was claimed: park it, do not retry.
+			return JobResult::pause( 'connector_disabled', 'Connector ' . $connector . ' is disabled' );
 		}
 		$reason = $this->unavailable_reason( $action_key );
 		if ( 'incompatible_contract' === $reason || 'entitlement_missing' === $reason ) {

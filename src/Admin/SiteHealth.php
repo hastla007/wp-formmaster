@@ -59,6 +59,14 @@ final class SiteHealth {
 				(int) floor( $d['queue']['oldest_due_age_s'] / 60 ),
 				(int) ( $d['queue']['counts']['dead'] ?? 0 )
 			);
+		$paused = (int) ( $d['queue']['paused'] ?? 0 );
+		if ( $paused > 0 ) {
+			$desc .= ' ' . sprintf(
+				/* translators: %d: number of paused jobs */
+				_n( '%d integration job is paused because its connector is disabled or missing (not counted as backlog).', '%d integration jobs are paused because their connector is disabled or missing (not counted as backlog).', $paused, 'form-captain' ),
+				$paused
+			);
+		}
 		return $this->result( 'queue', $ok, __( 'Form Captain queue is healthy', 'form-captain' ), __( 'Form Captain queue has a backlog', 'form-captain' ), $desc );
 	}
 

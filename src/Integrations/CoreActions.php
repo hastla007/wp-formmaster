@@ -298,7 +298,7 @@ final class CoreActions {
 	public function pending_handoffs( int $entry_id ): array {
 		$entries = $this->plugin->get( EntryRepository::class );
 		$entry   = $entries->find( $entry_id );
-		if ( ! $entry || ! empty( $entry['anonymized_gmt'] ) || in_array( $entry['status'], array( 'spam', 'trash' ), true ) ) {
+		if ( ! $entry || ! empty( $entry['anonymized_gmt'] ) || ! empty( $entry['consent_withdrawn_gmt'] ) || in_array( $entry['status'], array( 'spam', 'trash' ), true ) ) {
 			return array();
 		}
 		$form = $this->plugin->get( FormRepository::class )->find( (int) $entry['form_id'] );

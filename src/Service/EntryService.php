@@ -220,6 +220,9 @@ final class EntryService {
 		if ( in_array( $entry['status'], array( 'spam', 'trash' ), true ) ) {
 			return self::conflict( __( 'Notifications are not sent for spam or trashed submissions.', 'form-captain' ) );
 		}
+		if ( ! empty( $entry['consent_withdrawn_gmt'] ) ) {
+			return self::conflict( __( 'Consent for this submission was withdrawn. No further messages are sent.', 'form-captain' ) );
+		}
 		foreach ( $this->jobs->for_entry( $entry_id ) as $job ) {
 			if ( 'mail.admin' === $job['type'] && in_array( $job['status'], array( 'pending', 'running' ), true ) ) {
 				return true; // Already queued – dedupe.

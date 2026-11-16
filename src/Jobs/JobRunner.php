@@ -40,10 +40,10 @@ final class JobRunner {
 	/**
 	 * Runs up to $limit jobs or until the time budget is exhausted.
 	 *
-	 * @return array{processed:int,succeeded:int,failed:int,dead:int}
+	 * @return array{processed:int,succeeded:int,failed:int,dead:int,paused:int}
 	 */
 	public function run( ?int $limit = null ): array {
-		$stats = array( 'processed' => 0, 'succeeded' => 0, 'failed' => 0, 'dead' => 0 );
+		$stats = array( 'processed' => 0, 'succeeded' => 0, 'failed' => 0, 'dead' => 0, 'paused' => 0 );
 		$this->jobs->release_expired_locks();
 		$limit    = $limit ?? Limits::get( 'job_batch' );
 		$deadline = microtime( true ) + Limits::get( 'job_batch_seconds' );
@@ -61,7 +61,7 @@ final class JobRunner {
 		return $stats;
 	}
 
-	/** Returns 'succeeded'|'failed'|'dead' or null if the claim was lost. */
+	/** Returns 'succeeded'|'failed'|'dead'|'paused' or null if the claim was lost. */
 	public function run_one( int $id ): ?string {
 		$token = $this->jobs->claim( $id );
 		if ( null === $token ) {
@@ -95,6 +95,13 @@ final class JobRunner {
 		if ( JobResult::SUCCESS === $result->status ) {
 			$this->jobs->complete( $id, $token, $result->data );
 			return 'succeeded';
+		}
+		if ( JobResult::PAUSE === $result->status ) {
+			if ( $this->jobs->pause_claimed( $id, $token, $result->code ) ) {
+				Logger::log( 'info', 'job_paused', 'code=' . $result->code, array( 'job_id' => $id, 'entry_id' => $job['entry_id'] ?? 0, 'form_id' => $job['form_id'] ?? 0 ) );
+				return 'paused';
+			}
+			return null;
 		}
 		$state = $this->jobs->fail( $id, $token, $result->code, $result->message, JobResult::FAIL === $result->status );
 		// Only the error code goes to fc_log: handler/connector messages are free text and may echo field values (P5-09).

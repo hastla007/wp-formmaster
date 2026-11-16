@@ -128,7 +128,7 @@ final class Commands {
 	 */
 	public function cli_jobs_run( array $args, array $assoc ): void {
 		$stats = $this->run_jobs( (int) ( $assoc['limit'] ?? 20 ) );
-		\WP_CLI::success( sprintf( 'Processed %d jobs: %d succeeded, %d failed, %d dead.', $stats['processed'], $stats['succeeded'], $stats['failed'], $stats['dead'] ) );
+		\WP_CLI::success( sprintf( 'Processed %d jobs: %d succeeded, %d failed, %d dead, %d paused.', $stats['processed'], $stats['succeeded'], $stats['failed'], $stats['dead'], $stats['paused'] ?? 0 ) );
 	}
 
 	/**

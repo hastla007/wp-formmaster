@@ -12,17 +12,23 @@ declare(strict_types=1);
 namespace FormCaptain\Service;
 
 use FormCaptain\Integrations\CoreActions;
+use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\JobRepository;
 
 final class OutboxPlanner {
 
-	public function __construct( private JobRepository $jobs, private FormSchemaLoader $loader ) {}
+	public function __construct( private JobRepository $jobs, private FormSchemaLoader $loader, private ?EntryRepository $entries = null ) {}
 
 	/**
 	 * @param array<string,mixed> $form form row (settings + published version)
 	 * @throws \RuntimeException When a job cannot be stored (caller rolls back).
 	 */
 	public function plan( array $form, int $entry_id ): void {
+		// No new jobs for an entry whose consent was withdrawn.
+		$entry = $this->entries ? $this->entries->find( $entry_id ) : null;
+		if ( $entry && ! empty( $entry['consent_withdrawn_gmt'] ) ) {
+			return;
+		}
 		$settings = is_array( $form['settings'] ?? null ) ? $form['settings'] : array();
 		$form_id  = (int) $form['id'];
 		$prefix   = 'form-captain:' . get_current_blog_id() . ':' . $entry_id . ':';

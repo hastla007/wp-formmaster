@@ -110,8 +110,8 @@ Vom Kern gesetzte Codes (Integrationen zeigt je Code den nächsten Schritt):
 
 | Code | Bedeutung | Ergebnis |
 |---|---|---|
-| `connector_disabled` | Connector deaktiviert | retry bis `dead`; bei Reaktivierung werden diese Dead-Jobs automatisch neu eingeplant |
-| `connector_not_found` / `action_not_found` | Plugin fehlt/inaktiv | retry bis `dead` (keine verlorenen Jobs) |
+| `connector_disabled` | Connector deaktiviert | Job `paused` (kein Versuch gezählt, verfällt nicht); bei Reaktivierung automatisch fortgesetzt, siehe Abschnitt 6a |
+| `connector_not_found` / `action_not_found` | Plugin fehlt/inaktiv | bereits pausierte Jobs bleiben `paused` („Connector fehlt“); noch nicht pausierte Jobs: retry bis `dead` (keine verlorenen Jobs) |
 | `requirements_not_met` | Konfiguration unvollständig | retry |
 | `incompatible_contract` | Major passt nicht | fail |
 | `entitlement_missing` | Pro-Recht fehlt/abgelaufen | fail |
@@ -127,6 +127,20 @@ Eigene Codes des Connectors (z. B. `remote_unavailable`, `remote_rejected`, `tim
 - Standard 8 Versuche (Budget `job_max_attempts`), danach `dead`. Dead-Jobs bleiben 90 Tage sichtbar.
 - Manuell: *Integrationen → Integrations-Jobs → Wiederholen/Abbrechen* (`manage_integrations` + Nonce) oder `wp form-captain jobs retry <id>`.
 - Externe Fehler ändern nie den gespeicherten Entry, die Spamprüfung oder die native Admin-Mail.
+
+## 6a. Lifecycle: Deaktivieren, Reaktivieren, Entfernen
+
+| Ereignis | Wirkung auf Jobs `connector.action` dieses Connectors |
+|---|---|
+| **Deaktivieren** (Integrationen, `manage_integrations` + Nonce) | Offene Jobs (`pending`, `failed`) → `paused`, Code `connector_disabled`. `attempts` bleibt, Lock wird freigegeben. Der Worker führt `paused` nie aus, `paused` verfällt nicht und wird nie automatisch gelöscht. Jobs anderer Connectoren, Kernaktionen (`core.*`) und Mail-Jobs bleiben unberührt. |
+| Job läuft gerade, während deaktiviert wird (Race) | Der Handler erkennt den deaktivierten Connector vor dem Callback und setzt den Job zurück auf `paused`; der Versuch wird nicht gezählt, der Callback nicht aufgerufen. Dasselbe gilt für Jobs, die für einen nie aktivierten Connector eingeplant wurden. |
+| **Aktivieren** | Alle `paused`-Jobs dieses Connectors → `pending`, `run_after_gmt = jetzt`, `attempts` unverändert. Sie laufen mit dem nächsten Worker-Lauf. |
+| **Plugin entfernt/inaktiv** (nicht mehr registriert) | `paused`-Jobs bleiben `paused`; Integrationen zeigt „Pausiert (Connector fehlt)“ und einen Hinweis. Wird das Plugin wieder installiert **und** aktiviert, laufen sie weiter. Alternativ bricht ein Admin sie unter *Integrationen → Integrations-Jobs → Abbrechen* ab (`manage_integrations` + Nonce). |
+| Entry gelöscht/anonymisiert, Consent-Widerruf | Auch `paused`-Jobs des Entries werden `cancelled`. |
+
+Zuordnung Job → Connector: `payload.action_key` gegen die von der Registry registrierten Aktionen mit `definition.connector = <key>` (keine Schemaänderung). Ältere Installationen: Jobs, die vor diesem Verhalten mit `connector_disabled` im Dead-letter gelandet sind, werden **nicht** mehr automatisch neu eingeplant; sie lassen sich manuell wiederholen.
+
+Systemstatus und Site Health führen `paused` getrennt (`queue.paused`, `integrations.paused` je Connector, `missing` für fehlende Connectoren); pausierte Jobs gelten nicht als Rückstau. `wp form-captain jobs list --status=paused` listet sie.
 
 ## 7. Testlauf und Testmodus
 
@@ -157,6 +171,7 @@ Das Contract-Testkit liegt in `tests/integration/Contract/` (`ConnectorContractA
 - `assertConnectorShape()`, `assertJobArrayShape()`, `assertActionResultShape()`, `assertEntryEventShape()` (unbekannte Schlüssel erlaubt), `assertOnlyMappedValues()`, `assertIdempotentCallback()`.
 - Helfer `make_entry()`, `enqueue_action_job()`, `action_instance()`.
 - Zwei-Plugin-Beispiel: `ReferenceConnectorTest` (Opt-in, Timeout nach Erfolg, Ausfall, Dead-letter, Deaktivierung, Entry-Löschung, Testmodus, inkompatible Version).
+- Pausieren/Fortsetzen: `ConnectorPauseTest` (Deaktivieren pausiert nur Jobs dieses Connectors, Worker überspringt `paused`, Reaktivierung, Versuchszähler, entfernter Connector, manuelles Abbrechen, Entry-Löschung).
 
 ## 12. Release-Checkliste
 

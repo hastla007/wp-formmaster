@@ -17,12 +17,14 @@ use FormCaptain\Admin\Tables\EntriesListTable;
 use FormCaptain\Domain\HtmlSanitizer;
 use FormCaptain\Export\CsvExporter;
 use FormCaptain\Install\Capabilities;
+use FormCaptain\Integrations\ConnectorRegistry;
 use FormCaptain\Mail\MailBuilder;
 use FormCaptain\Mail\MailJobHandler;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
 use FormCaptain\Repository\JobRepository;
+use FormCaptain\Service\ConsentService;
 use FormCaptain\Service\EntryService;
 use FormCaptain\Service\RetentionService;
 use FormCaptain\Settings\Settings;
@@ -35,7 +37,7 @@ final class EntriesPage {
 	public const ACTION_ENTRY  = 'form_captain_entry_action';
 	public const NONCE_BULK    = 'form_captain_entries_bulk';
 	public const NONCE_ENTRY   = 'form_captain_entry_';
-	public const ENTRY_ACTIONS = array( 'status', 'trash', 'restore', 'delete', 'note', 'retry', 'resend' );
+	public const ENTRY_ACTIONS = array( 'status', 'trash', 'restore', 'delete', 'note', 'retry', 'resend', 'withdraw_consent' );
 
 	public function __construct(
 		private EntryRepository $entries,
@@ -112,9 +114,13 @@ final class EntriesPage {
 			'note' => $this->service->add_note( $entry_id, (string) ( $request['note'] ?? '' ) ),
 			'retry' => $this->service->retry_job( $entry_id, (int) ( $request['job_id'] ?? 0 ) ),
 			'resend' => $this->service->resend_notification( $entry_id ),
+			'withdraw_consent' => $this->withdraw_consent( $entry_id, $request ),
 		};
 		if ( is_wp_error( $result ) ) {
 			return $result;
+		}
+		if ( 'withdraw_consent' === $do ) {
+			return 'deleted' === $result['result'] ? 'consent_withdrawn_deleted' : 'consent_withdrawn';
 		}
 		return match ( $do ) {
 			'status' => 'status_changed',
@@ -124,6 +130,26 @@ final class EntriesPage {
 			'note' => 'note_added',
 			'retry', 'resend' => 'queued',
 		};
+	}
+
+	/**
+	 * Consent withdrawal from the detail view (explicit confirmation required).
+	 *
+	 * @param array<string,mixed> $request
+	 * @return array<string,mixed>|\WP_Error
+	 */
+	private function withdraw_consent( int $entry_id, array $request ): array|\WP_Error {
+		$then = sanitize_key( (string) ( $request['then'] ?? 'keep' ) );
+		if ( ! in_array( $then, ConsentService::THEN, true ) ) {
+			return new \WP_Error( 'invalid_request', __( 'Unknown follow-up action.', 'form-captain' ), array( 'status' => 400 ) );
+		}
+		if ( ! current_user_can( Capabilities::EDIT_ENTRIES ) || ( 'delete' === $then && ! current_user_can( Capabilities::DELETE_ENTRIES ) ) ) {
+			return Errors::error( Errors::FORBIDDEN );
+		}
+		if ( empty( $request['confirm_withdrawal'] ) ) {
+			return new \WP_Error( 'confirmation_required', __( 'Please confirm the consent withdrawal.', 'form-captain' ), array( 'status' => 400 ) );
+		}
+		return Plugin::instance()->get( ConsentService::class )->withdraw_as_current_user( $entry_id, $then, 'admin' );
 	}
 
 	public function handle_bulk(): void {
@@ -150,7 +176,7 @@ final class EntriesPage {
 		$request  = (array) wp_unslash( $_POST ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified in process_entry_action().
 		$result   = $this->process_entry_action( $request );
 		$entry_id = (int) ( $request['entry_id'] ?? 0 );
-		$back     = 'deleted' === $result ? self::url() : self::url( array( 'view' => $entry_id ) );
+		$back     = in_array( $result, array( 'deleted', 'consent_withdrawn_deleted' ), true ) ? self::url() : self::url( array( 'view' => $entry_id ) );
 		if ( is_wp_error( $result ) ) {
 			$this->die_or_redirect( $result, $back );
 		}
@@ -207,6 +233,8 @@ final class EntriesPage {
 			'deleted' => __( 'Submission deleted permanently.', 'form-captain' ),
 			'note_added' => __( 'Note added.', 'form-captain' ),
 			'queued' => __( 'The message was queued and will be sent shortly.', 'form-captain' ),
+			'consent_withdrawn' => __( 'Consent withdrawal recorded. Open deliveries were cancelled.', 'form-captain' ),
+			'consent_withdrawn_deleted' => __( 'Consent withdrawal recorded and the submission was deleted permanently.', 'form-captain' ),
 			'bulk_done' => sprintf(
 				/* translators: 1: processed count, 2: skipped count */
 				__( '%1$s submissions processed, %2$s skipped.', 'form-captain' ),
@@ -233,11 +261,12 @@ final class EntriesPage {
 			'job_not_retryable' => __( 'Only failed deliveries can be retried.', 'form-captain' ),
 			'validation_failed' => __( 'Notes must contain between 1 and 5000 characters.', 'form-captain' ),
 			'invalid_request' => __( 'Invalid request.', 'form-captain' ),
+			'confirmation_required' => __( 'Please confirm the consent withdrawal.', 'form-captain' ),
 			default => __( 'The action could not be completed.', 'form-captain' ),
 		};
 	}
 
-	/** @return array{form_id:int,status:string,search:string,date_from:string,date_to:string,paged:int} */
+	/** @return array{form_id:int,status:string,search:string,date_from:string,date_to:string,paged:int,consent:string} */
 	private function list_filters(): array {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended
 		$date   = static function ( string $key ): string {
@@ -253,6 +282,8 @@ final class EntriesPage {
 			'date_to'   => $date( 'date_to' ),
 			'paged'     => isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1,
 		);
+		$consent        = isset( $_GET['consent'] ) ? sanitize_key( wp_unslash( $_GET['consent'] ) ) : '';
+		$out['consent'] = in_array( $consent, array( 'withdrawn', 'active' ), true ) ? $consent : '';
 		// phpcs:enable
 		return $out;
 	}
@@ -267,6 +298,7 @@ final class EntriesPage {
 					's'         => $filters['search'] ?: null,
 					'date_from' => $filters['date_from'] ?: null,
 					'date_to'   => $filters['date_to'] ?: null,
+					'consent'   => $filters['consent'] ?: null,
 				)
 			)
 		);
@@ -321,6 +353,12 @@ final class EntriesPage {
 		echo '</select> ';
 		echo '<label for="fc-date-from">' . esc_html__( 'From', 'form-captain' ) . '</label> <input type="date" id="fc-date-from" name="date_from" value="' . esc_attr( $filters['date_from'] ) . '" /> ';
 		echo '<label for="fc-date-to">' . esc_html__( 'To', 'form-captain' ) . '</label> <input type="date" id="fc-date-to" name="date_to" value="' . esc_attr( $filters['date_to'] ) . '" /> ';
+		echo '<label class="screen-reader-text" for="fc-filter-consent">' . esc_html__( 'Filter by consent', 'form-captain' ) . '</label>';
+		echo '<select id="fc-filter-consent" name="consent">';
+		echo '<option value="">' . esc_html__( 'Any consent state', 'form-captain' ) . '</option>';
+		echo '<option value="withdrawn"' . selected( $filters['consent'], 'withdrawn', false ) . '>' . esc_html__( 'Consent withdrawn', 'form-captain' ) . '</option>';
+		echo '<option value="active"' . selected( $filters['consent'], 'active', false ) . '>' . esc_html__( 'Consent not withdrawn', 'form-captain' ) . '</option>';
+		echo '</select> ';
 		submit_button( __( 'Filter', 'form-captain' ), '', 'filter_action', false );
 		echo '</div></form><br class="clear" />';
 
@@ -362,6 +400,9 @@ final class EntriesPage {
 		echo '<h1>' . esc_html( sprintf( __( 'Submission #%d', 'form-captain' ), $entry_id ) ) . ' <span class="fc-status fc-status-' . esc_attr( (string) $entry['status'] ) . '">' . esc_html( CsvExporter::status_label( $entry ) ) . '</span></h1>';
 		if ( ! empty( $entry['anonymized_gmt'] ) ) {
 			echo '<div class="notice notice-info inline"><p>' . esc_html__( 'Personal data of this submission was anonymized.', 'form-captain' ) . '</p></div>';
+		}
+		if ( ! empty( $entry['consent_withdrawn_gmt'] ) ) {
+			echo '<div class="notice notice-warning inline"><p>' . EntriesListTable::consent_withdrawn_badge( $entry ) . ' ' . esc_html__( 'No further messages or integration deliveries are sent for this submission.', 'form-captain' ) . '</p></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- badge is escaped.
 		}
 		if ( ! empty( $entry['expires_gmt'] ) ) {
 			/* translators: %s: date */
@@ -496,7 +537,7 @@ final class EntriesPage {
 				$type = (string) $job['type'];
 				$cap  = str_starts_with( $type, 'connector.' ) ? Capabilities::MANAGE_INTEGRATIONS : Capabilities::EDIT_ENTRIES;
 				echo '<tr><td>' . esc_html( self::job_label( $job ) ) . '</td>';
-				echo '<td>' . esc_html( self::job_status_label( (string) $job['status'] ) ) . '</td>';
+				echo '<td>' . esc_html( 'paused' === $job['status'] ? Plugin::instance()->get( ConnectorRegistry::class )->paused_label( $job ) : self::job_status_label( (string) $job['status'] ) ) . '</td>';
 				echo '<td>' . esc_html( (int) $job['attempts'] . ' / ' . (int) $job['max_attempts'] ) . '</td>';
 				echo '<td><code>' . esc_html( (string) ( $job['last_error_code'] ?? '' ) ) . '</code></td>';
 				echo '<td>' . esc_html( get_date_from_gmt( (string) $job['updated_gmt'], get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) ) . '</td><td>';
@@ -507,7 +548,7 @@ final class EntriesPage {
 			}
 			echo '</tbody></table>';
 		}
-		if ( current_user_can( Capabilities::EDIT_ENTRIES ) && ! in_array( $entry['status'], array( 'spam', 'trash' ), true ) ) {
+		if ( current_user_can( Capabilities::EDIT_ENTRIES ) && ! in_array( $entry['status'], array( 'spam', 'trash' ), true ) && empty( $entry['consent_withdrawn_gmt'] ) ) {
 			echo '<p>';
 			$this->action_form( $entry, 'resend', __( 'Send admin notification again', 'form-captain' ), array(), 'secondary' );
 			echo '</p>';
@@ -537,6 +578,7 @@ final class EntriesPage {
 			'failed' => __( 'Failed – will retry', 'form-captain' ),
 			'dead' => __( 'Failed permanently', 'form-captain' ),
 			'cancelled' => __( 'Cancelled', 'form-captain' ),
+			'paused' => __( 'Paused (connector disabled)', 'form-captain' ),
 			default => $status,
 		};
 	}
@@ -592,6 +634,12 @@ final class EntriesPage {
 		if ( 'notification_queued' === $code ) {
 			return __( 'Admin notification queued manually', 'form-captain' );
 		}
+		if ( 'consent_withdrawn_anonymized' === $code ) {
+			return __( 'Anonymized after consent withdrawal', 'form-captain' );
+		}
+		if ( str_starts_with( $code, 'consent_withdrawn_' ) ) {
+			return __( 'Consent withdrawal recorded', 'form-captain' );
+		}
 		return $code;
 	}
 
@@ -628,6 +676,42 @@ final class EntriesPage {
 			);
 		}
 		echo '</div></div>';
+		$this->render_consent_withdrawal( $entry );
+	}
+
+	/**
+	 * "Withdraw consent" with follow-up choice and explicit confirmation (edit_entries; delete needs delete_entries).
+	 *
+	 * @param array<string,mixed> $entry
+	 */
+	private function render_consent_withdrawal( array $entry ): void {
+		if ( ! current_user_can( Capabilities::EDIT_ENTRIES ) ) {
+			return;
+		}
+		echo '<div class="postbox fc-consent-withdrawal"><h2 class="hndle">' . esc_html__( 'Withdraw consent', 'form-captain' ) . '</h2><div class="inside">';
+		if ( ! empty( $entry['consent_withdrawn_gmt'] ) ) {
+			echo '<p>' . EntriesListTable::consent_withdrawn_badge( $entry ) . '</p></div></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- badge is escaped.
+			return;
+		}
+		$id = (int) $entry['id'];
+		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+		$this->hidden_fields( $entry, 'withdraw_consent' );
+		echo '<p class="description">' . esc_html__( 'Records that the person withdrew their consent. Open notifications and integration deliveries are cancelled and no new ones are sent.', 'form-captain' ) . '</p>';
+		echo '<fieldset><legend class="screen-reader-text">' . esc_html__( 'What should happen with the submission?', 'form-captain' ) . '</legend>';
+		$choices = array(
+			'keep'      => __( 'Keep the submission', 'form-captain' ),
+			'anonymize' => __( 'Anonymize personal data', 'form-captain' ),
+		);
+		if ( current_user_can( Capabilities::DELETE_ENTRIES ) ) {
+			$choices['delete'] = __( 'Delete the submission permanently', 'form-captain' );
+		}
+		foreach ( $choices as $value => $label ) {
+			echo '<label for="fc-withdraw-' . esc_attr( $value . '-' . $id ) . '"><input type="radio" id="fc-withdraw-' . esc_attr( $value . '-' . $id ) . '" name="then" value="' . esc_attr( $value ) . '"' . checked( 'keep', $value, false ) . ' /> ' . esc_html( $label ) . '</label><br />';
+		}
+		echo '</fieldset>';
+		echo '<p><label for="fc-withdraw-confirm-' . (int) $id . '"><input type="checkbox" id="fc-withdraw-confirm-' . (int) $id . '" name="confirm_withdrawal" value="1" required /> ' . esc_html__( 'I confirm that the person withdrew their consent. This cannot be undone.', 'form-captain' ) . '</label></p>';
+		echo '<button type="submit" class="button">' . esc_html__( 'Withdraw consent', 'form-captain' ) . '</button>';
+		echo '</form></div></div>';
 	}
 
 	/** @param array<string,mixed> $entry */

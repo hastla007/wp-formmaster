@@ -323,6 +323,17 @@ final class EntryRepository {
 		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$this->entries()} WHERE expires_gmt IS NOT NULL AND expires_gmt <= %s ORDER BY id LIMIT %d", $now, $limit ) ) );
 	}
 
+	/**
+	 * Entries of one form created by one entry import run (context "import_run", any status).
+	 *
+	 * @return int[]
+	 */
+	public function ids_for_import_run( int $form_id, string $run_id, int $limit ): array {
+		global $wpdb;
+		$like = '%' . $wpdb->esc_like( '"import_run":"' . $run_id . '"' ) . '%';
+		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$this->entries()} WHERE form_id = %d AND context_json LIKE %s ORDER BY id LIMIT %d", $form_id, $like, $limit ) ) );
+	}
+
 	/** @return int[] trash/spam older than cutoff */
 	public function ids_trashed_before( string $cutoff, int $limit ): array {
 		global $wpdb;

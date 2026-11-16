@@ -14,6 +14,7 @@ final class JobResult {
 	public const SUCCESS = 'success';
 	public const RETRY   = 'retry';
 	public const FAIL    = 'fail';
+	public const PAUSE   = 'pause';
 
 	/**
 	 * @param array<string,mixed>|null $data
@@ -36,5 +37,10 @@ final class JobResult {
 
 	public static function fail( string $code, string $message = '' ): self {
 		return new self( self::FAIL, $code, $message, null );
+	}
+
+	/** Back to `paused` without counting the attempt (e.g. connector disabled while claimed). */
+	public static function pause( string $code, string $message = '' ): self {
+		return new self( self::PAUSE, $code, $message, null );
 	}
 }

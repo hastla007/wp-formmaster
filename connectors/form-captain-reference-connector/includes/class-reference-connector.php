@@ -22,6 +22,8 @@ final class Reference_Connector implements ConnectorInterface {
 	public const MODE_OPTION = 'fcrc_failure_mode';
 	public const SEEN_OPTION = 'fcrc_attempts';
 
+	public const WITHDRAWAL_OPTION = 'fcrc_consent_withdrawal_mode';
+
 	public function key(): string {
 		return 'reference';
 	}
@@ -177,5 +179,36 @@ final class Reference_Connector implements ConnectorInterface {
 			}
 		}
 		update_option( self::OPTION, $tickets, false );
+	}
+
+	/**
+	 * Example reaction to form_captain_consent_withdrawn_v1: the ticket is marked `consent_withdrawn`.
+	 * Personal data is only removed when the site explicitly configured it (option
+	 * `fcrc_consent_withdrawal_mode` = 'delete') – never a blind remote deletion.
+	 */
+	public static function on_consent_withdrawn( int $entry_id, int $form_id, string $source ): void {
+		unset( $form_id );
+		$tickets = get_option( self::OPTION, array() );
+		if ( ! is_array( $tickets ) ) {
+			return;
+		}
+		$delete  = 'delete' === get_option( self::WITHDRAWAL_OPTION, '' );
+		$changed = false;
+		foreach ( $tickets as $key => $ticket ) {
+			if ( (int) ( $ticket['entry_id'] ?? 0 ) !== $entry_id ) {
+				continue;
+			}
+			$tickets[ $key ]['status']                   = 'consent_withdrawn';
+			$tickets[ $key ]['consent_withdrawn_source'] = $source;
+			if ( $delete ) {
+				$tickets[ $key ]['email']   = '';
+				$tickets[ $key ]['subject'] = '';
+				$tickets[ $key ]['message'] = '';
+			}
+			$changed = true;
+		}
+		if ( $changed ) {
+			update_option( self::OPTION, $tickets, false );
+		}
 	}
 }

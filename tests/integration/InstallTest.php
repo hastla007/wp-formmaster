@@ -30,7 +30,7 @@ final class InstallTest extends TestCase {
 		update_option( Migrator::OPTION_VERSION, 0 );
 		$this->assertTrue( $migrator->migrate() );
 		$this->assertTrue( $migrator->migrate() );
-		$this->assertSame( 1, $migrator->installed_version() );
+		$this->assertSame( Migrator::TARGET_VERSION, $migrator->installed_version() );
 	}
 
 	public function test_downgrade_does_not_touch_schema(): void {
@@ -38,7 +38,7 @@ final class InstallTest extends TestCase {
 		$this->assertFalse( ( new Migrator() )->migrate() );
 		$state = get_option( Migrator::OPTION_STATE );
 		$this->assertSame( 'schema_newer_than_plugin', $state['error'] );
-		update_option( Migrator::OPTION_VERSION, 1 );
+		update_option( Migrator::OPTION_VERSION, Migrator::TARGET_VERSION );
 		delete_option( Migrator::OPTION_STATE );
 	}
 
@@ -76,6 +76,6 @@ final class InstallTest extends TestCase {
 		update_option( Migrator::OPTION_VERSION, 0 );
 		$this->assertTrue( $migrator->migrate() );
 		$this->assertFalse( get_option( Migrator::OPTION_STATE ) );
-		$this->assertSame( 1, $migrator->installed_version() );
+		$this->assertSame( Migrator::TARGET_VERSION, $migrator->installed_version() );
 	}
 }

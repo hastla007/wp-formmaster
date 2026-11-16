@@ -38,6 +38,9 @@ function fcrc_boot(): void {
 	if ( ! has_action( 'form_captain_entry_deleted_v1', 'fcrc_entry_deleted' ) ) {
 		add_action( 'form_captain_entry_deleted_v1', 'fcrc_entry_deleted', 10, 3 );
 	}
+	if ( ! has_action( 'form_captain_consent_withdrawn_v1', 'fcrc_consent_withdrawn' ) ) {
+		add_action( 'form_captain_consent_withdrawn_v1', 'fcrc_consent_withdrawn', 10, 3 );
+	}
 }
 
 /**
@@ -50,6 +53,10 @@ function fcrc_register_connector( array $connectors ): array {
 
 function fcrc_entry_deleted( int $entry_id, int $form_id, string $reason ): void {
 	\FormCaptainReferenceConnector\Reference_Connector::on_entry_deleted( $entry_id, $form_id, $reason );
+}
+
+function fcrc_consent_withdrawn( int $entry_id, int $form_id, string $source ): void {
+	\FormCaptainReferenceConnector\Reference_Connector::on_consent_withdrawn( $entry_id, $form_id, $source );
 }
 
 add_action( 'form_captain_loaded_v1', 'fcrc_boot' );

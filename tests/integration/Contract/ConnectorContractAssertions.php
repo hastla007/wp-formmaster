@@ -54,6 +54,20 @@ trait ConnectorContractAssertions {
 		}
 	}
 
+	/** Consent-withdrawn event payload (api-v1.md): IDs, time, source – never values or personal data. */
+	protected function assertConsentWithdrawnEventShape( array $event ): void {
+		foreach ( array( 'contract', 'entry_id', 'form_id', 'form_public_id', 'withdrawn_gmt', 'source' ) as $key ) {
+			$this->assertArrayHasKey( $key, $event, 'Consent event misses ' . $key );
+		}
+		$this->assertSame( 1, (int) explode( '.', (string) $event['contract'] )[0], 'Event contract major' );
+		$this->assertIsInt( $event['entry_id'] );
+		$this->assertIsInt( $event['form_id'] );
+		$this->assertMatchesRegularExpression( '/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', (string) $event['withdrawn_gmt'] );
+		foreach ( array( 'values', 'context', 'ip', 'ip_address', 'user_agent', 'email', 'consent' ) as $forbidden ) {
+			$this->assertArrayNotHasKey( $forbidden, $event );
+		}
+	}
+
 	/** Action callback argument ($job) as documented in api-v1.md. */
 	protected function assertJobArrayShape( array $job ): void {
 		foreach ( array( 'form_id', 'entry_id', 'idempotency_key', 'settings', 'values', 'context', 'test_mode' ) as $key ) {

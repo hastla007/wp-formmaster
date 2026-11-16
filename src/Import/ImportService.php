@@ -211,78 +211,108 @@ final class ImportService {
 	 * @return array<string,mixed>|\WP_Error
 	 */
 	public function import_entries( int $form_id, string $csv, array $mapping, array $options = array() ): array|\WP_Error {
+		$stats = $this->process_entries( $form_id, $csv, $mapping, array( 'require_record' => true ) + $options );
+		if ( is_wp_error( $stats ) ) {
+			return $stats;
+		}
+		$record    = (array) $this->record( $form_id );
+		$import_id = (string) $stats['import_id'];
+		$record['entry_imports'][ $import_id ] = array(
+			'created_gmt' => Clock::now(),
+			'user_id'     => get_current_user_id(),
+			'rows'        => $stats['rows'],
+			'imported'    => (int) ( $record['entry_imports'][ $import_id ]['imported'] ?? 0 ) + $stats['imported'],
+			'invalid'     => $stats['invalid'],
+			'expired'     => $stats['expired'],
+		);
+		update_option( self::RECORD_OPTION . $form_id, $record, false );
+		return $stats;
+	}
+
+	/**
+	 * Stable import ID of a file for a form: the request keys of its rows derive from it, so
+	 * importing the same file again (CLI or admin UI, any run) never creates duplicates.
+	 */
+	public static function entry_import_id( int $form_id, string $csv ): string {
+		return substr( hash( 'sha256', $form_id . '|' . hash( 'sha256', $csv ) ), 0, 32 );
+	}
+
+	/**
+	 * Entry import engine (profile "Generic CSV") for any published form.
+	 *
+	 * Options:
+	 * - time_column (header name) or time_index (column index), timezone (default: site),
+	 *   time_format (GenericCsv::TIME_FORMATS, default "iso");
+	 * - columns: column index => field ID or key (alternative to $mapping by header name);
+	 * - offset/limit: data rows to process in this call (batch steps of the admin UI);
+	 * - dry_run: validate and count only, write nothing;
+	 * - run_id: stored as context "import_run" (exact revert of one run);
+	 * - require_record: only forms created by import() (developer API);
+	 * - max_bytes/max_rows: stricter limits (admin UI).
+	 *
+	 * Never sends mails, enqueues jobs or fires entry_created_v1; expires_gmt is computed
+	 * from the original submission time.
+	 *
+	 * @param array<string,string> $mapping column header => field ID or key
+	 * @param array<string,mixed>  $options
+	 * @return array<string,mixed>|\WP_Error
+	 */
+	public function process_entries( int $form_id, string $csv, array $mapping, array $options = array() ): array|\WP_Error {
 		if ( ! current_user_can( Capabilities::MANAGE_FORMS ) || ! current_user_can( Capabilities::EDIT_ENTRIES ) ) {
 			return Errors::error( Errors::FORBIDDEN, __( 'You are not allowed to import entries.', 'form-captain' ) );
 		}
-		if ( strlen( $csv ) > GenericCsv::MAX_BYTES ) {
-			return Errors::error( Errors::PAYLOAD_TOO_LARGE, __( 'The file is too large (maximum 20 MB).', 'form-captain' ) );
+		$max_bytes = min( GenericCsv::MAX_BYTES, (int) ( $options['max_bytes'] ?? GenericCsv::MAX_BYTES ) );
+		$max_rows  = min( GenericCsv::MAX_ROWS, (int) ( $options['max_rows'] ?? GenericCsv::MAX_ROWS ) );
+		if ( strlen( $csv ) > $max_bytes ) {
+			/* translators: %s: maximum file size, e.g. "5 MB" */
+			return Errors::error( Errors::PAYLOAD_TOO_LARGE, sprintf( __( 'The file is too large (maximum %s).', 'form-captain' ), size_format( $max_bytes ) ) );
 		}
-		$form   = $this->repo->find( $form_id );
-		$record = $this->record( $form_id );
-		if ( ! $form || ! $record ) {
+		$form = $this->repo->find( $form_id );
+		if ( ! $form || ( ! empty( $options['require_record'] ) && ! $this->record( $form_id ) ) ) {
 			return Errors::error( 'import_not_found', __( 'Entries can only be imported into a form that was imported before.', 'form-captain' ), array( 'status' => 404 ) );
 		}
 		$version = ! empty( $form['published_version_id'] ) ? $this->repo->find_version( (int) $form['published_version_id'] ) : null;
 		if ( ! $version ) {
-			return Errors::error( 'form_not_published', __( 'Please publish the imported form before importing entries.', 'form-captain' ), array( 'status' => 409 ) );
+			return Errors::error( 'form_not_published', __( 'Please publish the form before importing entries.', 'form-captain' ), array( 'status' => 409 ) );
 		}
-		$rows = $this->read_csv( $csv, GenericCsv::MAX_ROWS + 1 );
+		$rows = $this->read_csv( $csv, $max_rows + 1 );
 		if ( is_wp_error( $rows ) ) {
 			return $rows;
 		}
-		if ( count( $rows ) - 1 > GenericCsv::MAX_ROWS ) {
-			return Errors::error( 'too_many_rows', __( 'The file has more than 50,000 rows.', 'form-captain' ), array( 'status' => 413 ) );
+		if ( count( $rows ) - 1 > $max_rows ) {
+			/* translators: %s: maximum number of rows */
+			return Errors::error( 'too_many_rows', sprintf( __( 'The file has more than %s rows.', 'form-captain' ), number_format_i18n( $max_rows ) ), array( 'status' => 413 ) );
 		}
 		$header = array_shift( $rows );
+		$plan   = $this->entry_plan( $version, $header, $mapping, $options );
+		if ( is_wp_error( $plan ) ) {
+			return $plan;
+		}
+		$fields   = $plan['fields'];
+		$cols     = $plan['cols'];
+		$time_idx = $plan['time_idx'];
 
-		// Column mapping.
-		$fields = array();
-		foreach ( (array) ( $version['schema']['fields'] ?? array() ) as $f ) {
-			$fields[ (string) $f['id'] ] = $f;
-		}
-		$by_key = array_column( array_values( $fields ), 'id', 'key' );
-		$cols   = array();
-		foreach ( $mapping as $column => $target ) {
-			$idx = array_search( (string) $column, $header, true );
-			$fid = isset( $fields[ (string) $target ] ) ? (string) $target : ( $by_key[ (string) $target ] ?? null );
-			if ( '' === (string) $target ) {
-				continue;
-			}
-			if ( false === $idx || null === $fid || in_array( $fields[ $fid ]['type'], array( 'html', 'hidden' ), true ) ) {
-				return Errors::error( 'invalid_mapping', __( 'The column mapping refers to unknown columns or fields.', 'form-captain' ), array( 'status' => 400 ) );
-			}
-			$cols[ $fid ] = (int) $idx;
-		}
-		$time_idx = array_search( (string) ( $options['time_column'] ?? '' ), $header, true );
-		if ( ! $cols || false === $time_idx ) {
-			return Errors::error( 'invalid_mapping', __( 'Please map at least one field and the submission time column.', 'form-captain' ), array( 'status' => 400 ) );
-		}
-		try {
-			$tz = new \DateTimeZone( (string) ( $options['timezone'] ?? '' ) ?: wp_timezone_string() );
-		} catch ( \Exception $e ) {
-			return Errors::error( 'invalid_timezone', __( 'Unknown time zone.', 'form-captain' ), array( 'status' => 400 ) );
-		}
-
-		// Import mode: only mapped fields, required fields may be missing, no conditions.
-		$check = array();
-		foreach ( $cols as $fid => $idx ) {
-			$f              = $fields[ $fid ];
-			$f['required']  = false;
-			$f['condition'] = null;
-			$check[]        = $f;
-		}
-
-		$import_id   = substr( hash( 'sha256', $form_id . '|' . hash( 'sha256', $csv ) ), 0, 32 );
+		$import_id   = self::entry_import_id( $form_id, $csv );
+		$run_id      = (string) ( $options['run_id'] ?? '' );
+		$dry_run     = ! empty( $options['dry_run'] );
+		$offset      = max( 0, (int) ( $options['offset'] ?? 0 ) );
+		$limit       = max( 0, (int) ( $options['limit'] ?? 0 ) );
+		$slice       = array_slice( $rows, $offset, $limit > 0 ? $limit : null, true );
 		$mode        = RetentionService::mode_for_form( $form );
 		$now         = Clock::now();
+		$inserted    = 0;
 		$stats       = array(
-			'import_id'  => $import_id,
-			'rows'       => count( $rows ),
-			'imported'   => 0,
-			'duplicates' => 0,
-			'invalid'    => 0,
-			'expired'    => 0,
-			'findings'   => array(),
+			'import_id'   => $import_id,
+			'rows'        => count( $rows ),
+			'processed'   => count( $slice ),
+			'valid'       => 0,
+			'imported'    => 0,
+			'duplicates'  => 0,
+			'invalid'     => 0,
+			'expired'     => 0,
+			'findings'    => array(),
+			'next_offset' => $offset + count( $slice ),
+			'done'        => $offset + count( $slice ) >= count( $rows ),
 		);
 		$row_finding = function ( int $row, string $code, string $field = '' ) use ( &$stats ): void {
 			++$stats['invalid'];
@@ -291,16 +321,24 @@ final class ImportService {
 			}
 		};
 
-		foreach ( array_chunk( $rows, GenericCsv::BATCH, true ) as $batch ) {
-			$this->entries->begin();
+		foreach ( array_chunk( $slice, GenericCsv::BATCH, true ) as $batch ) {
+			if ( ! $dry_run ) {
+				$this->entries->begin();
+			}
 			foreach ( $batch as $i => $cells ) {
-				$row_no = (int) $i + 2; // 1-based incl. header row.
-				$key    = hash( 'sha256', $import_id . ':' . $row_no );
-				if ( $this->entries->find_by_request_key( $key ) ) {
-					++$stats['duplicates'];
+				$row_no   = (int) $i + 2; // 1-based incl. header row.
+				$key      = hash( 'sha256', $import_id . ':' . $row_no );
+				$existing = $this->entries->find_by_request_key( $key );
+				if ( $existing ) {
+					// Same run (a batch repeated after an abort) counts as imported, others as duplicate.
+					if ( '' !== $run_id && $run_id === (string) ( $existing['context']['import_run'] ?? '' ) ) {
+						++$stats['imported'];
+					} else {
+						++$stats['duplicates'];
+					}
 					continue;
 				}
-				$created = GenericCsv::to_gmt( (string) ( $cells[ $time_idx ] ?? '' ), $tz );
+				$created = GenericCsv::to_gmt( (string) ( $cells[ $time_idx ] ?? '' ), $plan['tz'], $plan['time_format'] );
 				if ( null === $created ) {
 					$row_finding( $row_no, 'invalid_time' );
 					continue;
@@ -318,7 +356,7 @@ final class ImportService {
 					}
 					$input[ $fid ] = self::csv_value( $fields[ $fid ], $value );
 				}
-				$result = $this->submission->validate( $check, $input, array( 'today' => substr( $created, 0, 10 ) ) );
+				$result = $this->submission->validate( $plan['check'], $input, array( 'today' => substr( $created, 0, 10 ) ) );
 				if ( $result['codes'] ) {
 					$fid = (string) array_key_first( $result['codes'] );
 					$row_finding( $row_no, (string) $result['codes'][ $fid ], (string) ( $fields[ $fid ]['key'] ?? '' ) );
@@ -326,6 +364,10 @@ final class ImportService {
 				}
 				if ( ! $result['values'] ) {
 					$row_finding( $row_no, 'empty_row' );
+					continue;
+				}
+				++$stats['valid'];
+				if ( $dry_run ) {
 					continue;
 				}
 				$entry_id = $this->entries->insert(
@@ -336,34 +378,120 @@ final class ImportService {
 						'request_key'     => $key,
 						'source_url'      => null,
 						'user_id'         => null,
-						'context'         => array( 'import' => $import_id ),
+						'context'         => array( 'import' => $import_id ) + ( '' !== $run_id ? array( 'import_run' => $run_id ) : array() ),
 						'consent'         => $result['consent'] ? $result['consent'] : null,
 						'expires_gmt'     => $expires,
 					)
 				);
 				if ( $entry_id <= 0 || ! $this->entries->insert_values( $entry_id, $result['values'] ) ) {
+					--$stats['valid'];
 					$row_finding( $row_no, 'storage_failed' );
 					continue;
 				}
 				$this->entries->update( $entry_id, array( 'created_gmt' => $created ) );
 				++$stats['imported'];
+				++$inserted;
 			}
-			$this->entries->commit();
+			if ( ! $dry_run ) {
+				$this->entries->commit();
+			}
 		}
 
-		$record['entry_imports'][ $import_id ] = array(
-			'created_gmt' => $now,
-			'user_id'     => get_current_user_id(),
-			'rows'        => $stats['rows'],
-			'imported'    => (int) ( $record['entry_imports'][ $import_id ]['imported'] ?? 0 ) + $stats['imported'],
-			'invalid'     => $stats['invalid'],
-			'expired'     => $stats['expired'],
-		);
-		update_option( self::RECORD_OPTION . $form_id, $record, false );
-		if ( $stats['imported'] > 0 ) {
-			do_action( 'form_captain_entries_imported_v1', $import_id, $form_id, $stats['imported'] );
+		if ( $inserted > 0 ) {
+			do_action( 'form_captain_entries_imported_v1', $import_id, $form_id, $inserted );
 		}
 		return $stats;
+	}
+
+	/**
+	 * Column → field plan for an entry import.
+	 *
+	 * @param array<string,mixed>  $version
+	 * @param array<int,string>    $header
+	 * @param array<string,string> $mapping
+	 * @param array<string,mixed>  $options
+	 * @return array{fields:array<string,array<string,mixed>>,cols:array<string,int>,time_idx:int,tz:\DateTimeZone,time_format:string,check:array<int,array<string,mixed>>}|\WP_Error
+	 */
+	private function entry_plan( array $version, array $header, array $mapping, array $options ): array|\WP_Error {
+		$fields = array();
+		foreach ( (array) ( $version['schema']['fields'] ?? array() ) as $f ) {
+			$fields[ (string) $f['id'] ] = $f;
+		}
+		$by_key  = array_column( array_values( $fields ), 'id', 'key' );
+		$targets = array();
+		if ( isset( $options['columns'] ) && is_array( $options['columns'] ) ) {
+			foreach ( $options['columns'] as $idx => $target ) {
+				$targets[] = array( is_int( $idx ) && $idx >= 0 && $idx < count( $header ) ? $idx : false, (string) $target );
+			}
+		} else {
+			foreach ( $mapping as $column => $target ) {
+				$targets[] = array( array_search( (string) $column, $header, true ), (string) $target );
+			}
+		}
+		$cols = array();
+		foreach ( $targets as list( $idx, $target ) ) {
+			if ( '' === $target ) {
+				continue;
+			}
+			$fid = isset( $fields[ $target ] ) ? $target : ( $by_key[ $target ] ?? null );
+			if ( false === $idx || null === $fid || in_array( $fields[ $fid ]['type'], array( 'html', 'hidden' ), true ) || isset( $cols[ $fid ] ) ) {
+				return Errors::error( 'invalid_mapping', __( 'The column mapping refers to unknown columns or fields.', 'form-captain' ), array( 'status' => 400 ) );
+			}
+			$cols[ $fid ] = (int) $idx;
+		}
+		if ( isset( $options['time_index'] ) ) {
+			$time_idx = is_int( $options['time_index'] ) && $options['time_index'] >= 0 && $options['time_index'] < count( $header ) ? $options['time_index'] : false;
+		} else {
+			$time_idx = array_search( (string) ( $options['time_column'] ?? '' ), $header, true );
+		}
+		if ( ! $cols || false === $time_idx ) {
+			return Errors::error( 'invalid_mapping', __( 'Please map at least one field and the submission time column.', 'form-captain' ), array( 'status' => 400 ) );
+		}
+		$time_format = (string) ( $options['time_format'] ?? 'iso' );
+		if ( ! in_array( $time_format, GenericCsv::TIME_FORMATS, true ) ) {
+			return Errors::error( 'invalid_time_format', __( 'Unknown date format.', 'form-captain' ), array( 'status' => 400 ) );
+		}
+		try {
+			$tz = new \DateTimeZone( (string) ( $options['timezone'] ?? '' ) ?: wp_timezone_string() );
+		} catch ( \Exception $e ) {
+			return Errors::error( 'invalid_timezone', __( 'Unknown time zone.', 'form-captain' ), array( 'status' => 400 ) );
+		}
+
+		// Import mode: only mapped fields, required fields may be missing, no conditions.
+		$check = array();
+		foreach ( $cols as $fid => $idx ) {
+			$f              = $fields[ $fid ];
+			$f['required']  = false;
+			$f['condition'] = null;
+			$check[]        = $f;
+		}
+		return array(
+			'fields'      => $fields,
+			'cols'        => $cols,
+			'time_idx'    => (int) $time_idx,
+			'tz'          => $tz,
+			'time_format' => $time_format,
+			'check'       => $check,
+		);
+	}
+
+	/**
+	 * Parsed CSV for the admin UI: header and up to $max_rows data rows.
+	 *
+	 * @return array{header:array<int,string>,rows:array<int,array<int,string>>,delimiter:string}|\WP_Error
+	 */
+	public function read_entry_csv( string $csv, int $max_rows ): array|\WP_Error {
+		$rows = $this->read_csv( $csv, $max_rows + 1 );
+		if ( is_wp_error( $rows ) ) {
+			return $rows;
+		}
+		$body  = str_starts_with( $csv, "\xEF\xBB\xBF" ) ? substr( $csv, 3 ) : $csv;
+		$first = strtok( $body, "\n" );
+		return array(
+			'header'    => array_shift( $rows ),
+			'rows'      => $rows,
+			'delimiter' => GenericCsv::delimiter( false === $first ? '' : $first ),
+		);
 	}
 
 	/**

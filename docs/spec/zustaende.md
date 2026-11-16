@@ -56,9 +56,25 @@ stateDiagram-v2
   failed --> cancelled
   dead --> pending: manueller Retry (attempts = 0)
   running --> failed: Lock abgelaufen (Worker-Absturz)
+  pending --> paused: Connector deaktiviert
+  failed --> paused: Connector deaktiviert
+  running --> paused: Connector während der Ausführung deaktiviert (Versuch zählt nicht)
+  paused --> pending: Connector aktiviert (run_after_gmt = jetzt, attempts unverändert)
+  paused --> cancelled: Entry gelöscht/anonymisiert, Consent-Widerruf oder manuell abgebrochen
 ```
+
+| Status | Läuft? | Bedeutung |
+|---|---|---|
+| `pending` | ja, ab `run_after_gmt` | eingeplant |
+| `running` | – | vom Worker beansprucht (Lock) |
+| `failed` | ja, nach Backoff | temporärer Fehler, wird wiederholt |
+| `paused` | **nein** | nur `connector.action`: Connector deaktiviert oder Connector-Plugin fehlt; verfällt nicht, zählt keine Versuche |
+| `succeeded` | – | Endzustand |
+| `dead` | – | Endzustand (Dead-letter), manueller Retry möglich |
+| `cancelled` | – | Endzustand, manueller Retry möglich |
 
 - Backoff: `min(2^attempts * 60s, 6h)` + Jitter ±10 %.
 - Lock: `locked_until_gmt = now + 5 min`; abgelaufene Locks werden beim nächsten Lauf als `failed` mit `lock_expired` zurückgesetzt.
-- `succeeded`/`cancelled`/`dead` sind Endzustände (außer manueller Retry aus `dead`).
-- Erfolgreiche Jobs werden nach 30 Tagen gelöscht, `dead` nach 90 Tagen.
+- `paused` (Code `connector_disabled`): Deaktivieren eines Connectors setzt dessen offene Jobs (`pending`/`failed`) auf `paused`, Lock frei, `attempts` unverändert. Der Worker beansprucht `paused` nie. Aktivieren setzt sie auf `pending` (fällig sofort). Zuordnung Job → Connector über `payload.action_key` und die Registry (`definition.connector`). Fehlt das Connector-Plugin, bleiben die Jobs `paused` („Connector fehlt“), bis es wieder installiert und aktiviert wird oder ein Admin sie abbricht.
+- `succeeded`/`cancelled`/`dead` sind Endzustände (außer manueller Retry aus `dead`). `paused` ist kein Endzustand.
+- Erfolgreiche Jobs werden nach 30 Tagen gelöscht, `dead` nach 90 Tagen; `paused` wird nie automatisch gelöscht.

@@ -135,6 +135,9 @@ final class ContractApi {
 			'anonymized'     => ! empty( $entry['anonymized_gmt'] ),
 			'anonymized_gmt' => ! empty( $entry['anonymized_gmt'] ) ? self::iso( (string) $entry['anonymized_gmt'] ) : null,
 		);
+		// Additive (contract 1.x): consent withdrawal marker, no values.
+		$out['consent_withdrawn']     = ! empty( $entry['consent_withdrawn_gmt'] );
+		$out['consent_withdrawn_gmt'] = ! empty( $entry['consent_withdrawn_gmt'] ) ? self::iso( (string) $entry['consent_withdrawn_gmt'] ) : null;
 		$want_values    = in_array( 'values', $scopes, true ) || in_array( 'sensitive', $scopes, true );
 		$want_sensitive = in_array( 'sensitive', $scopes, true );
 		if ( $want_values ) {

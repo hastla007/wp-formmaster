@@ -13,7 +13,7 @@ Der Workflowvertrag führt **keine zusätzlichen Events** ein. Alle Workflow-Zus
 | Entry markiert (gelesen, archiviert, Spam) | `form_captain_entry_status_changed_v1( $id, $old, $new, $form_id )` | „Spam“ = `new === 'spam'` |
 | Entry gelöscht / anonymisiert | `form_captain_entry_deleted_v1( $id, $form_id, $reason )` | `reason`: `manual`, `retention`, `erasure`, `anonymized`, `form_deleted` |
 | Benachrichtigung fehlgeschlagen | `form_captain_notification_failed_v1( $entry_id, $form_id, $job_type, $error_code )` | nach Dead-letter eines `mail.*`-Jobs |
-| Aktion ausgeführt | Outbox-Job `connector.action` (Status, `remote_id`) | kein Event; sichtbar unter Integrationen |
+| Aktion ausgeführt | Outbox-Job `connector.action` (Status, `remote_id`) | kein Event; sichtbar unter Integrationen; bei deaktiviertem Connector Status `paused` |
 
 Stabile IDs: `entry_id`, `form_id`, `form_public_id`, `form_version` (Schema-Snapshot), `request_id` (Korrelation). Deprecation: `_deprecated_hook()`, `_v1` bleibt ≥ 12 Monate neben `_v2`.
 
@@ -50,7 +50,8 @@ Admin-Mail und Bestätigung laufen als eigene Jobs (`mail.admin`, `mail.confirma
 
 | Situation | Code | Anzeige |
 |---|---|---|
-| Workflow/Aktion fehlt (Plugin inaktiv) | `action_not_found`, `connector_not_found` | Integrationen, Job-Liste, nächster Schritt |
+| Workflow/Aktion fehlt (Plugin inaktiv) | `action_not_found`, `connector_not_found` | Integrationen, Job-Liste, nächster Schritt; bereits pausierte Jobs bleiben `paused` („Connector fehlt“) |
+| Connector deaktiviert | `connector_disabled` | Jobs `paused` (kein Versuch, kein Verfall), Fortsetzung bei Aktivierung; Integrationen, Eintragsdetail, Systemstatus (`queue.paused`) – siehe [`CONNECTORS.md`](CONNECTORS.md) §6a |
 | Pro-Recht fehlt/abgelaufen | `entitlement_missing` | Editor (`available=false`), Job `dead` |
 | Vertrag inkompatibel | `incompatible_contract` | Connector-Karte „Inkompatibel“ |
 | Queue-Timeout | `queue_timeout` (Systemstatus, > 15 min) | Systemstatus, Site Health |

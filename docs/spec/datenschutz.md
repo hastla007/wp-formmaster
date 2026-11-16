@@ -292,11 +292,11 @@ Englisch ist Quelltext (`__( '…', 'form-captain' )`); Deutsch ist die de_DE-Ü
 
 ## 13. Offene Punkte (Produkt-/Rechtsentscheidung erforderlich)
 
-1. **Spam-Aufbewahrung 30 Tage** ist hier festgelegt; rechtlich unkritisch, aber produktseitig zu bestätigen.
-2. **Default des Erasers** (`delete` vs. `anonymize`): technisch `delete`; ob Anonymisierung als Erfüllung eines Löschanspruchs genügt, ist rechtlich zu prüfen.
-3. **Interne Notizen im Auskunftsexport**: aktuell ausgeschlossen; Notizen können personenbezogene Daten über die anfragende Person enthalten (Art. 15 DSGVO). Rechtliche Bewertung nötig.
+1. ~~Spam-Aufbewahrung 30 Tage~~ – **entschieden 16.11.2026: 30 Tage** (docs/ENTSCHEIDUNGEN.md #5).
+2. ~~Default des Erasers~~ – **entschieden: `delete`** (#2); `anonymize` bleibt Admin-Option, deren rechtliche Eignung Teil der Prüfmappe ist.
+3. ~~Interne Notizen im Auskunftsexport~~ – **entschieden: enthalten** (#3); Audit-Einträge nicht; Hinweis am Notizfeld.
 4. **Text DS-T-70** ist ein Vorschlag, keine geprüfte Datenschutzerklärung.
 5. **Consent-Widerruf**: v1 bietet keinen eigenen Widerrufsablauf; Admin löscht/anonymisiert manuell. Ob ein strukturierter Widerruf (Status, Event) vor v1.0 nötig ist, ist zu entscheiden.
-6. **Schonfrist 14 Tage / Vorwarnfenster 14 Tage** – Produktbestätigung.
-7. **Event bei Anonymisierung**: `form_captain_entry_deleted_v1` mit `reason = erasure`, obwohl die Entry-Zeile bestehen bleibt. Ggf. eigenen Reason `anonymized` in `api-v1.md` ergänzen.
-8. **Schema-/Datenmodell-Nachträge**: Anonymisierungsmarker und `trashed_gmt` für Spam (Abschnitt 2); Feld-Eigenschaften `consent_revision` und `privacy_lookup` in `formularschema.md`.
+6. ~~Schonfrist/Vorwarnfenster~~ – **entschieden: je 14 Tage** (#6).
+7. ~~Event bei Anonymisierung~~ – umgesetzt mit `reason = anonymized` (api-v1.md).
+8. ~~Schema-/Datenmodell-Nachträge~~ (erledigt): Anonymisierungsmarker und `trashed_gmt` für Spam (Abschnitt 2); Feld-Eigenschaften `consent_revision` und `privacy_lookup` in `formularschema.md`.

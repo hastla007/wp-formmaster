@@ -105,7 +105,7 @@ Ein Backup enthält Jobs im Zustand zum Sicherungszeitpunkt. Jobs, die nach dem 
 
 ## 2. Support- und Fehlerprozess (P9-02 – Entwurf)
 
-> **Status: Entwurf.** Supportkanal, Reaktionszeiten und Sicherheitskontakt entscheidet die Produktverantwortung. Platzhalter sind in eckigen Klammern markiert.
+> **Status: entschieden 16.11.2026** (docs/ENTSCHEIDUNGEN.md #12, #13, #15): Free-Support im WordPress.org-Forum, Pro-Support per Ticket über E-Mail mit tarifabhängiger Antwortzeit; Sicherheitsmeldungen an eine eigene `security@…`-Adresse (konkrete Adresse noch einzutragen, Platzhalter `[SECURITY-KONTAKT]`). Nach einem Backup-Restore warnt der Systemstatus; erneutes Ausführen von Löschungen ist Betreiberpflicht.
 
 ### 2.1 Kanäle
 

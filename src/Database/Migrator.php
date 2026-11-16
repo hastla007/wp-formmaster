@@ -13,7 +13,7 @@ use FormCaptain\Support\Clock;
 
 final class Migrator {
 
-	public const TARGET_VERSION = 1;
+	public const TARGET_VERSION = 2;
 	public const OPTION_VERSION = 'form_captain_db_version';
 	public const OPTION_STATE   = 'form_captain_migration_state';
 
@@ -25,6 +25,7 @@ final class Migrator {
 	private function steps(): array {
 		return array(
 			1 => array( $this, 'install_v1' ),
+			2 => array( $this, 'migrate_v2' ),
 		);
 	}
 
@@ -122,10 +123,26 @@ final class Migrator {
 	}
 
 	/**
-	 * Throws if a table expected after $version is missing.
+	 * v2: fc_entries.consent_withdrawn_gmt + index (consent withdrawal workflow).
+	 * dbDelta() only adds what is missing, so the step is idempotent.
+	 */
+	public function migrate_v2(): void {
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( Schema::definitions()[ Tables::ENTRIES ] );
+	}
+
+	/**
+	 * Throws if a table or column expected after $version is missing.
 	 */
 	private function verify( int $version ): void {
 		global $wpdb;
+		if ( $version >= 2 ) {
+			$entries = Tables::name( Tables::ENTRIES );
+			$column  = $wpdb->get_var( $wpdb->prepare( "SHOW COLUMNS FROM {$entries} LIKE %s", 'consent_withdrawn_gmt' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			if ( 'consent_withdrawn_gmt' !== $column ) {
+				throw new \RuntimeException( 'missing_column:entries.consent_withdrawn_gmt' );
+			}
+		}
 		if ( $version >= 1 ) {
 			foreach ( Tables::ALL as $table ) {
 				$name  = Tables::name( $table );

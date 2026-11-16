@@ -79,6 +79,9 @@ final class MailJobHandler {
 		if ( ! empty( $entry['anonymized_gmt'] ) ) {
 			return JobResult::fail( 'entry_anonymized', 'Entry was anonymized' );
 		}
+		if ( ! empty( $entry['consent_withdrawn_gmt'] ) ) {
+			return JobResult::fail( 'consent_withdrawn', 'Consent was withdrawn' );
+		}
 		$form = $this->forms->find( (int) $entry['form_id'] );
 		if ( ! $form ) {
 			return JobResult::fail( 'form_not_found', 'Form no longer exists' );

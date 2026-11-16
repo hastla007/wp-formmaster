@@ -564,7 +564,8 @@ final class EntriesPage {
 			echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 			$this->hidden_fields( $entry, 'note' );
 			echo '<label for="fc-note" class="screen-reader-text">' . esc_html__( 'New note', 'form-captain' ) . '</label>';
-			echo '<textarea id="fc-note" name="note" rows="3" class="large-text" maxlength="5000" required></textarea>';
+			echo '<textarea id="fc-note" name="note" rows="3" class="large-text" maxlength="5000" required aria-describedby="fc-note-hint"></textarea>';
+			echo '<p id="fc-note-hint" class="description">' . esc_html__( 'Notes are included when the person requests a copy of their data. Write factually.', 'form-captain' ) . '</p>';
 			submit_button( __( 'Add note', 'form-captain' ), 'secondary', 'submit', false );
 			echo '</form>';
 		}

@@ -211,6 +211,21 @@ final class PrivacyIntegration {
 				);
 			}
 		}
+		// Internal notes are personal data about the person and part of the Art. 15 GDPR
+		// access request (product decision 2026-11-16). Audit entries contain no personal data.
+		foreach ( $this->entries->notes_for( (int) $entry['id'] ) as $note ) {
+			if ( 'note' !== ( $note['type'] ?? 'note' ) ) {
+				continue;
+			}
+			$items[] = array(
+				'name'  => sprintf(
+					/* translators: %s: date and time of the note */
+					__( 'Internal note (%s)', 'form-captain' ),
+					(string) get_date_from_gmt( (string) $note['created_gmt'], get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) )
+				),
+				'value' => (string) $note['message'],
+			);
+		}
 		return $items;
 	}
 

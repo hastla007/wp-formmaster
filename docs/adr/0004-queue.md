@@ -1,6 +1,6 @@
 # ADR 0004 – Queue/Worker (P0-13)
 
-**Status:** vorgeschlagen, Umsetzung erfolgt auf dieser Basis; Bestätigung durch Produktverantwortliche offen.
+**Status:** angenommen am 16.11.2026 (docs/ENTSCHEIDUNGEN.md #1).
 
 **Optionen**
 

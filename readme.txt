@@ -68,6 +68,10 @@ Use a system cron job or run `wp form-captain jobs run`. As a fallback, opening 
 
 Yes. The free plugin does not interfere with cart, checkout, orders or HPOS.
 
+== Support ==
+
+Support for the free plugin is provided in the WordPress.org support forum. Customers of Form Captain Pro receive support by email ticket with response times according to their plan.
+
 == Privacy ==
 
 Form Captain stores the data your visitors enter into your forms in your WordPress database. It does not store IP addresses; for rate limiting only a short-lived, salted hash is kept. It integrates with the WordPress personal data export and erasure tools and suggests text for your privacy policy. No data is sent to the plugin authors.

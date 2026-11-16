@@ -200,7 +200,7 @@ final class EntryRepository {
 	}
 
 	/**
-	 * @param array{form_id?:int,status?:string,search?:string,date_from?:string,date_to?:string,per_page?:int,page?:int,order?:string,ids?:int[]} $args
+	 * @param array{form_id?:int,status?:string,search?:string,date_from?:string,date_to?:string,per_page?:int,page?:int,order?:string,ids?:int[],consent?:string} $args
 	 * @return array{items:array<int,array<string,mixed>>,total:int}
 	 */
 	public function list( array $args = array() ): array {
@@ -268,6 +268,11 @@ final class EntryRepository {
 		}
 		if ( ! empty( $args['not_anonymized'] ) ) {
 			$where[] = 'e.anonymized_gmt IS NULL';
+		}
+		if ( 'withdrawn' === ( $args['consent'] ?? '' ) ) {
+			$where[] = 'e.consent_withdrawn_gmt IS NOT NULL';
+		} elseif ( 'active' === ( $args['consent'] ?? '' ) ) {
+			$where[] = 'e.consent_withdrawn_gmt IS NULL';
 		}
 		return array( implode( ' AND ', $where ), $params );
 	}
@@ -399,6 +404,15 @@ final class EntryRepository {
 		$params[] = $offset;
 		$sql      = "SELECT DISTINCT e.id FROM {$this->entries()} e INNER JOIN (" . implode( ' UNION ', $parts ) . ') m ON m.id = e.id WHERE e.anonymized_gmt IS NULL ORDER BY e.id ASC LIMIT %d OFFSET %d';
 		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( $sql, $params ) ) );
+	}
+
+	/**
+	 * Records a consent withdrawal once (atomic). Returns true only for the call that set the marker.
+	 */
+	public function mark_consent_withdrawn( int $id, string $when ): bool {
+		global $wpdb;
+		$affected = $wpdb->query( $wpdb->prepare( "UPDATE {$this->entries()} SET consent_withdrawn_gmt = %s, updated_gmt = %s WHERE id = %d AND consent_withdrawn_gmt IS NULL", $when, Clock::now(), $id ) );
+		return 1 === (int) $affected;
 	}
 
 	/** Deletes all notes of an entry (anonymization). */

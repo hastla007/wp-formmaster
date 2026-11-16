@@ -6,16 +6,18 @@
 
 ## 1. Offene Entscheidungen
 
+**Grundsatzentscheidung 16.11.2026:** Einreichung auf WordPress.org erfolgt **nach** einem externen Sicherheitsreview (docs/ENTSCHEIDUNGEN.md #10; Empfehlungen in docs/SECURITY-REVIEW.md Kapitel 5).
+
 | # | Entscheidung | Optionen / Hinweis | Verantwortlich | Status |
 |---|---|---|---|---|
 | E-1 | WordPress.org-Konto für Einreichung und SVN-Commit | Organisationskonto vs. persönliches Konto; 2FA Pflicht; mindestens zwei Committer | Produktverantwortung | **offen** |
 | E-2 | Plugin-Slug `form-captain` verfügbar? | Vor Einreichung prüfen (`https://wordpress.org/plugins/form-captain/` und Suche nach ähnlichen Namen). Der Slug wird bei Freigabe aus dem `Plugin Name` abgeleitet und ist danach nicht änderbar; ggf. in der Einreichung Wunsch-Slug angeben. Fallback-Slug festlegen. | Produktverantwortung | **offen** |
 | E-3 | Markenprüfung „Form Captain“ | Name darf keine fremde Marke verletzen und nicht mit „WordPress“/„WP“ beginnen (Richtlinie 17); Captain-Suite-Markenrechte klären | Produktverantwortung | **offen** |
-| E-4 | Supportkanal | WordPress.org-Forum (Pflicht, aktiv zu betreuen) + optional eigener Kanal für Pro; siehe `BETRIEB.md` 2.1 | Produktverantwortung | **offen** |
+| E-4 | Supportkanal | WordPress.org-Forum (Pflicht, aktiv zu betreuen) + optional eigener Kanal für Pro; siehe `BETRIEB.md` 2.1 | Produktverantwortung | **entschieden:** Forum für Free, Ticket per E-Mail für Pro |
 | E-5 | `Contributors:` in readme.txt | WordPress.org-Benutzernamen aus E-1 | Produktverantwortung | **offen** |
 | E-6 | `Plugin URI` / `Author URI` | derzeit GitHub-Repository; eigene Produktseite? Pro-Hinweis darf auf eigene Seite verlinken | Produktverantwortung | **offen** |
 | E-7 | Donate-Link | ja/nein | Produktverantwortung | offen |
-| E-8 | Sicherheitskontakt im readme | `[SECURITY-KONTAKT]` aus `BETRIEB.md` 2.6 | Produktverantwortung | **offen** |
+| E-8 | Sicherheitskontakt im readme | `[SECURITY-KONTAKT]` aus `BETRIEB.md` 2.6 | Produktverantwortung | **entschieden:** eigene `security@…`-Adresse – Adresse noch einzutragen |
 
 ## 2. Richtlinien-Checkliste
 

@@ -661,6 +661,9 @@ final class ConnectorRegistry {
 		if ( ! empty( $entry['anonymized_gmt'] ) ) {
 			return JobResult::fail( 'entry_anonymized', 'Entry was anonymized' );
 		}
+		if ( ! empty( $entry['consent_withdrawn_gmt'] ) ) {
+			return JobResult::fail( 'consent_withdrawn', 'Consent was withdrawn' );
+		}
 		if ( 'spam' === $entry['status'] ) {
 			return JobResult::fail( 'entry_spam', 'Entry is marked as spam' );
 		}

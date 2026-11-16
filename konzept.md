@@ -73,17 +73,17 @@ Die Produktanforderungen werden ohne Namen, Domains oder Links konkurrierender F
 
 Preis- und Funktionsentscheidungen werden aus eigenem Leistungsumfang, Supportkosten, Site-Limits, Kundenbedarf und Wartungsaufwand begründet. Fremde Wettbewerbermarken, Preislisten und URLs werden in diesen Projektdateien nicht geführt. Offizielle technische Plattformdokumentation darf für tatsächlich benötigte APIs weiterhin verlinkt werden.
 
-### Vorgeschlagene Form-Captain-Pro-Preise zum Start
+### Form-Captain-Pro-Preise zum Start (entschieden 16.11.2026)
 
 | Tarif | Jahrespreis (EUR, zzgl. USt.) | Live-Sites | Support |
 |---|---:|---:|---|
-| **Solo** | 49 € | 1 | Standard |
-| **Studio** | 99 € | 5 | Standard |
-| **Agency** | 199 € | 25 | Priorisiert |
+| **Solo** | 59 € | 1 | Standard |
+| **Studio** | 129 € | 5 | Standard |
+| **Agency** | 249 € | 25 | Priorisiert |
 
 Alle Tarife enthalten denselben Pro-Funktionsumfang, Updates und Support während der aktiven Laufzeit. Site-Limits zählen Live-Installationen; pro Live-Site ist eine Staging-Aktivierung enthalten, Development-Aktivierungen zählen nicht zum Limit, analog zum vorhandenen License Captain-Modell. Keine Lifetime-Lizenz und keine kostenpflichtigen Einzel-Add-ons zum Start. Preise nicht mit künstlichem „Normalpreis/Rabatt“-Doppelpreis vermarkten. Die Lizenz läuft 12 Monate und verlängert sich zum beim Kauf angezeigten Tarif, sofern im Checkout transparent zugestimmt wurde. Preisänderungen betreffen künftige Verlängerungen nur nach vorheriger Information und im Rahmen der Shopbedingungen.
 
-**Begründung:** Der Einstieg liegt nahe an einem bekannten 1-Site-Preisanker, die 5-Site-Stufe deckt kleine Agenturen ab und 25 Sites bilden einen klaren Agency-Tier. Die geringere Startposition gegenüber etablierten Produkten berücksichtigt den kleineren Funktions- und Supportumfang zum Launch. Preise nach den ersten 6 Monaten anhand von Conversion, Supportkosten und Verlängerungsquote neu bewerten; bis dahin keine zusätzliche Tarifstufe einführen.
+**Begründung:** Entscheidung vom 16.11.2026 (docs/ENTSCHEIDUNGEN.md #9): etwas höhere Startpreise als ursprünglich vorgeschlagen (49/99/199 €), um Supportaufwand und Pflege abzudecken. Der Einstieg liegt nahe an einem bekannten 1-Site-Preisanker, die 5-Site-Stufe deckt kleine Agenturen ab und 25 Sites bilden einen klaren Agency-Tier. Die geringere Startposition gegenüber etablierten Produkten berücksichtigt den kleineren Funktions- und Supportumfang zum Launch. Preise nach den ersten 6 Monaten anhand von Conversion, Supportkosten und Verlängerungsquote neu bewerten; bis dahin keine zusätzliche Tarifstufe einführen.
 
 
 ## 4. Funktionsumfang

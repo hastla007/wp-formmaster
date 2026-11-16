@@ -18,7 +18,15 @@ use FormCaptain\Support\Logger;
 
 final class JobRepository {
 
-	public const STATUSES = array( 'pending', 'running', 'succeeded', 'failed', 'dead', 'cancelled' );
+	public const STATUSES = array( 'pending', 'running', 'succeeded', 'failed', 'dead', 'cancelled', 'paused' );
+
+	/** Job type whose jobs can be paused per connector (ConnectorRegistry::JOB_TYPE). */
+	public const CONNECTOR_JOB_TYPE = 'connector.action';
+
+	/** Error code recorded on jobs paused because their connector is disabled. */
+	public const PAUSE_CODE = 'connector_disabled';
+
+	private const ACTION_KEY_PATTERN = '/^[a-z0-9_]+\.[a-z0-9_]+$/';
 
 	private function table(): string {
 		return Tables::name( Tables::JOBS );

@@ -12,7 +12,10 @@ namespace FormCaptain\Database;
 final class Schema {
 
 	/**
-	 * Returns CREATE TABLE statements for dbDelta() for schema version 1.
+	 * Returns CREATE TABLE statements for dbDelta() for the current schema version (2).
+	 *
+	 * v2 adds fc_entries.consent_withdrawn_gmt (+ index). dbDelta() adds the column
+	 * to existing v1 tables, so install and upgrade produce the same schema.
 	 *
 	 * @return array<string,string> table => sql
 	 */
@@ -68,12 +71,14 @@ final class Schema {
   trashed_gmt datetime DEFAULT NULL,
   expires_gmt datetime DEFAULT NULL,
   anonymized_gmt datetime DEFAULT NULL,
+  consent_withdrawn_gmt datetime DEFAULT NULL,
   PRIMARY KEY  (id),
   UNIQUE KEY request_key (request_key),
   KEY form_status_created (form_id,status,created_gmt),
   KEY status_created (status,created_gmt),
   KEY expires (expires_gmt),
-  KEY trashed (trashed_gmt)
+  KEY trashed (trashed_gmt),
+  KEY consent_withdrawn (consent_withdrawn_gmt)
 ) ENGINE=InnoDB $c;",
 			Tables::ENTRY_VALUES  => "CREATE TABLE {$t(Tables::ENTRY_VALUES)} (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,

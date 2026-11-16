@@ -49,12 +49,13 @@ async function fillContact( page, name ) {
 }
 
 /*
- * WordPress core's dashboard fires a background admin-ajax "wp-compression-test"
- * request; WebKit reports it as an access-control error when the page navigates
- * away before it finishes. It is not Form Captain code, so only that exact core
- * request is ignored – every other page error still fails the run.
+ * WordPress core's admin screens fire background admin-ajax requests (compression
+ * test, dashboard widgets, heartbeat). WebKit reports such a request as an
+ * "access control checks" page error when the page navigates away before it
+ * finishes. Form Captain never uses admin-ajax.php (REST only), so exactly that
+ * signature is ignored – every other page error still fails the run.
  */
-const IGNORED_CORE_ERRORS = [ /admin-ajax\.php\?action=wp-compression-test\b/ ];
+const IGNORED_CORE_ERRORS = [ /\/wp-admin\/admin-ajax\.php\b.*due to access control checks/ ];
 function recordError( errors, e ) {
 	const message = String( ( e && e.message ) || e );
 	if ( ! IGNORED_CORE_ERRORS.some( ( re ) => re.test( message ) ) ) {

@@ -170,6 +170,7 @@
 						input.value = data.token;
 					}
 					form.setAttribute( 'data-fc-token-issued', String( data.issued_at || now() ) );
+					form._fcOwnToken = true;
 					form._fcMinSubmitAt = data.min_submit_at || 0;
 					if ( data._fc_ctx ) {
 						var ctx = form.querySelector( 'input[name="_fc_ctx"]' );
@@ -196,7 +197,9 @@
 
 	function ensureFreshToken( form, maxAge ) {
 		var input = tokenInput( form );
-		if ( ! input || ! input.value || tokenAge( form ) > maxAge ) {
+		// Tokens embedded in (possibly cached) HTML may be shared by several visitors,
+		// so every page view fetches its own token once before submitting (P3-14).
+		if ( ! input || ! input.value || ! form._fcOwnToken || tokenAge( form ) > maxAge ) {
 			return refreshToken( form );
 		}
 		return Promise.resolve( null );

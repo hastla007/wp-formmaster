@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace FormCaptain\Admin;
 
 use FormCaptain\Admin\Tables\FormsListTable;
+use FormCaptain\Import\ImportAdmin;
 use FormCaptain\Install\Capabilities;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\FormRepository;
@@ -20,10 +21,10 @@ use FormCaptain\Support\Asset;
 final class FormsPage {
 
 	/** Row actions handled via admin-post.php?action=form_captain_form_{action}. */
-	public const ACTIONS = array( 'create', 'duplicate', 'pause', 'resume', 'publish', 'unpublish', 'archive', 'restore', 'export', 'delete', 'import', 'preview' );
+	public const ACTIONS = array( 'create', 'duplicate', 'pause', 'resume', 'publish', 'unpublish', 'archive', 'restore', 'export', 'delete', 'import', 'preview', 'type_a_preview', 'type_a_import' );
 
 	/** Actions without form ID (nonce without ID suffix). */
-	private const GLOBAL_ACTIONS = array( 'create', 'import' );
+	private const GLOBAL_ACTIONS = array( 'create', 'import', 'type_a_preview', 'type_a_import' );
 
 	public function __construct(
 		private FormService $service,
@@ -112,6 +113,9 @@ final class FormsPage {
 				return array( 'redirect' => admin_url( 'admin.php?page=form-captain-edit&form=' . (int) $id . '&fc_notice=created' ) );
 			case 'import':
 				return array( 'redirect' => $this->import_upload( $list ) );
+			case 'type_a_preview':
+			case 'type_a_import':
+				return array( 'redirect' => Plugin::instance()->get( ImportAdmin::class )->handle( $action, $list, $this ) );
 			case 'export':
 				$data = $this->service->export( $form_id );
 				if ( is_wp_error( $data ) ) {
@@ -216,6 +220,7 @@ final class FormsPage {
 		$table->display();
 		echo '</form>';
 		$this->import_form();
+		Plugin::instance()->get( ImportAdmin::class )->render();
 		DashboardPage::pro_hint( 'forms' );
 		echo '</div>';
 	}
@@ -305,6 +310,10 @@ final class FormsPage {
 			'payload_too_large'      => __( 'The file is too large (maximum 256 KB).', 'form-captain' ),
 			'unsupported_media_type' => __( 'Please upload a .json file.', 'form-captain' ),
 			'import_no_file'         => __( 'Please choose a file to import.', 'form-captain' ),
+			'import_no_source'       => __( 'Please paste the form source to import.', 'form-captain' ),
+			'import_expired'         => __( 'The import preview has expired. Please start again.', 'form-captain' ),
+			'import_blocked'         => __( 'The form cannot be imported. See the report for details.', 'form-captain' ),
+			'import_limit_exceeded'  => __( 'The form exceeds the limits (100 fields, 200 options) and was not imported.', 'form-captain' ),
 			'storage_failed'         => __( 'The form could not be saved.', 'form-captain' ),
 		);
 		if ( isset( $ok[ $notice ] ) ) {

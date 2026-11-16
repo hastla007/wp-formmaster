@@ -182,10 +182,15 @@ final class JobRepository {
 		return 1 === (int) $affected;
 	}
 
-	/** Cancels all open jobs of an entry (P4-18). */
+	/**
+	 * Cancels all open jobs of an entry (P4-18). Provider error texts of all its jobs are dropped as
+	 * well: they may quote personal data and must not outlive the entry (SR-08).
+	 */
 	public function cancel_for_entry( int $entry_id, string $reason = 'entry_deleted' ): int {
 		global $wpdb;
-		return (int) $wpdb->query( $wpdb->prepare( "UPDATE {$this->table()} SET status = 'cancelled', last_error_code = %s, lock_token = NULL, locked_until_gmt = NULL, finished_gmt = %s, updated_gmt = %s WHERE entry_id = %d AND status IN ('pending','failed','running')", $reason, Clock::now(), Clock::now(), $entry_id ) );
+		$cancelled = (int) $wpdb->query( $wpdb->prepare( "UPDATE {$this->table()} SET status = 'cancelled', last_error_code = %s, lock_token = NULL, locked_until_gmt = NULL, finished_gmt = %s, updated_gmt = %s WHERE entry_id = %d AND status IN ('pending','failed','running')", $reason, Clock::now(), Clock::now(), $entry_id ) );
+		$wpdb->query( $wpdb->prepare( "UPDATE {$this->table()} SET last_error_message = NULL WHERE entry_id = %d AND last_error_message IS NOT NULL", $entry_id ) );
+		return $cancelled;
 	}
 
 	/** Cancels open jobs of a given type prefix (e.g. connector deactivated). */

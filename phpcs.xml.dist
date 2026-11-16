@@ -37,6 +37,9 @@
 	<!-- Repositories build placeholder lists dynamically; values are always passed to prepare(). -->
 	<rule ref="WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber"><exclude-pattern>src/Repository/*</exclude-pattern></rule>
 	<rule ref="WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare"><exclude-pattern>src/Repository/*</exclude-pattern></rule>
+	<!-- The reference connector is a separate plugin with its own text domain and prefix. -->
+	<rule ref="WordPress.WP.I18n.TextDomainMismatch"><exclude-pattern>connectors/*</exclude-pattern></rule>
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals"><exclude-pattern>connectors/*</exclude-pattern></rule>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<property name="text_domain" type="array">

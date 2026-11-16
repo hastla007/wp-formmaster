@@ -17,10 +17,10 @@ use FormCaptain\Integrations\ConnectorInterface;
 
 final class Reference_Connector implements ConnectorInterface {
 
-	public const ACTION        = 'reference.create_ticket';
-	public const OPTION        = 'fcrc_tickets';
-	public const MODE_OPTION   = 'fcrc_failure_mode';
-	public const SEEN_OPTION   = 'fcrc_attempts';
+	public const ACTION      = 'reference.create_ticket';
+	public const OPTION      = 'fcrc_tickets';
+	public const MODE_OPTION = 'fcrc_failure_mode';
+	public const SEEN_OPTION = 'fcrc_attempts';
 
 	public function key(): string {
 		return 'reference';
@@ -128,10 +128,10 @@ final class Reference_Connector implements ConnectorInterface {
 			return array( 'status' => 'success', 'code' => 'already_created', 'message' => '', 'remote_id' => (string) $tickets[ $key ]['id'] );
 		}
 
-		$mode     = (string) get_option( self::MODE_OPTION, '' );
-		$attempts = get_option( self::SEEN_OPTION, array() );
-		$attempts = is_array( $attempts ) ? $attempts : array();
-		$count    = (int) ( $attempts[ $key ] ?? 0 ) + 1;
+		$mode             = (string) get_option( self::MODE_OPTION, '' );
+		$attempts         = get_option( self::SEEN_OPTION, array() );
+		$attempts         = is_array( $attempts ) ? $attempts : array();
+		$count            = (int) ( $attempts[ $key ] ?? 0 ) + 1;
 		$attempts[ $key ] = $count;
 		update_option( self::SEEN_OPTION, $attempts, false );
 
@@ -142,7 +142,7 @@ final class Reference_Connector implements ConnectorInterface {
 			return array( 'status' => 'retry', 'code' => 'remote_unavailable', 'message' => 'The example service is temporarily unavailable.' );
 		}
 
-		$ticket_id         = 'T-' . strtoupper( substr( hash( 'sha256', $key ), 0, 10 ) );
+		$ticket_id       = 'T-' . strtoupper( substr( hash( 'sha256', $key ), 0, 10 ) );
 		$tickets[ $key ] = array(
 			'id'          => $ticket_id,
 			'queue'       => $queue,
@@ -179,4 +179,3 @@ final class Reference_Connector implements ConnectorInterface {
 		update_option( self::OPTION, $tickets, false );
 	}
 }
-

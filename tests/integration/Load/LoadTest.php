@@ -48,9 +48,9 @@ final class LoadTest extends FrontendTestCase {
 	}
 
 	private static function measure( string $label, callable $fn ): mixed {
-		$start  = microtime( true );
-		$result = $fn();
-		$ms     = ( microtime( true ) - $start ) * 1000;
+		$start                  = microtime( true );
+		$result                 = $fn();
+		$ms                     = ( microtime( true ) - $start ) * 1000;
 		self::$report[ $label ] = sprintf( '%.1f ms', $ms );
 		return array( $result, $ms );
 	}
@@ -97,14 +97,14 @@ final class LoadTest extends FrontendTestCase {
 
 	public function test_form_with_100_fields_saves_renders_and_submits(): void {
 		$this->as_admin();
-		$service = $this->plugin()->get( FormService::class );
-		$schema  = array(
+		$service                = $this->plugin()->get( FormService::class );
+		$schema                 = array(
 			'schema_version' => 1,
 			'fields'         => self::hundred_fields(),
 		);
 		list( $id, $create_ms ) = self::measure( '100 fields: create', static fn() => $service->create( 'Groß', $schema, array() ) );
 		$this->assertIsInt( $id );
-		$form = $this->plugin()->get( FormRepository::class )->find( $id );
+		$form                    = $this->plugin()->get( FormRepository::class )->find( $id );
 		list( $saved, $save_ms ) = self::measure( '100 fields: save', static fn() => $service->save( $id, 'Groß', $schema, $form['settings'], (int) $form['revision'] ) );
 		$this->assertIsArray( $saved );
 		list( $published, $publish_ms ) = self::measure( '100 fields: publish', static fn() => $service->publish( $id ) );
@@ -114,7 +114,7 @@ final class LoadTest extends FrontendTestCase {
 		$this->assertCount( 100, $form['schema']['fields'] );
 		wp_set_current_user( 0 );
 
-		$renderer = $this->plugin()->get( Renderer::class );
+		$renderer                 = $this->plugin()->get( Renderer::class );
 		list( $html, $render_ms ) = self::measure( '100 fields: render', static fn() => $renderer->render( $form ) );
 		preg_match_all( '/name="fc\[(f_load\d{3})\]/', $html, $m );
 		$this->assertCount( 100, array_unique( $m[1] ), 'Every field is rendered' );
@@ -124,10 +124,10 @@ final class LoadTest extends FrontendTestCase {
 		foreach ( self::hundred_fields() as $i => $f ) {
 			$values[ $f['id'] ] = self::sample( (string) $f['type'], $i );
 		}
-		$payload = $this->payload( $form, $values );
+		$payload                                  = $this->payload( $form, $values );
 		self::$report['100 fields: payload size'] = sprintf( '%.1f KB', strlen( (string) wp_json_encode( $payload ) ) / 1024 );
 		$this->assertLessThan( Limits::get( 'request_bytes' ), strlen( (string) wp_json_encode( $payload ) ), 'A full 100-field submission fits the request budget' );
-		$submission = $this->plugin()->get( SubmissionService::class );
+		$submission              = $this->plugin()->get( SubmissionService::class );
 		list( $res, $submit_ms ) = self::measure( '100 fields: submit', static fn() => $submission->submit( $form, $payload, array( 'ip' => '198.51.100.20' ) ) );
 		$this->assertTrue( $res['success'], (string) wp_json_encode( $res['error_codes'] ?? $res['code'] ) );
 		$this->assertCount( 100, $this->plugin()->get( EntryRepository::class )->values_for( (int) $res['entry_id'] ) );
@@ -143,10 +143,10 @@ final class LoadTest extends FrontendTestCase {
 
 	/** @return array{0:array<string,mixed>,1:int} form + first entry id */
 	private function bulk_entries( int $count ): array {
-		$form  = $this->create_published_form();
-		$other = $this->create_published_form();
-		$repo  = $this->plugin()->get( EntryRepository::class );
-		$first = 0;
+		$form         = $this->create_published_form();
+		$other        = $this->create_published_form();
+		$repo         = $this->plugin()->get( EntryRepository::class );
+		$first        = 0;
 		list( , $ms ) = self::measure(
 			sprintf( '%d entries: insert via repository', $count ),
 			static function () use ( $repo, $form, $other, $count, &$first ): void {
@@ -191,15 +191,15 @@ final class LoadTest extends FrontendTestCase {
 		$peak_delta               = memory_get_peak_usage() - $before;
 		$size                     = (int) fstat( $stream )['size'];
 		fclose( $stream );
-		self::$report['2000 entries: CSV size']             = sprintf( '%.1f KB', $size / 1024 );
+		self::$report['2000 entries: CSV size']              = sprintf( '%.1f KB', $size / 1024 );
 		self::$report['2000 entries: CSV peak memory delta'] = sprintf( '%.1f MB', $peak_delta / 1048576 );
 		$this->assertSame( 1400, $rows, 'Active entries of the form (spam excluded)' );
 		$this->assertLessThan( 16 * 1048576, $peak_delta, 'Export streams in batches (csv_batch) instead of loading everything' );
 		$this->assertLessThan( 30000, $export_ms );
 
 		// List / pagination.
-		$entries = $this->plugin()->get( EntryRepository::class );
-		list( $page1, $p1_ms )  = self::measure( '2000 entries: list page 1', static fn() => $entries->list( array( 'form_id' => (int) $form['id'], 'per_page' => 20 ) ) );
+		$entries                 = $this->plugin()->get( EntryRepository::class );
+		list( $page1, $p1_ms )   = self::measure( '2000 entries: list page 1', static fn() => $entries->list( array( 'form_id' => (int) $form['id'], 'per_page' => 20 ) ) );
 		list( $page50, $p50_ms ) = self::measure( '2000 entries: list page 50', static fn() => $entries->list( array( 'form_id' => (int) $form['id'], 'per_page' => 20, 'page' => 50 ) ) );
 		$this->assertSame( 1400, $page1['total'] );
 		$this->assertCount( 20, $page1['items'] );
@@ -209,12 +209,12 @@ final class LoadTest extends FrontendTestCase {
 
 		// EXPLAIN on the main queries.
 		global $wpdb;
-		$e   = Tables::name( Tables::ENTRIES );
-		$v   = Tables::name( Tables::ENTRY_VALUES );
-		$j   = Tables::name( Tables::JOBS );
-		$fid = (int) $form['id'];
-		$ids = implode( ',', array_map( static fn( $i ) => (int) $i['id'], $page1['items'] ) );
-		$now = gmdate( 'Y-m-d H:i:s' );
+		$e      = Tables::name( Tables::ENTRIES );
+		$v      = Tables::name( Tables::ENTRY_VALUES );
+		$j      = Tables::name( Tables::JOBS );
+		$fid    = (int) $form['id'];
+		$ids    = implode( ',', array_map( static fn( $i ) => (int) $i['id'], $page1['items'] ) );
+		$now    = gmdate( 'Y-m-d H:i:s' );
 		$checks = array(
 			'list (form + status, sorted)' => array( "SELECT e.* FROM {$e} e WHERE 1=1 AND e.form_id = {$fid} AND e.status = 'new' ORDER BY e.created_gmt DESC, e.id DESC LIMIT 20 OFFSET 0", array( 'form_status_created' ) ),
 			'count (form + status)'        => array( "SELECT COUNT(*) FROM {$e} e WHERE 1=1 AND e.form_id = {$fid} AND e.status = 'new'", array( 'form_status_created' ) ),
@@ -226,8 +226,8 @@ final class LoadTest extends FrontendTestCase {
 		foreach ( $checks as $label => list( $sql, $keys ) ) {
 			$plan = $wpdb->get_results( 'EXPLAIN ' . $sql, ARRAY_A );
 			$this->assertNotEmpty( $plan, $label );
-			$row      = $plan[0];
-			$possible = array_filter( explode( ',', (string) ( $row['possible_keys'] ?? '' ) ) );
+			$row                                 = $plan[0];
+			$possible                            = array_filter( explode( ',', (string) ( $row['possible_keys'] ?? '' ) ) );
 			self::$report[ 'EXPLAIN ' . $label ] = sprintf( 'type=%s key=%s rows=%s', $row['type'] ?? '', $row['key'] ?? 'NULL', $row['rows'] ?? '' );
 			$this->assertNotEmpty( array_intersect( $keys, $possible ), $label . ': expected index among possible keys, got ' . (string) wp_json_encode( $row ) );
 			$this->assertNotSame( 'ALL', $row['type'] ?? '', $label . ': full table scan ' . (string) wp_json_encode( $row ) );
@@ -235,9 +235,9 @@ final class LoadTest extends FrontendTestCase {
 	}
 
 	public function test_burst_of_50_submissions_hits_rate_limit(): void {
-		$form       = $this->create_published_form();
-		$submission = $this->plugin()->get( SubmissionService::class );
-		$codes      = array();
+		$form         = $this->create_published_form();
+		$submission   = $this->plugin()->get( SubmissionService::class );
+		$codes        = array();
 		list( , $ms ) = self::measure(
 			'50 submissions burst (one IP)',
 			function () use ( $form, $submission, &$codes ): void {
@@ -246,7 +246,7 @@ final class LoadTest extends FrontendTestCase {
 				}
 			}
 		);
-		$counts = array_count_values( $codes );
+		$counts       = array_count_values( $codes );
 		self::$report['50 submissions burst: accepted'] = (string) ( $counts['created'] ?? 0 );
 		$this->assertSame( 5, $counts['created'] ?? 0, 'Per-form IP limit (spam.rate_limit = 5)' );
 		$this->assertSame( 45, $counts['rate_limited'] ?? 0 );
@@ -272,8 +272,8 @@ final class LoadTest extends FrontendTestCase {
 				++$events;
 			}
 		);
-		$submission = $this->plugin()->get( SubmissionService::class );
-		$jobs       = $this->count_rows( 'fc_jobs' );
+		$submission   = $this->plugin()->get( SubmissionService::class );
+		$jobs         = $this->count_rows( 'fc_jobs' );
 		list( , $ms ) = self::measure(
 			'spam wave: 100 honeypot submissions',
 			function () use ( $form, $submission ): void {
@@ -287,7 +287,7 @@ final class LoadTest extends FrontendTestCase {
 		);
 		$this->assertSame( 0, $this->count_rows( 'fc_jobs' ) - $jobs, 'Spam never creates outbox jobs' );
 		$this->assertSame( 0, $events, 'Spam never fires entry_created_v1' );
-		$this->assertSame( 100, $this->count_rows( 'fc_entries', "form_id = " . (int) $form['id'] . " AND status = 'spam' AND spam_reason = 'honeypot'" ) );
+		$this->assertSame( 100, $this->count_rows( 'fc_entries', 'form_id = ' . (int) $form['id'] . " AND status = 'spam' AND spam_reason = 'honeypot'" ) );
 		$this->assertLessThan( 30000, $ms );
 	}
 
@@ -323,7 +323,7 @@ final class LoadTest extends FrontendTestCase {
 		$this->assertSame( 20, Limits::get( 'job_batch_seconds' ), 'Raising the time budget is ignored' );
 
 		// Draining the whole queue needs ceil(468 / 7) runs, never more than one batch per run.
-		$runs = 0;
+		$runs               = 0;
 		list( , $drain_ms ) = self::measure(
 			'queue: drain 468 jobs (batch 7)',
 			static function () use ( $runner, &$runs ): void {

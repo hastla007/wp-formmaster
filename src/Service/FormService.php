@@ -92,8 +92,8 @@ final class FormService {
 			},
 			$this->sanitize_actions( is_array( $settings['actions'] ?? null ) ? $settings['actions'] : array(), $result['schema'], $action_errors, false )
 		);
-		$clean = $this->sanitize_settings( array_replace_recursive( $this->default_settings(), $settings ), $result['schema'] );
-		$id    = $this->forms->create( self::plain_title( $title ), $result['schema'], $clean['settings'], get_current_user_id() );
+		$clean               = $this->sanitize_settings( array_replace_recursive( $this->default_settings(), $settings ), $result['schema'] );
+		$id                  = $this->forms->create( self::plain_title( $title ), $result['schema'], $clean['settings'], get_current_user_id() );
 		if ( $id <= 0 ) {
 			return Errors::error( Errors::STORAGE_FAILED, __( 'The form could not be saved.', 'form-captain' ) );
 		}

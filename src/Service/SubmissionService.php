@@ -106,7 +106,10 @@ final class SubmissionService {
 				return $fail( Errors::INVALID_TOKEN );
 			}
 			$issued_at   = (int) $token['issued_at'];
-			$request_key = SubmissionToken::request_key( $form_id, (string) $token['random'] );
+			// A cached page can hand the same token to several visitors. The key therefore
+			// also covers the submitted values: an identical retry is deduplicated (P4-03),
+			// a different visitor's submission with the shared token is stored (P3-14).
+			$request_key = SubmissionToken::request_key( $form_id, (string) $token['random'] . '|' . self::fingerprint( $input ) );
 		}
 		$existing = $this->entries->find_by_request_key( $request_key );
 		if ( $existing ) {
@@ -262,6 +265,16 @@ final class SubmissionService {
 	/**
 	 * @param array<string,mixed> $meta
 	 */
+	/**
+	 * Order-independent hash of the submitted field values.
+	 *
+	 * @param array<string,mixed> $input
+	 */
+	private static function fingerprint( array $input ): string {
+		ksort( $input );
+		return hash( 'sha256', (string) wp_json_encode( $input ) );
+	}
+
 	private function trusted_request_key( int $form_id, array $meta ): string {
 		if ( isset( $meta['request_key'] ) && is_string( $meta['request_key'] ) && preg_match( '/^[0-9a-f]{64}$/', $meta['request_key'] ) ) {
 			return $meta['request_key'];

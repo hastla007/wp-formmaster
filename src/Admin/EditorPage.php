@@ -53,7 +53,8 @@ final class EditorPage {
 		wp_enqueue_style( self::HANDLE, Asset::url( 'editor.css' ), array( 'wp-components' ), Asset::version( 'editor.css' ) );
 		wp_enqueue_script( self::HANDLE, Asset::url( 'editor.js' ), array( 'wp-element', 'wp-components', 'wp-i18n', 'wp-api-fetch' ), Asset::version( 'editor.js' ), true );
 		wp_set_script_translations( self::HANDLE, 'form-captain', FORM_CAPTAIN_DIR . 'languages' );
-		wp_add_inline_script( self::HANDLE, 'window.formCaptainEditor = ' . wp_json_encode( $this->bootstrap( $id ) ) . ';', 'before' );
+		// JSON_HEX_TAG: page titles and labels can never open/close tags or comments inside the inline <script> (SR-07).
+		wp_add_inline_script( self::HANDLE, 'window.formCaptainEditor = ' . wp_json_encode( $this->bootstrap( $id ), JSON_HEX_TAG | JSON_HEX_AMP ) . ';', 'before' );
 	}
 
 	/**

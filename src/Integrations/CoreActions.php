@@ -161,8 +161,8 @@ final class CoreActions {
 				$allowed[] = (string) $field['id'];
 			}
 		}
-		$values = array_intersect_key( $this->plugin->get( EntryRepository::class )->values_for( (int) $entry['id'] ), array_flip( $allowed ) );
-		$copy   = $form;
+		$values                           = array_intersect_key( $this->plugin->get( EntryRepository::class )->values_for( (int) $entry['id'] ), array_flip( $allowed ) );
+		$copy                             = $form;
 		$copy['settings']['notification'] = array(
 			'enabled' => true,
 			'to'      => array( $to ),
@@ -412,7 +412,7 @@ final class CoreActions {
 		foreach ( $pending as $item ) {
 			$html .= '<li><strong>' . esc_html( $item['label'] ) . '</strong> ';
 			if ( $can ) {
-				$url   = wp_nonce_url(
+				$url = wp_nonce_url(
 					add_query_arg(
 						array(
 							'action'   => self::ADMIN_ACTION,

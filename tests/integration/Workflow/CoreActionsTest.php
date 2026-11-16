@@ -264,7 +264,7 @@ final class CoreActionsTest extends TestCase {
 	}
 
 	public function test_handoff_rejects_missing_or_core_targets(): void {
-		$form = $this->form(
+		$form  = $this->form(
 			array(
 				self::action_instance( CoreActions::SET_STATUS, 'a_00000000cc', array(), array( 'status' => 'read' ) ),
 				self::action_instance( CoreActions::HANDOFF, 'a_00000000dd', array(), array( 'target_instance' => 'a_00000000cc' ) ),

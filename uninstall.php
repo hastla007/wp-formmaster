@@ -56,5 +56,7 @@ foreach ( $form_captain_options as $form_captain_option ) {
 foreach ( array( 'fc\\_', 'form\\_captain\\_' ) as $form_captain_prefix ) {
 	$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", '\\_transient\\_' . $form_captain_prefix . '%', '\\_transient\\_timeout\\_' . $form_captain_prefix . '%' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 }
+// Per-form records with an ID suffix (import reports).
+$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 'form\\_captain\\_import\\_%' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 delete_metadata( 'user', 0, 'form_captain_pro_hints_dismissed', '', true );
 \FormCaptain\Install\Capabilities::uninstall();

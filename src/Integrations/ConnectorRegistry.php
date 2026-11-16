@@ -60,7 +60,7 @@ final class ConnectorRegistry {
 
 	private bool $collected = false;
 
-	/** True while the built-in core actions register (reserved namespace `core.*`, P8-19). */
+	/** @var bool true while the built-in core actions register (reserved namespace `core.*`, P8-19) */
 	private bool $registering_core = false;
 
 	public function __construct( private Plugin $plugin ) {}

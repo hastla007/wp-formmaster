@@ -1,6 +1,6 @@
 <?php
 /**
- * Mail jobs: content, allowlist, header injection, failures, dead letter (P4-07, P4-08, P4-17, P8-20).
+ * Mail jobs: content, allowlist, header injection, failures, dead letter (P4-07, P4-08, P4-17, F-12).
  *
  * @package FormCaptain
  */
@@ -260,21 +260,21 @@ final class MailJobHandlerTest extends TestCase {
 		$this->assertSame( 'receipt_rate_limited', $this->jobs()->find( $jobs[3] )['last_error_code'] );
 	}
 
-	public function test_explicit_handoff_skips_native_mail_and_default_is_native(): void {
+	public function test_core_always_sends_its_own_mails_without_handoff(): void {
+		// Owner decision F-12 / D10: the former `form_captain_mail_handoff` filter is removed;
+		// a callback on that hook name must not suppress native delivery.
 		$form    = $this->form();
 		$a       = $this->make_entry( $form, $this->values() );
-		$b       = $this->make_entry( $form, $this->values() );
 		$ja      = $this->enqueue_mail( $a, (int) $form['id'] );
-		$jb      = $this->enqueue_mail( $b, (int) $form['id'] );
-		$handoff = static fn( $handled, $type, $entry_id ) => $entry_id === $a ? 'handled' : $handled;
-		add_filter( 'form_captain_mail_handoff', $handoff, 10, 3 );
+		$handoff = static fn() => 'handled';
+		add_filter( 'form_captain_mail_handoff', $handoff );
 		$this->runner()->run();
-		remove_filter( 'form_captain_mail_handoff', $handoff, 10 );
-		$this->assertSame( array( 'handoff' => true ), $this->jobs()->find( $ja )['result'] );
-		$this->assertSame( 'succeeded', $this->jobs()->find( $jb )['status'] );
-		$this->assertCount( 1, $this->sent_mails(), 'only the non-handed-over message is sent natively' );
+		remove_filter( 'form_captain_mail_handoff', $handoff );
+		$this->assertSame( 'succeeded', $this->jobs()->find( $ja )['status'] );
+		$this->assertArrayNotHasKey( 'handoff', (array) $this->jobs()->find( $ja )['result'] );
+		$this->assertCount( 1, $this->sent_mails() );
 		// Same idempotency key cannot create a second job → no duplicate mail.
-		$this->assertSame( $jb, $this->enqueue_mail( $b, (int) $form['id'] ) );
+		$this->assertSame( $ja, $this->enqueue_mail( $a, (int) $form['id'] ) );
 		$this->runner()->run();
 		$this->assertCount( 1, $this->sent_mails() );
 	}

@@ -686,6 +686,29 @@ final class FormService {
 				$out[ $keep ] = $in[ $keep ];
 			}
 		}
+		// Form settings of an extension (contract 1.1.0), stored under `x`; the core never interprets them.
+		$ext = apply_filters( 'form_captain_normalize_form_settings_v1', null, is_array( $in['x'] ?? null ) ? $in['x'] : array(), $schema );
+		if ( is_array( $ext ) ) {
+			foreach ( (array) ( $ext['errors'] ?? array() ) as $key => $code ) {
+				if ( is_string( $key ) && preg_match( '/^[a-z0-9_.]{1,60}$/', $key ) && is_string( $code ) && preg_match( '/^[a-z][a-z0-9_]{1,40}$/', $code ) ) {
+					$errors[ "x.$key" ] = $code;
+				}
+			}
+			$x    = is_array( $ext['settings'] ?? null ) ? $ext['settings'] : array();
+			$json = wp_json_encode( $x );
+			if ( $x && is_string( $json ) && strlen( $json ) <= 16384 ) {
+				$out['x'] = $x;
+			} elseif ( $x ) {
+				$errors['x'] = 'extension_settings_too_large';
+			}
+		} elseif ( is_array( $in['x'] ?? null ) && $in['x'] ) {
+			// No extension active: keep stored extension settings unchanged, so a lapsed
+			// license or a deactivated add-on never deletes them (P7-06).
+			$json = wp_json_encode( $in['x'] );
+			if ( is_string( $json ) && strlen( $json ) <= 16384 ) {
+				$out['x'] = $in['x'];
+			}
+		}
 		return array(
 			'settings' => $out,
 			'errors'   => $errors,

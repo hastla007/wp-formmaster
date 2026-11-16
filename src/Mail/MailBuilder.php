@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace FormCaptain\Mail;
 
+use FormCaptain\Domain\Fields\FieldTypes;
+
 use FormCaptain\Repository\FormRepository;
 use FormCaptain\Settings\Settings;
 
@@ -63,7 +65,12 @@ final class MailBuilder {
 		$fields   = self::fields( $schema );
 		$rejected = array();
 
-		$to = $this->recipients( $settings['to'] ?? array( '{admin_email}' ), $rejected );
+		/*
+		 * Routing (contract 1.1.0): an extension may replace the configured recipient list, e.g. by
+		 * conditions on the values. The result goes through the same checks as configured addresses.
+		 */
+		$configured = apply_filters( 'form_captain_notification_recipients_v1', $settings['to'] ?? array( '{admin_email}' ), $form, (int) ( $entry['id'] ?? 0 ), $values );
+		$to         = $this->recipients( is_array( $configured ) || is_string( $configured ) ? $configured : array(), $rejected );
 		if ( ! $to ) {
 			return new \WP_Error( 'no_recipients', 'No valid recipient configured' );
 		}
@@ -335,9 +342,16 @@ final class MailBuilder {
 				$labels[ (string) $option['value'] ] = (string) ( $option['label'] ?? $option['value'] );
 			}
 		}
-		$items = is_array( $value ) ? $value : array( $value );
-		$items = array_map( static fn( $v ): string => $labels[ (string) $v ] ?? (string) $v, $items );
-		return implode( ', ', $items );
+		$items   = is_array( $value ) ? $value : array( $value );
+		$items   = array_map( static fn( $v ): string => $labels[ (string) $v ] ?? (string) $v, $items );
+		$display = implode( ', ', $items );
+		if ( empty( FieldTypes::all()[ $type ]['core'] ) ) {
+			// Extension field types describe their stored value as plain text (contract 1.1.0),
+			// e.g. a file name instead of an internal file reference. Callers escape the result.
+			$custom  = apply_filters( 'form_captain_display_value_v1', $display, $field, $value );
+			$display = is_string( $custom ) ? wp_strip_all_tags( $custom ) : $display;
+		}
+		return $display;
 	}
 
 	/**

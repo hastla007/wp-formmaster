@@ -24,6 +24,7 @@ use FormCaptain\Settings\Settings;
 use FormCaptain\Support\Errors;
 use FormCaptain\Support\Limits;
 use FormCaptain\Support\Logger;
+use FormCaptain\Support\UploadedFiles;
 
 final class RestController {
 
@@ -182,6 +183,7 @@ final class RestController {
 				'user_id'        => get_current_user_id(),
 				'body_bytes'     => strlen( $body ),
 				'request_id'     => Logger::correlation_id(),
+				'files'          => UploadedFiles::by_field( (array) $request->get_file_params() ),
 			)
 		);
 		return self::from_result( $result );

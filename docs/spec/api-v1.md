@@ -5,7 +5,7 @@ Nur das in diesem Dokument Aufgeführte ist öffentliche API. Klassen unter `For
 ## Version
 
 ```php
-FORM_CAPTAIN_CONTRACT_VERSION // '1.0.0'
+FORM_CAPTAIN_CONTRACT_VERSION // '1.1.0' (seit 16.11.2026; 1.0.0 → 1.1.0 additiv, siehe „Erweiterungspunkte für Pro-Funktionen“)
 form_captain_contract_version(): string
 ```
 
@@ -178,3 +178,22 @@ Connectoren sind nach Installation **deaktiviert**; nur aktivierte Connectoren d
 | `form_captain_spam_checks_v1` | zusätzliche Spamprüfungen (z. B. Captcha-Provider, opt-in) |
 | `form_captain_signed_context_purposes_v1` | registrierte Kontext-Zwecke |
 | `form_captain_pro_active` | Pro meldet sich (nur für sparsame Hinweise im Free) |
+
+## Erweiterungspunkte für Pro-Funktionen (seit Contract 1.1.0)
+
+Für Uploads, Mehrschritt-Formulare und erweiterte Bedingungen/Routing (P7-07, P7-08, P7-10). Alle Punkte sind additiv. Ohne Erweiterung verhält sich der Kern wie in 1.0.0. Getestet in `tests/integration/Contract/ExtensionPointsTest.php`.
+
+| Hook | Art | Argumente → Rückgabe | Regeln des Kerns |
+|---|---|---|---|
+| `form_captain_render_field_v1` | Filter | `null`, `array $field`, `array $ctx` (`id`, `name`, `value`, `required`, `invalid`, `aria-describedby`) → HTML des Bedienelements | Nur für Feldtypen aus `form_captain_field_types_v1`. Wrapper, Label, Hilfe- und Fehlerelement samt IDs liefert der Kern. Ohne Rückgabe entfällt das Feld. Die Erweiterung escaped ihr HTML selbst. |
+| `form_captain_validate_field_v1` | Filter | `null`, `array $field`, `string\|array\|null $value`, `array $ctx` (`file`: hochgeladene Datei im `$_FILES`-Format oder `null`, `form`) → `array{value:string\|string[]\|null}` oder `array{code:string}` | Nur für Erweiterungs-Feldtypen. Ohne Validator: Pflichtfeld → `required`, sonst kein Wert. Werte höchstens 5000 Zeichen. Fehlercodes `^[a-z][a-z0-9_]{1,40}$`. |
+| `form_captain_field_error_message_v1` | Filter | `''`, `string $code`, `array $field` → Text | Für eigene Fehlercodes. HTML wird entfernt. |
+| `form_captain_normalize_field_v1` | Filter | `null`, `array $raw_field`, `array $ids` (Feld-ID → Typ, bis einschließlich dieses Felds) → `array{settings?:array, errors?:array<string,string>}` | Gespeichert unter `field.x` (höchstens 8 KB JSON). Fehler erscheinen als `fields.N.x.<key>`. Der Kern wertet `x` nie aus. |
+| `form_captain_normalize_form_settings_v1` | Filter | `null`, `array $x`, `array $schema` → wie oben | Gespeichert unter `settings.x` (höchstens 16 KB). Ohne Erweiterung bleibt ein gespeichertes `x` unverändert erhalten; Lizenzende löscht nichts. |
+| `form_captain_form_attributes_v1` | Filter | `array()`, `array $form` → Attribute | Angenommen werden nur `data-fc-x-*`, zusätzliche Klassen und `enctype="multipart/form-data"`. Kern-Attribute sind nicht überschreibbar. |
+| `form_captain_field_attributes_v1` | Filter | `array()`, `array $field` → Attribute | Nur `data-fc-x-*` und zusätzliche Klassen (z. B. Schrittnummer, Bedingungsgruppe für eigenes JavaScript). |
+| `form_captain_notification_recipients_v1` | Filter | `string\|array $to`, `array $form`, `int $entry_id`, `array $values` → Empfängerliste | Routing. Das Ergebnis durchläuft dieselbe Prüfung wie konfigurierte Adressen (Header-Injection, `is_email`). |
+| `form_captain_confirmation_v1` | Filter | `array $confirmation` (Form wie `settings.confirmation`), `array $form`, `int $entry_id` → Bestätigung | Bedingte Bestätigung. Eine Seite muss veröffentlicht und intern sein, sonst bleibt es bei der Meldung. |
+| `form_captain_display_value_v1` | Filter | `string $display`, `array $field`, `string\|array $value` → Klartext | Nur Erweiterungs-Feldtypen. Gilt für Admin-Detail, CSV und Mail. HTML wird entfernt, die Aufrufer escapen. |
+
+**Dateien:** Formulareingaben heißen `fc[<field_id>]`. REST-Einsendung (`multipart/form-data`) und admin-post geben `$_FILES` über `FormCaptain\Support\UploadedFiles::by_field()` als `field_id → Datei` an den Validator weiter (höchstens 20 Dateien, eine je Feld). Der Kern verschiebt, speichert oder öffnet hochgeladene Dateien nie. Ablage, Prüfung, Quarantäne und Löschung (`form_captain_delete_entry_files_v1`) liegen bei der Erweiterung.

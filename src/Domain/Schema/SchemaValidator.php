@@ -167,6 +167,7 @@ final class SchemaValidator {
 					);
 				}
 			}
+			$n     = self::extension_settings( $n, $field, $ids, $errors, $p );
 			$out[] = $n;
 		}
 
@@ -185,6 +186,37 @@ final class SchemaValidator {
 			'schema' => $normalized,
 			'errors' => $errors,
 		);
+	}
+
+	/**
+	 * Settings an extension keeps on a field (contract 1.1.0), stored under the key `x`.
+	 * Filter form_captain_normalize_field_v1( null, $raw_field, $earlier_fields ) returns
+	 * array{settings?:array, errors?:array<string,string>} or null. The core never interprets `x`.
+	 *
+	 * @param array<string,mixed>  $n      normalized field
+	 * @param array<string,mixed>  $field  raw field
+	 * @param array<string,string> $ids    field_id => type of this and the earlier fields
+	 * @param array<string,string> $errors
+	 * @return array<string,mixed>
+	 */
+	private static function extension_settings( array $n, array $field, array $ids, array &$errors, string $p ): array {
+		$ext = apply_filters( 'form_captain_normalize_field_v1', null, $field, $ids );
+		if ( ! is_array( $ext ) ) {
+			return $n;
+		}
+		foreach ( (array) ( $ext['errors'] ?? array() ) as $key => $code ) {
+			if ( is_string( $key ) && preg_match( '/^[a-z0-9_.]{1,60}$/', $key ) && is_string( $code ) && preg_match( '/^[a-z][a-z0-9_]{1,40}$/', $code ) ) {
+				$errors[ "$p.x.$key" ] = $code;
+			}
+		}
+		$settings = is_array( $ext['settings'] ?? null ) ? $ext['settings'] : array();
+		$json     = wp_json_encode( $settings );
+		if ( $settings && is_string( $json ) && strlen( $json ) <= 8192 ) {
+			$n['x'] = $settings;
+		} elseif ( $settings ) {
+			$errors[ "$p.x" ] = 'extension_settings_too_large';
+		}
+		return $n;
 	}
 
 	public static function new_field_id(): string {

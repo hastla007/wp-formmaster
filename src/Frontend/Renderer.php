@@ -12,6 +12,8 @@ declare(strict_types=1);
 
 namespace FormCaptain\Frontend;
 
+use FormCaptain\Domain\Fields\FieldTypes;
+
 use FormCaptain\Domain\HtmlSanitizer;
 use FormCaptain\Install\Capabilities;
 use FormCaptain\Security\SignedContext;
@@ -131,6 +133,7 @@ final class Renderer {
 			$ctx_hidden = '<input type="hidden" name="_fc_ctx" value="' . esc_attr( $context ) . '">';
 		}
 
+		$attrs  = self::extension_attrs( $attrs, (array) apply_filters( 'form_captain_form_attributes_v1', array(), $form ), true );
 		$html  .= '<form' . self::attrs( $attrs ) . '>';
 		$html  .= '<input type="hidden" name="action" value="form_captain_submit">';
 		$html  .= '<input type="hidden" name="_fc_form" value="' . esc_attr( $public_id ) . '">';
@@ -236,6 +239,11 @@ final class Renderer {
 		);
 		if ( $cond ) {
 			$wrap['data-fc-condition'] = (string) wp_json_encode( $cond );
+		}
+		$wrap = self::extension_attrs( $wrap, (array) apply_filters( 'form_captain_field_attributes_v1', array(), $field ), false );
+
+		if ( empty( FieldTypes::all()[ $type ]['core'] ) ) {
+			return $this->extension_field( $field, $wrap, $uid, $name, $value, $error, $required );
 		}
 
 		if ( 'html' === $type ) {
@@ -392,6 +400,67 @@ final class Renderer {
 	/**
 	 * @param array<string,string|bool> $attrs
 	 */
+	/**
+	 * Merges attributes from an extension (contract 1.1.0). Only `data-fc-x-*` attributes and
+	 * additional CSS classes are accepted; on the form element also enctype="multipart/form-data".
+	 * Core attributes cannot be replaced.
+	 *
+	 * @param array<string,mixed> $attrs
+	 * @param array<mixed,mixed>  $extra
+	 * @return array<string,mixed>
+	 */
+	private static function extension_attrs( array $attrs, array $extra, bool $form ): array {
+		foreach ( $extra as $k => $v ) {
+			if ( ! is_string( $k ) || ! ( is_string( $v ) || is_int( $v ) ) ) {
+				continue;
+			}
+			if ( preg_match( '/^data-fc-x-[a-z0-9-]{1,40}$/', $k ) && ! isset( $attrs[ $k ] ) ) {
+				$attrs[ $k ] = mb_substr( (string) $v, 0, 4000 );
+			} elseif ( 'class' === $k && preg_match( '/^[A-Za-z0-9_\- ]{1,100}$/', (string) $v ) ) {
+				$attrs['class'] = trim( (string) ( $attrs['class'] ?? '' ) . ' ' . $v );
+			} elseif ( $form && 'enctype' === $k && 'multipart/form-data' === $v ) {
+				$attrs['enctype'] = 'multipart/form-data';
+			}
+		}
+		return $attrs;
+	}
+
+	/**
+	 * Field types registered by an extension are rendered by that extension
+	 * (form_captain_render_field_v1). The core provides the accessible frame: wrapper, label,
+	 * help and error elements with their IDs. Without a renderer the field is left out.
+	 *
+	 * @param array<string,mixed>      $field
+	 * @param array<string,mixed>      $wrap
+	 * @param string|array<int,string> $value
+	 */
+	private function extension_field( array $field, array $wrap, string $uid, string $name, string|array $value, string $error, bool $required ): string {
+		$help_id  = $uid . '-help';
+		$error_id = $uid . '-error';
+		$control  = apply_filters(
+			'form_captain_render_field_v1',
+			null,
+			$field,
+			array(
+				'id'               => $uid,
+				'name'             => $name,
+				'value'            => $value,
+				'required'         => $required,
+				'invalid'          => '' !== $error,
+				'aria-describedby' => trim( ( '' !== (string) ( $field['help'] ?? '' ) ? $help_id . ' ' : '' ) . $error_id ),
+			)
+		);
+		if ( ! is_string( $control ) || '' === $control ) {
+			return '';
+		}
+		$star  = $required ? ' <span class="fc-required" aria-hidden="true">*</span>' : '';
+		$label = '<label class="fc-label" for="' . esc_attr( $uid ) . '">' . esc_html( (string) ( $field['label'] ?? '' ) ) . $star . '</label>';
+		$help  = '' !== (string) ( $field['help'] ?? '' ) ? '<p class="fc-help" id="' . esc_attr( $help_id ) . '">' . esc_html( (string) $field['help'] ) . '</p>' : '';
+		$err   = '<p class="fc-error" id="' . esc_attr( $error_id ) . '"' . ( '' !== $error ? '' : ' hidden' ) . '>' . esc_html( $error ) . '</p>';
+		// The control comes from the extension, which is responsible for escaping it.
+		return '<div' . self::attrs( $wrap ) . '>' . $label . $help . $control . $err . '</div>';
+	}
+
 	private static function attrs( array $attrs ): string {
 		$out = '';
 		foreach ( $attrs as $k => $v ) {

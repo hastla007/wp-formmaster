@@ -329,7 +329,7 @@ Diese Aufgaben erweitern Phase 8 um zwei echte Kundenfälle. Sie ändern nicht d
 - [ ] **P9-02 – Support- und Fehlerprozess festlegen.** Supportkanal, Systemstatus-Export, Datenschutz beim Supportdump, Fehler-Triage und Sicherheitskontakt dokumentieren.
 - [x] **P9-03 – Release-Checkliste durchführen.** Versionsnummer, Changelog, ZIP-Prüfsumme, Upgrade-Test, Lizenz-/Entitlementtest, Datenbackup und Rollbackplan vor jedem Release bestätigen.
 - [ ] **P9-04 – Nutzungsfeedback nach Free-Launch auswerten.** Abbruchraten im Setup, häufige Feldtypen, Mailprobleme und Supportanfragen datensparsam erfassen; keine Submission-Inhalte als Telemetrie senden.
-- [x] **P9-05 – Contact Form 7 Import nach v1 spezifizieren.** Feld-/Regelzuordnung, nicht unterstützte Funktionen, Vorschau und Konvertierungsbericht festlegen.
+- [x] **P9-05 – Import aus einem verbreiteten Shortcode-Formularformat nach v1 spezifizieren.** Feld-/Regelzuordnung, nicht unterstützte Funktionen, Vorschau und Konvertierungsbericht festlegen.
 - [x] **P9-06 – Importer implementieren und testen.** Bestehende Formulare sicher migrieren; Entries nur über dokumentierte Exportdateien übernehmen; Originaldaten vor Import nicht löschen.
 - [x] **P9-07 – Mehrsprachigkeit erweitern.** WPML/Polylang-Unterstützung erst mit definierter Formular-/Übersetzungszuordnung und Testmatrix ergänzen.
 - [x] **P9-08 – Multisite separat planen.** Pro-Site-Datentrennung, Netzwerkaktivierung, Massenmigration und Lizenzzählung vor Implementierung spezifizieren.

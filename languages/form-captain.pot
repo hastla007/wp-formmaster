@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-16T06:42:56+00:00\n"
+"POT-Creation-Date: 2026-11-16T07:24:07+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: form-captain\n"
@@ -55,42 +55,42 @@ msgstr ""
 msgid "Please log in."
 msgstr ""
 
-#: src/Admin/AdminRest.php:139
+#: src/Admin/AdminRest.php:141
 msgid "Application passwords are not accepted for these routes."
 msgstr ""
 
-#: src/Admin/AdminRest.php:143
+#: src/Admin/AdminRest.php:145
 #: src/Admin/DashboardPage.php:118
 #: src/Admin/DashboardPage.php:181
-#: src/Admin/FormsPage.php:301
+#: src/Admin/FormsPage.php:306
 msgid "You are not allowed to do this."
 msgstr ""
 
-#: src/Admin/AdminRest.php:206
+#: src/Admin/AdminRest.php:208
 msgid "Revision and schema are required."
 msgstr ""
 
-#: src/Admin/AdminRest.php:224
+#: src/Admin/AdminRest.php:226
 msgid "Revision and actions are required."
 msgstr ""
 
-#: src/Admin/AdminRest.php:263
+#: src/Admin/AdminRest.php:265
 #: src/Service/EntryService.php:83
 msgid "Unknown status."
 msgstr ""
 
-#: src/Admin/AdminRest.php:283
-#: src/Admin/AdminRest.php:311
-#: src/Admin/EditorPage.php:159
-#: src/Admin/EditorPage.php:216
-#: src/Admin/FormsPage.php:302
-#: src/Service/FormService.php:149
-#: src/Service/FormService.php:202
-#: src/Service/FormService.php:294
-#: src/Service/FormService.php:317
-#: src/Service/FormService.php:361
-#: src/Service/FormService.php:398
-#: src/Service/FormService.php:433
+#: src/Admin/AdminRest.php:285
+#: src/Admin/AdminRest.php:313
+#: src/Admin/EditorPage.php:160
+#: src/Admin/EditorPage.php:217
+#: src/Admin/FormsPage.php:307
+#: src/Service/FormService.php:159
+#: src/Service/FormService.php:212
+#: src/Service/FormService.php:304
+#: src/Service/FormService.php:327
+#: src/Service/FormService.php:371
+#: src/Service/FormService.php:408
+#: src/Service/FormService.php:443
 msgid "Form not found."
 msgstr ""
 
@@ -288,7 +288,7 @@ msgid "No forms yet."
 msgstr ""
 
 #: src/Admin/DashboardPage.php:385
-#: src/Admin/EditorPage.php:172
+#: src/Admin/EditorPage.php:173
 msgid "Create form"
 msgstr ""
 
@@ -304,7 +304,7 @@ msgid "Entries"
 msgstr ""
 
 #: src/Admin/DashboardPage.php:392
-#: src/Admin/IntegrationsPage.php:187
+#: src/Admin/IntegrationsPage.php:192
 #: src/Admin/Menu.php:70
 msgid "Integrations"
 msgstr ""
@@ -319,231 +319,232 @@ msgstr ""
 msgid "Quick actions"
 msgstr ""
 
-#: src/Admin/EditorPage.php:99
+#: src/Admin/EditorPage.php:100
 msgid "Need file uploads, multi-step forms or grouped conditions? They are available with Form Captain Pro."
 msgstr ""
 
-#: src/Admin/EditorPage.php:106
+#: src/Admin/EditorPage.php:107
 msgid "Invalid field."
 msgstr ""
 
-#: src/Admin/EditorPage.php:107
+#: src/Admin/EditorPage.php:108
 msgid "Unknown field type."
 msgstr ""
 
-#: src/Admin/EditorPage.php:108
+#: src/Admin/EditorPage.php:109
 msgid "Invalid field ID."
 msgstr ""
 
-#: src/Admin/EditorPage.php:109
+#: src/Admin/EditorPage.php:110
 msgid "Field ID is used twice or was used before."
 msgstr ""
 
-#: src/Admin/EditorPage.php:110
+#: src/Admin/EditorPage.php:111
 msgid "Key must start with a lowercase letter and contain only a–z, 0–9 and _ (max. 40)."
 msgstr ""
 
-#: src/Admin/EditorPage.php:111
+#: src/Admin/EditorPage.php:112
 msgid "This key is already used by another field."
 msgstr ""
 
-#: src/Admin/EditorPage.php:112
+#: src/Admin/EditorPage.php:113
 msgid "Please enter a label."
 msgstr ""
 
-#: src/Admin/EditorPage.php:113
+#: src/Admin/EditorPage.php:114
 msgid "Consent fields must never be pre-checked."
 msgstr ""
 
-#: src/Admin/EditorPage.php:114
+#: src/Admin/EditorPage.php:115
 msgid "Option values may only contain A–Z, a–z, 0–9, _ and - and need a label."
 msgstr ""
 
-#: src/Admin/EditorPage.php:115
+#: src/Admin/EditorPage.php:116
 msgid "Option values must be unique."
 msgstr ""
 
-#: src/Admin/EditorPage.php:116
+#: src/Admin/EditorPage.php:117
 msgid "Too many options."
 msgstr ""
 
-#: src/Admin/EditorPage.php:117
+#: src/Admin/EditorPage.php:118
 msgid "Add at least one option."
 msgstr ""
 
-#: src/Admin/EditorPage.php:118
+#: src/Admin/EditorPage.php:119
 msgid "Please enter the consent text."
 msgstr ""
 
-#: src/Admin/EditorPage.php:119
+#: src/Admin/EditorPage.php:120
 msgid "Conditions may only refer to an earlier field that has a value."
 msgstr ""
 
-#: src/Admin/EditorPage.php:120
+#: src/Admin/EditorPage.php:121
 msgid "Invalid condition operator."
 msgstr ""
 
-#: src/Admin/EditorPage.php:121
+#: src/Admin/EditorPage.php:122
 msgid "Invalid pattern."
 msgstr ""
 
-#: src/Admin/EditorPage.php:122
+#: src/Admin/EditorPage.php:123
 #: src/Domain/SubmissionValidator.php:344
 msgid "Please enter a number."
 msgstr ""
 
-#: src/Admin/EditorPage.php:123
+#: src/Admin/EditorPage.php:124
 msgid "Minimum is greater than maximum."
 msgstr ""
 
-#: src/Admin/EditorPage.php:124
+#: src/Admin/EditorPage.php:125
 msgid "Use YYYY-MM-DD or \"today\"."
 msgstr ""
 
-#: src/Admin/EditorPage.php:125
+#: src/Admin/EditorPage.php:126
 msgid "Too many fields (maximum 100)."
 msgstr ""
 
-#: src/Admin/EditorPage.php:126
+#: src/Admin/EditorPage.php:127
 msgid "The form is too large."
 msgstr ""
 
-#: src/Admin/EditorPage.php:127
+#: src/Admin/EditorPage.php:128
 msgid "Add at least one input field before publishing."
 msgstr ""
 
-#: src/Admin/EditorPage.php:128
+#: src/Admin/EditorPage.php:129
 msgid "One of the recipient addresses is invalid."
 msgstr ""
 
-#: src/Admin/EditorPage.php:129
+#: src/Admin/EditorPage.php:130
 msgid "Enter at least one recipient or disable the notification."
 msgstr ""
 
-#: src/Admin/EditorPage.php:130
+#: src/Admin/EditorPage.php:131
 msgid "Reply-To must be an email field of this form."
 msgstr ""
 
-#: src/Admin/EditorPage.php:131
+#: src/Admin/EditorPage.php:132
 msgid "Select at least one field."
 msgstr ""
 
-#: src/Admin/EditorPage.php:132
+#: src/Admin/EditorPage.php:133
 msgid "Mark an email field as recipient of the confirmation email."
 msgstr ""
 
-#: src/Admin/EditorPage.php:133
+#: src/Admin/EditorPage.php:134
 msgid "Please enter a subject."
 msgstr ""
 
-#: src/Admin/EditorPage.php:134
+#: src/Admin/EditorPage.php:135
 msgid "Choose a published page."
 msgstr ""
 
-#: src/Admin/EditorPage.php:135
+#: src/Admin/EditorPage.php:136
 msgid "Invalid email address."
 msgstr ""
 
-#: src/Admin/EditorPage.php:136
 #: src/Admin/EditorPage.php:137
+#: src/Admin/EditorPage.php:138
 msgid "Invalid action."
 msgstr ""
 
-#: src/Admin/EditorPage.php:138
+#: src/Admin/EditorPage.php:139
 msgid "This action is no longer available."
 msgstr ""
 
-#: src/Admin/EditorPage.php:139
+#: src/Admin/EditorPage.php:140
 msgid "Invalid field mapping."
 msgstr ""
 
-#: src/Admin/EditorPage.php:140
+#: src/Admin/EditorPage.php:141
 msgid "Sensitive fields cannot be passed to actions."
 msgstr ""
 
-#: src/Admin/EditorPage.php:141
+#: src/Admin/EditorPage.php:142
 msgid "This field type cannot be used here."
 msgstr ""
 
-#: src/Admin/EditorPage.php:142
+#: src/Admin/EditorPage.php:143
 msgid "This value is required."
 msgstr ""
 
-#: src/Admin/EditorPage.php:150
-#: src/Admin/FormsPage.php:91
-#: src/Admin/FormsPage.php:199
+#: src/Admin/EditorPage.php:151
+#: src/Admin/FormsPage.php:92
+#: src/Admin/FormsPage.php:203
+#: src/Import/ImportService.php:114
 msgid "You are not allowed to manage forms."
 msgstr ""
 
-#: src/Admin/EditorPage.php:159
-#: src/Admin/EditorPage.php:163
+#: src/Admin/EditorPage.php:160
+#: src/Admin/EditorPage.php:164
 #: src/Admin/Menu.php:68
 msgid "Edit form"
 msgstr ""
 
-#: src/Admin/EditorPage.php:164
+#: src/Admin/EditorPage.php:165
 msgid "Back to forms"
 msgstr ""
 
-#: src/Admin/EditorPage.php:166
+#: src/Admin/EditorPage.php:167
 msgid "Loading editor…"
 msgstr ""
 
-#: src/Admin/EditorPage.php:167
+#: src/Admin/EditorPage.php:168
 msgid "The form editor needs JavaScript."
 msgstr ""
 
-#: src/Admin/EditorPage.php:174
+#: src/Admin/EditorPage.php:175
 msgid "Choose a template to start with. You can change every field afterwards."
 msgstr ""
 
-#: src/Admin/EditorPage.php:179
+#: src/Admin/EditorPage.php:180
 msgid "Blank form"
 msgstr ""
 
-#: src/Admin/EditorPage.php:180
+#: src/Admin/EditorPage.php:181
 msgid "Start from scratch."
 msgstr ""
 
 #. translators: %d: number of fields
-#: src/Admin/EditorPage.php:191
+#: src/Admin/EditorPage.php:192
 #, php-format
 msgid "%d field"
 msgid_plural "%d fields"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Admin/EditorPage.php:193
+#: src/Admin/EditorPage.php:194
 msgid "Use this template"
 msgstr ""
 
-#: src/Admin/EditorPage.php:196
+#: src/Admin/EditorPage.php:197
 msgid "You can also import a form definition (JSON) on the forms overview."
 msgstr ""
 
-#: src/Admin/EditorPage.php:196
+#: src/Admin/EditorPage.php:197
 msgid "Go to forms"
 msgstr ""
 
-#: src/Admin/EditorPage.php:208
+#: src/Admin/EditorPage.php:209
 msgid "You are not allowed to preview forms."
 msgstr ""
 
-#: src/Admin/EditorPage.php:228
+#: src/Admin/EditorPage.php:229
 msgid "The form renderer is not available."
 msgstr ""
 
-#: src/Admin/EditorPage.php:237
+#: src/Admin/EditorPage.php:238
 msgid "Preview – submissions are disabled. Nothing is stored or sent."
 msgstr ""
 
 #. translators: %s: form title
-#: src/Admin/EditorPage.php:240
+#: src/Admin/EditorPage.php:241
 #, php-format
 msgid "Preview: %s"
 msgstr ""
 
-#: src/Admin/EditorPage.php:258
+#: src/Admin/EditorPage.php:259
 #: src/Admin/SettingsPage.php:627
 #: src/Admin/Tables/FormsListTable.php:148
 #: assets/src/editor.js:1328
@@ -558,7 +559,7 @@ msgid "Your session has expired. Please reload the page."
 msgstr ""
 
 #: src/Admin/EntriesPage.php:105
-#: src/Admin/FormsPage.php:88
+#: src/Admin/FormsPage.php:89
 msgid "Unknown action."
 msgstr ""
 
@@ -601,6 +602,7 @@ msgid "This action is not possible in the current state of the submission."
 msgstr ""
 
 #: src/Admin/EntriesPage.php:231
+#: src/Integrations/CoreActions.php:342
 #: src/Service/EntryService.php:87
 #: src/Service/EntryService.php:105
 #: src/Service/EntryService.php:138
@@ -609,8 +611,8 @@ msgid "Submission not found."
 msgstr ""
 
 #: src/Admin/EntriesPage.php:232
-#: src/Admin/IntegrationsPage.php:84
-#: src/Admin/IntegrationsPage.php:95
+#: src/Admin/IntegrationsPage.php:85
+#: src/Admin/IntegrationsPage.php:98
 #: src/Service/EntryService.php:196
 msgid "Job not found."
 msgstr ""
@@ -629,7 +631,7 @@ msgid "Invalid request."
 msgstr ""
 
 #: src/Admin/EntriesPage.php:236
-#: src/Admin/FormsPage.php:314
+#: src/Admin/FormsPage.php:323
 msgid "The action could not be completed."
 msgstr ""
 
@@ -756,7 +758,7 @@ msgstr ""
 #: src/Admin/EntriesPage.php:425
 #: src/Admin/EntriesPage.php:494
 #: src/Admin/EntriesPage.php:694
-#: src/Admin/IntegrationsPage.php:306
+#: src/Admin/IntegrationsPage.php:311
 #: src/Admin/Tables/EntriesListTable.php:71
 #: src/Admin/Tables/FormsListTable.php:40
 #: src/Export/CsvExporter.php:46
@@ -816,7 +818,7 @@ msgid "Type"
 msgstr ""
 
 #: src/Admin/EntriesPage.php:494
-#: src/Admin/IntegrationsPage.php:306
+#: src/Admin/IntegrationsPage.php:311
 msgid "Attempts"
 msgstr ""
 
@@ -864,7 +866,7 @@ msgid "Sent"
 msgstr ""
 
 #: src/Admin/EntriesPage.php:537
-#: src/Admin/IntegrationsPage.php:171
+#: src/Admin/IntegrationsPage.php:176
 msgid "Failed – will retry"
 msgstr ""
 
@@ -873,7 +875,7 @@ msgid "Failed permanently"
 msgstr ""
 
 #: src/Admin/EntriesPage.php:539
-#: src/Admin/IntegrationsPage.php:173
+#: src/Admin/IntegrationsPage.php:178
 msgid "Cancelled"
 msgstr ""
 
@@ -1029,360 +1031,380 @@ msgstr ""
 msgid "Download CSV"
 msgstr ""
 
-#: src/Admin/FormsPage.php:204
+#: src/Admin/FormsPage.php:208
 #: src/Admin/Menu.php:67
 msgid "Forms"
 msgstr ""
 
-#: src/Admin/FormsPage.php:205
+#: src/Admin/FormsPage.php:209
 msgid "Add new form"
 msgstr ""
 
-#: src/Admin/FormsPage.php:215
+#: src/Admin/FormsPage.php:219
 msgid "Search forms"
 msgstr ""
 
-#: src/Admin/FormsPage.php:224
+#: src/Admin/FormsPage.php:229
 msgid "Import form from JSON"
 msgstr ""
 
-#: src/Admin/FormsPage.php:229
+#: src/Admin/FormsPage.php:234
 msgid "Form definition (.json, max. 256 KB)"
 msgstr ""
 
-#: src/Admin/FormsPage.php:231
+#: src/Admin/FormsPage.php:236
 msgid "Only the form definition is imported – never entries, files or credentials. The form is created as a draft; connector actions stay disabled until you enable them."
 msgstr ""
 
-#: src/Admin/FormsPage.php:232
+#: src/Admin/FormsPage.php:237
 msgid "Import"
 msgstr ""
 
-#: src/Admin/FormsPage.php:259
+#: src/Admin/FormsPage.php:264
 msgid "Import report"
 msgstr ""
 
-#: src/Admin/FormsPage.php:260
+#: src/Admin/FormsPage.php:265
 msgid "Open imported form"
 msgstr ""
 
-#: src/Admin/FormsPage.php:262
+#: src/Admin/FormsPage.php:267
 msgid "Please check these notification recipients:"
 msgstr ""
 
-#: src/Admin/FormsPage.php:263
+#: src/Admin/FormsPage.php:268
 msgid "Cleaned values:"
 msgstr ""
 
-#: src/Admin/FormsPage.php:264
+#: src/Admin/FormsPage.php:269
 msgid "Removed or reset values:"
 msgstr ""
 
-#: src/Admin/FormsPage.php:286
+#: src/Admin/FormsPage.php:291
 msgid "Form created."
 msgstr ""
 
-#: src/Admin/FormsPage.php:287
+#: src/Admin/FormsPage.php:292
 msgid "Form duplicated. The copy is a draft; connector actions are disabled."
 msgstr ""
 
-#: src/Admin/FormsPage.php:288
+#: src/Admin/FormsPage.php:293
 msgid "Form deleted."
 msgstr ""
 
-#: src/Admin/FormsPage.php:289
+#: src/Admin/FormsPage.php:294
 msgid "Form published."
 msgstr ""
 
-#: src/Admin/FormsPage.php:290
+#: src/Admin/FormsPage.php:295
 msgid "Form paused. Visitors see the pause message."
 msgstr ""
 
-#: src/Admin/FormsPage.php:291
+#: src/Admin/FormsPage.php:296
 msgid "Form resumed."
 msgstr ""
 
-#: src/Admin/FormsPage.php:292
+#: src/Admin/FormsPage.php:297
 msgid "Form moved back to draft."
 msgstr ""
 
-#: src/Admin/FormsPage.php:293
+#: src/Admin/FormsPage.php:298
 msgid "Form archived."
 msgstr ""
 
-#: src/Admin/FormsPage.php:294
+#: src/Admin/FormsPage.php:299
 msgid "Form restored as draft."
 msgstr ""
 
-#: src/Admin/FormsPage.php:295
+#: src/Admin/FormsPage.php:300
 msgid "Form imported as draft."
 msgstr ""
 
-#: src/Admin/FormsPage.php:296
+#: src/Admin/FormsPage.php:301
 msgid "Step marked as done."
 msgstr ""
 
-#: src/Admin/FormsPage.php:297
+#: src/Admin/FormsPage.php:302
 msgid "Draft page with your form created."
 msgstr ""
 
-#: src/Admin/FormsPage.php:300
+#: src/Admin/FormsPage.php:305
 msgid "This action is not possible in the current state. Forms with entries can be archived instead of deleted."
 msgstr ""
 
-#: src/Admin/FormsPage.php:303
+#: src/Admin/FormsPage.php:308
 msgid "The form has errors. Open the editor to fix them before publishing."
 msgstr ""
 
-#: src/Admin/FormsPage.php:304
-#: src/Service/FormService.php:505
+#: src/Admin/FormsPage.php:309
+#: src/Service/FormService.php:515
 msgid "This form was created with a newer version of Form Captain."
 msgstr ""
 
-#: src/Admin/FormsPage.php:305
-#: src/Service/FormService.php:469
+#: src/Admin/FormsPage.php:310
+#: src/Service/FormService.php:479
 msgid "The file is too large (maximum 256 KB)."
 msgstr ""
 
-#: src/Admin/FormsPage.php:306
+#: src/Admin/FormsPage.php:311
 msgid "Please upload a .json file."
 msgstr ""
 
-#: src/Admin/FormsPage.php:307
+#: src/Admin/FormsPage.php:312
 msgid "Please choose a file to import."
 msgstr ""
 
-#: src/Admin/FormsPage.php:308
-#: src/Service/FormService.php:88
-#: src/Service/FormService.php:377
-#: src/Service/FormService.php:534
+#: src/Admin/FormsPage.php:313
+msgid "Please paste the form source to import."
+msgstr ""
+
+#: src/Admin/FormsPage.php:314
+msgid "The import preview has expired. Please start again."
+msgstr ""
+
+#: src/Admin/FormsPage.php:315
+#: src/Import/ImportService.php:124
+msgid "The form cannot be imported. See the report for details."
+msgstr ""
+
+#: src/Admin/FormsPage.php:316
+#: src/Import/ImportService.php:124
+msgid "The form exceeds the limits (100 fields, 200 options) and was not imported."
+msgstr ""
+
+#: src/Admin/FormsPage.php:317
+#: src/Service/FormService.php:98
+#: src/Service/FormService.php:387
+#: src/Service/FormService.php:544
 msgid "The form could not be saved."
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:46
+#: src/Admin/IntegrationsPage.php:47
 msgid "Connector activated. Its actions can now be enabled per form."
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:49
+#: src/Admin/IntegrationsPage.php:50
 msgid "Connector deactivated. Waiting jobs are kept and retried when you activate it again; no data is deleted in the target system."
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:57
+#: src/Admin/IntegrationsPage.php:58
 msgid "Too many test runs. Please wait ten minutes."
 msgstr ""
 
 #. translators: 1: status, 2: code
-#: src/Admin/IntegrationsPage.php:67
+#: src/Admin/IntegrationsPage.php:68
 #, php-format
 msgid "Test run finished with status \"%1$s\" (code: %2$s). No entry or job was created."
 msgstr ""
 
 #. translators: %s: list of field keys
-#: src/Admin/IntegrationsPage.php:72
+#: src/Admin/IntegrationsPage.php:73
 #, php-format
 msgid "Sample fields sent: %s"
-msgstr ""
-
-#: src/Admin/IntegrationsPage.php:87
-msgid "Job queued again. It runs with the next worker run."
 msgstr ""
 
 #: src/Admin/IntegrationsPage.php:88
 msgid "Only failed, dead or cancelled jobs can be retried."
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:98
-msgid "Job cancelled."
+#: src/Admin/IntegrationsPage.php:91
+msgid "Job queued again. It runs with the next worker run."
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:99
+#: src/Admin/IntegrationsPage.php:101
 msgid "This job cannot be cancelled."
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:106
-#: src/Admin/IntegrationsPage.php:180
+#: src/Admin/IntegrationsPage.php:104
+msgid "Job cancelled."
+msgstr ""
+
+#: src/Admin/IntegrationsPage.php:111
+#: src/Admin/IntegrationsPage.php:185
 msgid "You are not allowed to manage integrations."
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:157
+#: src/Admin/IntegrationsPage.php:162
 msgid "Active"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:158
+#: src/Admin/IntegrationsPage.php:163
 msgid "Disabled"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:159
+#: src/Admin/IntegrationsPage.php:164
 msgid "Detected – not activated"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:160
+#: src/Admin/IntegrationsPage.php:165
 msgid "Incompatible"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:161
+#: src/Admin/IntegrationsPage.php:166
 msgid "Plugin missing"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:168
+#: src/Admin/IntegrationsPage.php:173
 msgid "Waiting"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:169
+#: src/Admin/IntegrationsPage.php:174
 msgid "Running"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:170
+#: src/Admin/IntegrationsPage.php:175
 msgid "Delivered"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:172
+#: src/Admin/IntegrationsPage.php:177
 msgid "Dead-letter"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:188
+#: src/Admin/IntegrationsPage.php:193
 msgid "Connectors are separate plugins that pass selected form data to other systems. Installed connectors stay disabled until you activate them. Connectors receive only the fields you map in a form – sensitive fields are blocked."
 msgstr ""
 
 #. translators: %s: licence status
-#: src/Admin/IntegrationsPage.php:193
+#: src/Admin/IntegrationsPage.php:198
 msgid "Form Captain Pro is active."
 msgstr ""
 
 #. translators: %s: licence status
-#: src/Admin/IntegrationsPage.php:193
+#: src/Admin/IntegrationsPage.php:198
 #, php-format
 msgid "Licence status: %s"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:203
+#: src/Admin/IntegrationsPage.php:208
 msgid "Connectors"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:205
+#: src/Admin/IntegrationsPage.php:210
 msgid "No connector is installed. Connectors are installed as separate WordPress plugins; see the developer guide docs/CONNECTORS.md for building one."
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:213
+#: src/Admin/IntegrationsPage.php:218
 msgid "Other form actions"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:233
+#: src/Admin/IntegrationsPage.php:238
+#: src/Import/ImportAdmin.php:139
 msgid "Key"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:234
+#: src/Admin/IntegrationsPage.php:239
 msgid "Plugin version"
 msgstr ""
 
 #. translators: %s: core contract version
-#: src/Admin/IntegrationsPage.php:236
+#: src/Admin/IntegrationsPage.php:241
 msgid "Contract"
 msgstr ""
 
 #. translators: %s: core contract version
-#: src/Admin/IntegrationsPage.php:236
+#: src/Admin/IntegrationsPage.php:241
 #, php-format
 msgid "(Form Captain provides %s)"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:238
+#: src/Admin/IntegrationsPage.php:243
 msgid "Requirements"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:238
+#: src/Admin/IntegrationsPage.php:243
 msgid "Met"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:238
+#: src/Admin/IntegrationsPage.php:243
 msgid "Not met"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:243
+#: src/Admin/IntegrationsPage.php:248
 msgid "Capabilities"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:252
+#: src/Admin/IntegrationsPage.php:257
 msgid "Deactivate this connector? Waiting jobs stay queued."
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:255
+#: src/Admin/IntegrationsPage.php:260
 msgid "Activate"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:255
+#: src/Admin/IntegrationsPage.php:260
 msgid "Deactivate"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:261
+#: src/Admin/IntegrationsPage.php:266
 msgid "Form actions"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:261
-#: src/Admin/IntegrationsPage.php:306
+#: src/Admin/IntegrationsPage.php:266
+#: src/Admin/IntegrationsPage.php:311
 #: assets/src/editor.js:366
 msgid "Action"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:261
+#: src/Admin/IntegrationsPage.php:266
 msgid "Mapped fields"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:261
+#: src/Admin/IntegrationsPage.php:266
 msgid "Test"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:265
+#: src/Admin/IntegrationsPage.php:270
 msgid "may be sensitive"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:271
+#: src/Admin/IntegrationsPage.php:276
 msgid "Run test"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:272
+#: src/Admin/IntegrationsPage.php:277
 msgid "Uses sample values in test mode. No entry, no job."
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:274
+#: src/Admin/IntegrationsPage.php:279
 msgid "Activate the connector to run a test."
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:294
+#: src/Admin/IntegrationsPage.php:299
 msgid "Integration jobs"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:297
+#: src/Admin/IntegrationsPage.php:302
 #: src/Admin/Tables/EntriesListTable.php:116
 #: src/Admin/Tables/FormsListTable.php:96
 msgid "All"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:303
+#: src/Admin/IntegrationsPage.php:308
 msgid "No integration jobs yet. Jobs appear here after a form with an enabled action receives a submission."
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:306
+#: src/Admin/IntegrationsPage.php:311
 msgid "Entry"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:306
+#: src/Admin/IntegrationsPage.php:311
 msgid "Last run / next step"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:306
+#: src/Admin/IntegrationsPage.php:311
 msgid "Manage"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:312
+#: src/Admin/IntegrationsPage.php:317
 msgid "Remote ID:"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:319
+#: src/Admin/IntegrationsPage.php:324
 msgid "Retry"
 msgstr ""
 
-#: src/Admin/IntegrationsPage.php:322
+#: src/Admin/IntegrationsPage.php:327
+#: src/Import/ImportAdmin.php:167
 msgid "Cancel"
 msgstr ""
 
@@ -2321,7 +2343,7 @@ msgid "This form does not exist (anymore). Please choose another form."
 msgstr ""
 
 #: src/Frontend/Renderer.php:56
-#: src/Service/FormService.php:124
+#: src/Service/FormService.php:134
 #: src/Support/Errors.php:62
 msgid "This form is currently not accepting submissions."
 msgstr ""
@@ -2380,6 +2402,378 @@ msgstr ""
 msgid "Method not allowed."
 msgstr ""
 
+#: src/Import/ImportAdmin.php:87
+msgid "Import from another form format"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:100
+#: assets/src/editor.js:1642
+msgid "Form title"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:102
+msgid "Form source in shortcode form format type A (max. 256 KB)"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:104
+msgid "The source is only analysed, never executed. You will see a preview with a conversion report before anything is saved. The form is created as a draft; the original form remains unchanged."
+msgstr ""
+
+#: src/Import/ImportAdmin.php:105
+msgid "Analyse and preview"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:114
+msgid "Complete"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:115
+msgid "With adjustments"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:116
+msgid "With losses"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:117
+msgid "Not importable"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:120
+msgid "taken over"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:121
+msgid "adjusted"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:122
+msgid "dropped"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:123
+msgid "setting"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:126
+msgid "Preview and conversion report"
+msgstr ""
+
+#. translators: 1: total elements, 2: taken over, 3: adjusted, 4: dropped
+#: src/Import/ImportAdmin.php:131
+#, php-format
+msgid "Elements: %1$d – taken over: %2$d, adjusted: %3$d, dropped: %4$d"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:139
+msgid "Original tag"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:139
+msgid "Target type"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:139
+#: assets/src/editor.js:453
+msgid "Label"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:139
+msgid "Result"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:144
+msgid "(text block)"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:154
+msgid "Notes:"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:160
+msgid "After the import: check recipients and consent text, test the form, then publish it and replace the old shortcode on your pages."
+msgstr ""
+
+#: src/Import/ImportAdmin.php:166
+msgid "Import as draft"
+msgstr ""
+
+#: src/Import/ImportAdmin.php:170
+msgid "Back"
+msgstr ""
+
+#. translators: %s: list of error codes
+#: src/Import/ImportService.php:75
+#, php-format
+msgid "The converted form is not valid (%s)."
+msgstr ""
+
+#: src/Import/ImportService.php:117
+#: src/Import/ShortcodeFormatParser.php:68
+msgid "The form source is too large (maximum 256 KB)."
+msgstr ""
+
+#: src/Import/ImportService.php:188
+#: src/Service/FormService.php:541
+msgid "Imported form"
+msgstr ""
+
+#. translators: %s: form title
+#: src/Import/ImportService.php:191
+#, php-format
+msgid "%s (Import)"
+msgstr ""
+
+#: src/Import/ImportService.php:215
+msgid "You are not allowed to import entries."
+msgstr ""
+
+#: src/Import/ImportService.php:218
+msgid "The file is too large (maximum 20 MB)."
+msgstr ""
+
+#: src/Import/ImportService.php:223
+msgid "Entries can only be imported into a form that was imported before."
+msgstr ""
+
+#: src/Import/ImportService.php:227
+msgid "Please publish the imported form before importing entries."
+msgstr ""
+
+#: src/Import/ImportService.php:234
+msgid "The file has more than 50,000 rows."
+msgstr ""
+
+#: src/Import/ImportService.php:252
+msgid "The column mapping refers to unknown columns or fields."
+msgstr ""
+
+#: src/Import/ImportService.php:258
+msgid "Please map at least one field and the submission time column."
+msgstr ""
+
+#: src/Import/ImportService.php:263
+msgid "Unknown time zone."
+msgstr ""
+
+#: src/Import/ImportService.php:399
+#: src/Import/ImportService.php:424
+msgid "The file is empty or not UTF-8 encoded CSV."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:73
+msgid "The source was not valid UTF-8 and has been converted."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:82
+msgid "Scripts, styles or embedded objects were removed from the source."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:87
+msgid "The form source is empty."
+msgstr ""
+
+#. translators: %d: maximum number of fields
+#: src/Import/ShortcodeFormatParser.php:97
+#, php-format
+msgid "The form has more than %d fields and cannot be imported (no partial import)."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:99
+msgid "No supported input fields were found."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:259
+msgid "Malformed or nested tag ignored."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:266
+msgid "Closing tag without matching start tag ignored."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:274
+msgid "Button text is not taken over; Form Captain uses its own translated button text."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:281
+msgid "The message area is provided by Form Captain automatically."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:383
+msgid "Disallowed HTML (attributes, tags or links) was removed from a text block."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:436
+msgid "Exclusive checkboxes were converted to radio buttons."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:439
+msgid "URL field converted to a text field (no URL validation)."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:442
+msgid "Slider converted to a number field."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:445
+msgid "Tag without name; a key was generated."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:476
+msgid "Invalid CSS class removed."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:480
+msgid "The id: option is not taken over."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:483
+msgid "Dynamic default values (default:…) are not supported; the value stays empty."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:510
+msgid "Number of rows limited to 2–20."
+msgstr ""
+
+#. translators: %d: maximum length
+#: src/Import/ShortcodeFormatParser.php:519
+#, php-format
+msgid "Maximum length limited to %d."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:530
+msgid "Length limits of phone fields are not taken over."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:539
+msgid "Invalid number limit removed."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:545
+msgid "Contradictory number limits removed."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:558
+msgid "Relative date limits other than \"today\" are not supported."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:568
+msgid "Input patterns are not taken over."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:583
+msgid "The first option served as a prompt and was removed."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:589
+msgid "Selection field without options cannot be imported."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:598
+msgid "Empty first entry: the field has no preselection."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:602
+msgid "Free-text option (\"other\") is not supported."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:609
+msgid "Preselection not taken over."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:612
+msgid "Radio buttons start without forced preselection."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:615
+msgid "External option sources (data:…) are not supported."
+msgstr ""
+
+#. translators: %s: list of option names
+#: src/Import/ShortcodeFormatParser.php:621
+#, php-format
+msgid "Options not taken over: %s"
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:637
+msgid "Label derived from the surrounding text, placeholder or name – please check."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:641
+#: src/Import/ShortcodeFormatParser.php:705
+msgid "Label shortened to 190 characters."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:646
+msgid "Single checkbox converted to a checkbox field with one option."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:682
+msgid "Tags inside the consent text were removed."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:685
+msgid "Consent is never preselected; the preselection was removed."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:689
+msgid "Disallowed HTML was removed from the consent text."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:695
+msgid "I agree."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:696
+msgid "No consent text found; a placeholder text was inserted – please replace it."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:701
+msgid "Label derived from the consent text – please check."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:708
+msgid "Optional consent converted to a checkbox (a consent field is always required)."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:732
+msgid "Acceptance converted to a required consent field (never preselected, revision 1)."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:744
+msgid "File uploads are not supported in the free version (available in Pro). The field was not converted."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:746
+msgid "Quiz fields are not supported; the field was removed."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:748
+msgid "Spam protection of the source is not taken over; Form Captain uses honeypot, minimum time and rate limit."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:750
+msgid "Unknown or unsupported tag (for example calculations or extensions); not converted."
+msgstr ""
+
+#. translators: %d: maximum number of options
+#: src/Import/ShortcodeFormatParser.php:763
+#, php-format
+msgid "More than %d options – the form cannot be imported (no partial import)."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:783
+msgid "Option label shortened to 190 characters."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:804
+msgid "Stored option values were normalized (letters, digits, \"-\" and \"_\")."
+msgstr ""
+
+#: src/Import/ShortcodeFormatParser.php:888
+msgid "Field key normalized or made unique."
+msgstr ""
+
 #: src/Install/Capabilities.php:54
 msgid "Manage forms"
 msgstr ""
@@ -2408,234 +2802,305 @@ msgstr ""
 msgid "Manage integrations"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:149
+#: src/Integrations/ConnectorRegistry.php:168
 msgid "The registered object does not implement the connector interface or uses an invalid key."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:168
+#: src/Integrations/ConnectorRegistry.php:187
 msgid "The connector key does not match the registered key."
 msgstr ""
 
 #. translators: 1: contract version required by the connector, 2: contract version of Form Captain
-#: src/Integrations/ConnectorRegistry.php:173
+#: src/Integrations/ConnectorRegistry.php:192
 #, php-format
 msgid "The connector expects contract %1$s, Form Captain provides %2$s."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:248
+#: src/Integrations/ConnectorRegistry.php:267
 msgid "This connector is not installed."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:254
+#: src/Integrations/ConnectorRegistry.php:273
 msgid "The connector requirements are not met."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:338
+#: src/Integrations/ConnectorRegistry.php:357
 msgid "The connector plugin is not active or was removed."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:360
+#: src/Integrations/ConnectorRegistry.php:379
 msgid "Connector plugin missing"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:361
+#: src/Integrations/ConnectorRegistry.php:380
 msgid "Install and activate the connector plugin, or remove the action from the form."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:364
+#: src/Integrations/ConnectorRegistry.php:383
 msgid "Connector disabled"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:365
+#: src/Integrations/ConnectorRegistry.php:384
 msgid "Activate the connector under Form Captain → Integrations. Waiting jobs are retried automatically."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:368
+#: src/Integrations/ConnectorRegistry.php:387
 msgid "Incompatible contract version"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:369
+#: src/Integrations/ConnectorRegistry.php:388
 msgid "Update the connector or Form Captain so that both support the same contract major version."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:372
+#: src/Integrations/ConnectorRegistry.php:391
 msgid "Requirements not met"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:373
+#: src/Integrations/ConnectorRegistry.php:392
 msgid "Complete the connector configuration shown in its requirements."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:376
+#: src/Integrations/ConnectorRegistry.php:395
 msgid "Pro feature not available"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:377
+#: src/Integrations/ConnectorRegistry.php:396
 msgid "This action needs Form Captain Pro with a valid licence. Renew or activate the licence, or disable the action."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:380
+#: src/Integrations/ConnectorRegistry.php:399
 msgid "Workflow or action missing"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:381
+#: src/Integrations/ConnectorRegistry.php:400
 msgid "The plugin that provided this action is inactive. Reactivate it or remove the action from the form."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:384
+#: src/Integrations/ConnectorRegistry.php:403
 msgid "Action disabled in form"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:385
+#: src/Integrations/ConnectorRegistry.php:404
 msgid "Enable the action in the form editor if it should run."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:388
+#: src/Integrations/ConnectorRegistry.php:407
 msgid "Action removed from form"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:389
+#: src/Integrations/ConnectorRegistry.php:408
 msgid "No action needed. The job was stopped because the form no longer contains this action."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:392
+#: src/Integrations/ConnectorRegistry.php:411
 msgid "Field mapping incomplete"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:393
+#: src/Integrations/ConnectorRegistry.php:412
 msgid "Map all required fields of the action in the form editor, then retry the job."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:396
+#: src/Integrations/ConnectorRegistry.php:415
 msgid "Mapped field has the wrong type"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:397
+#: src/Integrations/ConnectorRegistry.php:416
 msgid "Choose a field of a supported type in the action mapping, then retry the job."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:400
+#: src/Integrations/ConnectorRegistry.php:419
 msgid "Sensitive field blocked"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:401
+#: src/Integrations/ConnectorRegistry.php:420
 msgid "Sensitive fields are never sent unless the action explicitly allows them. Map a different field."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:404
+#: src/Integrations/ConnectorRegistry.php:423
 msgid "Entry deleted"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:405
+#: src/Integrations/ConnectorRegistry.php:424
 msgid "No action needed. The entry was deleted before the job ran."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:408
+#: src/Integrations/ConnectorRegistry.php:427
 msgid "Entry anonymized"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:409
+#: src/Integrations/ConnectorRegistry.php:428
 msgid "No action needed. Personal data was removed before the job ran."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:412
+#: src/Integrations/ConnectorRegistry.php:431
 msgid "Consent withdrawn"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:413
+#: src/Integrations/ConnectorRegistry.php:432
 msgid "No action needed. The job was stopped because consent was withdrawn."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:416
+#: src/Integrations/ConnectorRegistry.php:435
 msgid "Timeout"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:417
+#: src/Integrations/ConnectorRegistry.php:436
 msgid "The target system did not answer in time. The job is retried automatically; check the target system if it keeps failing."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:420
+#: src/Integrations/ConnectorRegistry.php:439
 msgid "Connector error"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:421
+#: src/Integrations/ConnectorRegistry.php:440
 msgid "The connector raised an error. The job is retried automatically; contact the connector vendor if it keeps failing."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:424
+#: src/Integrations/ConnectorRegistry.php:443
 msgid "Invalid connector response"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:425
+#: src/Integrations/ConnectorRegistry.php:444
 msgid "The connector returned an invalid result. Update the connector plugin."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:428
+#: src/Integrations/ConnectorRegistry.php:447
 msgid "Worker interrupted"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:429
+#: src/Integrations/ConnectorRegistry.php:448
 msgid "The job is retried automatically. If this repeats, check PHP time limits and the cron setup."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:432
+#: src/Integrations/ConnectorRegistry.php:451
 msgid "Queue delayed"
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:433
+#: src/Integrations/ConnectorRegistry.php:452
 msgid "Jobs are waiting longer than 15 minutes. Check WP-Cron or run \"wp form-captain jobs run\" from a system cron."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:444
+#: src/Integrations/ConnectorRegistry.php:463
 msgid "Check the connector documentation for this code. You can retry the job once the cause is fixed."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:457
+#: src/Integrations/ConnectorRegistry.php:476
 msgid "Actions can only be registered in or after form_captain_loaded_v1."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:460
+#: src/Integrations/ConnectorRegistry.php:479
 msgid "Invalid action key. Expected \"connector.action\" in lowercase letters, digits and underscores."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:463
+#: src/Integrations/ConnectorRegistry.php:482
+msgid "The action namespace \"core\" is reserved for built-in actions."
+msgstr ""
+
+#: src/Integrations/ConnectorRegistry.php:485
 msgid "An action with this key is already registered."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:483
+#: src/Integrations/ConnectorRegistry.php:505
 msgid "The action definition needs a label."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:487
+#: src/Integrations/ConnectorRegistry.php:509
 msgid "The action definition needs a contract constraint such as \"^1.0\"."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:490
+#: src/Integrations/ConnectorRegistry.php:512
 msgid "The action expects an incompatible contract version."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:494
+#: src/Integrations/ConnectorRegistry.php:516
 msgid "Invalid connector key in action definition."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:499
+#: src/Integrations/ConnectorRegistry.php:521
 msgid "Every action setting needs a valid key."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:514
+#: src/Integrations/ConnectorRegistry.php:536
 msgid "Every mapping entry needs a valid key."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:805
+#: src/Integrations/ConnectorRegistry.php:827
 msgid "This action is not registered."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:841
+#: src/Integrations/ConnectorRegistry.php:863
 msgid "This is a test message from Form Captain."
 msgstr ""
 
-#: src/Integrations/ConnectorRegistry.php:848
+#: src/Integrations/ConnectorRegistry.php:870
 msgid "Sample value"
+msgstr ""
+
+#: src/Integrations/CoreActions.php:94
+msgid "Additional admin notification"
+msgstr ""
+
+#: src/Integrations/CoreActions.php:96
+msgid "Recipient address"
+msgstr ""
+
+#: src/Integrations/CoreActions.php:97
+msgid "Subject (optional)"
+msgstr ""
+
+#: src/Integrations/CoreActions.php:105
+msgid "Set submission status"
+msgstr ""
+
+#: src/Integrations/CoreActions.php:107
+msgid "New status"
+msgstr ""
+
+#: src/Integrations/CoreActions.php:115
+msgid "Anonymize submission after a number of days"
+msgstr ""
+
+#: src/Integrations/CoreActions.php:117
+msgid "Days after submission"
+msgstr ""
+
+#: src/Integrations/CoreActions.php:125
+msgid "Hand over to another action after confirmation"
+msgstr ""
+
+#: src/Integrations/CoreActions.php:127
+msgid "Instance ID of the target action in this form"
+msgstr ""
+
+#. translators: %s: label of the target action
+#: src/Integrations/CoreActions.php:261
+#, php-format
+msgid "Hand-over pending: \"%s\" runs only after an administrator confirms it in the submission details."
+msgstr ""
+
+#: src/Integrations/CoreActions.php:338
+#: src/Integrations/CoreActions.php:378
+msgid "You are not allowed to confirm hand-overs."
+msgstr ""
+
+#: src/Integrations/CoreActions.php:352
+msgid "There is no pending hand-over for this submission."
+msgstr ""
+
+#: src/Integrations/CoreActions.php:411
+msgid "These hand-overs only run after you confirm them. Check the submission first."
+msgstr ""
+
+#: src/Integrations/CoreActions.php:427
+msgid "Confirm hand-over"
+msgstr ""
+
+#: src/Integrations/CoreActions.php:429
+msgid "An administrator with the right to manage integrations has to confirm this hand-over."
+msgstr ""
+
+#: src/Integrations/CoreActions.php:435
+msgid "Pending hand-overs"
 msgstr ""
 
 #: src/Jobs/Scheduler.php:71
@@ -2735,8 +3200,8 @@ msgid "Some submissions were sent to connected integrations. Data in those syste
 msgstr ""
 
 #: src/Repository/FormRepository.php:113
-#: src/Service/FormService.php:152
-#: src/Service/FormService.php:205
+#: src/Service/FormService.php:162
+#: src/Service/FormService.php:215
 msgid "This form was changed by someone else in the meantime. Reload to see the latest version."
 msgstr ""
 
@@ -2809,7 +3274,7 @@ msgid "Select between 1 and 500 submissions."
 msgstr ""
 
 #: src/Service/FormService.php:47
-#: src/Service/FormService.php:963
+#: src/Service/FormService.php:973
 msgid "Untitled form"
 msgstr ""
 
@@ -2818,87 +3283,83 @@ msgid "This template does not exist."
 msgstr ""
 
 #. translators: {form_title} is a placeholder and must not be translated.
-#: src/Service/FormService.php:110
+#: src/Service/FormService.php:120
 msgid "New submission: {form_title}"
 msgstr ""
 
-#: src/Service/FormService.php:121
-#: src/Service/SubmissionService.php:319
+#: src/Service/FormService.php:131
+#: src/Service/SubmissionService.php:337
 #: src/Support/Errors.php:65
 msgid "Thank you! Your submission has been received."
 msgstr ""
 
-#: src/Service/FormService.php:297
+#: src/Service/FormService.php:307
 msgid "Archived forms cannot be published. Restore the form as a draft first."
 msgstr ""
 
-#: src/Service/FormService.php:301
+#: src/Service/FormService.php:311
 msgid "The form cannot be published until all errors are fixed."
 msgstr ""
 
-#: src/Service/FormService.php:321
+#: src/Service/FormService.php:331
 msgid "This status change is not possible."
 msgstr ""
 
 #. translators: %s: form title
-#: src/Service/FormService.php:374
+#: src/Service/FormService.php:384
 #, php-format
 msgid "%s (copy)"
 msgstr ""
 
-#: src/Service/FormService.php:402
+#: src/Service/FormService.php:412
 msgid "This form has entries. Archive it instead, or delete it together with its entries."
 msgstr ""
 
-#: src/Service/FormService.php:405
+#: src/Service/FormService.php:415
 msgid "You are not allowed to delete entries."
 msgstr ""
 
-#: src/Service/FormService.php:409
+#: src/Service/FormService.php:419
 msgid "Entries cannot be deleted right now. Archive the form instead."
 msgstr ""
 
-#: src/Service/FormService.php:416
+#: src/Service/FormService.php:426
 msgid "Not all entries could be deleted. Please try again."
 msgstr ""
 
-#: src/Service/FormService.php:473
+#: src/Service/FormService.php:483
 msgid "The file is not a valid Form Captain form definition."
 msgstr ""
 
 #. translators: 1: field key, 2: property name
-#: src/Service/FormService.php:489
+#: src/Service/FormService.php:499
 #, php-format
 msgid "Field \"%1$s\": markup removed from %2$s."
 msgstr ""
 
 #. translators: 1: field key, 2: property name
-#: src/Service/FormService.php:495
+#: src/Service/FormService.php:505
 #, php-format
 msgid "Field \"%1$s\": disallowed HTML removed from %2$s."
 msgstr ""
 
-#: src/Service/FormService.php:508
+#: src/Service/FormService.php:518
 msgid "The form definition contains errors and was not imported."
 msgstr ""
 
 #. translators: %s: setting path
-#: src/Service/FormService.php:523
+#: src/Service/FormService.php:533
 #, php-format
 msgid "Invalid action configuration removed (%s)."
 msgstr ""
 
 #. translators: 1: setting path, 2: error code
-#: src/Service/FormService.php:528
+#: src/Service/FormService.php:538
 #, php-format
 msgid "Setting %1$s was invalid and has been reset (%2$s)."
 msgstr ""
 
-#: src/Service/FormService.php:531
-msgid "Imported form"
-msgstr ""
-
-#: src/Service/FormService.php:953
+#: src/Service/FormService.php:963
 msgid "The form definition is invalid."
 msgstr ""
 
@@ -3509,10 +3970,6 @@ msgstr ""
 msgid "Label (internal)"
 msgstr ""
 
-#: assets/src/editor.js:453
-msgid "Label"
-msgstr ""
-
 #: assets/src/editor.js:465
 msgid "Field key"
 msgstr ""
@@ -3973,10 +4430,6 @@ msgstr ""
 
 #: assets/src/editor.js:1624
 msgid "Saved changes are not live yet. Publish to apply them. Existing entries keep the version they were submitted with."
-msgstr ""
-
-#: assets/src/editor.js:1642
-msgid "Form title"
 msgstr ""
 
 #: assets/src/editor.js:1655

@@ -40,6 +40,7 @@ Vollständige Darstellung: [docs/spec/datenschutz.md](spec/datenschutz.md) (Merm
 
 **Prüffrage R-7:** Reicht für Webhooks der Hinweis im readme (Betreiber wählt Ziel und Felder, AVV/Drittlandtransfer liegt beim Betreiber), oder braucht das Add-on einen Hinweis direkt im Webhook-Dialog?
 **Prüffrage R-8:** Ist für Entwürfe (Fortsetzungslink, 7 Tage) ein eigener Textbaustein für die Datenschutzerklärung nötig? Vorschlag liegt im readme des Add-ons („Drafts of multi-step forms …“).
+**Prüffrage R-9:** BoatingSchool-Leads werden 180 Tage gespeichert und dann automatisch gelöscht (Entscheidung 20). Ist die Frist für B2B-Interessenten angemessen? Support-Leads enthalten zusätzlich Produkt und Kundennummer des angemeldeten WooCommerce-Kunden.
 
 ## 3. Zu prüfende Texte
 

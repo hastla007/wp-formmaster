@@ -35,8 +35,18 @@ final class AdminRenderTest extends TestCase {
 		return (string) ob_get_clean();
 	}
 
+	/** Other suites may leak committed rows (transactions inside services); start from empty tables. */
+	private function empty_tables(): void {
+		global $wpdb;
+		foreach ( array( \FormCaptain\Database\Tables::FORMS, \FormCaptain\Database\Tables::FORM_VERSIONS, \FormCaptain\Database\Tables::ENTRIES ) as $t ) {
+			$wpdb->query( 'DELETE FROM ' . \FormCaptain\Database\Tables::name( $t ) ); // phpcs:ignore WordPress.DB
+		}
+		delete_option( DashboardPage::STEPS_OPTION );
+	}
+
 	public function test_empty_states(): void {
 		$this->as_admin();
+		$this->empty_tables();
 		$dash = $this->render( $this->plugin()->get( DashboardPage::class ) );
 		$this->assertStringContainsString( 'Get started', $dash );
 		$this->assertStringContainsString( 'No Captain Suite plugins detected', $dash );

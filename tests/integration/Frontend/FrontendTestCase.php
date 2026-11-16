@@ -2,10 +2,8 @@
 /**
  * Shared helpers for frontend/submission integration tests.
  *
- * The submission service uses real transactions (START TRANSACTION/COMMIT). Inside the WordPress test
- * suite every test already runs in a transaction that is rolled back afterwards; a nested
- * START TRANSACTION would implicitly commit test data. We therefore map the service's transaction
- * statements to savepoints for the duration of each test.
+ * Note: every WordPress test runs inside a transaction (autocommit off); the submission service
+ * detects this and uses a savepoint, so nothing is committed by these tests.
  *
  * @package FormCaptain
  */
@@ -26,21 +24,8 @@ use FormCaptain\Tests\Integration\TestCase;
 
 abstract class FrontendTestCase extends TestCase {
 
-	/** @var callable|null */
-	private $tx_filter = null;
-
 	public function set_up(): void {
 		parent::set_up();
-		$this->tx_filter = static function ( string $query ): string {
-			$q = strtoupper( trim( $query ) );
-			return match ( $q ) {
-				'START TRANSACTION' => 'SAVEPOINT fc_test_tx',
-				'COMMIT' => 'RELEASE SAVEPOINT fc_test_tx',
-				'ROLLBACK' => 'ROLLBACK TO SAVEPOINT fc_test_tx',
-				default => $query,
-			};
-		};
-		add_filter( 'query', $this->tx_filter );
 		Limits::reset();
 		Renderer::reset_counters();
 		Assets::reset();
@@ -52,9 +37,6 @@ abstract class FrontendTestCase extends TestCase {
 	}
 
 	public function tear_down(): void {
-		if ( $this->tx_filter ) {
-			remove_filter( 'query', $this->tx_filter );
-		}
 		$_GET = array();
 		parent::tear_down();
 	}

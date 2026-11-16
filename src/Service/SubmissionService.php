@@ -195,7 +195,7 @@ final class SubmissionService {
 		}
 
 		$entry_id = 0;
-		$tx       = $this->entries->begin();
+		$tx       = $this->begin();
 		try {
 			$entry_id = $this->entries->insert( $entry );
 			if ( $entry_id <= 0 ) {
@@ -214,7 +214,7 @@ final class SubmissionService {
 				$this->planner->plan( $form, $entry_id );
 			}
 			if ( $tx ) {
-				$this->entries->commit();
+				$this->commit();
 			}
 		} catch ( \Throwable $e ) {
 			$this->abort( $tx, $entry_id, ! empty( $ctx_result['single_use'] ) ? (string) $ctx_result['nonce'] : null );
@@ -332,9 +332,44 @@ final class SubmissionService {
 		return array( 'message' => $message );
 	}
 
+	/** True while a savepoint inside a caller-managed transaction is used instead of our own transaction. */
+	private bool $nested = false;
+
+	/**
+	 * Starts the entry transaction. When the connection already runs inside a caller-managed
+	 * transaction (autocommit off), a savepoint is used so the caller's transaction is not
+	 * implicitly committed.
+	 */
+	private function begin(): bool {
+		global $wpdb;
+		$this->nested = '0' === (string) $wpdb->get_var( 'SELECT @@autocommit' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		if ( $this->nested ) {
+			return false !== $wpdb->query( 'SAVEPOINT fc_submission' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		}
+		return $this->entries->begin();
+	}
+
+	private function commit(): void {
+		global $wpdb;
+		if ( $this->nested ) {
+			$wpdb->query( 'RELEASE SAVEPOINT fc_submission' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			return;
+		}
+		$this->entries->commit();
+	}
+
+	private function rollback(): void {
+		global $wpdb;
+		if ( $this->nested ) {
+			$wpdb->query( 'ROLLBACK TO SAVEPOINT fc_submission' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			return;
+		}
+		$this->entries->rollback();
+	}
+
 	private function abort( bool $tx, int $entry_id, ?string $nonce ): void {
 		if ( $tx ) {
-			$this->entries->rollback();
+			$this->rollback();
 		}
 		if ( $entry_id > 0 && null !== $this->entries->find( $entry_id ) ) {
 			// Compensation for engines without transaction support.

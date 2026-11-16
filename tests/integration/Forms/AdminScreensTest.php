@@ -164,8 +164,18 @@ final class AdminScreensTest extends TestCase {
 		$this->assertArrayHasKey( 'error', get_transient( 'form_captain_import_report_' . get_current_user_id() ) );
 	}
 
+	/** Other suites may leak committed rows (transactions inside services); start from empty tables. */
+	private function empty_tables(): void {
+		global $wpdb;
+		foreach ( array( \FormCaptain\Database\Tables::FORMS, \FormCaptain\Database\Tables::FORM_VERSIONS, \FormCaptain\Database\Tables::ENTRIES ) as $t ) {
+			$wpdb->query( 'DELETE FROM ' . \FormCaptain\Database\Tables::name( $t ) ); // phpcs:ignore WordPress.DB
+		}
+		delete_option( DashboardPage::STEPS_OPTION );
+	}
+
 	public function test_dashboard_step_requires_nonce(): void {
 		$this->as_admin();
+		$this->empty_tables();
 		$dash             = $this->plugin()->get( DashboardPage::class );
 		$_REQUEST['step'] = 'privacy';
 		try {

@@ -181,13 +181,41 @@ Ziel: nachweisen, dass ein fehlerhaftes Update innerhalb der Zielzeit `[ZIEL-WIE
 3. **Backup** nach 1.2 (DB + Dateien), Prüfsummen notieren.
 4. **Testrelease installieren:** RC-ZIP (`bin/build-release.sh x.y.z-rc.N`), SHA-256 prüfen, Plugin-Verzeichnis ersetzen, Admin aufrufen → Migration.
 5. **Fehler simulieren** (je Übung einer):
-   - a) Migration bricht ab (Test-Hook `FORM_CAPTAIN_TEST_FAIL_MIGRATION` oder `kill` des PHP-Prozesses),
+   - a) Migration schlägt fehl: dem Datenbankbenutzer vor dem Update das Recht `ALTER` entziehen (`REVOKE ALTER ON <db>.* FROM '<user>'@'<host>'`), oder Abbruch durch `kill` des PHP-Prozesses,
    - b) Fatal Error im neuen Code nach erfolgreicher Migration,
    - c) fehlerhafter Mailversand (SMTP aus) mit wachsender Queue.
 6. **Entscheiden** anhand Rollback-Plan (`RELEASE.md` 3.5): Downgrade ohne Restore oder mit Restore.
 7. **Wiederherstellen:** Formulare pausieren, Plugin-Verzeichnis durch letzte funktionierende Version ersetzen; bei Bedarf DB-Restore nach 1.3 (Tabellen + Optionen) und Dateien.
 8. **Prüfen:** Integritätsprüfung 1.5, Zählung/Hash = Ausgangszustand (abzüglich bewusst verworfener Test-Einsendungen), Testeinsendung, Queue leer bzw. nur erwartete Jobs.
 9. **Dokumentieren:** Dauer je Schritt, Abweichungen, Verbesserungen an Skripten/Doku; Ticket „Rollback-Übung x.y.z“ abschließen.
+
+### 3.1 Protokoll der Übung vom 16.11.2026 (lokales Staging)
+
+**Umgebung:** WordPress 6.8.3, PHP 8.3.6 (eingebauter Webserver), MariaDB 10.11, eigener DB-Benutzer mit `SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP, LOCK TABLES`. Mail-Senke per MU-Plugin. Zielzeit `[ZIEL-WIEDERHERSTELLUNGSZEIT]` ist noch nicht festgelegt.
+
+**Artefakte:** Als letzte funktionierende Version diente der Stand `1a404d8` mit Schema 1 (`form-captain-v1.zip`, SHA-256 `8312784988…3d2a`). Als Release-Kandidat diente der aktuelle Stand mit Schema 2 (`form-captain-1.0.0-rc.1.zip`, SHA-256 `5b74b73b…8022`). Die Migration 1 → 2 ist echt: neue Spalte `consent_withdrawn_gmt` und ein Index.
+
+**Ausgangszustand:** 2 Formulare, 40 Einträge, 200 Werte, Queue leer. Prüfsumme über alle Werte (MD5 über Eintrag, Feld und MD5 des Werts): `bb85fe1c…f9b3`.
+
+| Schritt | Ergebnis | Dauer |
+|---|---|---|
+| Backup: `fc_*`-Tabellen, `form_captain_*`-Optionen, Plugin-Verzeichnis, SHA-256 notiert | 3 Dateien, Prüfsummen OK | 1 s |
+| **a) Fehlgeschlagene Migration:** `ALTER` entzogen, RC installiert | Version bleibt 1. Zustand `migration_failed`, Detail `missing_column:entries.consent_withdrawn_gmt`. Frontend 200, Admin erreichbar | 2 s |
+| Einsendung im Fehlerzustand | wird im Schema 1 gespeichert, kein Datenbankfehler außer den abgelehnten `ALTER` (Dokumentation in RELEASE.md 3.2 entsprechend berichtigt) | – |
+| Ursache behoben (`GRANT ALTER`), Admin-Seite aufgerufen | Migration setzt automatisch fort, Schema 2, Status OK. Die 40 Ausgangseinträge sind bitgleich (`bb85fe1c…f9b3`) | < 1 s |
+| **b) Fatal Error im neuen Code** (kaputte PHP-Datei) | Frontend und Admin HTTP 500 | – |
+| Downgrade ohne DB-Restore auf v1 (Schema 2 bleibt) | Frontend 200, Einsendung funktioniert (additive Migration ist abwärtsverträglich). Während des nicht atomaren Dateitauschs kurz HTTP 500 | 1 s |
+| Rollback mit DB-Restore (Tabellen, Optionen, Plugin-Dateien aus dem Backup) | Prüfsummen OK. Datenstand gleich dem Ausgangszustand (alle Zähler und die Prüfsumme). Schema 1, Status OK, Testeinsendung OK. Vorher gesichert: 2 Einsendungen seit dem Update (nur gezählt) | < 1 s |
+
+**Befunde und Folgen:**
+
+1. Downgrade wurde nicht erkannt: `maybe_upgrade()` rief `migrate()` nur bei installiert < Ziel auf. **Behoben** mit Test `InstallTest::test_boot_records_downgrade_and_clears_it_after_reinstall`.
+2. Der Systemstatus empfahl bei jedem Schemaproblem „deaktivieren/aktivieren“. Jetzt nennt er die Ursache: DB-Rechte bei `migration_failed`, neuere Version oder Backup bei einem Downgrade (`SystemStatusTest::test_schema_problem_messages_name_the_cause`).
+3. RELEASE.md 3.2 beschrieb eine Einsende-Sperre bei fehlgeschlagener Migration, die es nicht gibt (und bei additiven Migrationen nicht braucht). **Doku berichtigt.**
+4. Der in Schritt 5a genannte Test-Hook existierte nicht. Ersetzt durch den Rechteentzug.
+5. Der Dateitausch beim Rollback soll atomar per Umbenennen erfolgen (RELEASE.md 3.4).
+
+**Noch offen:** Wiederholung auf einem echten Staging mit Produktions-Versionsmatrix und System-Cron, Zielzeit festlegen, Szenario c (SMTP aus mit wachsender Queue; das Verhalten ist lokal in docs/MAILZUSTELLUNG.md abgenommen).
 
 ## 4. Staging-Rollout und Datenbank-Rollback (P9-13)
 

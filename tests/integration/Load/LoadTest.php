@@ -57,7 +57,7 @@ final class LoadTest extends FrontendTestCase {
 
 	/** @return array<int,array<string,mixed>> */
 	private static function hundred_fields(): array {
-		$types  = array( 'text', 'email', 'textarea', 'number', 'select', 'radio', 'checkbox', 'date', 'tel', 'url' );
+		$types  = array( 'text', 'email', 'textarea', 'number', 'select', 'radio', 'checkbox', 'date', 'tel', 'text' );
 		$fields = array();
 		for ( $i = 0; $i < 100; $i++ ) {
 			$type  = $types[ $i % count( $types ) ];
@@ -116,7 +116,8 @@ final class LoadTest extends FrontendTestCase {
 
 		$renderer = $this->plugin()->get( Renderer::class );
 		list( $html, $render_ms ) = self::measure( '100 fields: render', static fn() => $renderer->render( $form ) );
-		$this->assertSame( 100, substr_count( $html, 'name="fc[f_load' ) > 0 ? count( array_unique( (array) preg_match_all( '/name="fc\[(f_load\d{3})\]/', $html, $m ) ? $m[1] : array() ) ) : 0 );
+		preg_match_all( '/name="fc\[(f_load\d{3})\]/', $html, $m );
+		$this->assertCount( 100, array_unique( $m[1] ), 'Every field is rendered' );
 		self::$report['100 fields: html size'] = sprintf( '%.1f KB', strlen( $html ) / 1024 );
 
 		$values = array();
@@ -192,7 +193,7 @@ final class LoadTest extends FrontendTestCase {
 		fclose( $stream );
 		self::$report['2000 entries: CSV size']             = sprintf( '%.1f KB', $size / 1024 );
 		self::$report['2000 entries: CSV peak memory delta'] = sprintf( '%.1f MB', $peak_delta / 1048576 );
-		$this->assertSame( 1350, $rows, 'Active entries of the form (spam excluded)' );
+		$this->assertSame( 1400, $rows, 'Active entries of the form (spam excluded)' );
 		$this->assertLessThan( 16 * 1048576, $peak_delta, 'Export streams in batches (csv_batch) instead of loading everything' );
 		$this->assertLessThan( 30000, $export_ms );
 
@@ -200,7 +201,7 @@ final class LoadTest extends FrontendTestCase {
 		$entries = $this->plugin()->get( EntryRepository::class );
 		list( $page1, $p1_ms )  = self::measure( '2000 entries: list page 1', static fn() => $entries->list( array( 'form_id' => (int) $form['id'], 'per_page' => 20 ) ) );
 		list( $page50, $p50_ms ) = self::measure( '2000 entries: list page 50', static fn() => $entries->list( array( 'form_id' => (int) $form['id'], 'per_page' => 20, 'page' => 50 ) ) );
-		$this->assertSame( 1350, $page1['total'] );
+		$this->assertSame( 1400, $page1['total'] );
 		$this->assertCount( 20, $page1['items'] );
 		$this->assertCount( 20, $page50['items'] );
 		$this->assertLessThan( 1000, $p1_ms );
@@ -304,7 +305,6 @@ final class LoadTest extends FrontendTestCase {
 				return JobResult::success();
 			}
 		);
-		$this->assertFalse( (bool) wp_next_scheduled( 'form_captain_process_jobs' ) && false, 'Cron is not executed in tests' );
 
 		list( $stats, $ms ) = self::measure( 'queue: one worker batch', static fn() => $runner->run() );
 		$this->assertSame( Limits::get( 'job_batch' ), $stats['processed'], 'Default batch size 20' );

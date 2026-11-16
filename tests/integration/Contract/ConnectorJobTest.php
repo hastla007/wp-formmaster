@@ -41,7 +41,7 @@ final class ConnectorJobTest extends TestCase {
 						array( 'key' => 'name', 'label' => 'Name', 'types' => array( 'text' ) ),
 					),
 				),
-				'fake.secret' => array(
+				'fake.sensitive' => array(
 					'mapping' => array(
 						array( 'key' => 'code', 'label' => 'Code', 'types' => array( 'text' ), 'allow_sensitive' => true ),
 					),
@@ -120,9 +120,9 @@ final class ConnectorJobTest extends TestCase {
 	}
 
 	public function test_sensitive_field_allowed_when_action_declares_it(): void {
-		$form  = $this->form_with_action( array( 'code' => 'f_iban01' ), 'fake.secret' );
+		$form  = $this->form_with_action( array( 'code' => 'f_iban01' ), 'fake.sensitive' );
 		$entry = $this->entry( $form );
-		$id    = $this->enqueue_action_job( $form, $entry, 'fake.secret', 'a_0123456789' );
+		$id    = $this->enqueue_action_job( $form, $entry, 'fake.sensitive', 'a_0123456789' );
 		$this->assertSame( 'succeeded', $this->run_job( $id ) );
 		$this->assertSame( 'DE00123456781234567890', $this->fake->calls[0]['values']['code'] );
 	}

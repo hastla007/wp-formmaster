@@ -9,7 +9,7 @@
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 const require = createRequire( import.meta.url );
-const { chromium } = require( 'playwright' );
+const playwright = require( 'playwright' );
 
 const BASE = process.env.E2E_URL || 'http://127.0.0.1:8889';
 const axeSource = readFileSync( require.resolve( 'axe-core/axe.min.js' ), 'utf8' );
@@ -31,7 +31,13 @@ async function audit( page, label, include ) {
 	return blocking.length;
 }
 
-const browser = await chromium.launch();
+// Same engine as the main flow (CI installs only the matrix browser per job).
+const engine = ( process.env.E2E_BROWSERS || 'chromium' ).split( ',' )[ 0 ].trim() || 'chromium';
+if ( ! playwright[ engine ] ) {
+	throw new Error( `Unknown browser "${ engine }" in E2E_BROWSERS` );
+}
+console.log( `\n[a11y: ${ engine }]` );
+const browser = await playwright[ engine ].launch();
 const ctx = await browser.newContext( { viewport: { width: 1280, height: 900 } } );
 const page = await ctx.newPage();
 let failures = 0;

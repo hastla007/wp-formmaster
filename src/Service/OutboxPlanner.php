@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace FormCaptain\Service;
 
+use FormCaptain\Integrations\CoreActions;
 use FormCaptain\Repository\JobRepository;
 
 final class OutboxPlanner {
@@ -34,8 +35,11 @@ final class OutboxPlanner {
 			$this->enqueue( 'mail.confirmation', $prefix . 'mail.confirmation', array( 'notification' => 'confirmation' ), $entry_id, $form_id );
 		}
 
-		foreach ( is_array( $settings['actions'] ?? null ) ? $settings['actions'] : array() as $action ) {
-			if ( ! is_array( $action ) || empty( $action['enabled'] ) ) {
+		$actions = is_array( $settings['actions'] ?? null ) ? $settings['actions'] : array();
+		// Targets of an enabled core.handoff are only queued after manual confirmation (P8-19).
+		$awaiting = class_exists( CoreActions::class ) ? CoreActions::handoff_targets( $actions ) : array();
+		foreach ( $actions as $action ) {
+			if ( ! is_array( $action ) || empty( $action['enabled'] ) || isset( $awaiting[ (string) ( $action['instance_id'] ?? '' ) ] ) ) {
 				continue;
 			}
 			$key      = (string) ( $action['action_key'] ?? '' );

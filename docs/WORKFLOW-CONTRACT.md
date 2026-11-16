@@ -27,6 +27,21 @@ Stabile IDs: `entry_id`, `form_id`, `form_public_id`, `form_version` (Schema-Sna
 
 Aktionen sind Connector-Code mit Outbox-Ausführung. Der Kern stellt keine Aktionen für Zahlung, Ticket-/Gutscheinausgabe, Partnerfreigabe oder Review-Veröffentlichung bereit. Adapter, die solche Systeme ansprechen, müssen Ergebnisse als „pending/zur Prüfung“ anlegen (Vertragspflicht der Adapter).
 
+### Eingebaute sichere Aktionen
+
+Der Kern bringt vier Aktionen im reservierten Namensraum `core.*` mit (`src/Integrations/CoreActions.php`). Sie laufen über dieselbe Registry (`ConnectorRegistry`) und Outbox (`connector.action`) wie Connector-Aktionen, haben aber `connector = null`: Der interne Kern-„Connector“ `core` ist immer aktiv und braucht **kein** site-weites Opt-in. Jede Aktion muss trotzdem pro Formular hinzugefügt und aktiviert werden. Der Connector-Key `core` und Aktions-Keys `core.*` sind für Dritte gesperrt (`invalid_request`).
+
+| Aktion | Einstellungen | Verhalten | Ergebniscodes |
+|---|---|---|---|
+| `core.notify_admin` | `to` (eine feste Adresse), `subject` (optional, Platzhalter wie Admin-Mail) | Zusätzliche Admin-Benachrichtigung über `MailBuilder` + `wp_mail()`. Sensible Felder und Datei-/Passwort-/Zahlungs-/Signatur-/HTML-Felder werden weder im Text noch in Betreff-Platzhaltern verwendet. Kein Reply-To. | `sent`, `invalid_recipient`, `mail_failed` (retry) |
+| `core.set_status` | `status`: `read` oder `archived` | Statuswechsel über `EntryService::transition()` (nur erlaubte Übergänge, Audit-Notiz, Event `entry_status_changed_v1`). `spam`/`trash` sind nie Ziel. | `status_*`, `unchanged`, `transition_not_allowed`, `invalid_status` |
+| `core.anonymize_after` | `days` (1–3650) | Plant einen verzögerten Job `core.anonymize` (Idempotency-Key `form-captain:{site}:{entry}:core.anonymize:{instance}`), der nach Ablauf `PrivacyIntegration::anonymize()` aufruft (wie Eraser-Anonymisierung, Event `entry_deleted_v1` mit `anonymized`). Die Anonymisierung bricht alle offenen Jobs des Entries ab, der Job selbst endet daher als `cancelled`/`entry_anonymized`. | `scheduled` (remote_id = Job-ID), `invalid_days` |
+| `core.handoff` | `target_instance` (Instanz-ID einer anderen, aktivierten Nicht-`core`-Aktion desselben Formulars) | Übergabe an eine Suite-/Connector-Aktion nur nach manueller Bestätigung: Die Zielaktion wird vom `OutboxPlanner` **nicht** automatisch eingeplant. Der Handoff-Job schreibt die Entry-Notiz „Übergabe ausstehend“; im Entry-Detail erscheint der Abschnitt „Ausstehende Übergaben“ mit Bestätigen-Button (Nonce, Rechte `read_entries` + `edit_entries` + `manage_integrations`). Erst dann wird der Ziel-Job `connector.action` mit dem regulären Idempotency-Key eingereiht (Audit `handoff_confirmed`). | `handoff_pending`, `handoff_target_invalid`, `handoff_target_missing`, `action_disabled` |
+
+Testlauf (`test_mode`) aller Kernaktionen ist ohne Nebenwirkungen. Bewusst **nicht** vorhanden: automatische Zahlung, Ticket-/Gutscheinausgabe, Partnerfreigabe, Review-Veröffentlichung. Wird ein solcher Dienst per `core.handoff` angebunden, bleibt die Vertragspflicht des Adapters („pending/zur Prüfung“) bestehen.
+
+Tests: `tests/integration/Workflow/CoreActionsTest.php`.
+
 ## 4. Native Mail bleibt Standard (P8-20)
 
 Admin-Mail und Bestätigung laufen als eigene Jobs (`mail.admin`, `mail.confirmation`). Eine Erweiterung kann eine einzelne Nachricht explizit übernehmen über den internen Filter `form_captain_mail_handoff` (Rückgabe `'handled'`); jede andere Rückgabe → Fallback `wp_mail()`. Dedupe über den Idempotency-Key des Mail-Jobs. Connector-Fehler beeinflussen die native Mail nicht.

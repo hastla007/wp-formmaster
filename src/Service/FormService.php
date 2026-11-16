@@ -82,6 +82,16 @@ final class FormService {
 		if ( $result['errors'] ) {
 			return $this->schema_error( Errors::SCHEMA_INVALID, $result['errors'] );
 		}
+		// Actions are only released via save_actions() (OP-FRM-10: manage_forms + manage_integrations).
+		// A new form never starts with enabled or unsanitized actions (SR-01).
+		$action_errors       = array();
+		$settings['actions'] = array_map(
+			static function ( array $a ): array {
+				$a['enabled'] = false;
+				return $a;
+			},
+			$this->sanitize_actions( is_array( $settings['actions'] ?? null ) ? $settings['actions'] : array(), $result['schema'], $action_errors, false )
+		);
 		$clean = $this->sanitize_settings( array_replace_recursive( $this->default_settings(), $settings ), $result['schema'] );
 		$id    = $this->forms->create( self::plain_title( $title ), $result['schema'], $clean['settings'], get_current_user_id() );
 		if ( $id <= 0 ) {

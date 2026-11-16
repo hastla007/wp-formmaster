@@ -70,6 +70,11 @@ final class SubmissionService {
 			);
 		};
 
+		// 0. Never write entries while the schema is being migrated (P6-11).
+		if ( ( new \FormCaptain\Database\Migrator() )->is_running() ) {
+			return $fail( Errors::STORAGE_FAILED );
+		}
+
 		// 1. Form must be published (T-SUB-05: no existence oracle for drafts/archived).
 		$status = (string) ( $form['status'] ?? '' );
 		if ( 'paused' === $status ) {

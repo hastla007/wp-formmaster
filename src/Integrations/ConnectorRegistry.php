@@ -60,11 +60,15 @@ final class ConnectorRegistry {
 
 	private bool $collected = false;
 
+	/** True while the built-in core actions register (reserved namespace `core.*`, P8-19). */
+	private bool $registering_core = false;
+
 	public function __construct( private Plugin $plugin ) {}
 
 	public function register( Plugin $plugin ): void {
 		add_action( 'init', array( $this, 'boot' ), 5 );
 		add_filter( 'form_captain_job_handlers', array( $this, 'add_job_handler' ) );
+		$plugin->get( CoreActions::class )->register( $plugin );
 	}
 
 	/**
@@ -116,6 +120,7 @@ final class ConnectorRegistry {
 		foreach ( is_array( $raw ) ? $raw : array() as $key => $connector ) {
 			$this->validate_connector( (string) $key, $connector );
 		}
+		$this->register_core_actions();
 		foreach ( $this->connectors as $key => $connector ) {
 			if ( isset( $this->booted[ $key ] ) ) {
 				continue;
@@ -128,6 +133,20 @@ final class ConnectorRegistry {
 				$this->seen[ $key ]['message'] = Logger::redact( $e->getMessage() );
 				Logger::log( 'error', 'connector_register_failed', $key );
 			}
+		}
+	}
+
+	/** Built-in safe actions (P8-19): always available, no opt-in, enabled per form only. */
+	private function register_core_actions(): void {
+		if ( isset( $this->booted[ CoreActions::CONNECTOR ] ) ) {
+			return;
+		}
+		$this->booted[ CoreActions::CONNECTOR ] = true;
+		$this->registering_core                 = true;
+		try {
+			$this->plugin->get( CoreActions::class )->register_actions( $this );
+		} finally {
+			$this->registering_core = false;
 		}
 	}
 
@@ -144,7 +163,7 @@ final class ConnectorRegistry {
 			'code'         => '',
 			'message'      => '',
 		);
-		if ( ! preg_match( self::KEY_PATTERN, $key ) || ! $connector instanceof ConnectorInterface ) {
+		if ( CoreActions::CONNECTOR === $key || ! preg_match( self::KEY_PATTERN, $key ) || ! $connector instanceof ConnectorInterface ) {
 			$info['code']    = 'invalid_connector';
 			$info['message'] = __( 'The registered object does not implement the connector interface or uses an invalid key.', 'form-captain' );
 			if ( preg_match( self::KEY_PATTERN, $key ) ) {
@@ -458,6 +477,9 @@ final class ConnectorRegistry {
 		}
 		if ( ! preg_match( self::ACTION_KEY_PATTERN, $key ) ) {
 			return new \WP_Error( 'invalid_request', __( 'Invalid action key. Expected "connector.action" in lowercase letters, digits and underscores.', 'form-captain' ) );
+		}
+		if ( str_starts_with( $key, CoreActions::CONNECTOR . '.' ) !== $this->registering_core ) {
+			return new \WP_Error( 'invalid_request', __( 'The action namespace "core" is reserved for built-in actions.', 'form-captain' ) );
 		}
 		if ( isset( $this->actions[ $key ] ) ) {
 			return new \WP_Error( 'invalid_request', __( 'An action with this key is already registered.', 'form-captain' ) );

@@ -32,7 +32,29 @@ global $wpdb;
 foreach ( \FormCaptain\Database\Tables::ALL as $form_captain_table ) {
 	$wpdb->query( 'DROP TABLE IF EXISTS ' . esc_sql( $wpdb->prefix . $form_captain_table ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared
 }
-foreach ( array( 'form_captain_settings', 'form_captain_db_version', 'form_captain_migration_state', 'form_captain_secret', 'form_captain_connectors', 'form_captain_activation_redirect', 'form_captain_worker_lock' ) as $form_captain_option ) {
+$form_captain_options = array(
+	'form_captain_settings',
+	'form_captain_db_version',
+	'form_captain_migration_state',
+	'form_captain_secret',
+	'form_captain_secret_previous',
+	'form_captain_secret_previous_until',
+	'form_captain_rl_salt',
+	'form_captain_connectors',
+	'form_captain_activation_redirect',
+	'form_captain_worker_lock',
+	'form_captain_setup_steps',
+	'form_captain_retention_modes',
+	'form_captain_cleanup_failures',
+	'form_captain_last_cleanup',
+	'form_captain_last_cleanup_at',
+);
+foreach ( $form_captain_options as $form_captain_option ) {
 	delete_option( $form_captain_option );
 }
+// Short-lived transients (No-JS results with field values, preview tokens, notices, counters).
+foreach ( array( 'fc\\_', 'form\\_captain\\_' ) as $form_captain_prefix ) {
+	$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", '\\_transient\\_' . $form_captain_prefix . '%', '\\_transient\\_timeout\\_' . $form_captain_prefix . '%' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+}
+delete_metadata( 'user', 0, 'form_captain_pro_hints_dismissed', '', true );
 \FormCaptain\Install\Capabilities::uninstall();

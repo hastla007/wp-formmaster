@@ -135,7 +135,9 @@ final class AdminRest {
 				return new \WP_Error( 'unauthenticated', __( 'Please log in.', 'form-captain' ), array( 'status' => 401 ) );
 			}
 			$auth = (string) $request->get_header( 'authorization' );
-			if ( '' !== $auth && 0 === stripos( $auth, 'basic ' ) ) {
+			// Header check plus core's own record: servers that pass Basic auth only via PHP_AUTH_USER have no header.
+			$app_password = function_exists( 'rest_get_authenticated_app_password' ) && null !== rest_get_authenticated_app_password();
+			if ( $app_password || ( '' !== $auth && 0 === stripos( $auth, 'basic ' ) ) ) {
 				return Errors::error( Errors::FORBIDDEN, __( 'Application passwords are not accepted for these routes.', 'form-captain' ) );
 			}
 			foreach ( $caps as $cap ) {

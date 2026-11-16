@@ -36,6 +36,30 @@ final class Migrator {
 		return $this->installed_version() < self::TARGET_VERSION;
 	}
 
+	/** Seconds after which a migration without result counts as interrupted. */
+	public const STALE_AFTER = 600;
+
+	/**
+	 * True while a migration step is running (state recorded, no error, not stale).
+	 * Submissions are refused meanwhile (P6-11) so no entry is written to a half-migrated schema.
+	 */
+	public function is_running(): bool {
+		$state = get_option( self::OPTION_STATE, null );
+		if ( ! is_array( $state ) || ! empty( $state['error'] ) || empty( $state['started_gmt'] ) ) {
+			return false;
+		}
+		return ( Clock::timestamp() - (int) strtotime( $state['started_gmt'] . ' UTC' ) ) < self::STALE_AFTER;
+	}
+
+	/** True when a migration started but neither finished nor recorded an error in time (crash/timeout). */
+	public function was_interrupted(): bool {
+		$state = get_option( self::OPTION_STATE, null );
+		if ( ! is_array( $state ) || ! empty( $state['error'] ) || empty( $state['started_gmt'] ) ) {
+			return false;
+		}
+		return ! $this->is_running();
+	}
+
 	/**
 	 * Runs all pending migrations. Returns true on success. On failure the stored
 	 * version stays at the last successful step and the error is recorded.
@@ -46,6 +70,13 @@ final class Migrator {
 			// Downgrade: never touch data; record state for system status.
 			update_option( self::OPTION_STATE, array( 'error' => 'schema_newer_than_plugin', 'installed' => $current ), false );
 			return false;
+		}
+		if ( $this->is_running() ) {
+			return false; // Another request is migrating right now.
+		}
+		if ( $this->was_interrupted() ) {
+			// Steps are idempotent (dbDelta), so an interrupted step is simply repeated.
+			\FormCaptain\Support\Logger::log( 'warning', 'migration_resumed', 'Interrupted migration is resumed.' );
 		}
 		foreach ( $this->steps() as $version => $step ) {
 			if ( $version <= $current ) {

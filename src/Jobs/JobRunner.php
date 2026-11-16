@@ -78,6 +78,10 @@ final class JobRunner {
 			Logger::log( 'error', 'job_no_handler', (string) $job['type'], array( 'job_id' => $id ) );
 			return 'dead';
 		}
+		// T-JOB-06: handlers never run with the capabilities of whoever triggered the worker
+		// (admin fallback, WP-CLI --user, loopback). Restored afterwards for the surrounding request.
+		$previous_user = get_current_user_id();
+		wp_set_current_user( 0 );
 		try {
 			$result = $handler( $job );
 			if ( ! $result instanceof JobResult ) {
@@ -85,13 +89,16 @@ final class JobRunner {
 			}
 		} catch ( \Throwable $e ) {
 			$result = JobResult::retry( 'exception', $e->getMessage() );
+		} finally {
+			wp_set_current_user( $previous_user );
 		}
 		if ( JobResult::SUCCESS === $result->status ) {
 			$this->jobs->complete( $id, $token, $result->data );
 			return 'succeeded';
 		}
 		$state = $this->jobs->fail( $id, $token, $result->code, $result->message, JobResult::FAIL === $result->status );
-		Logger::log( 'dead' === $state ? 'error' : 'warning', 'job_' . $state, $result->code . ': ' . $result->message, array( 'job_id' => $id, 'entry_id' => $job['entry_id'] ?? 0, 'form_id' => $job['form_id'] ?? 0 ) );
+		// Only the error code goes to fc_log: handler/connector messages are free text and may echo field values (P5-09).
+		Logger::log( 'dead' === $state ? 'error' : 'warning', 'job_' . $state, 'code=' . $result->code, array( 'job_id' => $id, 'entry_id' => $job['entry_id'] ?? 0, 'form_id' => $job['form_id'] ?? 0 ) );
 		if ( 'dead' === $state && $job['entry_id'] && str_starts_with( (string) $job['type'], 'mail.' ) ) {
 			do_action( 'form_captain_notification_failed_v1', (int) $job['entry_id'], (int) $job['form_id'], (string) $job['type'], $result->code );
 		}

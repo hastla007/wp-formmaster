@@ -165,7 +165,7 @@ final class RetentionService {
 					try {
 						$ok = $this->deletion->delete( $id, 'retention' );
 					} catch ( \Throwable $e ) {
-						Logger::log( 'error', 'cleanup_exception', $e->getMessage(), array( 'entry_id' => $id ) );
+						Logger::log( 'error', 'cleanup_exception', get_class( $e ), array( 'entry_id' => $id ) );
 					}
 					if ( $ok ) {
 						++$stats[ $kind ];
@@ -444,7 +444,7 @@ final class RetentionService {
 					( $this->plugin ?? Plugin::instance() )->get( $class )->purge_old();
 				}
 			} catch ( \Throwable $e ) {
-				Logger::log( 'warning', 'rate_limit_purge_failed', $e->getMessage() );
+				Logger::log( 'warning', 'rate_limit_purge_failed', get_class( $e ) );
 			}
 			return;
 		}

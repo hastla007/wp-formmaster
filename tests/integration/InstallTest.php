@@ -60,4 +60,22 @@ final class InstallTest extends TestCase {
 		$count = (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . Tables::name( Tables::FORMS ) . ' WHERE id = ' . (int) $form['id'] );
 		$this->assertSame( 1, $count );
 	}
+
+	public function test_running_migration_blocks_submissions_and_interrupted_one_resumes(): void {
+		$form = $this->create_published_form();
+		update_option( Migrator::OPTION_STATE, array( 'target' => 1, 'started_gmt' => gmdate( 'Y-m-d H:i:s' ), 'error' => null ), false );
+		$migrator = new Migrator();
+		$this->assertTrue( $migrator->is_running() );
+		$result = $this->plugin()->get( \FormCaptain\Service\SubmissionService::class )->submit( $form, array( 'name' => 'A', 'email' => 'a@example.org' ), array( 'trusted' => true, 'plugin' => 'test', 'idempotency_key' => 'mig-1' ) );
+		$this->assertFalse( $result['success'] );
+		$this->assertSame( 'storage_failed', $result['code'] );
+		$this->assertFalse( $migrator->migrate(), 'second migrator waits while one is running' );
+
+		update_option( Migrator::OPTION_STATE, array( 'target' => 1, 'started_gmt' => gmdate( 'Y-m-d H:i:s', time() - 3600 ), 'error' => null ), false );
+		$this->assertTrue( $migrator->was_interrupted() );
+		update_option( Migrator::OPTION_VERSION, 0 );
+		$this->assertTrue( $migrator->migrate() );
+		$this->assertFalse( get_option( Migrator::OPTION_STATE ) );
+		$this->assertSame( 1, $migrator->installed_version() );
+	}
 }

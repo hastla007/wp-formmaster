@@ -17,6 +17,7 @@ use FormCaptain\Install\Capabilities;
 use FormCaptain\Integrations\ConnectorRegistry;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\JobRepository;
+use FormCaptain\Support\Logger;
 
 final class IntegrationsPage {
 
@@ -83,9 +84,11 @@ final class IntegrationsPage {
 		if ( ! $job || ! str_starts_with( (string) $job['type'], 'connector.' ) ) {
 			return self::notice( 'error', array( __( 'Job not found.', 'form-captain' ) ) );
 		}
-		return $this->jobs->retry( $id )
-			? self::notice( 'success', array( __( 'Job queued again. It runs with the next worker run.', 'form-captain' ) ) )
-			: self::notice( 'error', array( __( 'Only failed, dead or cancelled jobs can be retried.', 'form-captain' ) ) );
+		if ( ! $this->jobs->retry( $id ) ) {
+			return self::notice( 'error', array( __( 'Only failed, dead or cancelled jobs can be retried.', 'form-captain' ) ) );
+		}
+		Logger::log( 'info', 'job_manual_retry', 'user ' . get_current_user_id(), array( 'job_id' => $id ) );
+		return self::notice( 'success', array( __( 'Job queued again. It runs with the next worker run.', 'form-captain' ) ) );
 	}
 
 	/** @return array{type:string,messages:string[]} */
@@ -94,9 +97,11 @@ final class IntegrationsPage {
 		if ( ! $job || ! str_starts_with( (string) $job['type'], 'connector.' ) ) {
 			return self::notice( 'error', array( __( 'Job not found.', 'form-captain' ) ) );
 		}
-		return $this->jobs->cancel( $id )
-			? self::notice( 'success', array( __( 'Job cancelled.', 'form-captain' ) ) )
-			: self::notice( 'error', array( __( 'This job cannot be cancelled.', 'form-captain' ) ) );
+		if ( ! $this->jobs->cancel( $id ) ) {
+			return self::notice( 'error', array( __( 'This job cannot be cancelled.', 'form-captain' ) ) );
+		}
+		Logger::log( 'info', 'job_manual_cancel', 'user ' . get_current_user_id(), array( 'job_id' => $id ) );
+		return self::notice( 'success', array( __( 'Job cancelled.', 'form-captain' ) ) );
 	}
 
 	/* --- admin-post ------------------------------------------------------- */

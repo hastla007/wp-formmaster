@@ -475,6 +475,9 @@ final class Renderer {
 		return '<div' . self::attrs( $wrap ) . '>' . $label . $help . $control . $err . '</div>';
 	}
 
+	/**
+	 * @param array<string,mixed> $attrs
+	 */
 	private static function attrs( array $attrs ): string {
 		$out = '';
 		foreach ( $attrs as $k => $v ) {

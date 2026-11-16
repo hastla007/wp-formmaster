@@ -346,7 +346,8 @@ final class SubmissionService {
 	 * Confirmation: message or internal, published page (P3-10, P3-15). Never taken from the request;
 	 * an extension may choose another message or page for the saved entry (P7-10).
 	 *
-	 * @param array<string,mixed> $form
+	 * @param array<string,mixed>                    $form
+	 * @param array<string,string|array<int,string>> $values
 	 * @return array{message:string,redirect_url?:string}
 	 */
 	public static function confirmation( array $form, int $entry_id = 0, array $values = array() ): array {

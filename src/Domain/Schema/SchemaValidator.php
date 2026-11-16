@@ -202,6 +202,13 @@ final class SchemaValidator {
 	private static function extension_settings( array $n, array $field, array $ids, array &$errors, string $p ): array {
 		$ext = apply_filters( 'form_captain_normalize_field_v1', null, $field, $ids );
 		if ( ! is_array( $ext ) ) {
+			// No extension active (license lapsed, add-on off): keep stored settings unchanged so
+			// saving the form never deletes them (P7-06). They are not interpreted by the core.
+			$raw  = is_array( $field['x'] ?? null ) ? $field['x'] : array();
+			$json = wp_json_encode( $raw );
+			if ( $raw && is_string( $json ) && strlen( $json ) <= 8192 ) {
+				$n['x'] = $raw;
+			}
 			return $n;
 		}
 		foreach ( (array) ( $ext['errors'] ?? array() ) as $key => $code ) {

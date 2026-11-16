@@ -145,6 +145,9 @@ final class ExtensionPointsTest extends TestCase {
 		);
 		$validator = new SchemaValidator();
 		$fields    = $this->fields();
+		$plain     = $fields;
+		$plain[0]['x'] = array( 'condition_group' => array( 'match' => 'any' ) );
+		$this->assertSame( array( 'condition_group' => array( 'match' => 'any' ) ), $validator->validate( array( 'schema_version' => 1, 'fields' => $plain ) )['schema']['fields'][0]['x'], 'without an extension for this field stored settings stay (P7-06)' );
 		$result    = $validator->validate( array( 'schema_version' => 1, 'fields' => $fields ) );
 		$this->assertSame( 'max_kb_required', $result['errors']['fields.1.x.max_kb'] );
 		$fields[1]['x'] = array( 'max_kb' => 512, 'evil' => 'dropped' );

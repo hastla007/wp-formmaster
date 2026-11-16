@@ -99,8 +99,25 @@
 		Array.prototype.forEach.call( nodes, function ( node ) {
 			var id = node.getAttribute( 'data-fc-field' );
 			var raw = node.getAttribute( 'data-fc-condition' );
+			var group = node.getAttribute( 'data-fc-x-condition' );
 			var show = true;
-			if ( raw ) {
+			if ( group ) {
+				// Grouped condition of an extension (contract 1.1.0): { action, match: all|any, rules: [ { field, operator, value } ] }.
+				var g;
+				try {
+					g = JSON.parse( group );
+				} catch ( e ) {
+					g = null;
+				}
+				if ( g && Array.isArray( g.rules ) && g.rules.length ) {
+					var results = g.rules.map( function ( r ) {
+						var v = visible[ r.field ] ? fieldValue( form, r.field ) : '';
+						return matches( String( r.operator || '' ), v, String( r.value || '' ) );
+					} );
+					var hit = g.match === 'any' ? results.indexOf( true ) !== -1 : results.indexOf( false ) === -1;
+					show = g.action === 'hide' ? ! hit : hit;
+				}
+			} else if ( raw ) {
 				var cond;
 				try {
 					cond = JSON.parse( raw );

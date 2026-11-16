@@ -221,7 +221,8 @@ Ziel: nachweisen, dass ein fehlerhaftes Update innerhalb der Zielzeit `[ZIEL-WIE
 
 **Vor dem Update (Pflicht bei jeder Migration):**
 1. Rollback-Plan (`RELEASE.md` 3.5) ausgefüllt; bei nicht additiver Migration Wiederherstellungsweg festgelegt **und auf Staging geübt**, bevor das Produktions-Update startet.
-2. Staging mit **anonymisierten** Beispieldaten: Produktionsdaten nur nach Anonymisierung übernehmen (Werte aller Freitext-/E-Mail-/Telefonfelder ersetzen, `user_id` = NULL, Notizen leeren); alternativ synthetische Testdaten. Keine Produktionsmails von Staging: Mailversand auf Sink umleiten.
+2. Staging mit **anonymisierten** Beispieldaten: Produktionsdaten nur nach Anonymisierung übernehmen; alternativ synthetische Testdaten. Keine Produktionsmails von Staging: Mailversand auf Sink umleiten.
+   **Werkzeug:** Auf der Staging-Kopie `WP_ENVIRONMENT_TYPE` auf `staging` setzen, dann `wp eval-file bin/anonymize-staging.php yes` ausführen. Das Skript liegt im Repository, nicht im Plugin-ZIP. Es ersetzt E-Mail-, Telefon-, Text-, Absatz- und versteckte Werte, wobei die Länge erhalten bleibt. Auswahl-, Zahl-, Datums- und Einwilligungswerte bleiben stehen, damit Bedingungen und Exporte testbar bleiben. `user_id` und `context_json` werden entfernt, Notiztexte, Log-Texte und Auftragsnutzdaten geleert, offene Aufträge storniert und E-Mail-Adressen in Formulareinstellungen ersetzt. Ausgegeben werden nur Zähler. Bei `production` und ohne das Argument `yes` verweigert das Skript den Lauf. Test: `tests/integration/Privacy/AnonymizeStagingTest.php`. WordPress-Benutzer und andere Plugins fasst es nicht an; dafür ist eigenes Werkzeug nötig.
 3. Laufzeit der Migration auf Staging messen; bei > 30 s Ausführung über `wp form-captain migrate` im Wartungsfenster planen.
 
 **Rollout:**
@@ -231,6 +232,14 @@ Ziel: nachweisen, dass ein fehlerhaftes Update innerhalb der Zielzeit `[ZIEL-WIE
 4. Update; Systemstatus prüfen (Schema, Migration, Queue).
 5. Testeinsendung; Formulare reaktivieren.
 6. Bei Fehler: Rollback nach `RELEASE.md` 3.4; Einsendungen seit Update vor einem DB-Restore als CSV sichern.
+
+### 4.1 Übung vom 16.11.2026
+
+Auf dem Staging aus der Rollback-Übung (3.1) mit Schema 1:
+
+1. **Anonymisierung:** Der Lauf mit Umgebungstyp `production` wurde verweigert. Mit `staging`: 164 Werte ersetzt, 41 behalten (Einwilligungen), 1 offener Auftrag storniert, Dauer < 1 s. Danach 0 Treffer für Namen, E-Mail-Adressen und Nachrichtentexte der Testpersonen. Alle Zähler (Formulare, Einträge, Werte) unverändert.
+2. **Migrationslaufzeit:** Bestand auf 100 041 Einträge vergrößert (Schema 1), dann Update auf den Release-Kandidaten mit Schema 2 durch atomaren Verzeichnistausch. Migration inklusive WordPress-Start: **335 ms** (MariaDB 10.11 fügt die Spalte ohne Tabellenkopie hinzu). Die Grenze von 30 s für ein Wartungsfenster wird weit unterschritten. Auf MySQL 5.7 oder älterem MariaDB vor dem Release erneut messen.
+3. **Wiederherstellungsweg:** Migration 1 → 2 ist additiv. Ein Downgrade ohne DB-Restore ist möglich (in 3.1 geprüft). Ein DB-Restore aus Tabellen- und Options-Backup ist in 3.1 geübt; der Datenstand war danach identisch.
 
 ## 5. Betriebsüberwachung (P9-14)
 

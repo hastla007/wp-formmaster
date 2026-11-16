@@ -236,10 +236,32 @@ final class JobRepository {
 		}
 		$oldest = $wpdb->get_var( $wpdb->prepare( "SELECT MIN(run_after_gmt) FROM {$this->table()} WHERE status IN ('pending','failed') AND run_after_gmt <= %s", Clock::now() ) );
 		return array(
-			'counts'            => $counts,
-			'oldest_due_gmt'    => $oldest ?: null,
-			'oldest_due_age_s'  => $oldest ? max( 0, Clock::timestamp() - (int) strtotime( $oldest . ' UTC' ) ) : 0,
+			'counts'           => $counts,
+			'oldest_due_gmt'   => $oldest ?: null,
+			'oldest_due_age_s' => $oldest ? max( 0, Clock::timestamp() - (int) strtotime( $oldest . ' UTC' ) ) : 0,
 		);
+	}
+
+	/** Cancels a single open or dead job (admin action). */
+	public function cancel( int $id, string $reason = 'cancelled_by_admin' ): bool {
+		global $wpdb;
+		$affected = $wpdb->query( $wpdb->prepare( "UPDATE {$this->table()} SET status = 'cancelled', last_error_code = %s, lock_token = NULL, locked_until_gmt = NULL, finished_gmt = %s, updated_gmt = %s WHERE id = %d AND status IN ('pending','failed','dead')", mb_substr( $reason, 0, 60 ), Clock::now(), Clock::now(), $id ) );
+		return 1 === (int) $affected;
+	}
+
+	/**
+	 * Aggregated error codes of failed/dead jobs updated since $since (no payloads, no messages).
+	 *
+	 * @return array<string,int> last_error_code => count
+	 */
+	public function error_summary( string $type_prefix, string $since ): array {
+		global $wpdb;
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT last_error_code code, COUNT(*) c FROM {$this->table()} WHERE type LIKE %s AND status IN ('failed','dead') AND last_error_code IS NOT NULL AND updated_gmt >= %s GROUP BY last_error_code ORDER BY c DESC LIMIT 20", $wpdb->esc_like( $type_prefix ) . '%', $since ), ARRAY_A );
+		$out  = array();
+		foreach ( $rows ?: array() as $r ) {
+			$out[ (string) $r['code'] ] = (int) $r['c'];
+		}
+		return $out;
 	}
 
 	/** Deletes old finished jobs. */

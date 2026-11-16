@@ -60,8 +60,8 @@ final class EntryRepository {
 	 */
 	public function insert( array $data ): int {
 		global $wpdb;
-		$now  = Clock::now();
-		$row  = array(
+		$now = Clock::now();
+		$row = array(
 			'form_id'         => (int) $data['form_id'],
 			'form_version_id' => (int) $data['form_version_id'],
 			'status'          => (string) ( $data['status'] ?? 'new' ),
@@ -77,7 +77,7 @@ final class EntryRepository {
 			'trashed_gmt'     => 'spam' === ( $data['status'] ?? '' ) ? $now : null,
 			'expires_gmt'     => $data['expires_gmt'] ?? null,
 		);
-		$ok = $wpdb->insert( $this->entries(), $row );
+		$ok  = $wpdb->insert( $this->entries(), $row );
 		return $ok ? (int) $wpdb->insert_id : 0;
 	}
 
@@ -192,13 +192,13 @@ final class EntryRepository {
 	public function list( array $args = array() ): array {
 		global $wpdb;
 		list( $w, $params ) = $this->where( $args );
-		$per_page = max( 1, min( 500, (int) ( $args['per_page'] ?? 20 ) ) );
-		$offset   = max( 0, ( (int) ( $args['page'] ?? 1 ) - 1 ) * $per_page );
-		$order    = 'ASC' === strtoupper( (string) ( $args['order'] ?? 'DESC' ) ) ? 'ASC' : 'DESC';
-		$total    = (int) $wpdb->get_var( $params ? $wpdb->prepare( "SELECT COUNT(*) FROM {$this->entries()} e WHERE {$w}", $params ) : "SELECT COUNT(*) FROM {$this->entries()} e WHERE {$w}" );
-		$params[] = $per_page;
-		$params[] = $offset;
-		$rows     = $wpdb->get_results( $wpdb->prepare( "SELECT e.* FROM {$this->entries()} e WHERE {$w} ORDER BY e.created_gmt {$order}, e.id {$order} LIMIT %d OFFSET %d", $params ), ARRAY_A );
+		$per_page           = max( 1, min( 500, (int) ( $args['per_page'] ?? 20 ) ) );
+		$offset             = max( 0, ( (int) ( $args['page'] ?? 1 ) - 1 ) * $per_page );
+		$order              = 'ASC' === strtoupper( (string) ( $args['order'] ?? 'DESC' ) ) ? 'ASC' : 'DESC';
+		$total              = (int) $wpdb->get_var( $params ? $wpdb->prepare( "SELECT COUNT(*) FROM {$this->entries()} e WHERE {$w}", $params ) : "SELECT COUNT(*) FROM {$this->entries()} e WHERE {$w}" );
+		$params[]           = $per_page;
+		$params[]           = $offset;
+		$rows               = $wpdb->get_results( $wpdb->prepare( "SELECT e.* FROM {$this->entries()} e WHERE {$w} ORDER BY e.created_gmt {$order}, e.id {$order} LIMIT %d OFFSET %d", $params ), ARRAY_A );
 		return array(
 			'items' => array_map( array( $this, 'hydrate' ), $rows ?: array() ),
 			'total' => $total,
@@ -214,9 +214,9 @@ final class EntryRepository {
 	public function batch_after( int $after_id, int $limit, array $args = array() ): array {
 		global $wpdb;
 		list( $w, $params ) = $this->where( $args );
-		$params[] = $after_id;
-		$params[] = $limit;
-		$rows     = $wpdb->get_results( $wpdb->prepare( "SELECT e.* FROM {$this->entries()} e WHERE {$w} AND e.id > %d ORDER BY e.id ASC LIMIT %d", $params ), ARRAY_A );
+		$params[]           = $after_id;
+		$params[]           = $limit;
+		$rows               = $wpdb->get_results( $wpdb->prepare( "SELECT e.* FROM {$this->entries()} e WHERE {$w} AND e.id > %d ORDER BY e.id ASC LIMIT %d", $params ), ARRAY_A );
 		return array_map( array( $this, 'hydrate' ), $rows ?: array() );
 	}
 
@@ -244,9 +244,9 @@ final class EntryRepository {
 			$params[] = (string) $args['date_to'];
 		}
 		if ( ! empty( $args['ids'] ) ) {
-			$ids      = array_map( 'intval', (array) $args['ids'] );
-			$where[]  = 'e.id IN (' . implode( ',', array_fill( 0, count( $ids ), '%d' ) ) . ')';
-			$params   = array_merge( $params, $ids );
+			$ids     = array_map( 'intval', (array) $args['ids'] );
+			$where[] = 'e.id IN (' . implode( ',', array_fill( 0, count( $ids ), '%d' ) ) . ')';
+			$params  = array_merge( $params, $ids );
 		}
 		if ( ! empty( $args['search'] ) ) {
 			$where[]  = "EXISTS (SELECT 1 FROM {$this->values()} v WHERE v.entry_id = e.id AND v.value LIKE %s)";
@@ -308,6 +308,112 @@ final class EntryRepository {
 	public function ids_trashed_before( string $cutoff, int $limit ): array {
 		global $wpdb;
 		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$this->entries()} WHERE status IN ('trash','spam') AND trashed_gmt IS NOT NULL AND trashed_gmt <= %s ORDER BY id LIMIT %d", $cutoff, $limit ) ) );
+	}
+
+	/**
+	 * Active (not trash/spam/anonymized) entries whose expiry falls in [now, until].
+	 *
+	 * @return array{count:int,earliest:string|null}
+	 */
+	public function expiring_summary( string $now, string $until, int $form_id = 0 ): array {
+		global $wpdb;
+		$sql = "SELECT COUNT(*) c, MIN(expires_gmt) earliest FROM {$this->entries()} WHERE expires_gmt IS NOT NULL AND expires_gmt >= %s AND expires_gmt <= %s AND status NOT IN ('trash','spam')";
+		$row = $form_id
+			? $wpdb->get_row( $wpdb->prepare( $sql . ' AND form_id = %d', $now, $until, $form_id ), ARRAY_A )
+			: $wpdb->get_row( $wpdb->prepare( $sql, $now, $until ), ARRAY_A );
+		return array(
+			'count'    => (int) ( $row['c'] ?? 0 ),
+			'earliest' => ! empty( $row['earliest'] ) ? (string) $row['earliest'] : null,
+		);
+	}
+
+	/** @return int[] active entry IDs expiring on or before $until (for the "expiring soon" filter). */
+	public function ids_expiring_before( string $until, int $form_id = 0, int $limit = 1000 ): array {
+		global $wpdb;
+		$sql = "SELECT id FROM {$this->entries()} WHERE expires_gmt IS NOT NULL AND expires_gmt <= %s AND status NOT IN ('trash','spam')";
+		return array_map(
+			'intval',
+			$form_id
+				? $wpdb->get_col( $wpdb->prepare( $sql . ' AND form_id = %d ORDER BY id LIMIT %d', $until, $form_id, $limit ) )
+				: $wpdb->get_col( $wpdb->prepare( $sql . ' ORDER BY id LIMIT %d', $until, $limit ) )
+		);
+	}
+
+	/** Sets expires_gmt without touching updated_gmt semantics of the submission. */
+	public function set_expires( int $id, ?string $expires_gmt ): bool {
+		global $wpdb;
+		return false !== $wpdb->update( $this->entries(), array( 'expires_gmt' => $expires_gmt ), array( 'id' => $id ) );
+	}
+
+	/** Deletes fc_files rows referencing an entry (physical files are removed via filter). */
+	public function delete_file_rows( int $entry_id ): int {
+		global $wpdb;
+		return (int) $wpdb->delete( Tables::name( Tables::FILES ), array( 'entry_id' => $entry_id ) );
+	}
+
+	/** @return array<string,mixed>|null */
+	public function find_note( int $note_id ): ?array {
+		global $wpdb;
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$this->notes()} WHERE id = %d", $note_id ), ARRAY_A );
+		return $row ?: null;
+	}
+
+	/**
+	 * Privacy lookup (datenschutz.md 6.2): entries whose lookup e-mail fields equal $email
+	 * or whose user_id is $user_id. Anonymized entries are excluded. Stable order id ASC.
+	 *
+	 * @param string[] $field_ids
+	 * @return int[]
+	 */
+	public function ids_for_privacy( array $field_ids, string $email, int $user_id, int $limit, int $offset = 0 ): array {
+		global $wpdb;
+		$parts  = array();
+		$params = array();
+		if ( $field_ids && '' !== $email ) {
+			$in      = implode( ',', array_fill( 0, count( $field_ids ), '%s' ) );
+			$parts[] = "SELECT v.entry_id AS id FROM {$this->values()} v WHERE v.field_id IN ({$in}) AND v.value = %s";
+			$params  = array_merge( $params, array_values( $field_ids ), array( $email ) );
+		}
+		if ( $user_id > 0 ) {
+			$parts[]  = "SELECT e2.id AS id FROM {$this->entries()} e2 WHERE e2.user_id = %d";
+			$params[] = $user_id;
+		}
+		if ( ! $parts ) {
+			return array();
+		}
+		$params[] = $limit;
+		$params[] = $offset;
+		$sql      = "SELECT DISTINCT e.id FROM {$this->entries()} e INNER JOIN (" . implode( ' UNION ', $parts ) . ') m ON m.id = e.id WHERE e.anonymized_gmt IS NULL ORDER BY e.id ASC LIMIT %d OFFSET %d';
+		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( $sql, $params ) ) );
+	}
+
+	/** Deletes all notes of an entry (anonymization). */
+	public function delete_notes( int $entry_id ): int {
+		global $wpdb;
+		return (int) $wpdb->delete( $this->notes(), array( 'entry_id' => $entry_id ) );
+	}
+
+	/**
+	 * Count and oldest creation date of entries (any status), optionally limited to forms.
+	 *
+	 * @param int[]|null $form_ids null = all forms
+	 * @return array{count:int,oldest_created:string|null}
+	 */
+	public function count_for_forms( ?array $form_ids = null ): array {
+		global $wpdb;
+		$sql = "SELECT COUNT(*) c, MIN(created_gmt) oldest FROM {$this->entries()} WHERE anonymized_gmt IS NULL";
+		if ( null !== $form_ids ) {
+			$form_ids = array_values( array_filter( array_map( 'intval', $form_ids ) ) );
+			if ( ! $form_ids ) {
+				return array( 'count' => 0, 'oldest_created' => null );
+			}
+			$sql = $wpdb->prepare( $sql . ' AND form_id IN (' . implode( ',', array_fill( 0, count( $form_ids ), '%d' ) ) . ')', $form_ids );
+		}
+		$row = $wpdb->get_row( $sql, ARRAY_A );
+		return array(
+			'count'          => (int) ( $row['c'] ?? 0 ),
+			'oldest_created' => ! empty( $row['oldest'] ) ? (string) $row['oldest'] : null,
+		);
 	}
 
 	/** @return array<string,int> status => count */

@@ -168,6 +168,26 @@ final class FormRepository {
 	}
 
 	/**
+	 * All published snapshots of a form, newest first.
+	 *
+	 * @return array<int,array{id:int,form_id:int,version_no:int,schema:array<string,mixed>}>
+	 */
+	public function versions_for( int $form_id ): array {
+		global $wpdb;
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$this->versions()} WHERE form_id = %d ORDER BY version_no DESC", $form_id ), ARRAY_A );
+		$out  = array();
+		foreach ( $rows ?: array() as $row ) {
+			$out[] = array(
+				'id'         => (int) $row['id'],
+				'form_id'    => (int) $row['form_id'],
+				'version_no' => (int) $row['version_no'],
+				'schema'     => (array) json_decode( (string) $row['schema_json'], true ),
+			);
+		}
+		return $out;
+	}
+
+	/**
 	 * @param array{status?:string,search?:string,per_page?:int,page?:int,orderby?:string,order?:string} $args
 	 * @return array{items:array<int,array<string,mixed>>,total:int}
 	 */
@@ -208,6 +228,42 @@ final class FormRepository {
 		$out     = array();
 		foreach ( $rows ?: array() as $r ) {
 			$out[ (int) $r['form_id'] ] = (int) $r['c'];
+		}
+		return $out;
+	}
+
+	/**
+	 * Settings of every form (any status), used for global-default hints and retention previews.
+	 *
+	 * @return array<int,array{title:string,status:string,settings:array<string,mixed>}> form_id => data
+	 */
+	public function all_settings(): array {
+		global $wpdb;
+		$rows = $wpdb->get_results( "SELECT id, title, status, settings_json FROM {$this->table()} ORDER BY id ASC", ARRAY_A );
+		$out  = array();
+		foreach ( $rows ?: array() as $r ) {
+			$out[ (int) $r['id'] ] = array(
+				'title'    => (string) $r['title'],
+				'status'   => (string) $r['status'],
+				'settings' => (array) json_decode( (string) $r['settings_json'], true ),
+			);
+		}
+		return $out;
+	}
+
+	/**
+	 * Every schema ever used (working copies and all published snapshots) – privacy lookups.
+	 *
+	 * @return array<int,array<string,mixed>>
+	 */
+	public function all_schemas(): array {
+		global $wpdb;
+		$out = array();
+		foreach ( $wpdb->get_col( "SELECT schema_json FROM {$this->table()}" ) ?: array() as $json ) {
+			$out[] = (array) json_decode( (string) $json, true );
+		}
+		foreach ( $wpdb->get_col( "SELECT schema_json FROM {$this->versions()}" ) ?: array() as $json ) {
+			$out[] = (array) json_decode( (string) $json, true );
 		}
 		return $out;
 	}

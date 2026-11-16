@@ -1,0 +1,20 @@
+{
+	"template_key": "contact",
+	"template_version": "1.0.0",
+	"title": "Contact",
+	"description": "Name, email and message – the classic contact form.",
+	"schema": {
+		"schema_version": 1,
+		"fields": [
+			{ "id": "f_ctname01", "type": "text", "key": "name", "label": "Name", "required": true, "placeholder": "", "validation": { "max_length": 190 } },
+			{ "id": "f_ctmail01", "type": "email", "key": "email", "label": "Email address", "required": true, "help": "We will reply to this address.", "placeholder": "name@example.com", "privacy_lookup": true },
+			{ "id": "f_ctsubj01", "type": "text", "key": "subject", "label": "Subject", "required": false },
+			{ "id": "f_ctmsg001", "type": "textarea", "key": "message", "label": "Message", "required": true, "rows": 6, "validation": { "max_length": 5000 } },
+			{ "id": "f_ctcons01", "type": "consent", "key": "consent", "label": "Privacy", "required": true, "consent_text": "I agree that my details will be stored to answer my request.", "privacy_link": true, "consent_revision": 1 }
+		]
+	},
+	"settings": {
+		"notification": { "enabled": true, "to": [ "{admin_email}" ], "reply_to_field": "f_ctmail01", "subject": "New message: {form_title}", "fields": "all_non_sensitive" },
+		"confirmation": { "type": "message", "message": "Thank you! We will get back to you soon.", "page_id": 0 }
+	}
+}

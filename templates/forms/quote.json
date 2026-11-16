@@ -1,0 +1,25 @@
+{
+	"template_key": "quote",
+	"template_version": "1.0.0",
+	"title": "Quote request",
+	"description": "Collect project details for a quote.",
+	"schema": {
+		"schema_version": 1,
+		"fields": [
+			{ "id": "f_qtname01", "type": "text", "key": "name", "label": "Name", "required": true },
+			{ "id": "f_qtcomp01", "type": "text", "key": "company", "label": "Company", "required": false },
+			{ "id": "f_qtmail01", "type": "email", "key": "email", "label": "Email address", "required": true, "placeholder": "name@example.com", "privacy_lookup": true },
+			{ "id": "f_qtphon01", "type": "tel", "key": "phone", "label": "Phone", "required": false },
+			{ "id": "f_qtserv01", "type": "select", "key": "service", "label": "Service", "required": true, "options": [ { "value": "consulting", "label": "Consulting" }, { "value": "implementation", "label": "Implementation" }, { "value": "support", "label": "Support and maintenance" }, { "value": "other", "label": "Other" } ] },
+			{ "id": "f_qtothr01", "type": "text", "key": "service_other", "label": "Please describe the service", "required": false, "condition": { "action": "show", "field": "f_qtserv01", "operator": "equals", "value": "other" } },
+			{ "id": "f_qtbudg01", "type": "radio", "key": "budget", "label": "Budget", "required": false, "options": [ { "value": "small", "label": "Up to 1,000" }, { "value": "medium", "label": "1,000 to 5,000" }, { "value": "large", "label": "More than 5,000" } ] },
+			{ "id": "f_qtdate01", "type": "date", "key": "start_date", "label": "Desired start", "required": false, "validation": { "min": "today" } },
+			{ "id": "f_qtdesc01", "type": "textarea", "key": "details", "label": "Project details", "required": true, "rows": 6 },
+			{ "id": "f_qtcons01", "type": "consent", "key": "consent", "label": "Privacy", "required": true, "consent_text": "I agree that my details will be stored to prepare a quote.", "privacy_link": true, "consent_revision": 1 }
+		]
+	},
+	"settings": {
+		"notification": { "enabled": true, "to": [ "{admin_email}" ], "reply_to_field": "f_qtmail01", "subject": "New quote request: {form_title}", "fields": "all_non_sensitive" },
+		"confirmation": { "type": "message", "message": "Thank you for your request! We will send you a quote shortly.", "page_id": 0 }
+	}
+}

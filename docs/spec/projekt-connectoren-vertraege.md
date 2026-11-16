@@ -12,6 +12,18 @@
 
 ## Teil A – BoatingSchool: Lead-Intake (P8-42)
 
+### A.0 Umsetzung in BoatingSchool (16.11.2026)
+
+Umgesetzt auf boatingschool Branch `claude/sleepy-ptolemy-n32guj` (`docs/integrations/form-captain-leads.md`, Version 1). Abweichungen von diesem Entwurf (dort Abschnitt 10), verbindlich ist die Fassung in BoatingSchool:
+1. Schlüssel liegen in der Server-`.env` (zwei aktive plus Widerrufsliste), nicht im Superadmin-Bereich angelegt; „zuletzt benutzt“ kommt aus dem Cache.
+2. Neuer Code `403 site_not_allowed` für eine optionale Liste erlaubter Websites.
+3. `DELETE /leads/{id}` antwortet bei unbekannter ID `404 not_found`.
+4. `400 bad_request` auch bei fehlendem/ungültigem `Idempotency-Key`, falschem Content-Type und Query-Parametern.
+5. Wiederholung nach Löschung des Leads liefert die alte Lead-ID mit `"status": "deleted"` und legt nichts neu an.
+6. `202 accepted_merged` trägt Lead-ID und Status.
+7. Signiert wird der vollständige Request-Pfad mit führendem Schrägstrich.
+Zusätzlich löscht der Connector bei Einwilligungswiderruf den Lead auf der Plattform (Standard an, abschaltbar).
+
 ### A.1 Endpunkt
 
 `POST /api/integrations/v1/form-captain/leads`, nur HTTPS, `Content-Type: application/json; charset=utf-8`, Body höchstens 16 KB.

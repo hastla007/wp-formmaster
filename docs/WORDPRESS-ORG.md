@@ -121,9 +121,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 7. Einstellungen Datenschutz & Aufbewahrung
 8. Systemstatus
 
-- [ ] Screenshots mit Beispieldaten ohne echte Personen/E-Mail-Adressen (`example.com`).
+- [x] Screenshots mit Beispieldaten ohne echte Personen/E-Mail-Adressen (`example.com`). *Erstellt 16.11.2026 in `.wordpress-org/` (screenshot-1 bis -8, 1280 px breit), dazu Icon 128/256 + SVG und Banner 772/1544; Erzeugung reproduzierbar mit `tools/wporg-assets/`.*
 - [ ] Deutsche Screenshots zusätzlich möglich über lokalisierte Assets erst nach Übersetzungsfreigabe; Standard: Englisch (Quelltextsprache).
-- [ ] Dateigrößen gering halten (komprimierte PNGs), MIME-Typ in SVN korrekt (`svn propset svn:mime-type image/png`).
+- [ ] Dateigrößen gering halten (komprimierte PNGs; derzeit 3–220 KB je Datei), MIME-Typ in SVN korrekt (`svn propset svn:mime-type image/png`). Vor dem ersten SVN-Commit Screenshots mit der dann freigegebenen Version neu erzeugen.
 
 ## 5. Einreichung und SVN-Ablauf
 

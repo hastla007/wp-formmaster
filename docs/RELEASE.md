@@ -11,7 +11,7 @@
 | `form-captain.php` Header `Version:` | Plugin-Version (SemVer, z. B. `1.0.1`) | jedes Release |
 | `form-captain.php` Konstante `FORM_CAPTAIN_VERSION` | identisch zum Header | jedes Release |
 | `readme.txt` `Stable tag:` | identisch zum Header | jedes Release |
-| `readme.txt` `Tested up to:` / `Requires at least:` / `Requires PHP:` | geprüfte WP-Version / 6.8 / 8.3 | wenn sich die Testmatrix ändert |
+| `readme.txt` `Tested up to:` / `Requires at least:` / `Requires PHP:` | geprüfte WP-Version / 6.8 / 8.5 | wenn sich die Testmatrix ändert |
 | `Migrator::TARGET_VERSION` | Datenbank-Schemaversion (int, unabhängig von der Plugin-Version) | nur bei neuer Migration |
 | `FORM_CAPTAIN_CONTRACT_VERSION` | Version des öffentlichen Vertrags (`api-v1.md`) | nur bei Vertragsänderung; Minor = additiv, Major = Breaking (nicht in 1.x) |
 | Formular-JSON `schema_version` | Formularschema (`formularschema.md`) | nur mit Migrationsklasse `V{n}To{n+1}` |
@@ -47,7 +47,7 @@ npm run e2e              # Hauptablauf (P6-13)
 bin/check-secrets.sh     # keine Secrets im Arbeitsbaum
 ```
 
-- [ ] Alle Befehle ohne Fehler; CI-Matrix (PHP 8.3/8.4, WP 6.8/aktuell, MariaDB 10.6/10.11, MySQL 8.0/8.4) grün (ADR 0005).
+- [ ] Alle Befehle ohne Fehler; CI-Matrix (PHP 8.5, WP 6.8/aktuell, MariaDB 12.3, MySQL 9.7) grün (ADR 0005).
 - [ ] Upgrade-Matrix aus Abschnitt 4 für alle Ausgangsversionen durchlaufen (automatisierter Teil in CI, manueller Teil protokolliert).
 - [ ] WooCommerce-Basiskompatibilität (P6-03): mit aktivem WooCommerce keine Eingriffe in Warenkorb/Checkout/HPOS.
 - [ ] **[Pro]** Lizenz-/Entitlementtest: aktivieren, Entitlement entziehen, Offline-Cache (14 Tage) abgelaufen, Lizenz abgelaufen → Free-Formulare und Entries intakt, Pro-Aktionen pausiert, keine Pro-Updates.
@@ -63,7 +63,7 @@ bin/check-release.sh dist/form-captain-x.y.z.zip
 - [ ] `bin/check-release.sh` meldet `Release check OK` (Dateiliste, Rechte 644/755, PHP-Syntax, Textdomain, Header, keine Tests/Secrets/Dev-Dateien, Prüfsumme).
 - [ ] Reproduzierbarkeit: Zweiter Build mit gleichem `SOURCE_DATE_EPOCH` auf anderer Maschine ergibt denselben SHA-256. Abweichung = Release-Blocker.
 - [ ] SHA-256 im Release-Ticket und in den GitHub-Release-Notizen eingetragen: `sha256sum -c form-captain-x.y.z.zip.sha256`.
-- [ ] ZIP-Installation auf frischem WordPress 6.8 / PHP 8.3 und auf aktueller WP-Version: aktivieren, Assistent, Testformular absenden, Entry sichtbar.
+- [ ] ZIP-Installation auf frischem WordPress 6.8 / PHP 8.5 und auf aktueller WP-Version: aktivieren, Assistent, Testformular absenden, Entry sichtbar.
 - [ ] **[Pro]** Updater-Metadaten signiert; Paketgröße und SHA-256 im Updatefeed stimmen mit dem ZIP überein (konzept.md Abschnitt 8, Punkt 5).
 
 ### 2.4 Upgrade-Test, Backup und Rollback-Plan

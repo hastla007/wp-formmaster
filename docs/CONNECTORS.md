@@ -4,7 +4,7 @@ Dieser Leitfaden beschreibt, wie ein eigenständiges WordPress-Plugin („Connec
 
 ## 1. Voraussetzungen
 
-- WordPress ≥ 6.8, PHP ≥ 8.3, Form Captain mit `form_captain_contract_version()` Major `1`.
+- WordPress ≥ 6.8, PHP ≥ 8.5, Form Captain mit `form_captain_contract_version()` Major `1`.
 - Plugin-Header `Requires Plugins: form-captain` (empfohlen). Ohne Form Captain bleibt der Connector still (keine Fatal Errors, keine Admin-Fehler).
 - Nur öffentliche API verwenden: Funktionen `form_captain_*_v1`, Filter/Actions mit Suffix `_v1`, Interface `FormCaptain\Integrations\ConnectorInterface`. Klassen, Tabellen und Optionen von Form Captain sind **intern** und können sich ohne Ankündigung ändern.
 

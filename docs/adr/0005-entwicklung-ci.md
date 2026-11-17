@@ -2,9 +2,9 @@
 
 | Bereich | Festlegung |
 |---|---|
-| PHP | 8.3 (Minimum) und 8.4 in CI |
+| PHP | 8.5 (Minimum, Entscheidung 21) in CI |
 | WordPress | 6.8 (Minimum) und aktuelle stabile Version |
-| Datenbank | MariaDB 10.6 / 10.11, MySQL 8.0 / 8.4 |
+| Datenbank | MariaDB 12.3, MySQL 9.7 (Minimum, Entscheidung 21) |
 | Testframework | PHPUnit 9.6 + `wp-phpunit/wp-phpunit` + `yoast/phpunit-polyfills` |
 | Statische Analyse | PHPStan (Level 6) mit `szepeviktor/phpstan-wordpress`, WPCS 3 |
 | JS-Build | Node 20+, `esbuild` |

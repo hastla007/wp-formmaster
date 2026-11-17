@@ -14,7 +14,7 @@ Stand 16.11.2026: Form Captain Free ist implementiert (src/, Tests unter tests/,
 
 - [x] **P0-01 – Produktgrenze festlegen.** Free ist eigenständig nutzbar; Pro ist ein separates Add-on. Zahlungen, Uploads und Multi-Step sind nicht Teil des Free-MVP.
 - [x] **P0-02 – Produktidentität festlegen.** Name Form Captain, Kernslug `form-captain`, Add-on `form-captain-pro`, Lizenz-Produktschlüssel `form-captain-pro`, Rechtepräfix `form.`.
-- [x] **P0-03 – Mindestplattform festlegen.** WordPress 6.8+, PHP 8.3+, WooCommerce optional ab 8.0; keine Multisite-Unterstützung in Free v1.0.
+- [x] **P0-03 – Mindestplattform festlegen.** WordPress 6.8+, PHP 8.3+, WooCommerce optional ab 8.0; keine Multisite-Unterstützung in Free v1.0. *Angehoben 17.11.2026 (Entscheidung 21): PHP 8.5+, MySQL 9.7+ oder MariaDB 12.3+; CI-Matrix entsprechend.*
 - [x] **P0-04 – v1-Datenmodell als Spezifikation abschließen.** Tabellen, Spalten, Indizes, Fremdschlüssel-Strategie, Statuswerte, UTC-Zeitstempel und Löschverhalten für Formulare, Entries, Entry-Werte, Jobs und Upload-Referenzen dokumentieren.
 - [x] **P0-05 – JSON-Formularschema festschreiben.** Schema-Version, stabile Feld-IDs, Feldtypen, Optionen, Validierungsregeln, bedingte Sichtbarkeit und Migrationsregeln mit Beispielen spezifizieren.
 - [x] **P0-06 – Zustandsmodelle definieren.** Zustände und erlaubte Übergänge für Formular (Entwurf/veröffentlicht/pausiert/archiviert), Entry (neu/gelesen/archiviert/Spam/Papierkorb) sowie Integrationsjob festlegen.

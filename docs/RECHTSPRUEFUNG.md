@@ -27,6 +27,21 @@ Vollständige Darstellung: [docs/spec/datenschutz.md](spec/datenschutz.md) (Merm
 | Papierkorb | Status `trash` | 30 Tage | – |
 | Logs | `fc_log`, redigiert (keine Werte, E-Mails, IPs, Tokens) | 30 Tage | – |
 
+**Zusätzlich mit Form Captain Pro** (captain-pro, `addons/form-captain-pro`, Doku `docs/FORM-PRO.md`; Stand 16.11.2026):
+
+| Datenart | Speicherort | Dauer | Empfänger |
+|---|---|---|---|
+| Hochgeladene Dateien (`form.uploads`) | private Ablage `uploads/form-captain-pro-private/` oder Ordner außerhalb des Web-Roots, Tabelle `{prefix}fcp_files`; Eintrag speichert nur eine Referenz | wie der Eintrag; Löschen, Erasure, Anonymisieren und Aufbewahrungsende löschen die Datei; Uploads nicht gespeicherter Einsendungen nach 1 Tag | nur berechtigte Admin-Rollen per Download mit Nonce; in Mails und CSV nur Name und Größe; optional ein Virenscanner über Filter (Datenfluss hängt vom Scanner ab) |
+| Webhook-Zustellung (`form.webhooks`) | Outbox des Kerns | wie Connector-Aufträge | vom Betreiber eingetragene HTTPS-Adresse mit den gemappten Feldern (kann personenbezogene Daten enthalten; Drittland möglich) |
+| Entwürfe mehrstufiger Formulare (`form.multi_step`) | Transient, Schlüssel = Hash des Tokens | 7 Tage, beim Absenden gelöscht | wer den Fortsetzungslink hat; sensible, Datei-, versteckte und Einwilligungsfelder nie im Entwurf |
+| Ratenbegrenzung der Pro-Routen | Transient mit gesalzenem Hash der IP und Stunde | 1 Stunde | – |
+| PDF eines Eintrags (`form.pdf`) | nicht gespeichert, auf Abruf erzeugt | – | berechtigte Admin-Rolle; sensible Felder nur mit Exportrecht |
+| Lizenzprüfung | Lizenzserver des Herstellers | – | URL der Website, Installations-ID, Lizenzschlüssel (bei Aktivierung), Versionen, Art der Website; nie Formulardaten |
+
+**Prüffrage R-7:** Reicht für Webhooks der Hinweis im readme (Betreiber wählt Ziel und Felder, AVV/Drittlandtransfer liegt beim Betreiber), oder braucht das Add-on einen Hinweis direkt im Webhook-Dialog?
+**Prüffrage R-8:** Ist für Entwürfe (Fortsetzungslink, 7 Tage) ein eigener Textbaustein für die Datenschutzerklärung nötig? Vorschlag liegt im readme des Add-ons („Drafts of multi-step forms …“).
+**Prüffrage R-9:** BoatingSchool-Leads werden 180 Tage gespeichert und dann automatisch gelöscht (Entscheidung 20). Ist die Frist für B2B-Interessenten angemessen? Support-Leads enthalten zusätzlich Produkt und Kundennummer des angemeldeten WooCommerce-Kunden.
+
 ## 3. Zu prüfende Texte
 
 | ID | Ort | Text | Quelle |

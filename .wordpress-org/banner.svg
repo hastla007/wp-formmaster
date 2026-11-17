@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1544 500" role="img" aria-label="Form Captain">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1d3557"/><stop offset="1" stop-color="#26507a"/></linearGradient></defs>
+  <rect width="1544" height="500" fill="url(#g)"/>
+  <g opacity="0.08" fill="#f1faee"><circle cx="1400" cy="80" r="160"/><circle cx="1250" cy="470" r="120"/></g>
+  <g transform="translate(1040 70) scale(1.4)">
+    <rect x="0" y="0" width="240" height="250" rx="18" fill="#f1faee"/>
+    <rect x="28" y="34" width="90" height="12" rx="6" fill="#457b9d"/>
+    <rect x="28" y="56" width="184" height="26" rx="5" fill="none" stroke="#457b9d" stroke-width="4"/>
+    <rect x="28" y="104" width="90" height="12" rx="6" fill="#457b9d"/>
+    <rect x="28" y="126" width="184" height="26" rx="5" fill="none" stroke="#457b9d" stroke-width="4"/>
+    <rect x="28" y="182" width="96" height="34" rx="6" fill="#1d3557"/>
+    <circle cx="212" cy="222" r="40" fill="#e9c46a" stroke="#1d3557" stroke-width="7"/>
+    <path d="M193 222l13 13 25-26" fill="none" stroke="#1d3557" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="96" y="232" font-family="DejaVu Sans, Arial, sans-serif" font-weight="700" font-size="104" fill="#f1faee">Form Captain</text>
+  <text x="100" y="312" font-family="DejaVu Sans, Arial, sans-serif" font-size="38" fill="#cfe3ef">Forms and submissions on your own site.</text>
+</svg>

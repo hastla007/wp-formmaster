@@ -10,6 +10,8 @@ declare(strict_types=1);
 use FormCaptain\Api\ContractApi;
 use FormCaptain\Plugin;
 
+defined( 'ABSPATH' ) || exit;
+
 if ( ! function_exists( 'form_captain_contract_version' ) ) {
 
 	function form_captain_contract_version(): string {
@@ -36,6 +38,17 @@ if ( ! function_exists( 'form_captain_contract_version' ) ) {
 	 */
 	function form_captain_submit_v1( int|string $form_id, array $payload, array $context = array() ): array {
 		return Plugin::instance()->get( ContractApi::class )->submit( $form_id, $payload, $context );
+	}
+
+	/**
+	 * Checks values against the published form without saving (contract 1.1.0).
+	 *
+	 * @param array<string,mixed> $values field ID or key => value
+	 * @param string[]            $only   field IDs whose errors are wanted (empty = all)
+	 * @return array{valid:bool,errors:array<string,string>,codes:array<string,string>}|WP_Error
+	 */
+	function form_captain_validate_v1( int|string $form_id, array $values, array $only = array() ): array|WP_Error {
+		return Plugin::instance()->get( ContractApi::class )->validate( $form_id, $values, $only );
 	}
 
 	/**

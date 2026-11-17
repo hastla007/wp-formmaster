@@ -20,6 +20,7 @@ use FormCaptain\Service\FormSchemaLoader;
 use FormCaptain\Service\SubmissionService;
 use FormCaptain\Support\Errors;
 use FormCaptain\Support\Limits;
+use FormCaptain\Support\UploadedFiles;
 
 final class AdminPostController {
 
@@ -35,7 +36,7 @@ final class AdminPostController {
 	public function handle(): void {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Public form protected by the submission token (ADR 0003).
 		$post   = wp_unslash( $_POST );
-		$target = $this->process( is_array( $post ) ? $post : array(), $_SERVER );
+		$target = $this->process( is_array( $post ) ? $post : array(), $_SERVER, $_FILES ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- see above.
 		nocache_headers();
 		wp_safe_redirect( $target['location'], $target['status'] );
 		exit;
@@ -44,9 +45,10 @@ final class AdminPostController {
 	/**
 	 * @param array<string,mixed> $post   unslashed POST data
 	 * @param array<string,mixed> $server $_SERVER subset (CONTENT_LENGTH, HTTP_REFERER)
+	 * @param array<string,mixed> $files  $_FILES (only used by extension field types, contract 1.1.0)
 	 * @return array{location:string,status:int,result:array<string,mixed>}
 	 */
-	public function process( array $post, array $server ): array {
+	public function process( array $post, array $server, array $files = array() ): array {
 		$public_id = is_string( $post['_fc_form'] ?? null ) ? (string) $post['_fc_form'] : '';
 		$form      = preg_match( '/^[a-z0-9]{16}$/', $public_id ) ? $this->forms->find_by_public_id( $public_id ) : null;
 		$back      = self::back_url( $post, $server );
@@ -57,7 +59,7 @@ final class AdminPostController {
 				'code'    => Errors::FORM_NOT_FOUND,
 				'message' => Errors::public_message( Errors::FORM_NOT_FOUND ),
 			);
-		} elseif ( (int) ( $server['CONTENT_LENGTH'] ?? 0 ) > Limits::get( 'request_bytes' ) ) {
+		} elseif ( (int) ( $server['CONTENT_LENGTH'] ?? 0 ) - self::file_bytes( $files ) > Limits::get( 'request_bytes' ) ) {
 			$result = array(
 				'success' => false,
 				'code'    => Errors::PAYLOAD_TOO_LARGE,
@@ -72,7 +74,8 @@ final class AdminPostController {
 					'source_url'     => $back,
 					'source_post_id' => $post['_fc_src'] ?? null,
 					'user_id'        => 0, // No nonce in cached HTML → no user binding (ADR 0003).
-					'body_bytes'     => (int) ( $server['CONTENT_LENGTH'] ?? 0 ),
+					'body_bytes'     => max( 0, (int) ( $server['CONTENT_LENGTH'] ?? 0 ) - self::file_bytes( $files ) ),
+					'files'          => UploadedFiles::by_field( $files ),
 				)
 			);
 		}
@@ -114,6 +117,20 @@ final class AdminPostController {
 			'status'   => 303,
 			'result'   => $result,
 		);
+	}
+
+	/**
+	 * Bytes of uploaded files for extension fields: they do not count against the request limit
+	 * of the form fields; their own limits are checked by the extension (contract 1.1.0).
+	 *
+	 * @param array<string,mixed> $files $_FILES
+	 */
+	private static function file_bytes( array $files ): int {
+		$sum = 0;
+		foreach ( UploadedFiles::by_field( $files ) as $file ) {
+			$sum += max( 0, (int) $file['size'] );
+		}
+		return $sum;
 	}
 
 	/**

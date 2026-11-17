@@ -241,7 +241,23 @@ final class SystemStatus {
 		$d   = $data ?? $this->collect();
 		$out = array();
 		if ( ! $d['schema']['ok'] ) {
-			$out['schema'] = __( 'The database schema is not up to date. Deactivate and activate Form Captain or check the error log.', 'form-captain' );
+			$error = (string) ( $d['schema']['error'] ?? '' );
+			if ( 'schema_newer_than_plugin' === $error ) {
+				$out['schema'] = sprintf(
+					/* translators: %d: installed database schema version */
+					__( 'The database was set up by a newer Form Captain version (schema %d). Reinstall the newer version or restore a backup from before the update. No data was changed.', 'form-captain' ),
+					(int) $d['schema']['installed']
+				);
+			} elseif ( 'migration_failed' === $error ) {
+				$out['schema'] = sprintf(
+					/* translators: 1: current schema version, 2: target schema version */
+					__( 'The database update from schema %1$d to %2$d failed. Make sure the database user may create and alter tables (CREATE, ALTER, INDEX), then open any Form Captain page again; the update resumes automatically. Submissions are still saved.', 'form-captain' ),
+					(int) $d['schema']['installed'],
+					(int) $d['schema']['target']
+				);
+			} else {
+				$out['schema'] = __( 'The database schema is not up to date. Deactivate and activate Form Captain or check the error log.', 'form-captain' );
+			}
 		}
 		foreach ( $d['schema']['engines'] as $table => $engine ) {
 			if ( 'missing' === $engine ) {

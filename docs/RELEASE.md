@@ -99,13 +99,17 @@ bin/check-release.sh dist/form-captain-x.y.z.zip
 | Prozess abgebrochen (Timeout, Fatal, Serverneustart) | `form_captain_migration_state` vorhanden, `error = null`, `started_gmt` älter als 10 min | nächster Request startet den offenen Schritt erneut (idempotent) | keine; bei wiederholtem Abbruch Migration per WP-CLI (Abschnitt 3.6) mit höherem Zeitlimit |
 | Tabelle fehlt nach Schritt | Verify wirft `missing_table:{name}` → `migration_failed` | wie oben | DB-Benutzer braucht `CREATE`/`ALTER`; danach erneut laden |
 
-Solange `form_captain_db_version < TARGET_VERSION` gilt, nimmt das Plugin **keine** Einsendungen an, die neue Strukturen benötigen; öffentliche Formulare zeigen die neutrale Meldung zu `storage_failed` (HTTP 503), Eingaben bleiben im Browser erhalten. Admin-Seiten bleiben lesbar.
+**Einsendungen während einer Migration (P6-11, geprüft in der Rollback-Übung vom 16.11.2026):**
 
-> Umsetzungshinweis: Die Sperre der Submission bei offener Migration und die Erkennung „abgebrochen nach 10 min“ sind in `Migrator` noch nicht implementiert; sie sind Abnahmekriterium von P6-11.
+- Solange ein Schritt **läuft** (`Migrator::is_running()`: Zustand ohne Fehler, jünger als `STALE_AFTER` = 600 s), lehnt das Plugin Einsendungen mit `storage_failed` (HTTP 503) ab; Eingaben bleiben im Browser erhalten.
+- Ist ein Schritt **fehlgeschlagen** (`migration_failed`), speichert das Plugin Einsendungen weiter im bisherigen Schema. Das ist sicher, weil 1.x-Migrationen additiv sind (siehe 3.3). Funktionen, die die neue Struktur brauchen (in Schema 2: Einwilligungswiderruf), stehen erst nach erfolgreicher Migration zur Verfügung. Der Systemstatus nennt Ursache und Abhilfe (DB-Rechte `CREATE`, `ALTER`, `INDEX`). Jeder weitere Seitenaufruf versucht den offenen Schritt erneut.
+- Wurde ein Schritt **abgebrochen** (Zustand ohne Fehler, älter als 600 s), setzt der nächste Request ihn fort (`migration_resumed` im Log).
+
+Admin-Seiten bleiben in allen Fällen lesbar.
 
 ### 3.3 Downgrade (ältere Plugin-Version auf neuerem Schema)
 
-- `migrate()` erkennt `form_captain_db_version > TARGET_VERSION`, schreibt `form_captain_migration_state = {error: schema_newer_than_plugin, installed: n}` und bricht ab.
+- Beim Laden erkennt das Plugin `form_captain_db_version > TARGET_VERSION` (`Activator::maybe_upgrade()` → `migrate()`), schreibt einmalig `form_captain_migration_state = {error: schema_newer_than_plugin, installed: n}` und bricht ab. Wird die neuere Version wieder installiert, entfernt das Plugin den Hinweis selbst. *(Befund der Übung vom 16.11.2026: Vorabstände bis einschließlich Commit `1a404d8` speichern den Zustand nicht, weil `maybe_upgrade()` `migrate()` nur bei installiert < Ziel aufrief; behoben vor 1.0.0.)*
 - **Daten werden nicht angefasst:** keine Tabellen gelöscht, keine Spalten entfernt, keine Version zurückgesetzt.
 - Systemstatus zeigt: „Die Datenbank wurde von einer neueren Form-Captain-Version angelegt (Schema n). Bitte die neuere Version wieder installieren oder ein Backup von vor dem Update einspielen.“
 - Ob die ältere Version mit dem neueren Schema arbeiten darf, entscheidet das Release: Additive Migrationen (neue Spalten/Tabellen/Indizes) sind abwärtsverträglich und im Rollback-Plan als „Downgrade ohne DB-Restore möglich“ zu markieren. Nicht additive Migrationen (Umbenennung, Typänderung, Datenumbau) sind „nur mit DB-Restore“.
@@ -116,7 +120,7 @@ Solange `form_captain_db_version < TARGET_VERSION` gilt, nimmt das Plugin **kein
 Rollback = Rückkehr zur letzten funktionierenden Plugin-Version **und** zu einem konsistenten Datenstand.
 
 1. Wartungsmodus aktivieren bzw. betroffene Formulare pausieren (Status `paused`), damit keine Einsendungen verloren gehen oder in ein später verworfenes Schema geschrieben werden.
-2. Plugin-Verzeichnis durch das ZIP der letzten funktionierenden Version ersetzen (SHA-256 vorher prüfen). Nicht deaktivieren/deinstallieren – `uninstall.php` würde bei gesetzter Löschoption Daten entfernen.
+2. Plugin-Verzeichnis durch das ZIP der letzten funktionierenden Version ersetzen (SHA-256 vorher prüfen). Nicht deaktivieren/deinstallieren – `uninstall.php` würde bei gesetzter Löschoption Daten entfernen. **Austausch atomar:** ZIP zuerst neben das Plugin-Verzeichnis entpacken, dann per Umbenennen tauschen (`mv form-captain form-captain.broken && mv form-captain.new form-captain`). Löschen und Entpacken nacheinander erzeugt in der Übung kurz HTTP 500 für Besucher.
 3. Rollback-Plan prüfen:
    - *Downgrade ohne DB-Restore möglich:* fertig; Systemstatus zeigt `schema_newer_than_plugin` als Hinweis. Beim späteren erneuten Upgrade läuft keine Migration erneut (Version bereits erreicht).
    - *Nur mit DB-Restore:* Tabellen `fc_*` und Optionen `form_captain_*` aus dem Backup vor dem Update einspielen (`BETRIEB.md` Abschnitt 1.3). Einsendungen zwischen Update und Restore vorher als CSV sichern und mit dem Kunden klären, ob sie nachgetragen werden.

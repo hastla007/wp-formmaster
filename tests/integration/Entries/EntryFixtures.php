@@ -78,6 +78,9 @@ trait EntryFixtures {
 	}
 
 	protected function role_with_caps( string $role, array $caps ): int {
+		// Always start from a fresh role: add_role() is a no-op for an existing role, so caps from
+		// another test using the same role name would leak into this one.
+		remove_role( $role );
 		add_role( $role, $role, array( 'read' => true ) );
 		$r = get_role( $role );
 		foreach ( $caps as $cap ) {

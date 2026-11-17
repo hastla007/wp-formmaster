@@ -45,17 +45,27 @@ Nummern beziehen sich auf die Detailed Plugin Guidelines.
 | 18 | Verzeichnis kann Plugins entfernen/ändern | Supportpflicht ernst nehmen | – |
 
 **Zusätzliche technische Prüfungen**
-- [ ] Plugin Check (offizielles Prüf-Plugin) auf dem Release-ZIP ohne Fehler; Warnungen begründet im Release-Ticket.
-- [ ] Alle Ausgaben escaped, Eingaben sanitized, Nonces + Capabilities (P5-07, P5-08).
-- [ ] Textdomain `form-captain` = Slug; keine `load_plugin_textdomain`-Pflicht für WordPress.org-Übersetzungen, Sprachpakete über translate.wordpress.org.
-- [ ] Keine Dateien außerhalb von Allowlist (Tests, `vendor/`, `node_modules/`, `docs/`) – `bin/check-release.sh`.
-- [ ] `uninstall.php` löscht Daten nur nach expliziter Zustimmung (P5-06).
-- [ ] Keine Remote-Assets (Fonts, Skripte, Bilder von CDNs) im Admin oder Frontend.
-- [ ] Externe Dienste (Captcha, Connectoren) im readme-Abschnitt „External services“ mit Zweck, übertragenen Daten, Zeitpunkt und Links zu Bedingungen/Datenschutz des Anbieters. In v1.0 ohne aktivierbaren externen Dienst: Abschnitt mit Aussage „keine externen Dienste“.
+- [x] Plugin Check (offizielles Prüf-Plugin) auf dem Release-ZIP ohne Fehler; Warnungen begründet im Release-Ticket. *Lauf 16.11.2026 mit Plugin Check 2.2.0 auf `form-captain-1.0.0.zip` (Version im Header auf 1.0.0 gesetzt, WP 6.8.3): **0 Fehler**, 68 Warnungen. Behoben: fehlender `ABSPATH`-Schutz in drei Dateien (deshalb steht `includes/functions.php` nicht mehr im Composer-Autoload; das Plugin lädt sie selbst). Beim Dev-Build meldet Plugin Check erwartbar „Stable tag mismatch“ (1.0.0 ≠ 1.0.0-dev). Begründung der verbleibenden Warnungen in Abschnitt 2.1.*
+- [x] Alle Ausgaben escaped, Eingaben sanitized, Nonces + Capabilities (P5-07, P5-08). *Nachweis: PHPCS (WordPress-Extra) 0 Fehler, Sicherheitsreview docs/SECURITY-REVIEW.md.*
+- [x] Textdomain `form-captain` = Slug; keine `load_plugin_textdomain`-Pflicht für WordPress.org-Übersetzungen, Sprachpakete über translate.wordpress.org.
+- [x] Keine Dateien außerhalb von Allowlist (Tests, `vendor/`, `node_modules/`, `docs/`) – `bin/check-release.sh` OK (126 Dateien, 16.11.2026).
+- [x] `uninstall.php` löscht Daten nur nach expliziter Zustimmung (P5-06): Option `delete_data_on_uninstall` **und** Bestätigungszeitpunkt nötig.
+- [x] Keine Remote-Assets (Fonts, Skripte, Bilder von CDNs) im Admin oder Frontend. *Nachweis: keine `wp_remote_*`-Aufrufe im Kern; E2E-Test „Seite ohne Formular lädt keine Form-Captain-Assets“.*
+- [x] Externe Dienste (Captcha, Connectoren) im readme-Abschnitt „External services“ mit Zweck, übertragenen Daten, Zeitpunkt und Links zu Bedingungen/Datenschutz des Anbieters. In v1.0 ohne aktivierbaren externen Dienst: Abschnitt mit Aussage „keine externen Dienste“.
+
+### 2.1 Verbleibende Plugin-Check-Warnungen (begründet)
+
+| Anzahl | Code | Begründung |
+|---:|---|---|
+| 43 | `PluginCheck.Security.DirectDB.UnescapedDBParameter` | Tabellennamen aus `$wpdb->prefix` und festen Konstanten (`Database\Tables`), WHERE-Fragmente aus festen Spaltennamen mit Platzhaltern; Werte gehen immer über `$wpdb->prepare()`. Kein Benutzerwert fließt ungeprüft in SQL (Sicherheitsreview docs/SECURITY-REVIEW.md). |
+| 13 | `WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber` / `UnfinishedPrepare` | Fehlalarm: WHERE-Klauseln mit Platzhaltern werden dynamisch zusammengesetzt und die Parameter als Array übergeben (`EntryRepository`, `FormRepository`, `JobRepository`); der Sniff kann die Platzhalter im Variableninhalt nicht zählen. Abgedeckt durch Integrationstests der Filter. |
+| 10 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` / `NoCaching` | Eigene Tabellen (Migrator, Logger) ohne WordPress-API; Caching ist bei Migrations- und Schreibabfragen nicht sinnvoll. |
+| 1 | `load_plugin_textdomain` | Das Plugin liefert de_DE/de_AT selbst aus, bevor Sprachpakete auf translate.wordpress.org existieren. Nach Freigabe der Übersetzungen dort kann der Aufruf entfallen. |
+| 1 | `set_time_limit()` | Nur beim CSV-Export großer Datenmengen, mit `function_exists`-Prüfung; der Export läuft zusätzlich in Stapeln. |
 
 ## 3. readme.txt
 
-Datei liegt noch nicht vor (P6-08). Pflichtinhalt:
+`readme.txt` liegt vor (P6-08) und ist am 16.11.2026 gegen die Liste unten abgeglichen. Pflichtinhalt:
 
 ```
 === Form Captain ===
@@ -78,16 +88,16 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 == Upgrade Notice ==
 ```
 
-- [ ] Kurzbeschreibung ≤ 150 Zeichen.
-- [ ] Höchstens 5 Tags; keine fremden Produktnamen.
-- [ ] Description: Funktionsumfang Free (konzept.md 4.1), was **nicht** enthalten ist, Hinweis auf Pro als separates Add-on (ein Absatz, sachlich).
-- [ ] Abschnitt **Privacy / Datenschutz**: gespeicherte Daten (Tabellen, keine IP), Retention-Default 12 Monate, Exporter/Eraser, Backups-Hinweis (DS-T-30), keine Telemetrie.
-- [ ] Abschnitt **External services** (siehe oben).
-- [ ] Abschnitt **Source code / Build**: Quellen in `assets/src`, Build mit `npm ci && npm run build` (esbuild), Repository-Link.
-- [ ] FAQ: Mailzustellung/SMTP, Rechte/Rollen, Multisite nicht unterstützt (v1.0), Deinstallation und Daten, Einsendungen exportieren, Unterschied Free/Pro.
-- [ ] Screenshots-Abschnitt: nummerierte Beschriftungen passend zu `screenshot-N.png`.
-- [ ] Changelog-Format `= x.y.z =` (wird von `bin/build-release.sh` ausgelesen).
-- [ ] Validierung mit dem offiziellen Readme-Validator.
+- [x] Kurzbeschreibung ≤ 150 Zeichen (125).
+- [x] Höchstens 5 Tags; keine fremden Produktnamen.
+- [x] Description: Funktionsumfang Free (konzept.md 4.1), was **nicht** enthalten ist, Hinweis auf Pro als separates Add-on (ein Absatz, sachlich).
+- [x] Abschnitt **Privacy / Datenschutz**: gespeicherte Daten (Tabellen, keine IP), Retention-Default 12 Monate, Exporter/Eraser, Backups-Hinweis (DS-T-30), keine Telemetrie.
+- [x] Abschnitt **External services** (siehe oben).
+- [x] Abschnitt **Source code / Build**: Quellen in `assets/src`, Build mit `npm ci && npm run build` (esbuild), Repository-Link.
+- [x] FAQ: Mailzustellung/SMTP, Rechte/Rollen, Multisite nicht unterstützt (v1.0), Deinstallation und Daten, Einsendungen exportieren, Unterschied Free/Pro.
+- [x] Screenshots-Abschnitt: nummerierte Beschriftungen passend zu `screenshot-N.png` (8 Einträge = Screenshot-Liste in Abschnitt 4).
+- [x] Changelog-Format `= x.y.z =` (wird von `bin/build-release.sh` ausgelesen).
+- [ ] Validierung mit dem offiziellen Readme-Validator (wordpress.org, aus dieser Umgebung nicht erreichbar). `Contributors: captainsuite` ist ein Platzhalter bis E-5; `Tested up to` vor dem Release auf die geprüfte WP-Version setzen.
 
 ## 4. Assets (SVN-Verzeichnis `/assets`, nicht im ZIP)
 
@@ -111,9 +121,9 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 7. Einstellungen Datenschutz & Aufbewahrung
 8. Systemstatus
 
-- [ ] Screenshots mit Beispieldaten ohne echte Personen/E-Mail-Adressen (`example.com`).
+- [x] Screenshots mit Beispieldaten ohne echte Personen/E-Mail-Adressen (`example.com`). *Erstellt 16.11.2026 in `.wordpress-org/` (screenshot-1 bis -8, 1280 px breit), dazu Icon 128/256 + SVG und Banner 772/1544; Erzeugung reproduzierbar mit `tools/wporg-assets/`.*
 - [ ] Deutsche Screenshots zusätzlich möglich über lokalisierte Assets erst nach Übersetzungsfreigabe; Standard: Englisch (Quelltextsprache).
-- [ ] Dateigrößen gering halten (komprimierte PNGs), MIME-Typ in SVN korrekt (`svn propset svn:mime-type image/png`).
+- [ ] Dateigrößen gering halten (komprimierte PNGs; derzeit 3–220 KB je Datei), MIME-Typ in SVN korrekt (`svn propset svn:mime-type image/png`). Vor dem ersten SVN-Commit Screenshots mit der dann freigegebenen Version neu erzeugen.
 
 ## 5. Einreichung und SVN-Ablauf
 

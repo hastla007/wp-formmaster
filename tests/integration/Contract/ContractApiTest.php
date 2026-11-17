@@ -44,7 +44,7 @@ final class ContractApiTest extends TestCase {
 	}
 
 	public function test_contract_version(): void {
-		$this->assertSame( '1.0.0', form_captain_contract_version() );
+		$this->assertSame( '1.1.0', form_captain_contract_version() );
 		$this->assertSame( FORM_CAPTAIN_CONTRACT_VERSION, form_captain_contract_version() );
 	}
 
@@ -135,6 +135,17 @@ final class ContractApiTest extends TestCase {
 		$form = $this->sensitive_form();
 		$this->assertStringContainsString( '<form', form_captain_get_render_v1( $form['public_id'] ) );
 		$this->assertSame( '', form_captain_get_render_v1( 'zzzzzzzzzzzzzzzz' ) );
+	}
+
+	public function test_render_passes_the_public_endpoint_reference(): void {
+		if ( ! class_exists( 'FormCaptain\\Frontend\\Renderer' ) ) {
+			$this->markTestSkipped( 'Renderer not available.' );
+		}
+		$form = $this->sensitive_form();
+		$html = form_captain_get_render_v1( $form['public_id'], array( 'context_ref' => array( 'purpose' => 'pass.event_registration', 'ref_type' => 'event', 'ref_id' => '1187', 'extra' => array( 'x' ) ) ) );
+		$this->assertStringContainsString( 'data-fc-ctx-purpose="pass.event_registration"', $html );
+		$this->assertStringContainsString( 'data-fc-ctx-ref-id="1187"', $html );
+		$this->assertStringNotContainsString( 'data-fc-ctx-purpose', form_captain_get_render_v1( $form['public_id'], array( 'context_ref' => array( 'purpose' => 'pass.event_registration' ) ) ), 'incomplete references are dropped' );
 	}
 
 	/* --- signed context trust boundaries (P8-14) --------------------------- */

@@ -24,6 +24,7 @@ use FormCaptain\Settings\Settings;
 use FormCaptain\Support\Errors;
 use FormCaptain\Support\Limits;
 use FormCaptain\Support\Logger;
+use FormCaptain\Support\UploadedFiles;
 
 final class RestController {
 
@@ -168,6 +169,10 @@ final class RestController {
 		if ( ! is_array( $raw ) ) {
 			return self::respond( self::error_body( Errors::VALIDATION_FAILED ), 400 );
 		}
+		if ( 'multipart/form-data' === $type && strlen( (string) wp_json_encode( $raw ) ) > Limits::get( 'request_bytes' ) ) {
+			// Multipart: the raw body is not readable; the non-file fields are limited here, files by their extension.
+			return self::respond( self::error_body( Errors::PAYLOAD_TOO_LARGE ), 413 );
+		}
 		$form = $this->forms->find_by_public_id( (string) $request['public_id'] );
 		if ( ! $form ) {
 			return self::respond( self::error_body( Errors::FORM_NOT_FOUND ), 404 );
@@ -182,6 +187,7 @@ final class RestController {
 				'user_id'        => get_current_user_id(),
 				'body_bytes'     => strlen( $body ),
 				'request_id'     => Logger::correlation_id(),
+				'files'          => UploadedFiles::by_field( (array) $request->get_file_params() ),
 			)
 		);
 		return self::from_result( $result );

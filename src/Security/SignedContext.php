@@ -225,6 +225,9 @@ final class SignedContext {
 		if ( ! empty( $d['marks_verified'] ) && ! isset( $d['submit_check'] ) ) {
 			return 'context_purpose_invalid';
 		}
+		if ( isset( $d['version_for'] ) && ( ! is_callable( $d['version_for'] ) || ! isset( $d['submit_check'] ) ) ) {
+			return 'context_purpose_invalid';
+		}
 		return null;
 	}
 
@@ -420,6 +423,42 @@ final class SignedContext {
 			&& is_string( $p['nonce'] ) && preg_match( '/^[A-Za-z0-9_-]{22}$/', $p['nonce'] );
 	}
 
+	/**
+	 * Form version a verified context is bound to (contract 1.1.0, optional `version_for` of the
+	 * purpose): the owner of the purpose answers from its own data, e.g. the version a buyer bought
+	 * with. Never from the request.
+	 *
+	 * @param array<string,mixed> $context Verified context (purpose, ref_type, ref_id).
+	 * @param int                 $form_id Form.
+	 * @return int Version number, 0 = the published version.
+	 */
+	public function pinned_version( array $context, int $form_id ): int {
+		$def = $this->purposes()[ (string) ( $context['purpose'] ?? '' ) ] ?? null;
+		if ( ! is_array( $def ) || ! isset( $def['version_for'] ) || ! is_callable( $def['version_for'] ) ) {
+			return 0;
+		}
+		try {
+			$no = call_user_func( $def['version_for'], (string) ( $context['ref_type'] ?? '' ), (string) ( $context['ref_id'] ?? '' ), $form_id );
+		} catch ( \Throwable $e ) {
+			return 0;
+		}
+		return is_int( $no ) && $no > 0 ? $no : 0;
+	}
+
+	/**
+	 * Version for rendering with a signed context value (checked like a submission, nothing consumed).
+	 *
+	 * @param array<string,mixed> $form Form row.
+	 * @return int Version number, 0 = the published version.
+	 */
+	public function pinned_version_of( string $value, array $form ): int {
+		if ( '' === $value || ! self::accepted_purposes( $form ) ) {
+			return 0;
+		}
+		$res = $this->verify( $value, $form );
+		return ! empty( $res['ok'] ) && is_array( $res['context'] ?? null ) ? $this->pinned_version( $res['context'], (int) $form['id'] ) : 0;
+	}
+
 	/** Maps internal codes to the three public codes (spec 5). */
 	public static function public_code( string $code ): string {
 		return match ( $code ) {
@@ -442,7 +481,20 @@ final class SignedContext {
 	 */
 	public static function accepted_purposes( array $form ): array {
 		$list = $form['settings']['accepted_context_purposes'] ?? array();
-		return is_array( $list ) ? array_values( array_filter( $list, 'is_string' ) ) : array();
+		$list = is_array( $list ) ? array_values( array_filter( $list, 'is_string' ) ) : array();
+		/**
+		 * Context purposes a form accepts (contract 1.1.0). Lets the owner of a purpose (an add-on that
+		 * assigns the form, e.g. to a product) accept its purpose without editing the stored settings.
+		 * The purpose must still be registered; the signature, TTL and checks are unchanged.
+		 *
+		 * @param string[] $list    Purposes from the form settings.
+		 * @param int      $form_id Form ID.
+		 */
+		$filtered = apply_filters( 'form_captain_accepted_context_purposes_v1', $list, (int) ( $form['id'] ?? 0 ) );
+		if ( ! is_array( $filtered ) ) {
+			return $list;
+		}
+		return array_values( array_unique( array_filter( $filtered, static fn( $p ): bool => is_string( $p ) && 1 === preg_match( self::PURPOSE_RE, $p ) ) ) );
 	}
 
 	private static function run_check( mixed $callback, string $ref_type, string $ref_id, int $form_id ): bool {

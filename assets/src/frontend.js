@@ -99,8 +99,25 @@
 		Array.prototype.forEach.call( nodes, function ( node ) {
 			var id = node.getAttribute( 'data-fc-field' );
 			var raw = node.getAttribute( 'data-fc-condition' );
+			var group = node.getAttribute( 'data-fc-x-condition' );
 			var show = true;
-			if ( raw ) {
+			if ( group ) {
+				// Grouped condition of an extension (contract 1.1.0): { action, match: all|any, rules: [ { field, operator, value } ] }.
+				var g;
+				try {
+					g = JSON.parse( group );
+				} catch ( e ) {
+					g = null;
+				}
+				if ( g && Array.isArray( g.rules ) && g.rules.length ) {
+					var results = g.rules.map( function ( r ) {
+						var v = visible[ r.field ] ? fieldValue( form, r.field ) : '';
+						return matches( String( r.operator || '' ), v, String( r.value || '' ) );
+					} );
+					var hit = g.match === 'any' ? results.indexOf( true ) !== -1 : results.indexOf( false ) === -1;
+					show = g.action === 'hide' ? ! hit : hit;
+				}
+			} else if ( raw ) {
 				var cond;
 				try {
 					cond = JSON.parse( raw );
@@ -313,6 +330,10 @@
 		if ( status ) {
 			status.focus();
 		}
+		// Contract 1.1.0: extensions react to a successful submission (e.g. discard a saved draft).
+		if ( typeof window.CustomEvent === 'function' ) {
+			form.dispatchEvent( new window.CustomEvent( 'fc:submitted', { bubbles: true } ) );
+		}
 	}
 
 	/* ---------------------------------------------------------------
@@ -394,12 +415,15 @@
 				return hadToken ? null : wait( form._fcMinSubmitAt );
 			} )
 			.then( function () {
+				// Forms with file inputs (enctype set by an extension, contract 1.1.0) are sent as
+				// multipart/form-data with the same field names as the no-JS fallback.
+				var multipart = ( form.getAttribute( 'enctype' ) || '' ).toLowerCase() === 'multipart/form-data';
 				return fetch( restUrl( form.getAttribute( 'data-fc-form' ), 'submissions' ), {
 					method: 'POST',
 					credentials: 'same-origin',
 					cache: 'no-store',
-					headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-					body: JSON.stringify( collect( form ) ),
+					headers: multipart ? { Accept: 'application/json' } : { 'Content-Type': 'application/json', Accept: 'application/json' },
+					body: multipart ? new FormData( form ) : JSON.stringify( collect( form ) ),
 				} );
 			} )
 			.then( function ( res ) {

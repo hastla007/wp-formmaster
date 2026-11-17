@@ -32,6 +32,18 @@ final class Activator {
 			$migrator->migrate();
 			Capabilities::install();
 			Settings::ensure_defaults();
+			return;
+		}
+		$state = get_option( Migrator::OPTION_STATE, null );
+		$error = is_array( $state ) ? (string) ( $state['error'] ?? '' ) : '';
+		if ( $migrator->installed_version() > Migrator::TARGET_VERSION ) {
+			// Downgrade: record it once so the system status can explain it (data stays untouched).
+			if ( 'schema_newer_than_plugin' !== $error ) {
+				$migrator->migrate();
+			}
+		} elseif ( 'schema_newer_than_plugin' === $error ) {
+			// The newer version is back: the downgrade notice no longer applies.
+			delete_option( Migrator::OPTION_STATE );
 		}
 	}
 }

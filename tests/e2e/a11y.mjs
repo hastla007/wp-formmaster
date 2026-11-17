@@ -42,10 +42,23 @@ const ctx = await browser.newContext( { viewport: { width: 1280, height: 900 } }
 const page = await ctx.newPage();
 let failures = 0;
 
-await page.goto( `${ BASE }/wp-login.php?redirect_to=${ encodeURIComponent( `${ BASE }/wp-admin/admin.php?page=form-captain` ) }` );
-await page.fill( '#user_login', process.env.E2E_USER || 'admin' );
-await page.fill( '#user_pass', process.env.E2E_PASS || 'admin-password' );
-await Promise.all( [ page.waitForURL( /wp-admin\/admin\.php\?page=form-captain/, { waitUntil: 'domcontentloaded' } ), page.click( '#wp-submit' ) ] );
+// Log in with a form POST through the browser context (shared cookie jar) instead of
+// clicking the login button: waiting for the post-login navigation timed out
+// intermittently in Firefox CI. Visiting wp-login.php first sets the test cookie.
+await page.goto( `${ BASE }/wp-login.php` );
+await page.request.post( `${ BASE }/wp-login.php`, {
+	form: {
+		log: process.env.E2E_USER || 'admin',
+		pwd: process.env.E2E_PASS || 'admin-password',
+		'wp-submit': 'Log In',
+		testcookie: '1',
+	},
+	maxRedirects: 0,
+} );
+await page.goto( `${ BASE }/wp-admin/admin.php?page=form-captain`, { waitUntil: 'domcontentloaded' } );
+if ( ! /wp-admin\/admin\.php\?page=form-captain/.test( page.url() ) ) {
+	throw new Error( `Login failed, landed on ${ page.url() }` );
+}
 
 const adminPages = [
 	[ 'Dashboard', 'form-captain' ],

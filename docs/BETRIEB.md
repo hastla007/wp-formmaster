@@ -103,30 +103,30 @@ Ein Backup enthält Jobs im Zustand zum Sicherungszeitpunkt. Jobs, die nach dem 
 - Privacy-Löschanfragen, die **nach** dem Backup-Datum abgeschlossen wurden, muss der Betreiber erneut ausführen (Werkzeuge → Personenbezogene Daten löschen), weil kein Schattenregister gelöschter Personen existiert (DS-B-04).
 - Empfehlung im Handbuch: Backup-Aufbewahrung des Hosters nicht länger als die kürzeste Retention-Einstellung plus Papierkorbfrist wählen.
 
-## 2. Support- und Fehlerprozess (P9-02 – Entwurf)
+## 2. Support- und Fehlerprozess (P9-02)
 
 > **Status: entschieden 16.11.2026** (docs/ENTSCHEIDUNGEN.md #12, #13, #15): Free-Support im WordPress.org-Forum, Pro-Support per Ticket über E-Mail mit tarifabhängiger Antwortzeit; Sicherheitsmeldungen an eine eigene `security@…`-Adresse (konkrete Adresse noch einzutragen, Platzhalter `[SECURITY-KONTAKT]`). Nach einem Backup-Restore warnt der Systemstatus; erneutes Ausführen von Löschungen ist Betreiberpflicht.
 
 ### 2.1 Kanäle
 
-| Kanal | Für | Entscheidung offen |
+| Kanal | Für | Stand |
 |---|---|---|
-| WordPress.org-Supportforum | Free-Fragen, öffentlich | Betreuung, Antwortziel |
-| `[PRO-SUPPORT-KANAL]` (Ticketsystem/E-Mail) | Pro-Kunden je Tarif (Standard / priorisiert) | Werkzeug, Reaktionszeiten je Tarif |
-| `[SECURITY-KONTAKT]` | vertrauliche Sicherheitsmeldungen | Adresse, PGP-Schlüssel, `security.txt`, Offenlegungsfrist |
-| GitHub-Issues | Entwickler/Vertrag (`api-v1.md`), keine Kundendaten | öffentlich ja/nein |
+| WordPress.org-Supportforum | Free-Fragen, öffentlich | **entschieden** (Nr. 12); Antwortziel: werktags innerhalb von 3 Werktagen (Vorschlag, intern) |
+| Ticket per E-Mail `[PRO-SUPPORT-KANAL]` | Pro-Kunden je Tarif: Solo/Studio Standard, Agency priorisiert | **entschieden** (Nr. 12); Adresse und veröffentlichte Antwortzeiten folgen mit dem Pro-Verkaufsstart |
+| `[SECURITY-KONTAKT]` (eigene `security@…`-Adresse) | vertrauliche Sicherheitsmeldungen | **entschieden** (Nr. 15); konkrete Adresse offen. Richtlinie: `SECURITY.md`, Vorlage `security.txt` in 2.6 |
+| GitHub-Issues | Entwickler/Vertrag (`api-v1.md`), keine Kundendaten | Repository derzeit privat; keine Kundenanfragen über Issues |
 
 Im Forum und in Issues niemals Systemstatus-Berichte mit Site-URL oder Entries anfordern; nur den Diagnosebericht nach 2.2.
 
 ### 2.2 Systemstatus-Diagnosebericht (ohne PII)
 
-Erzeugt über *Form Captain → Einstellungen → Systemstatus → Diagnose kopieren* (Recht `form_captain_manage_settings`) bzw. `wp form-captain status --format=json`.
+Erzeugt über *Form Captain → Einstellungen → Systemstatus*, Schaltfläche „Copy report“ / „Bericht kopieren“ (Recht `form_captain_manage_settings`), bzw. `wp form-captain status` (Textformat, identischer Inhalt; `SystemStatus::report_text()`).
 
 **Enthalten:** Plugin-/Pro-Version, Vertrag-Version, WP-/PHP-/DB-Version, Datenbank-Engine je Tabelle, Schemaversion und Migrationszustand (Fehlercode, ohne `detail` mit Pfaden), Anzahl Formulare je Status, Anzahl Entries je Status (gerundet auf 10er), Queue-Zähler je Typ/Status, ältester fälliger Job (Alter in Minuten), Anzahl `dead` letzte 7 Tage je Fehlercode, Cron-Modus (WP-Cron/deaktiviert/System-Cron), letzter Worker- und Cleanup-Lauf (Zeitstempel), Mailtransport erkannt (wp_mail/SMTP-Plugin aktiv ja/nein), letzte 20 Fehlercodes aus `fc_log` mit Korrelations-ID und Zeit, aktive Suite-Plugins mit Version, Multisite ja/nein, Sprache.
 
 **Nicht enthalten:** Site-URL/Domain (optional per Checkbox, Standard aus), Formulartitel, Feldlabels, Feldwerte, E-Mail-Adressen (auch nicht die Absenderadresse – nur „Domain passt zur Site: ja/nein“), Benutzernamen, IP/IP-Hashes, Tokens, `form_captain_secret`, Webhook-/Connector-Secrets, Lizenzschlüssel (nur Status), `last_error_message`-Freitexte.
 
-Prüfung: AC-125/AC-140 und P5-22 gelten auch für den Bericht; Testfall „100 Einsendungen, Bericht nach Werten/E-Mail/IP durchsuchen → keine Treffer“.
+Prüfung: AC-125/AC-140 und P5-22 gelten auch für den Bericht; automatisiert in `tests/integration/Admin/SystemStatusTest.php::test_report_contains_no_personal_data` (Bericht nach Werten, E-Mail-Adressen und IP durchsuchen → keine Treffer).
 
 ### 2.3 Korrelations-IDs
 
@@ -159,7 +159,18 @@ Ablauf: Eingang → Diagnosebericht + Korrelations-ID anfordern → reproduziere
 3. Fix auf privatem Branch, Regressionstest, Release nach `RELEASE.md`; Changelog „Sicherheit“ ohne Exploit-Details.
 4. Koordinierte Veröffentlichung, Credit nach Wunsch des Meldenden; WordPress.org-Plugin-Team informieren, falls Verzeichnisaktion nötig.
 
-**Entscheidung durch Produktverantwortliche:** Sicherheitskontakt, Offenlegungsfrist, Teilnahme an einem Disclosure-Programm.
+Fristen (Vorschlag in `SECURITY.md`, bis zur Bestätigung durch die Produktverantwortung): Eingangsbestätigung binnen 3 Werktagen, Ersteinschätzung binnen 10 Werktagen, Offenlegung spätestens 90 Tage nach Eingang oder nach dem Fix-Release.
+
+**Vorlage `/.well-known/security.txt`** (RFC 9116) für die Produktwebsite, nach Eintragen der Adresse:
+
+```
+Contact: mailto:[SECURITY-KONTAKT]
+Expires: [Datum in höchstens 12 Monaten, ISO 8601]
+Preferred-Languages: de, en
+Policy: [URL der veröffentlichten SECURITY.md]
+```
+
+**Noch offen (Produktverantwortung):** konkrete Adresse, optional PGP-Schlüssel, Bestätigung der Fristen, Teilnahme an einem Disclosure-Programm.
 
 ## 3. Release- und Rollback-Übung (P9-12)
 
@@ -170,7 +181,7 @@ Ziel: nachweisen, dass ein fehlerhaftes Update innerhalb der Zielzeit `[ZIEL-WIE
 3. **Backup** nach 1.2 (DB + Dateien), Prüfsummen notieren.
 4. **Testrelease installieren:** RC-ZIP (`bin/build-release.sh x.y.z-rc.N`), SHA-256 prüfen, Plugin-Verzeichnis ersetzen, Admin aufrufen → Migration.
 5. **Fehler simulieren** (je Übung einer):
-   - a) Migration bricht ab (Test-Hook `FORM_CAPTAIN_TEST_FAIL_MIGRATION` oder `kill` des PHP-Prozesses),
+   - a) Migration schlägt fehl: dem Datenbankbenutzer vor dem Update das Recht `ALTER` entziehen (`REVOKE ALTER ON <db>.* FROM '<user>'@'<host>'`), oder Abbruch durch `kill` des PHP-Prozesses,
    - b) Fatal Error im neuen Code nach erfolgreicher Migration,
    - c) fehlerhafter Mailversand (SMTP aus) mit wachsender Queue.
 6. **Entscheiden** anhand Rollback-Plan (`RELEASE.md` 3.5): Downgrade ohne Restore oder mit Restore.
@@ -178,11 +189,40 @@ Ziel: nachweisen, dass ein fehlerhaftes Update innerhalb der Zielzeit `[ZIEL-WIE
 8. **Prüfen:** Integritätsprüfung 1.5, Zählung/Hash = Ausgangszustand (abzüglich bewusst verworfener Test-Einsendungen), Testeinsendung, Queue leer bzw. nur erwartete Jobs.
 9. **Dokumentieren:** Dauer je Schritt, Abweichungen, Verbesserungen an Skripten/Doku; Ticket „Rollback-Übung x.y.z“ abschließen.
 
+### 3.1 Protokoll der Übung vom 16.11.2026 (lokales Staging)
+
+**Umgebung:** WordPress 6.8.3, PHP 8.3.6 (eingebauter Webserver), MariaDB 10.11, eigener DB-Benutzer mit `SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP, LOCK TABLES`. Mail-Senke per MU-Plugin. Zielzeit `[ZIEL-WIEDERHERSTELLUNGSZEIT]` ist noch nicht festgelegt.
+
+**Artefakte:** Als letzte funktionierende Version diente der Stand `1a404d8` mit Schema 1 (`form-captain-v1.zip`, SHA-256 `8312784988…3d2a`). Als Release-Kandidat diente der aktuelle Stand mit Schema 2 (`form-captain-1.0.0-rc.1.zip`, SHA-256 `5b74b73b…8022`). Die Migration 1 → 2 ist echt: neue Spalte `consent_withdrawn_gmt` und ein Index.
+
+**Ausgangszustand:** 2 Formulare, 40 Einträge, 200 Werte, Queue leer. Prüfsumme über alle Werte (MD5 über Eintrag, Feld und MD5 des Werts): `bb85fe1c…f9b3`.
+
+| Schritt | Ergebnis | Dauer |
+|---|---|---|
+| Backup: `fc_*`-Tabellen, `form_captain_*`-Optionen, Plugin-Verzeichnis, SHA-256 notiert | 3 Dateien, Prüfsummen OK | 1 s |
+| **a) Fehlgeschlagene Migration:** `ALTER` entzogen, RC installiert | Version bleibt 1. Zustand `migration_failed`, Detail `missing_column:entries.consent_withdrawn_gmt`. Frontend 200, Admin erreichbar | 2 s |
+| Einsendung im Fehlerzustand | wird im Schema 1 gespeichert, kein Datenbankfehler außer den abgelehnten `ALTER` (Dokumentation in RELEASE.md 3.2 entsprechend berichtigt) | – |
+| Ursache behoben (`GRANT ALTER`), Admin-Seite aufgerufen | Migration setzt automatisch fort, Schema 2, Status OK. Die 40 Ausgangseinträge sind bitgleich (`bb85fe1c…f9b3`) | < 1 s |
+| **b) Fatal Error im neuen Code** (kaputte PHP-Datei) | Frontend und Admin HTTP 500 | – |
+| Downgrade ohne DB-Restore auf v1 (Schema 2 bleibt) | Frontend 200, Einsendung funktioniert (additive Migration ist abwärtsverträglich). Während des nicht atomaren Dateitauschs kurz HTTP 500 | 1 s |
+| Rollback mit DB-Restore (Tabellen, Optionen, Plugin-Dateien aus dem Backup) | Prüfsummen OK. Datenstand gleich dem Ausgangszustand (alle Zähler und die Prüfsumme). Schema 1, Status OK, Testeinsendung OK. Vorher gesichert: 2 Einsendungen seit dem Update (nur gezählt) | < 1 s |
+
+**Befunde und Folgen:**
+
+1. Downgrade wurde nicht erkannt: `maybe_upgrade()` rief `migrate()` nur bei installiert < Ziel auf. **Behoben** mit Test `InstallTest::test_boot_records_downgrade_and_clears_it_after_reinstall`.
+2. Der Systemstatus empfahl bei jedem Schemaproblem „deaktivieren/aktivieren“. Jetzt nennt er die Ursache: DB-Rechte bei `migration_failed`, neuere Version oder Backup bei einem Downgrade (`SystemStatusTest::test_schema_problem_messages_name_the_cause`).
+3. RELEASE.md 3.2 beschrieb eine Einsende-Sperre bei fehlgeschlagener Migration, die es nicht gibt (und bei additiven Migrationen nicht braucht). **Doku berichtigt.**
+4. Der in Schritt 5a genannte Test-Hook existierte nicht. Ersetzt durch den Rechteentzug.
+5. Der Dateitausch beim Rollback soll atomar per Umbenennen erfolgen (RELEASE.md 3.4).
+
+**Noch offen:** Wiederholung auf einem echten Staging mit Produktions-Versionsmatrix und System-Cron, Zielzeit festlegen, Szenario c (SMTP aus mit wachsender Queue; das Verhalten ist lokal in docs/MAILZUSTELLUNG.md abgenommen).
+
 ## 4. Staging-Rollout und Datenbank-Rollback (P9-13)
 
 **Vor dem Update (Pflicht bei jeder Migration):**
 1. Rollback-Plan (`RELEASE.md` 3.5) ausgefüllt; bei nicht additiver Migration Wiederherstellungsweg festgelegt **und auf Staging geübt**, bevor das Produktions-Update startet.
-2. Staging mit **anonymisierten** Beispieldaten: Produktionsdaten nur nach Anonymisierung übernehmen (Werte aller Freitext-/E-Mail-/Telefonfelder ersetzen, `user_id` = NULL, Notizen leeren); alternativ synthetische Testdaten. Keine Produktionsmails von Staging: Mailversand auf Sink umleiten.
+2. Staging mit **anonymisierten** Beispieldaten: Produktionsdaten nur nach Anonymisierung übernehmen; alternativ synthetische Testdaten. Keine Produktionsmails von Staging: Mailversand auf Sink umleiten.
+   **Werkzeug:** Auf der Staging-Kopie `WP_ENVIRONMENT_TYPE` auf `staging` setzen, dann `wp eval-file bin/anonymize-staging.php yes` ausführen. Das Skript liegt im Repository, nicht im Plugin-ZIP. Es ersetzt E-Mail-, Telefon-, Text-, Absatz- und versteckte Werte, wobei die Länge erhalten bleibt. Auswahl-, Zahl-, Datums- und Einwilligungswerte bleiben stehen, damit Bedingungen und Exporte testbar bleiben. `user_id` und `context_json` werden entfernt, Notiztexte, Log-Texte und Auftragsnutzdaten geleert, offene Aufträge storniert und E-Mail-Adressen in Formulareinstellungen ersetzt. Ausgegeben werden nur Zähler. Bei `production` und ohne das Argument `yes` verweigert das Skript den Lauf. Test: `tests/integration/Privacy/AnonymizeStagingTest.php`. WordPress-Benutzer und andere Plugins fasst es nicht an; dafür ist eigenes Werkzeug nötig.
 3. Laufzeit der Migration auf Staging messen; bei > 30 s Ausführung über `wp form-captain migrate` im Wartungsfenster planen.
 
 **Rollout:**
@@ -192,6 +232,14 @@ Ziel: nachweisen, dass ein fehlerhaftes Update innerhalb der Zielzeit `[ZIEL-WIE
 4. Update; Systemstatus prüfen (Schema, Migration, Queue).
 5. Testeinsendung; Formulare reaktivieren.
 6. Bei Fehler: Rollback nach `RELEASE.md` 3.4; Einsendungen seit Update vor einem DB-Restore als CSV sichern.
+
+### 4.1 Übung vom 16.11.2026
+
+Auf dem Staging aus der Rollback-Übung (3.1) mit Schema 1:
+
+1. **Anonymisierung:** Der Lauf mit Umgebungstyp `production` wurde verweigert. Mit `staging`: 164 Werte ersetzt, 41 behalten (Einwilligungen), 1 offener Auftrag storniert, Dauer < 1 s. Danach 0 Treffer für Namen, E-Mail-Adressen und Nachrichtentexte der Testpersonen. Alle Zähler (Formulare, Einträge, Werte) unverändert.
+2. **Migrationslaufzeit:** Bestand auf 100 041 Einträge vergrößert (Schema 1), dann Update auf den Release-Kandidaten mit Schema 2 durch atomaren Verzeichnistausch. Migration inklusive WordPress-Start: **335 ms** (MariaDB 10.11 fügt die Spalte ohne Tabellenkopie hinzu). Die Grenze von 30 s für ein Wartungsfenster wird weit unterschritten. Auf MySQL 5.7 oder älterem MariaDB vor dem Release erneut messen.
+3. **Wiederherstellungsweg:** Migration 1 → 2 ist additiv. Ein Downgrade ohne DB-Restore ist möglich (in 3.1 geprüft). Ein DB-Restore aus Tabellen- und Options-Backup ist in 3.1 geübt; der Datenstand war danach identisch.
 
 ## 5. Betriebsüberwachung (P9-14)
 

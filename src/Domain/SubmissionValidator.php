@@ -20,7 +20,8 @@ final class SubmissionValidator {
 	/**
 	 * @param array<int,array<string,mixed>> $fields  normalized schema fields
 	 * @param array<mixed,mixed>             $input   field_id (or key, see accept_keys) => raw value
-	 * @param array{today?:string,accept_keys?:bool} $options
+	 * @param array{today?:string,accept_keys?:bool,files?:array<string,mixed>,form?:array<string,mixed>} $options
+	 *        files: field_id => uploaded file data (PHP $_FILES shape) for Pro field types (contract 1.1.0)
 	 * @return array{values:array<string,string|array<int,string>>,errors:array<string,string>,codes:array<string,string>,visible:array<string,bool>,consent:array<string,bool>}
 	 */
 	public function validate( array $fields, array $input, array $options = array() ): array {
@@ -99,7 +100,9 @@ final class SubmissionValidator {
 			if ( ! FieldTypes::has_value( $type ) || isset( $codes[ $id ] ) || empty( $visible[ $id ] ) ) {
 				continue;
 			}
-			$result = $this->validate_field( $field, $raw[ $id ] ?? null, $today );
+			$result = empty( FieldTypes::all()[ $type ]['core'] )
+				? self::validate_extension_field( $field, $raw[ $id ] ?? null, $options )
+				: $this->validate_field( $field, $raw[ $id ] ?? null, $today );
 			if ( isset( $result['code'] ) ) {
 				$codes[ $id ] = $result['code'];
 				continue;
@@ -319,6 +322,45 @@ final class SubmissionValidator {
 	}
 
 	/**
+	 * Field types registered by an extension (form_captain_field_types_v1) are validated by that
+	 * extension (contract 1.1.0). Without a validator a required field fails and an optional one
+	 * stays empty, so no unchecked value is ever stored.
+	 *
+	 * @param array<string,mixed>      $field
+	 * @param string|array<int,string> $value
+	 * @param array<string,mixed>      $options
+	 * @return array{value?:string|array<int,string>|null,code?:string}
+	 */
+	private static function validate_extension_field( array $field, string|array|null $value, array $options ): array {
+		$id     = (string) $field['id'];
+		$files  = is_array( $options['files'] ?? null ) ? $options['files'] : array();
+		$result = apply_filters(
+			'form_captain_validate_field_v1',
+			null,
+			$field,
+			$value,
+			array(
+				'file' => $files[ $id ] ?? null,
+				'form' => is_array( $options['form'] ?? null ) ? $options['form'] : array(),
+			)
+		);
+		if ( is_array( $result ) && ( array_key_exists( 'value', $result ) || isset( $result['code'] ) ) ) {
+			if ( isset( $result['code'] ) ) {
+				return array( 'code' => preg_match( '/^[a-z][a-z0-9_]{1,40}$/', (string) $result['code'] ) ? (string) $result['code'] : 'invalid_value' );
+			}
+			$v = $result['value'];
+			if ( null === $v || is_string( $v ) ) {
+				return array( 'value' => null === $v ? null : mb_substr( $v, 0, 5000 ) );
+			}
+			if ( is_array( $v ) ) {
+				return array( 'value' => array_values( array_map( static fn( $x ): string => mb_substr( (string) $x, 0, 500 ), array_filter( $v, 'is_scalar' ) ) ) );
+			}
+			return array( 'code' => 'invalid_value' );
+		}
+		return ! empty( $field['required'] ) ? array( 'code' => 'required' ) : array( 'value' => null );
+	}
+
+	/**
 	 * Translated, visitor-safe message for a field error code.
 	 *
 	 * @param array<string,mixed> $field
@@ -365,7 +407,9 @@ final class SubmissionValidator {
 			case 'duplicate_value':
 			case 'invalid_value':
 			default:
-				return __( 'This value is not allowed.', 'form-captain' );
+				/** Extensions translate their own codes (contract 1.1.0). */
+				$custom = apply_filters( 'form_captain_field_error_message_v1', '', $code, $field );
+				return is_string( $custom ) && '' !== $custom ? wp_strip_all_tags( $custom ) : __( 'This value is not allowed.', 'form-captain' );
 		}
 	}
 }

@@ -5,7 +5,7 @@ Nur das in diesem Dokument Aufgeführte ist öffentliche API. Klassen unter `For
 ## Version
 
 ```php
-FORM_CAPTAIN_CONTRACT_VERSION // '1.0.0'
+FORM_CAPTAIN_CONTRACT_VERSION // '1.1.0' (seit 16.11.2026; 1.0.0 → 1.1.0 additiv, siehe „Erweiterungspunkte für Pro-Funktionen“)
 form_captain_contract_version(): string
 ```
 
@@ -79,9 +79,10 @@ form_captain_get_form_v1( int|string $form_id ): array|WP_Error
 form_captain_get_entry_v1( int $entry_id, array $scopes = ['meta'] ): array|WP_Error
 form_captain_submit_v1( int|string $form_id, array $payload, array $context = [] ): array
 form_captain_register_action_v1( string $key, array $definition, callable $callback ): true|WP_Error
-form_captain_get_render_v1( int|string $form_id, array $args = [] ): string
+form_captain_get_render_v1( int|string $form_id, array $args = [] ): string // $args: context (signierter Wert, nur aus PHP), title, seit 1.1.0 context_ref {purpose, ref_type, ref_id} für den Ausgabeweg public_endpoint
 form_captain_sign_context_v1( string $purpose, int $form_id, string $ref_type, string $ref_id, int $ttl = 0 ): array
 form_captain_register_context_purpose_v1( string $purpose, array $definition ): true|WP_Error
+form_captain_validate_v1( int|string $form_id, array $values, array $only = [] ): array|WP_Error // seit 1.1.0: prüft gegen die veröffentlichte Version, speichert nichts; nur Fehler der Felder in $only (leer = alle); Rückgabe {valid, errors, codes}
 ```
 
 Signierter Suite-Kontext: siehe [`suite-kontext.md`](suite-kontext.md).
@@ -177,4 +178,39 @@ Connectoren sind nach Installation **deaktiviert**; nur aktivierte Connectoren d
 | `form_captain_csv_columns_v1` | zusätzliche CSV-Spalten (nur Metadaten) |
 | `form_captain_spam_checks_v1` | zusätzliche Spamprüfungen (z. B. Captcha-Provider, opt-in) |
 | `form_captain_signed_context_purposes_v1` | registrierte Kontext-Zwecke |
+| `form_captain_accepted_context_purposes_v1` | (seit Contract 1.1.0) Kontext-Zwecke, die ein Formular annimmt: `( string[] $purposes, int $form_id )`. Für das Add-on, dem ein Zweck gehört und das das Formular zuordnet (z. B. Käuferfragebogen an einem Produkt); Signatur, TTL und Prüfungen bleiben unverändert. |
+
+**Versionsbindung (seit Contract 1.1.0):** Eine Zweck-Definition für `form_captain_register_context_purpose_v1()` darf `version_for` enthalten: `callable( string $ref_type, string $ref_id, int $form_id ): int` liefert die Versionsnummer, an die der Kontext gebunden ist (0 = aktuelle Version). Nur zusammen mit `submit_check`. Liegt ein verifizierter Kontext vor, rendert und prüft Form Captain gegen diese veröffentlichte Version und speichert den Eintrag mit ihr; fehlt die Version, wird abgelehnt (`invalid_context`, keine andere Version). Die Version kommt nur vom Eigentümer des Zwecks, nie aus der Anfrage. Ältere Kerne ignorieren den Schlüssel.
 | `form_captain_pro_active` | Pro meldet sich (nur für sparsame Hinweise im Free) |
+
+## Erweiterungspunkte für Pro-Funktionen (seit Contract 1.1.0)
+
+Für Uploads, Mehrschritt-Formulare und erweiterte Bedingungen/Routing (P7-07, P7-08, P7-10). Alle Punkte sind additiv. Ohne Erweiterung verhält sich der Kern wie in 1.0.0. Getestet in `tests/integration/Contract/ExtensionPointsTest.php`.
+
+| Hook | Art | Argumente → Rückgabe | Regeln des Kerns |
+|---|---|---|---|
+| `form_captain_render_field_v1` | Filter | `null`, `array $field`, `array $ctx` (`id`, `name`, `value`, `required`, `invalid`, `aria-describedby`) → HTML des Bedienelements | Nur für Feldtypen aus `form_captain_field_types_v1`. Wrapper, Label, Hilfe- und Fehlerelement samt IDs liefert der Kern. Ohne Rückgabe entfällt das Feld. Die Erweiterung escaped ihr HTML selbst. |
+| `form_captain_validate_field_v1` | Filter | `null`, `array $field`, `string\|array\|null $value`, `array $ctx` (`file`: hochgeladene Datei im `$_FILES`-Format oder `null`, `form`) → `array{value:string\|string[]\|null}` oder `array{code:string}` | Nur für Erweiterungs-Feldtypen. Ohne Validator: Pflichtfeld → `required`, sonst kein Wert. Werte höchstens 5000 Zeichen. Fehlercodes `^[a-z][a-z0-9_]{1,40}$`. |
+| `form_captain_field_error_message_v1` | Filter | `''`, `string $code`, `array $field` → Text | Für eigene Fehlercodes. HTML wird entfernt. |
+| `form_captain_normalize_field_v1` | Filter | `null`, `array $raw_field`, `array $ids` (Feld-ID → Typ, bis einschließlich dieses Felds) → `array{settings?:array, errors?:array<string,string>}` | Gespeichert unter `field.x` (höchstens 8 KB JSON). Fehler erscheinen als `fields.N.x.<key>`. Der Kern wertet `x` nie aus. |
+| `form_captain_normalize_form_settings_v1` | Filter | `null`, `array $x`, `array $schema` → wie oben | Gespeichert unter `settings.x` (höchstens 16 KB). Ohne Erweiterung bleibt ein gespeichertes `x` unverändert erhalten; Lizenzende löscht nichts. |
+| `form_captain_form_attributes_v1` | Filter | `array()`, `array $form` → Attribute | Angenommen werden nur `data-fc-x-*`, zusätzliche Klassen und `enctype="multipart/form-data"`. Kern-Attribute sind nicht überschreibbar. |
+| `form_captain_field_attributes_v1` | Filter | `array()`, `array $field` → Attribute | Nur `data-fc-x-*` und zusätzliche Klassen (z. B. Schrittnummer, Bedingungsgruppe für eigenes JavaScript). |
+
+**Ereignis im Browser:** Nach erfolgreicher Einsendung über das Frontend-Skript löst das Formular-Element das DOM-Ereignis `fc:submitted` aus (`bubbles: true`, ohne Daten).
+
+**Gruppierte Bedingungen im Browser:** Trägt ein Feld das Attribut `data-fc-x-condition` mit JSON `{ "action": "show"|"hide", "match": "all"|"any", "rules": [ { "field", "operator", "value" } ] }`, wertet das Frontend-Skript des Kerns diese Gruppe statt `data-fc-condition` aus. Es gelten dieselben Operatoren und dieselbe Regel für ausgeblendete Bezugsfelder. Maßgeblich bleibt die Serverprüfung der Erweiterung über `form_captain_condition_evaluators_v1`.
+| `form_captain_notification_recipients_v1` | Filter | `string\|array $to`, `array $form`, `int $entry_id`, `array $values` → Empfängerliste | Routing. Das Ergebnis durchläuft dieselbe Prüfung wie konfigurierte Adressen (Header-Injection, `is_email`). |
+| `form_captain_confirmation_v1` | Filter | `array $confirmation` (Form wie `settings.confirmation`), `array $form`, `int $entry_id`, `array $values` (geprüfte Werte, Feld-ID → Wert; bei Doppelversand die gespeicherten) → Bestätigung | Bedingte Bestätigung. Eine Seite muss veröffentlicht und intern sein, sonst bleibt es bei der Meldung. |
+| `form_captain_display_value_v1` | Filter | `string $display`, `array $field`, `string\|array $value` → Klartext | Nur Erweiterungs-Feldtypen. Gilt für Admin-Detail, CSV und Mail. HTML wird entfernt, die Aufrufer escapen. |
+
+**Einstellungen im Formular-Editor:** Filter `form_captain_editor_extensions_v1` (`array $panels` → Panels).
+
+- **Panel:** `key` (`^[a-z][a-z0-9_]{1,40}$`, eindeutig), `scope` (`field` oder `form`), `label`, `description`, `types` (Feldtypen, für die das Panel erscheint; leer = alle), `controls`, `messages` (Fehlercode → Text; Meldungen des Kerns haben Vorrang).
+- **Control:** `key`, `type` (`text`, `textarea`, `number`, `checkbox`, `select` mit `options`, `rules`, `json`), `label`, `help`.
+- **Speicherort:** Der Editor speichert den Wert unter `field.x[<control key>]` bzw. `settings.x[<control key>]`. Prüfung und Fehler (`x.<key>…`) kommen von `form_captain_normalize_field_v1` / `form_captain_normalize_form_settings_v1`.
+- **`rules`:** eine Gruppe `{ action, match, rules: [ { field, operator, value } ] }` auf frühere Felder; im Formular-Scope ohne `action`.
+- **`json`:** für Strukturen ohne eigenes Bedienelement.
+- **Bereinigung:** Unbekannte Typen, doppelte Schlüssel und Panels ohne Controls verwirft der Kern; Texte werden von HTML befreit. Test: `ExtensionPointsTest::test_editor_extension_panels_are_cleaned`.
+
+**Dateien:** Formulareingaben heißen `fc[<field_id>]`. REST-Einsendung (`multipart/form-data`) und admin-post geben `$_FILES` über `FormCaptain\Support\UploadedFiles::by_field()` als `field_id → Datei` an den Validator weiter (höchstens 20 Dateien, eine je Feld). Mit `enctype="multipart/form-data"` (über `form_captain_form_attributes_v1`) sendet das Frontend-Skript des Kerns `FormData` statt JSON. Dateigrößen zählen nicht gegen `request_bytes`; dieses Limit gilt dann nur für die übrigen Felder. Der Kern verschiebt, speichert oder öffnet hochgeladene Dateien nie. Ablage, Prüfung, Quarantäne und Löschung (`form_captain_delete_entry_files_v1`) liegen bei der Erweiterung.

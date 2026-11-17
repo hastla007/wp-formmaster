@@ -48,7 +48,8 @@ final class SubmissionService {
 	 * @param array<string,mixed> $raw  request data: `fields` (field_id => value) plus `_fc_token`, `_fc_ctx`,
 	 *                                  honeypot; or a flat field_id/key => value map for trusted callers.
 	 * @param array<string,mixed> $meta trusted, plugin, idempotency_key, request_key, signed_context, ip,
-	 *                                  source_url, source_post_id, user_id, request_id, body_bytes
+	 *                                  source_url, source_post_id, user_id, request_id, body_bytes,
+	 *                                  files (field_id => uploaded file, Support\UploadedFiles)
 	 * @return array<string,mixed> result object (api-v1.md)
 	 */
 	public function submit( array $form, array $raw, array $meta = array() ): array {
@@ -146,6 +147,16 @@ final class SubmissionService {
 				return $fail( $ctx_result['public_code'], $extra );
 			}
 			$context = $ctx_result['context'] ?? null;
+			// The purpose may bind the context to the version it was given for (e.g. bought with).
+			$pin = is_array( $context ) ? $this->contexts->pinned_version( $context, (int) $form['id'] ) : 0;
+			if ( $pin > 0 && $pin !== (int) $version['version_no'] ) {
+				$pinned = $this->loader->version( $form, $pin );
+				if ( null === $pinned ) {
+					return $fail( Errors::INVALID_CONTEXT, array( 'message' => SignedContext::public_message( Errors::INVALID_CONTEXT ) ) );
+				}
+				$version = $pinned;
+				$fields  = $version['fields'];
+			}
 		}
 
 		// 6. Field validation (P3-05, P3-07).
@@ -155,6 +166,8 @@ final class SubmissionService {
 			array(
 				'today'       => wp_date( 'Y-m-d' ),
 				'accept_keys' => $trusted,
+				'files'       => is_array( $meta['files'] ?? null ) ? $meta['files'] : array(),
+				'form'        => $form,
 			)
 		);
 		if ( $checked['errors'] ) {
@@ -236,11 +249,11 @@ final class SubmissionService {
 			if ( $trusted ) {
 				return $fail( Errors::SPAM_SUSPECTED, array( 'entry_id' => $entry_id ) );
 			}
-			return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED );
+			return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED, $values );
 		}
 		$this->dispatch_event( $form, $fields, $entry_id, (int) $version['version_no'], $values, $context, $request_id, $now );
 		Scheduler::nudge();
-		return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED );
+		return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED, $values );
 	}
 
 	/**
@@ -308,14 +321,15 @@ final class SubmissionService {
 				'errors'     => array(),
 			);
 		}
-		return $this->success( $form, (int) $entry['id'], $request_id, self::CODE_DUPLICATE );
+		return $this->success( $form, (int) $entry['id'], $request_id, self::CODE_DUPLICATE, $this->entries->values_for( (int) $entry['id'] ) );
 	}
 
 	/**
-	 * @param array<string,mixed> $form
+	 * @param array<string,mixed>                     $form
+	 * @param array<string,string|array<int,string>> $values validated values (for conditional confirmations)
 	 * @return array<string,mixed>
 	 */
-	private function success( array $form, int $entry_id, string $request_id, string $code ): array {
+	private function success( array $form, int $entry_id, string $request_id, string $code, array $values = array() ): array {
 		$out = array(
 			'success'    => true,
 			'code'       => $code,
@@ -325,17 +339,25 @@ final class SubmissionService {
 			'request_id' => $request_id,
 			'errors'     => array(),
 		);
-		return array_merge( $out, self::confirmation( $form ) );
+		return array_merge( $out, self::confirmation( $form, $entry_id, $values ) );
 	}
 
 	/**
-	 * Confirmation: message or internal, published page (P3-10, P3-15). Never taken from the request.
+	 * Confirmation: message or internal, published page (P3-10, P3-15). Never taken from the request;
+	 * an extension may choose another message or page for the saved entry (P7-10).
 	 *
-	 * @param array<string,mixed> $form
+	 * @param array<string,mixed>                    $form
+	 * @param array<string,string|array<int,string>> $values
 	 * @return array{message:string,redirect_url?:string}
 	 */
-	public static function confirmation( array $form ): array {
-		$conf    = is_array( $form['settings']['confirmation'] ?? null ) ? $form['settings']['confirmation'] : array();
+	public static function confirmation( array $form, int $entry_id = 0, array $values = array() ): array {
+		$conf = is_array( $form['settings']['confirmation'] ?? null ) ? $form['settings']['confirmation'] : array();
+		if ( $entry_id > 0 ) {
+			// Conditional confirmation (contract 1.1.0): same shape as settings.confirmation, same checks below.
+			// $values: validated values of the entry (field_id => value), never shown to the visitor.
+			$filtered = apply_filters( 'form_captain_confirmation_v1', $conf, $form, $entry_id, $values );
+			$conf     = is_array( $filtered ) ? $filtered : $conf;
+		}
 		$message = trim( wp_strip_all_tags( (string) ( $conf['message'] ?? '' ) ) );
 		$message = '' !== $message ? $message : __( 'Thank you! Your submission has been received.', 'form-captain' );
 		if ( 'page' === ( $conf['type'] ?? '' ) ) {

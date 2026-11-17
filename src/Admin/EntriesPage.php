@@ -543,7 +543,8 @@ final class EntriesPage {
 				echo '<tr><td>' . esc_html( self::job_label( $job ) ) . '</td>';
 				echo '<td>' . esc_html( 'paused' === $job['status'] ? Plugin::instance()->get( ConnectorRegistry::class )->paused_label( $job ) : self::job_status_label( (string) $job['status'] ) ) . '</td>';
 				echo '<td>' . esc_html( (int) $job['attempts'] . ' / ' . (int) $job['max_attempts'] ) . '</td>';
-				echo '<td><code>' . esc_html( (string) ( $job['last_error_code'] ?? '' ) ) . '</code></td>';
+				$error_code = (string) ( $job['last_error_code'] ?? '' );
+				echo '<td>' . ( '' !== $error_code ? '<code>' . esc_html( $error_code ) . '</code>' : '<span aria-hidden="true">–</span><span class="screen-reader-text">' . esc_html__( 'None', 'form-captain' ) . '</span>' ) . '</td>';
 				echo '<td>' . esc_html( get_date_from_gmt( (string) $job['updated_gmt'], get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) ) . '</td><td>';
 				if ( in_array( $job['status'], array( 'failed', 'dead' ), true ) && ( str_starts_with( $type, 'mail.' ) || str_starts_with( $type, 'connector.' ) ) && current_user_can( $cap ) ) {
 					$this->action_form( $entry, 'retry', __( 'Send again', 'form-captain' ), array( 'job_id' => (int) $job['id'] ) );

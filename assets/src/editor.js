@@ -426,6 +426,234 @@
 		);
 	}
 
+	/* ------------------------------------------------------------------ */
+	/* Settings of extensions (contract 1.1.0, form_captain_editor_extensions_v1) */
+	/* ------------------------------------------------------------------ */
+
+	var OPERATORS = [
+		{ value: 'equals', label: __( 'equals', 'form-captain' ) },
+		{ value: 'not_equals', label: __( 'does not equal', 'form-captain' ) },
+		{ value: 'contains', label: __( 'contains', 'form-captain' ) },
+		{ value: 'is_empty', label: __( 'is empty', 'form-captain' ) },
+		{ value: 'is_not_empty', label: __( 'is not empty', 'form-captain' ) },
+		{ value: 'checked', label: __( 'is checked', 'form-captain' ) },
+	];
+
+	/** Group of rules: { action, match, rules: [ { field, operator, value } ] } on the given fields. */
+	function RulesControl( props ) {
+		var group = props.value && Array.isArray( props.value.rules ) ? props.value : null;
+		var candidates = props.fields.filter( function ( f ) {
+			return hasValue( f.type );
+		} );
+		if ( ! candidates.length ) {
+			return el( 'p', { className: 'description' }, __( 'Rules can refer to fields above this one. Add an input field before it first.', 'form-captain' ) );
+		}
+		var set = function ( next ) {
+			props.onChange( next );
+		};
+		var rules = group ? group.rules : [];
+		var setRule = function ( i, patch ) {
+			var next = rules.slice();
+			next[ i ] = Object.assign( {}, next[ i ], patch );
+			set( Object.assign( {}, group, { rules: next } ) );
+		};
+		return el(
+			'div',
+			{ className: 'fc-rules' },
+			el( C.CheckboxControl, {
+				label: props.label,
+				checked: !! group,
+				onChange: function ( on ) {
+					set( on ? { action: 'show', match: 'all', rules: [ { field: candidates[ candidates.length - 1 ].id, operator: 'is_not_empty', value: '' } ] } : null );
+				},
+			} ),
+			group &&
+				el(
+					Fragment,
+					null,
+					props.withAction &&
+						el( C.SelectControl, {
+							label: __( 'Action', 'form-captain' ),
+							value: group.action || 'show',
+							options: [
+								{ value: 'show', label: __( 'Show this field if', 'form-captain' ) },
+								{ value: 'hide', label: __( 'Hide this field if', 'form-captain' ) },
+							],
+							onChange: function ( v ) {
+								set( Object.assign( {}, group, { action: v } ) );
+							},
+						} ),
+					el( C.SelectControl, {
+						label: __( 'Match', 'form-captain' ),
+						value: group.match || 'all',
+						options: [
+							{ value: 'all', label: __( 'all rules (AND)', 'form-captain' ) },
+							{ value: 'any', label: __( 'at least one rule (OR)', 'form-captain' ) },
+						],
+						onChange: function ( v ) {
+							set( Object.assign( {}, group, { match: v } ) );
+						},
+					} ),
+					rules.map( function ( r, i ) {
+						var needsValue = [ 'equals', 'not_equals', 'contains' ].indexOf( r.operator ) !== -1;
+						return el(
+							'div',
+							{ key: i, className: 'fc-rule' },
+							el( C.SelectControl, {
+								label: __( 'Field', 'form-captain' ),
+								value: r.field,
+								options: candidates.map( function ( f ) {
+									return { value: f.id, label: fieldLabel( f ) };
+								} ),
+								onChange: function ( v ) {
+									setRule( i, { field: v, value: '' } );
+								},
+							} ),
+							el( C.SelectControl, {
+								label: __( 'Operator', 'form-captain' ),
+								value: r.operator,
+								options: OPERATORS,
+								onChange: function ( v ) {
+									setRule( i, { operator: v } );
+								},
+							} ),
+							needsValue &&
+								el( C.TextControl, {
+									label: __( 'Value', 'form-captain' ),
+									value: r.value || '',
+									onChange: function ( v ) {
+										setRule( i, { value: v } );
+									},
+								} ),
+							el( C.Button, {
+								variant: 'link',
+								isDestructive: true,
+								onClick: function () {
+									var next = rules.filter( function ( x, j ) {
+										return j !== i;
+									} );
+									set( next.length ? Object.assign( {}, group, { rules: next } ) : null );
+								},
+							}, __( 'Remove rule', 'form-captain' ) )
+						);
+					} ),
+					rules.length < 10 &&
+						el( C.Button, {
+							variant: 'secondary',
+							onClick: function () {
+								set( Object.assign( {}, group, { rules: rules.concat( [ { field: candidates[ 0 ].id, operator: 'is_not_empty', value: '' } ] ) } ) );
+							},
+						}, __( 'Add rule', 'form-captain' ) )
+				)
+		);
+	}
+
+	/** JSON for structures without their own control; the server checks and returns errors. */
+	function JsonControl( props ) {
+		var initial = props.value === undefined || props.value === null ? '' : JSON.stringify( props.value, null, 2 );
+		var state = useState( initial );
+		var text = state[ 0 ];
+		var setText = state[ 1 ];
+		var bad = useState( false );
+		return el(
+			Fragment,
+			null,
+			el( C.TextareaControl, {
+				label: props.label,
+				help: props.help,
+				rows: 8,
+				className: 'fc-json',
+				value: text,
+				onChange: function ( v ) {
+					setText( v );
+					if ( v.trim() === '' ) {
+						bad[ 1 ]( false );
+						props.onChange( null );
+						return;
+					}
+					try {
+						props.onChange( JSON.parse( v ) );
+						bad[ 1 ]( false );
+					} catch ( e ) {
+						bad[ 1 ]( true );
+					}
+				},
+			} ),
+			bad[ 0 ] && el( 'p', { className: 'fc-error' }, __( 'This is not valid JSON yet; the last valid value is kept.', 'form-captain' ) )
+		);
+	}
+
+	function ExtensionControl( props ) {
+		var c = props.control;
+		var v = props.value;
+		var change = props.onChange;
+		switch ( c.type ) {
+			case 'rules':
+				return el( RulesControl, { label: c.label, value: v, fields: props.fields, withAction: props.scope === 'field', onChange: change } );
+			case 'json':
+				return el( JsonControl, { label: c.label, help: c.help, value: v, onChange: change } );
+			case 'checkbox':
+				return el( C.CheckboxControl, { label: c.label, help: c.help, checked: !! v, onChange: change } );
+			case 'select':
+				return el( C.SelectControl, { label: c.label, help: c.help, value: v === undefined || v === null ? '' : String( v ), options: c.options, onChange: change } );
+			case 'number':
+				return el( NumberInput, { label: c.label, value: v, onChange: change } );
+			case 'textarea':
+				return el( C.TextareaControl, { label: c.label, help: c.help, rows: 3, value: v || '', onChange: change } );
+			default:
+				return el( C.TextControl, { label: c.label, help: c.help, value: v || '', onChange: change } );
+		}
+	}
+
+	/**
+	 * Panels of extensions for one scope. Values live in obj.x[control.key]; the core never
+	 * interprets them, the extension checks them on save (errors under x.<key>).
+	 */
+	function ExtensionPanels( props ) {
+		var panels = ( boot.extensions || [] ).filter( function ( p ) {
+			return p.scope === props.scope && ( ! p.types || ! p.types.length || ( props.type && p.types.indexOf( props.type ) !== -1 ) );
+		} );
+		if ( ! panels.length ) {
+			return null;
+		}
+		var x = props.x || {};
+		return panels.map( function ( p ) {
+			return el(
+				'fieldset',
+				{ key: 'ext-' + p.key, className: 'fc-extension fc-extension--' + p.key },
+				el( 'legend', null, p.label ),
+				p.description && el( 'p', { className: 'description' }, p.description ),
+				p.controls.map( function ( c ) {
+					var errs = Object.keys( props.errors || {} ).filter( function ( k ) {
+						return k === 'x.' + c.key || k.indexOf( 'x.' + c.key + '.' ) === 0;
+					} );
+					return el(
+						Fragment,
+						{ key: c.key },
+						el( ExtensionControl, {
+							control: c,
+							scope: props.scope,
+							value: x[ c.key ],
+							fields: props.fields,
+							onChange: function ( v ) {
+								var next = Object.assign( {}, x );
+								if ( v === null || v === undefined || v === '' ) {
+									delete next[ c.key ];
+								} else {
+									next[ c.key ] = v;
+								}
+								props.onChange( next );
+							},
+						} ),
+						errs.map( function ( k ) {
+							return el( FieldError, { key: k, code: props.errors[ k ] } );
+						} )
+					);
+				} )
+			);
+		} );
+	}
+
 	function FieldSettings( props ) {
 		var f = props.field;
 		var err = props.errors || {};
@@ -714,6 +942,17 @@
 				error: err.condition || err[ 'condition.field' ] || err[ 'condition.operator' ],
 				onChange: function ( c ) {
 					set( { condition: c } );
+				},
+			} ),
+			el( ExtensionPanels, {
+				key: 'ext',
+				scope: 'field',
+				type: f.type,
+				x: f.x,
+				fields: props.previous,
+				errors: err,
+				onChange: function ( x ) {
+					set( { x: Object.keys( x ).length ? x : undefined } );
 				},
 			} )
 		);
@@ -1133,6 +1372,15 @@
 				],
 				onChange: function ( v ) {
 					props.onChange( Object.assign( {}, s, { retention: { mode: v } } ) );
+				},
+			} ),
+			el( ExtensionPanels, {
+				scope: 'form',
+				x: s.x,
+				fields: props.fields || [],
+				errors: props.errors || {},
+				onChange: function ( x ) {
+					props.onChange( Object.assign( {}, s, { x: Object.keys( x ).length ? x : undefined } ) );
 				},
 			} )
 		);
@@ -1732,7 +1980,7 @@
 						case 'confirmation':
 							return el( ConfirmationTab, { settings: settings, errors: otherErrors, onChange: setSettings } );
 						case 'settings':
-							return el( FormSettingsTab, { settings: settings, onChange: setSettings } );
+							return el( FormSettingsTab, { settings: settings, fields: fields, errors: otherErrors, onChange: setSettings } );
 						case 'actions':
 							return el( ActionsTab, {
 								actions: actions,

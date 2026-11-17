@@ -43,14 +43,20 @@ jobs:
       - run: npm run build:check
 
   integration:
-    name: PHP ${{ matrix.php }} / WP ${{ matrix.wp }} / ${{ matrix.db }}
+    name: PHP ${{ matrix.php }} / WP ${{ matrix.wp }} / ${{ matrix.db }}${{ matrix.experimental && ' (experimental)' || '' }}
     runs-on: ubuntu-latest
+    # Minimum versions (decision 21): PHP 8.5, WordPress 7.0, MySQL 9.7 LTS, MariaDB 12.3 LTS.
+    # PHP 8.6 (GA 2026-11-19) runs as setup-php's nightly build: shown, but does not fail the run.
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
       matrix:
         php: [ '8.5' ]
-        wp: [ '6.8.3', 'latest' ]
+        wp: [ '7.0.8', 'latest' ]
         db: [ 'mariadb:12.3', 'mysql:9.7' ]
+        experimental: [ false ]
+        include:
+          - { php: '8.6', wp: 'latest', db: 'mariadb:12.3', experimental: true }
     services:
       database:
         image: ${{ matrix.db }}

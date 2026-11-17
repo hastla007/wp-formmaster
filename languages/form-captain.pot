@@ -5134,3 +5134,21 @@ msgstr ""
 #: assets/src/editor.js:1956
 msgid "Reload latest version (discards your changes)"
 msgstr ""
+
+#. translators: 1: minimum MySQL version, 2: minimum MariaDB version, 3: MySQL or MariaDB, 4: version of this server
+#: src/Support/Requirements.php:84
+#, php-format
+msgid "Form Captain supports MySQL %1$s or newer and MariaDB %2$s or newer; this site uses %3$s %4$s. Forms keep working and nothing is blocked, but older database servers are no longer tested. Ask your host for an update."
+msgstr ""
+
+#: src/Admin/SiteHealth.php
+msgid "The database server meets the Form Captain minimum"
+msgstr ""
+
+#: src/Admin/SiteHealth.php
+msgid "The database server is older than the Form Captain minimum"
+msgstr ""
+
+#: src/Admin/SiteHealth.php
+msgid "MySQL 9.7 or newer, or MariaDB 12.3 or newer."
+msgstr ""

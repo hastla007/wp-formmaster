@@ -7,7 +7,7 @@
 ## Konventionen
 
 - **Typ:** `unit` (PHPUnit ohne WordPress-DB bzw. Jest), `integration` (WP-PHPUnit mit DB, REST-Requests über `rest_do_request`), `e2e` (Playwright gegen WordPress-Testinstanz), `manuell` (Checkliste mit Protokoll im Release-Ticket).
-- **CI:** Alle `unit`/`integration` laufen in jeder PR; `e2e` in jeder PR auf der Hauptmatrix (WP 6.8 + aktuell, PHP 8.5 + aktuell), vollständig vor Release. `manuell` vor jedem Release-Kandidaten.
+- **CI:** Alle `unit`/`integration` laufen in jeder PR; `e2e` in jeder PR auf der Hauptmatrix (WP 7.0 + aktuell, PHP 8.5 + aktuell), vollständig vor Release. `manuell` vor jedem Release-Kandidaten.
 - **Testdaten:** Fixture-Formulare `contact`, `quote`, `support` (aus Vorlagen), `all-fields` (alle 12 Feldtypen), `conditional` (eine Regel), Nutzer `admin`, `editor`, `author`, `subscriber`, `fc_reader` (nur `form_captain_read_entries`).
 - Ein Punkt ist erfüllt, wenn das erwartete Ergebnis vollständig eintritt; Teilerfüllung = nicht erfüllt.
 - Testdateien referenzieren die AC-ID im Testnamen (`test_AC_031_…`, `AC-031: …`).
@@ -18,12 +18,12 @@
 
 | ID | Typ | Vorgehen | Erwartetes Ergebnis |
 |---|---|---|---|
-| AC-001 | integration | Plugin auf leerer WP 6.8 / PHP 8.5 aktivieren | Tabellen `fc_forms`, `fc_form_versions`, `fc_entries`, `fc_entry_values`, `fc_entry_notes`, `fc_jobs`, `fc_files`, `fc_rate_limits`, `fc_log` existieren mit Präfix; gespeicherte Schema-Version = aktuelle; keine PHP-Notices |
+| AC-001 | integration | Plugin auf leerer WP 7.0 / PHP 8.5 aktivieren | Tabellen `fc_forms`, `fc_form_versions`, `fc_entries`, `fc_entry_values`, `fc_entry_notes`, `fc_jobs`, `fc_files`, `fc_rate_limits`, `fc_log` existieren mit Präfix; gespeicherte Schema-Version = aktuelle; keine PHP-Notices |
 | AC-002 | integration | Frische Installation vs. Upgrade von ältester unterstützter Schema-Version vergleichen (`SHOW CREATE TABLE`) | identisches Schema (Spalten, Indizes, UNIQUE) |
 | AC-003 | integration | Aktivierung zweimal ausführen | idempotent, keine doppelten Optionen/Caps/Events |
 | AC-004 | integration | Aktivierung prüft Capabilities | `administrator` hat alle 7 `form_captain_*`-Caps; `editor`, `author`, `contributor`, `subscriber` keine |
 | AC-005 | integration | Deaktivieren | Cron-Events `form_captain_process_jobs`, `form_captain_daily_cleanup`, `form_captain_hourly_cleanup` entfernt; alle Tabellen/Daten unverändert |
-| AC-006 | integration | Plugin auf PHP < 8.5 bzw. WP < 6.8 laden (Mock der Versionsprüfung) | kein Fatal Error; Admin-Hinweis zur Mindestversion; keine Hooks/Routen registriert |
+| AC-006 | integration | Plugin auf PHP < 8.5 bzw. WP < 7.0 laden (Mock der Versionsprüfung) | kein Fatal Error; Admin-Hinweis zur Mindestversion; keine Hooks/Routen registriert |
 | AC-007 | integration | Multisite-Installation | Aktivierung verweigert/Hinweis „Multisite nicht unterstützt in v1.0“; kein Netzwerk-Aktivieren |
 | AC-008 | integration | Plugin ohne WooCommerce und ohne Yoast | alle Funktionen verfügbar, keine Warnungen |
 | AC-009 | manuell | Release-ZIP installieren (Upload über Plugins → Installieren) | Aktivierung erfolgreich; ZIP enthält keine `tests/`, `node_modules/`, `.git`, Dev-Vendor, Secrets |

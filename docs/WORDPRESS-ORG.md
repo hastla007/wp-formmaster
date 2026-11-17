@@ -71,7 +71,7 @@ Nummern beziehen sich auf die Detailed Plugin Guidelines.
 === Form Captain ===
 Contributors: [E-5]
 Tags: forms, contact form, form builder, submissions, gdpr
-Requires at least: 6.8
+Requires at least: 7.0
 Tested up to: [aktuelle geprüfte WP-Version]
 Requires PHP: 8.5
 Stable tag: x.y.z

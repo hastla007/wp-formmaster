@@ -23,7 +23,7 @@ final class SiteHealth {
 	 * @return array<string,mixed>
 	 */
 	public function tests( array $tests ): array {
-		foreach ( array( 'queue', 'mail', 'cron', 'schema' ) as $name ) {
+		foreach ( array( 'queue', 'mail', 'cron', 'schema', 'database_version' ) as $name ) {
 			$tests['direct'][ 'form_captain_' . $name ] = array(
 				'label' => __( 'Form Captain', 'form-captain' ),
 				'test'  => array( $this, 'test_' . $name ),
@@ -109,6 +109,19 @@ final class SiteHealth {
 			__( 'Form Captain database needs attention', 'form-captain' ),
 			$ok ? __( 'All tables exist and the schema version matches.', 'form-captain' ) : __( 'The schema version does not match or a table is missing. Reactivate the plugin; data is never deleted by this.', 'form-captain' ),
 			'critical'
+		);
+	}
+
+	/** @return array<string,mixed> */
+	public function test_database_version(): array {
+		$d       = $this->status->collect();
+		$warning = \FormCaptain\Support\Requirements::database_warning( (string) ( $d['environment']['database'] ?? '' ) );
+		return $this->result(
+			'database_version',
+			null === $warning,
+			__( 'The database server meets the Form Captain minimum', 'form-captain' ),
+			__( 'The database server is older than the Form Captain minimum', 'form-captain' ),
+			$warning ?? __( 'MySQL 9.7 or newer, or MariaDB 12.3 or newer.', 'form-captain' )
 		);
 	}
 

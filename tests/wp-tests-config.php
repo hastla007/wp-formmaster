@@ -7,7 +7,7 @@
 
 // phpcs:disable WordPress.WP.GlobalVariablesOverride
 
-$form_captain_wp_version = getenv( 'WP_VERSION' ) ?: '6.8.3';
+$form_captain_wp_version = getenv( 'WP_VERSION' ) ?: '7.0.8';
 $form_captain_core       = getenv( 'WP_CORE_DIR' ) ?: dirname( __DIR__ ) . '/vendor/wordpress/' . $form_captain_wp_version;
 
 define( 'ABSPATH', rtrim( $form_captain_core, '/' ) . '/' );

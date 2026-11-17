@@ -286,6 +286,10 @@ final class SystemStatus {
 		if ( ! empty( $d['queue']['cleanup_failures'] ) ) {
 			$out['cleanup'] = __( 'Some submissions could not be deleted by the cleanup three times in a row. Check the error log and delete them manually if needed.', 'form-captain' );
 		}
+		$db_warning = \FormCaptain\Support\Requirements::database_warning( (string) ( $d['environment']['database'] ?? '' ) );
+		if ( null !== $db_warning ) {
+			$out['database_version'] = $db_warning;
+		}
 		if ( array_sum( $d['mail']['failed_24h'] ) > 0 ) {
 			$out['mail'] = __( 'E-mails failed in the last 24 hours. Send a test e-mail and check your mail configuration (e.g. an SMTP plugin).', 'form-captain' );
 		}

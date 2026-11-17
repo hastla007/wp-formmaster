@@ -4,7 +4,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 CMD="${1:-start}"
-WP_VERSION="${WP_VERSION:-6.8.3}"
+WP_VERSION="${WP_VERSION:-7.0.8}"
 PORT="${E2E_PORT:-8889}"
 DIR="${E2E_DIR:-$ROOT/build/e2e-site}"
 DB_NAME="${E2E_DB_NAME:-wp_e2e}"

@@ -39,7 +39,7 @@ fi
 
 # Header sanity.
 grep -q 'Text Domain:       form-captain' "$PLUGIN/form-captain.php" || err "text domain header"
-grep -q 'Requires PHP:      8.3' "$PLUGIN/form-captain.php" || err "requires PHP header"
+grep -q 'Requires PHP:      8.5' "$PLUGIN/form-captain.php" || err "requires PHP header"
 grep -q 'License:           GPL-2.0-or-later' "$PLUGIN/form-captain.php" || err "license header"
 
 # Version consistency: plugin header, constant and readme Stable tag must match for releases.

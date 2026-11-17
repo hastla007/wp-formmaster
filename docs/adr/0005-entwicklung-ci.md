@@ -2,9 +2,9 @@
 
 | Bereich | Festlegung |
 |---|---|
-| PHP | 8.3 (Minimum) und 8.4 in CI |
-| WordPress | 6.8 (Minimum) und aktuelle stabile Version |
-| Datenbank | MariaDB 10.6 / 10.11, MySQL 8.0 / 8.4 |
+| PHP | 8.5 (Minimum, Entscheidung 21); 8.6 als Vorabtest (Ergebnis sichtbar, bricht den Lauf nicht ab) |
+| WordPress | 7.0 (Minimum, Entscheidung 21) und aktuelle stabile Version |
+| Datenbank | MariaDB 12.3, MySQL 9.7 (Minimum, Entscheidung 21) |
 | Testframework | PHPUnit 9.6 + `wp-phpunit/wp-phpunit` + `yoast/phpunit-polyfills` |
 | Statische Analyse | PHPStan (Level 6) mit `szepeviktor/phpstan-wordpress`, WPCS 3 |
 | JS-Build | Node 20+, `esbuild` |
@@ -18,7 +18,7 @@ composer install
 composer lint        # PHP-Syntax (php -l) über alle Dateien
 composer phpcs
 composer phpstan
-bin/install-wp-tests.sh 6.8.3   # einmalig: WordPress-Core per Git nach vendor/wordpress/6.8.3
+bin/install-wp-tests.sh 7.0.8   # einmalig: WordPress-Core per Git nach vendor/wordpress/7.0.8
 composer test:integration
 npm ci && npm run build
 npm run e2e

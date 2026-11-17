@@ -225,6 +225,11 @@ final class LoadTest extends FrontendTestCase {
 		);
 		foreach ( $checks as $label => list( $sql, $keys ) ) {
 			$plan = $wpdb->get_results( 'EXPLAIN ' . $sql, ARRAY_A );
+			if ( isset( $plan[0]['EXPLAIN'] ) ) {
+				// MySQL 9 prints the tree format by default; the table format names the possible keys.
+				// MariaDB does not know FORMAT=TRADITIONAL, so it is only asked for here.
+				$plan = $wpdb->get_results( 'EXPLAIN FORMAT=TRADITIONAL ' . $sql, ARRAY_A );
+			}
 			$this->assertNotEmpty( $plan, $label );
 			$row                                 = $plan[0];
 			$possible                            = array_filter( explode( ',', (string) ( $row['possible_keys'] ?? '' ) ) );

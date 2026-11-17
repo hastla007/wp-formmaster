@@ -5,7 +5,7 @@
 # the wp-phpunit/wp-phpunit Composer package.
 set -euo pipefail
 
-WP_VERSION="${1:-${WP_VERSION:-6.8.3}}"
+WP_VERSION="${1:-${WP_VERSION:-7.0.8}}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
 # "latest" means the newest stable release tag (x.y or x.y.z), not the development branch.

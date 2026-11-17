@@ -19,6 +19,7 @@ use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\JobRepository;
 use FormCaptain\Support\Clock;
 use FormCaptain\Support\Logger;
+use FormCaptain\Support\Requirements;
 use FormCaptain\Tests\Integration\Contract\FakeConnector;
 use FormCaptain\Tests\Integration\TestCase;
 
@@ -75,9 +76,33 @@ final class SystemStatusTest extends TestCase {
 		$this->assertSame( 'form_captain_queue', $health['test'] );
 	}
 
+	/** Decision 21: an older database server is reported (never blocked); the filter lowers the minimum. */
+	public function test_database_version_warning(): void {
+		$this->assertSame( array( 'type' => 'mariadb', 'version' => '10.11.6' ), Requirements::parse_db_server( '5.5.5-10.11.6-MariaDB-ubu2204' ) );
+		$this->assertSame( array( 'type' => 'mariadb', 'version' => '12.3.1' ), Requirements::parse_db_server( '12.3.1-MariaDB-ubu2404' ) );
+		$this->assertSame( array( 'type' => 'mysql', 'version' => '9.7.0' ), Requirements::parse_db_server( '9.7' ) );
+		$this->assertNull( Requirements::parse_db_server( 'unknown' ) );
+
+		$this->assertNull( Requirements::database_warning( '9.7.4' ) );
+		$this->assertNull( Requirements::database_warning( '12.3.3-MariaDB' ) );
+		$this->assertNull( Requirements::database_warning( '' ) );
+		$this->assertStringContainsString( 'MySQL 8.4.2', (string) Requirements::database_warning( '8.4.2' ) );
+		$this->assertStringContainsString( 'MariaDB 11.4.5', (string) Requirements::database_warning( '11.4.5-MariaDB' ) );
+
+		$d                            = $this->status()->collect();
+		$d['environment']['database'] = '8.0.36';
+		$this->assertArrayHasKey( 'database_version', $this->status()->problems( $d ) );
+
+		$lower = static fn() => array( 'mysql' => '8.0', 'mariadb' => 'not-a-version' );
+		add_filter( 'form_captain_minimum_db_versions_v1', $lower );
+		$this->assertArrayNotHasKey( 'database_version', $this->status()->problems( $d ) );
+		$this->assertNotNull( Requirements::database_warning( '11.4.5-MariaDB' ) );
+		remove_filter( 'form_captain_minimum_db_versions_v1', $lower );
+	}
+
 	public function test_site_health_tests_are_registered(): void {
 		$tests = apply_filters( 'site_status_tests', array( 'direct' => array(), 'async' => array() ) );
-		foreach ( array( 'queue', 'mail', 'cron', 'schema' ) as $t ) {
+		foreach ( array( 'queue', 'mail', 'cron', 'schema', 'database_version' ) as $t ) {
 			$this->assertArrayHasKey( 'form_captain_' . $t, $tests['direct'] );
 		}
 		$this->assertSame( 'good', $this->plugin()->get( SiteHealth::class )->test_schema()['status'] );

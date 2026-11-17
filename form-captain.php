@@ -4,8 +4,8 @@
  * Plugin URI:        https://github.com/hastla007/wp-formmaster
  * Description:       Build forms visually, manage submissions securely inside WordPress and connect them to the Captain Suite.
  * Version:           1.0.0-dev
- * Requires at least: 6.8
- * Requires PHP:      8.3
+ * Requires at least: 7.0
+ * Requires PHP:      8.5
  * Author:            Captain Suite
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -24,8 +24,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'FORM_CAPTAIN_VERSION', '1.0.0-dev' );
 define( 'FORM_CAPTAIN_FILE', __FILE__ );
 define( 'FORM_CAPTAIN_DIR', __DIR__ . '/' );
-define( 'FORM_CAPTAIN_MIN_WP', '6.8' );
-define( 'FORM_CAPTAIN_MIN_PHP', '8.3' );
+define( 'FORM_CAPTAIN_MIN_WP', '7.0' );
+define( 'FORM_CAPTAIN_MIN_PHP', '8.5' );
 define( 'FORM_CAPTAIN_CONTRACT_VERSION', '1.1.0' );
 
 if ( version_compare( PHP_VERSION, FORM_CAPTAIN_MIN_PHP, '<' ) || version_compare( get_bloginfo( 'version' ), FORM_CAPTAIN_MIN_WP, '<' ) ) {

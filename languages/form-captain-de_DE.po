@@ -5776,3 +5776,21 @@ msgstr "Neueste Version laden (verwirft Ihre Änderungen)"
 #~ msgstr ""
 #~ "Einträge können derzeit nicht gelöscht werden. Archivieren Sie "
 #~ "stattdessen das Formular."
+
+#. translators: 1: minimum MySQL version, 2: minimum MariaDB version, 3: MySQL or MariaDB, 4: version of this server
+#: src/Support/Requirements.php:84
+#, php-format
+msgid "Form Captain supports MySQL %1$s or newer and MariaDB %2$s or newer; this site uses %3$s %4$s. Forms keep working and nothing is blocked, but older database servers are no longer tested. Ask your host for an update."
+msgstr "Form Captain unterstützt MySQL %1$s oder neuer und MariaDB %2$s oder neuer; diese Website nutzt %3$s %4$s. Formulare funktionieren weiter und nichts wird gesperrt, ältere Datenbankserver werden aber nicht mehr getestet. Bitten Sie Ihren Hoster um ein Update."
+
+#: src/Admin/SiteHealth.php
+msgid "The database server meets the Form Captain minimum"
+msgstr "Der Datenbankserver erfüllt die Mindestanforderung von Form Captain"
+
+#: src/Admin/SiteHealth.php
+msgid "The database server is older than the Form Captain minimum"
+msgstr "Der Datenbankserver ist älter als die Mindestanforderung von Form Captain"
+
+#: src/Admin/SiteHealth.php
+msgid "MySQL 9.7 or newer, or MariaDB 12.3 or newer."
+msgstr "MySQL 9.7 oder neuer bzw. MariaDB 12.3 oder neuer."

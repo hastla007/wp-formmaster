@@ -37,11 +37,24 @@ async function login( page ) {
 	// Land on Form Captain's own screen instead of the core dashboard: the dashboard
 	// fires slow background requests (news widget, compression test, heartbeat) that
 	// can stall its load event and are not what this suite tests.
-	const target = encodeURIComponent( `${ BASE }/wp-admin/admin.php?page=form-captain` );
-	await page.goto( `${ BASE }/wp-login.php?redirect_to=${ target }` );
-	await page.fill( '#user_login', USER );
-	await page.fill( '#user_pass', PASS );
-	await Promise.all( [ page.waitForURL( /wp-admin\/admin\.php\?page=form-captain/, { waitUntil: 'domcontentloaded' } ), page.click( '#wp-submit' ) ] );
+	// Log in with a form POST through the browser context (shared cookie jar) instead of
+	// clicking the login button: waiting for the post-login navigation timed out
+	// intermittently in Firefox CI (same fix as tests/e2e/a11y.mjs). Visiting wp-login.php
+	// first sets the test cookie; the form fields are still checked to exist.
+	await page.goto( `${ BASE }/wp-login.php` );
+	await page.locator( '#user_login' ).waitFor();
+	await page.locator( '#user_pass' ).waitFor();
+	const res = await page.request.post( `${ BASE }/wp-login.php`, {
+		form: { log: USER, pwd: PASS, 'wp-submit': 'Log In', testcookie: '1' },
+		maxRedirects: 0,
+	} );
+	if ( 302 !== res.status() ) {
+		throw new Error( `Login POST answered ${ res.status() } instead of a redirect` );
+	}
+	await page.goto( `${ BASE }/wp-admin/admin.php?page=form-captain`, { waitUntil: 'domcontentloaded' } );
+	if ( ! /wp-admin\/admin\.php\?page=form-captain/.test( page.url() ) ) {
+		throw new Error( `Login failed, landed on ${ page.url() }` );
+	}
 }
 
 async function fillContact( page, name ) {

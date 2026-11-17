@@ -19,7 +19,7 @@ Form Captain ist ein WordPress-natives Formular- und Einsendungs-Plugin: Formula
 
 ## Voraussetzungen
 
-WordPress 7.0+, PHP 8.5+, MySQL 9.7+ oder MariaDB 12.3+ (InnoDB). WooCommerce ist optional (ab 11.2). Ältere Datenbankserver werden nicht gesperrt, der Systemstatus warnt. Multisite wird in v1 nicht unterstützt.
+WordPress 7.0+, PHP 8.5+, MySQL 9.7+ oder MariaDB 12.3+ (InnoDB). WooCommerce ist optional (ab 11.2.2). Ältere Datenbankserver werden nicht gesperrt, der Systemstatus warnt. Multisite wird in v1 nicht unterstützt.
 
 ## Entwicklung
 

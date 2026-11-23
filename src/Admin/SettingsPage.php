@@ -524,7 +524,9 @@ final class SettingsPage {
 				echo '<input type="color" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"' . $aria . '> <code>' . esc_html( (string) $value ) . '</code>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				break;
 			case 'text':
-				echo '<textarea class="large-text code" rows="6" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" maxlength="' . esc_attr( (string) $def['max_length'] ) . '"' . $aria . '>' . esc_textarea( (string) $value ) . '</textarea>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			case 'css':
+				$locked = ! empty( $def['edit_cap'] ) && ! current_user_can( (string) $def['edit_cap'] );
+				echo '<textarea class="large-text code" rows="6" id="' . esc_attr( $id ) . '"' . ( $locked ? ' readonly' : ' name="' . esc_attr( $name ) . '"' ) . ' maxlength="' . esc_attr( (string) $def['max_length'] ) . '"' . $aria . '>' . esc_textarea( (string) $value ) . '</textarea>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				break;
 			default:
 				echo '<input type="' . ( 'email' === $def['type'] ? 'email' : 'text' ) . '" class="regular-text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"' . ( isset( $def['max_length'] ) ? ' maxlength="' . esc_attr( (string) $def['max_length'] ) . '"' : '' ) . $aria . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

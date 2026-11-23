@@ -99,6 +99,39 @@ final class SettingsSchema {
 				'label' => __( 'Accent colour', 'form-captain' ),
 				'help'  => __( 'Used for buttons and focus outlines with base styles only.', 'form-captain' ),
 			),
+			'appearance.radius'                 => array(
+				'type'  => 'int',
+				'min'   => 0,
+				'max'   => 24,
+				'label' => __( 'Corner radius (pixels)', 'form-captain' ),
+				'help'  => __( 'Rounding of input fields and buttons with base styles only. 0 = square corners.', 'form-captain' ),
+			),
+			'appearance.spacing'                => array(
+				'type'  => 'int',
+				'min'   => 0,
+				'max'   => 48,
+				'label' => __( 'Space between fields (pixels)', 'form-captain' ),
+				'help'  => __( 'Vertical space between the fields with base styles only.', 'form-captain' ),
+			),
+			'appearance.font_size'              => array(
+				'type'    => 'enum',
+				'options' => array(
+					'theme' => __( 'Like the theme', 'form-captain' ),
+					'14'    => __( 'Small (14 px)', 'form-captain' ),
+					'16'    => __( 'Normal (16 px)', 'form-captain' ),
+					'18'    => __( 'Large (18 px)', 'form-captain' ),
+					'20'    => __( 'Very large (20 px)', 'form-captain' ),
+				),
+				'label'   => __( 'Font size', 'form-captain' ),
+				'help'    => __( 'Font size of forms with base styles only.', 'form-captain' ),
+			),
+			'appearance.custom_css'             => array(
+				'type'       => 'css',
+				'max_length' => 10000,
+				'edit_cap'   => 'unfiltered_html',
+				'label'      => __( 'Custom CSS', 'form-captain' ),
+				'help'       => __( 'Loaded after the Form Captain styles on pages with a form, for both styling options. Only users who may post unfiltered HTML can change it. @import and HTML are not allowed.', 'form-captain' ),
+			),
 			'email.from_name'                   => array(
 				'type'       => 'string',
 				'max_length' => 190,
@@ -262,6 +295,13 @@ final class SettingsSchema {
 				continue;
 			}
 			$path = $group . '.' . $key;
+			if ( ! empty( $def['edit_cap'] ) && ! current_user_can( (string) $def['edit_cap'] ) ) {
+				// Only users with this extra capability may change the value (e.g. custom CSS: unfiltered_html).
+				if ( array_key_exists( $key, $input ) && (string) $input[ $key ] !== (string) ( $current[ $key ] ?? '' ) ) {
+					$errors[ $path ] = __( 'You are not allowed to change this setting.', 'form-captain' );
+				}
+				continue;
+			}
 			if ( 'bool' === $def['type'] ) {
 				$values[ $key ] = ! empty( $input[ $key ] );
 				continue;

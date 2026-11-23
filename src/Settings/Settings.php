@@ -28,6 +28,10 @@ final class Settings {
 			'appearance' => array(
 				'mode'         => 'inherit',
 				'accent_color' => '#2271b1',
+				'radius'       => 4,
+				'spacing'      => 16,
+				'font_size'    => 'theme',
+				'custom_css'   => '',
 			),
 			'email'      => array(
 				'from_name'    => wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES ),

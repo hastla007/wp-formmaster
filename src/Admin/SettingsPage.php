@@ -1102,7 +1102,7 @@ final class SettingsPage {
 			}
 			if ( $p['changes'] ) {
 				echo '<table class="widefat striped"><thead><tr><th scope="col">' . esc_html__( 'Setting', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'Current value', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'New value', 'form-captain' ) . '</th></tr></thead><tbody>';
-				$defs = SettingsSchema::definitions();
+				$defs = SettingsSchema::definitions() + SettingsSchema::extension_fields();
 				foreach ( $p['changes'] as $path => $pair ) {
 					echo '<tr><td>' . esc_html( (string) ( $defs[ $path ]['label'] ?? $path ) ) . ' <code>' . esc_html( $path ) . '</code></td><td>' . esc_html( self::show_value( $pair[0] ) ) . '</td><td>' . esc_html( self::show_value( $pair[1] ) ) . '</td></tr>';
 				}

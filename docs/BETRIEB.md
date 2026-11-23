@@ -294,11 +294,12 @@ wp form-captain settings list [--format=table|json|csv|yaml]   # Schlüssel, Wer
 wp form-captain settings get privacy.retention
 wp form-captain settings set spam.rate_limit 10
 wp form-captain settings set privacy.retention 90d --yes       # Aufbewahrung, externer Captcha und Datenlöschung bei Deinstallation nur mit --yes
-wp form-captain settings reset spam --yes                      # ein Bereich: general, appearance, email, privacy, spam
+wp form-captain settings set multistep.draft_days 14           # Werte von Add-ons (z. B. Form Captain Pro) unter ihrer Feld-ID, Prüfung durch das Add-on
+wp form-captain settings reset spam --yes                      # ein Bereich: general, appearance, email, privacy, spam, export oder ein Add-on-Bereich; samt Add-on-Werten des Bereichs
 wp form-captain settings reset --all --yes
 wp form-captain settings export [--file=form-captain-settings.json]
 wp form-captain settings import form-captain-settings.json --dry-run   # nur anzeigen
 wp form-captain settings import form-captain-settings.json [--yes]     # --yes bestätigt eine geänderte Aufbewahrung
 ```
 
-Ungültige Werte und unbekannte Schlüssel beim Import werden als Warnung gemeldet und nicht übernommen. Rollenrechte werden nicht per CLI gesetzt (dafür `wp role`/`wp cap`).
+Ungültige Werte und unbekannte Schlüssel beim Import werden als Warnung gemeldet und nicht übernommen. Werte von Add-ons stehen in der Datei unter `extensions` (ohne Geheimnisse und ohne Bestätigungsschalter wie „Daten bei Deinstallation löschen“); ist das Add-on am Ziel nicht aktiv, erscheinen sie als unbekannte Schlüssel. Rollenrechte werden nicht per CLI gesetzt (dafür `wp role`/`wp cap`).

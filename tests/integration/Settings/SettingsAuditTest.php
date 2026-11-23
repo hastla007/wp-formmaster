@@ -252,4 +252,72 @@ final class SettingsAuditTest extends TestCase {
 		unset( $_GET['tab'] );
 		$this->assertStringContainsString( 'never sooner than 30 days after this change', $html );
 	}
+
+	public function test_addon_values_survive_export_and_import_without_secrets_and_switches(): void {
+		$this->as_admin();
+		add_filter( 'form_captain_settings_fields_v1', static fn( $f ) => array_merge( (array) $f, self::addon_fields() ) );
+		update_option(
+			'fc_audit_addon',
+			array(
+				'audit.days'                => 21,
+				'audit.api_secret'          => 'top-secret',
+				'uninstall.remove_all_data' => true,
+			)
+		);
+		$export = SettingsTransfer::export();
+		$this->assertSame( array( 'audit.days' => 21 ), $export['extensions'], 'no secret, no confirm switch' );
+		$this->assertStringNotContainsString( 'top-secret', SettingsTransfer::export_json() );
+
+		delete_option( 'fc_audit_addon' );
+		$export['extensions']['audit.days']                = 22;
+		$export['extensions']['audit.api_secret']          = 'from-file';
+		$export['extensions']['uninstall.remove_all_data'] = true;
+		$export['extensions']['other.addon']               = 1;
+		$preview = SettingsTransfer::preview( (string) wp_json_encode( $export ) );
+		$this->assertSame( array( 7, 22 ), $preview['changes']['audit.days'] );
+		$this->assertContains( 'audit.api_secret', $preview['skipped'] );
+		$this->assertContains( 'uninstall.remove_all_data', $preview['skipped'] );
+		$this->assertContains( 'other.addon', $preview['unknown'], 'add-on not active on the target site' );
+		$this->assertFalse( get_option( 'fc_audit_addon' ), 'preview does not save' );
+
+		$export['extensions']['audit.days'] = 99;
+		$res                                = SettingsTransfer::import( (string) wp_json_encode( $export ) );
+		$this->assertArrayHasKey( 'ext.audit.days', $res['errors'], 'add-on check applies' );
+		$this->assertFalse( get_option( 'fc_audit_addon' ) );
+
+		$export['extensions']['audit.days'] = 22;
+		SettingsTransfer::import( (string) wp_json_encode( $export ) );
+		$stored = get_option( 'fc_audit_addon' );
+		$this->assertSame( 22, $stored['audit.days'] );
+		$this->assertArrayNotHasKey( 'audit.api_secret', $stored );
+		$this->assertArrayNotHasKey( 'uninstall.remove_all_data', $stored );
+		$log = array_column( ChangeLog::latest(), null, 'key' );
+		$this->assertSame( 'import', $log['audit.days']['source'] );
+	}
+
+	public function test_cli_lists_gets_sets_and_resets_addon_values(): void {
+		add_filter( 'form_captain_settings_fields_v1', static fn( $f ) => array_merge( (array) $f, self::addon_fields() ) );
+		$cli  = $this->plugin()->get( \FormCaptain\Cli\Commands::class );
+		$rows = array_column( $cli->settings_list(), null, 'key' );
+		$this->assertSame( '7', $rows['audit.days']['value'] );
+		$this->assertSame( 'int', $rows['audit.days']['type'] );
+		$this->assertSame( '7', $cli->settings_get( 'audit.days' ) );
+
+		$this->assertInstanceOf( \WP_Error::class, $cli->settings_set( 'audit.days', '31' ) );
+		$this->assertSame( array( 7, 12 ), $cli->settings_set( 'audit.days', '12' ) );
+		$this->assertSame( 12, get_option( 'fc_audit_addon' )['audit.days'] );
+		$this->assertSame( 'cli', ChangeLog::latest()[0]['source'] );
+
+		$cli->settings_set( 'audit.api_secret', 'xyz' );
+		$this->assertSame( '••••••', $cli->settings_get( 'audit.api_secret' ) );
+		$this->assertSame( '••••••', ChangeLog::latest()[0]['new'] );
+
+		$this->assertInstanceOf( \WP_Error::class, $cli->settings_set( 'uninstall.remove_all_data', 'true' ), 'needs --yes' );
+		$this->assertSame( array( false, true ), $cli->settings_set( 'uninstall.remove_all_data', 'true', true ) );
+		$this->assertSame( array( true, true ), $cli->settings_set( 'uninstall.remove_all_data', 'true' ), 'already on' );
+		$this->assertSame( array( true, false ), $cli->settings_set( 'uninstall.remove_all_data', 'false' ) );
+
+		$this->assertTrue( $cli->settings_reset( 'general', false, true ) );
+		$this->assertSame( 7, get_option( 'fc_audit_addon' )['audit.days'], 'reset includes the add-on values of the section' );
+	}
 }

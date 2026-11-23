@@ -640,11 +640,7 @@ final class SettingsSchema {
 			if ( 'confirm' === $type && self::confirm_stays_on( $field, $input[ $id ], $input ) ) {
 				continue; // Already confirmed and still ticked: no new confirmation word needed.
 			}
-			list( $value, $error ) = self::check_extension_value( $field, $input[ $id ], $input );
-			if ( null === $error && is_callable( $field['validate'] ?? null ) ) {
-				$res   = call_user_func( $field['validate'], $value );
-				$error = is_string( $res ) && '' !== $res ? $res : null;
-			}
+			list( $value, $error ) = self::extension_check( $field, $input[ $id ], $input );
 			if ( null !== $error ) {
 				$errors[ 'ext.' . $id ] = $error;
 				continue;
@@ -660,6 +656,34 @@ final class SettingsSchema {
 			'changed' => $changed,
 			'errors'  => $errors,
 		);
+	}
+
+	/**
+	 * Full check of one add-on value: the add-on's `sanitize` or the core check, then `validate`.
+	 * Used by the settings screen, the settings import and WP-CLI.
+	 *
+	 * @param array<string,mixed> $field     normalized field from extension_fields()
+	 * @param array<string,mixed> $submitted other submitted values (confirmation word as `<id>_confirm`)
+	 * @return array{0:mixed,1:?string} [value, error message]
+	 */
+	public static function extension_check( array $field, mixed $raw, array $submitted = array() ): array {
+		list( $value, $error ) = self::check_extension_value( $field, $raw, $submitted );
+		if ( null === $error && is_callable( $field['validate'] ?? null ) ) {
+			$res   = call_user_func( $field['validate'], $value );
+			$error = is_string( $res ) && '' !== $res ? $res : null;
+		}
+		return array( $value, $error );
+	}
+
+	/**
+	 * Whether an add-on value goes into the settings export (SET-FC-P1): not for secrets (by name),
+	 * not for confirm switches (deleting data must be confirmed on the target site) and not when
+	 * the field says `exportable => false`.
+	 *
+	 * @param array<string,mixed> $field
+	 */
+	public static function is_extension_exportable( array $field ): bool {
+		return 'confirm' !== $field['type'] && ! self::is_secret( (string) $field['id'] ) && false !== ( $field['exportable'] ?? true ) && empty( $field['secret'] );
 	}
 
 	/**
@@ -957,6 +981,9 @@ final class SettingsSchema {
 		if ( is_array( $def ) ) {
 			// Core values declare it; the name check would also hit e.g. spam.token_minutes (form time limit).
 			return ! empty( $def['secret'] );
+		}
+		if ( ! empty( self::extension_fields()[ $path ]['secret'] ) ) {
+			return true;
 		}
 		return (bool) preg_match( '/secret|token|password|passwd|api_?key|private_?key|credential/i', $path );
 	}

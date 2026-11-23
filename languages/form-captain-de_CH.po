@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Form Captain 1.0.0-dev\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/formmaster-int\n"
-"POT-Creation-Date: 2026-11-23T14:47:53+00:00\n"
+"POT-Creation-Date: 2026-11-23T15:26:53+00:00\n"
 "PO-Revision-Date: 2026-11-16 12:00+0000\n"
 "Last-Translator: Captain Suite\n"
 "Language-Team: Deutsch (Schweiz)\n"
@@ -43,8 +43,8 @@ msgid "formular"
 msgstr "formular"
 
 #. Plugin Name of the plugin
-#: form-captain.php:3 src/Admin/DashboardPage.php:220 src/Admin/Menu.php:57
-#: src/Admin/Menu.php:58 src/Admin/Menu.php:78 src/Admin/Menu.php:98
+#: form-captain.php:3 src/Admin/DashboardPage.php:220 src/Admin/Menu.php:60
+#: src/Admin/Menu.php:61 src/Admin/Menu.php:81 src/Admin/Menu.php:101
 #: src/Admin/SettingsPage.php:636 src/Admin/SiteHealth.php:28
 #: src/Admin/SiteHealth.php:41 src/Admin/SiteHealth.php:168
 #: src/Privacy/PrivacyIntegration.php:87 assets/src/block-editor.js:100
@@ -98,16 +98,16 @@ msgstr "Sie sind nicht berechtigt, dies zu tun."
 msgid "Revision and schema are required."
 msgstr "Revision und Schema sind erforderlich."
 
-#: src/Admin/AdminRest.php:237
+#: src/Admin/AdminRest.php:245
 msgid "Revision and actions are required."
 msgstr "Revision und Aktionen sind erforderlich."
 
-#: src/Admin/AdminRest.php:276 src/Service/EntryService.php:83
+#: src/Admin/AdminRest.php:284 src/Service/EntryService.php:83
 msgid "Unknown status."
 msgstr "Unbekannter Status."
 
-#: src/Admin/AdminRest.php:296 src/Admin/AdminRest.php:314
-#: src/Admin/AdminRest.php:344 src/Admin/EditorPage.php:279
+#: src/Admin/AdminRest.php:304 src/Admin/AdminRest.php:322
+#: src/Admin/AdminRest.php:352 src/Admin/EditorPage.php:279
 #: src/Admin/EditorPage.php:336 src/Admin/FormsPage.php:323
 #: src/Import/EntryImportAdmin.php:183 src/Import/EntryImportService.php:211
 #: src/Service/FormService.php:134 src/Service/FormService.php:187
@@ -118,7 +118,7 @@ msgid "Form not found."
 msgstr "Formular nicht gefunden."
 
 #. translators: %s: e-mail address
-#: src/Admin/AdminRest.php:325
+#: src/Admin/AdminRest.php:333
 #, php-format
 msgid "Test e-mail sent to %s."
 msgstr "Test-E-Mail an %s gesendet."
@@ -322,18 +322,18 @@ msgstr "Formular erstellen"
 msgid "All forms"
 msgstr "Alle Formulare"
 
-#: src/Admin/DashboardPage.php:384 src/Admin/Menu.php:69
+#: src/Admin/DashboardPage.php:384 src/Admin/Menu.php:72
 #: src/Admin/Tables/FormsListTable.php:45
 msgid "Entries"
 msgstr "Einträge"
 
 #: src/Admin/DashboardPage.php:387 src/Admin/IntegrationsPage.php:227
-#: src/Admin/Menu.php:70 src/Settings/SettingsSchema.php:584
+#: src/Admin/Menu.php:73 src/Settings/SettingsSchema.php:584
 msgid "Integrations"
 msgstr "Integrationen"
 
-#: src/Admin/DashboardPage.php:390 src/Admin/Menu.php:71
-#: assets/src/editor.js:1813
+#: src/Admin/DashboardPage.php:390 src/Admin/Menu.php:74
+#: assets/src/editor.js:1862
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -405,7 +405,7 @@ msgstr "Ort"
 msgid "State / region"
 msgstr "Bundesland / Region"
 
-#: src/Admin/EditorPage.php:132 src/Admin/SettingsPage.php:936
+#: src/Admin/EditorPage.php:132 src/Admin/SettingsPage.php:950
 msgid "Country"
 msgstr "Land"
 
@@ -616,7 +616,7 @@ msgid "You are not allowed to manage forms."
 msgstr "Sie sind nicht berechtigt, Formulare zu verwalten."
 
 #: src/Admin/EditorPage.php:279 src/Admin/EditorPage.php:283
-#: src/Admin/Menu.php:68
+#: src/Admin/Menu.php:71
 msgid "Edit form"
 msgstr "Formular bearbeiten"
 
@@ -688,9 +688,9 @@ msgstr ""
 msgid "Preview: %s"
 msgstr "Vorschau: %s"
 
-#: src/Admin/EditorPage.php:378 src/Admin/SettingsPage.php:911
-#: src/Admin/Tables/FormsListTable.php:151 assets/src/editor.js:1939
-#: assets/src/editor.js:2265
+#: src/Admin/EditorPage.php:378 src/Admin/SettingsPage.php:925
+#: src/Admin/Tables/FormsListTable.php:151 assets/src/editor.js:1988
+#: assets/src/editor.js:2318
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -953,7 +953,7 @@ msgstr "Quellseite"
 msgid "Source post"
 msgstr "Quellbeitrag"
 
-#: src/Admin/EntriesPage.php:486 src/Admin/SettingsPage.php:1166
+#: src/Admin/EntriesPage.php:486 src/Admin/SettingsPage.php:1180
 msgid "User"
 msgstr "Benutzer"
 
@@ -1006,7 +1006,7 @@ msgid "Updated"
 msgstr "Aktualisiert"
 
 #: src/Admin/EntriesPage.php:550 src/Settings/SettingsSchema.php:725
-#: assets/src/editor.js:1374
+#: assets/src/editor.js:1414
 msgid "None"
 msgstr "Keines"
 
@@ -1018,7 +1018,7 @@ msgstr "Erneut senden"
 msgid "Send admin notification again"
 msgstr "Admin-Benachrichtigung erneut senden"
 
-#: src/Admin/EntriesPage.php:570 assets/src/editor.js:1351
+#: src/Admin/EntriesPage.php:570 assets/src/editor.js:1390
 msgid "Admin notification"
 msgstr "Admin-Benachrichtigung"
 
@@ -1069,7 +1069,7 @@ msgstr "Interne Notizen"
 msgid "No notes yet."
 msgstr "Noch keine Notizen."
 
-#: src/Admin/EntriesPage.php:607 src/Admin/SettingsPage.php:1164
+#: src/Admin/EntriesPage.php:607 src/Admin/SettingsPage.php:1178
 msgid "System"
 msgstr "System"
 
@@ -1124,8 +1124,8 @@ msgid "Consent withdrawal recorded"
 msgstr "Widerruf der Einwilligung erfasst"
 
 #: src/Admin/EntriesPage.php:657 src/Import/EntryImportAdmin.php:571
-#: src/Settings/FormSettingsSchema.php:211 assets/src/editor.js:1927
-#: assets/src/editor.js:2294
+#: src/Settings/FormSettingsSchema.php:211 assets/src/editor.js:1225
+#: assets/src/editor.js:1976 assets/src/editor.js:2347
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -1246,8 +1246,8 @@ msgstr ""
 "Ohne Auswahl werden alle aktiven Einsendungen exportiert (kein Spam, kein "
 "Papierkorb)."
 
-#: src/Admin/EntriesPage.php:792 src/Admin/SettingsPage.php:769
-#: assets/src/editor.js:1723
+#: src/Admin/EntriesPage.php:792 src/Admin/SettingsPage.php:775
+#: assets/src/editor.js:1772
 msgid "Period"
 msgstr "Zeitraum"
 
@@ -1267,7 +1267,7 @@ msgstr "Trennzeichen"
 msgid "Download CSV"
 msgstr "CSV herunterladen"
 
-#: src/Admin/FormsPage.php:223 src/Admin/Menu.php:67
+#: src/Admin/FormsPage.php:223 src/Admin/Menu.php:70
 msgid "Forms"
 msgstr "Formulare"
 
@@ -1297,7 +1297,7 @@ msgstr ""
 "oder Zugangsdaten. Das Formular wird als Entwurf angelegt; Connector-"
 "Aktionen bleiben deaktiviert, bis Sie sie aktivieren."
 
-#: src/Admin/FormsPage.php:253 src/Admin/SettingsPage.php:1163
+#: src/Admin/FormsPage.php:253 src/Admin/SettingsPage.php:1177
 msgid "Import"
 msgstr "Importieren"
 
@@ -1719,11 +1719,11 @@ msgstr "Erneut versuchen"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/Admin/Menu.php:66
+#: src/Admin/Menu.php:69
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: src/Admin/Menu.php:99
+#: src/Admin/Menu.php:102
 msgid "This area is not available yet."
 msgstr "Dieser Bereich ist noch nicht verfügbar."
 
@@ -1963,60 +1963,60 @@ msgstr "Form-Captain-Einstellungen"
 msgid "Settings sections"
 msgstr "Einstellungsbereiche"
 
-#: src/Admin/SettingsPage.php:695
+#: src/Admin/SettingsPage.php:698
 msgid "Save changes"
 msgstr "Änderungen speichern"
 
-#: src/Admin/SettingsPage.php:717
+#: src/Admin/SettingsPage.php:720
 msgid "More settings with Form Captain Pro"
 msgstr "Weitere Einstellungen mit Form Captain Pro"
 
-#: src/Admin/SettingsPage.php:720
+#: src/Admin/SettingsPage.php:723
 msgid "Pro"
 msgstr "Pro"
 
-#: src/Admin/SettingsPage.php:727
+#: src/Admin/SettingsPage.php:730
 msgid "Learn more about Form Captain Pro"
 msgstr "Mehr über Form Captain Pro"
 
-#: src/Admin/SettingsPage.php:729
+#: src/Admin/SettingsPage.php:732
 msgid "You can hide these hints in the General section."
 msgstr "Diese Hinweise lassen sich im Bereich „Allgemein“ ausblenden."
 
-#: src/Admin/SettingsPage.php:744 src/Admin/SettingsPage.php:785
-#: assets/src/editor.js:1801
+#: src/Admin/SettingsPage.php:750 src/Admin/SettingsPage.php:791
+#: assets/src/editor.js:1850
 msgid "Enabled"
 msgstr "Aktiviert"
 
-#: src/Admin/SettingsPage.php:768
+#: src/Admin/SettingsPage.php:774
 msgid "Delete automatically after"
 msgstr "Automatisch löschen nach"
 
-#: src/Admin/SettingsPage.php:770 assets/src/editor.js:1732
+#: src/Admin/SettingsPage.php:776 assets/src/editor.js:1781
 msgid "Unit"
 msgstr "Einheit"
 
-#: src/Admin/SettingsPage.php:774
+#: src/Admin/SettingsPage.php:780
 msgid "Keep until deleted manually"
 msgstr "Bis zur manuellen Löschung aufbewahren"
 
-#: src/Admin/SettingsPage.php:786
+#: src/Admin/SettingsPage.php:792
 msgid "To switch this on, type DELETE:"
 msgstr "Zum Einschalten tippe LÖSCHEN (oder DELETE):"
 
-#: src/Admin/SettingsPage.php:801 assets/src/admin-settings.js:61
+#: src/Admin/SettingsPage.php:807 assets/src/admin-settings.js:67
 msgid "Choose image"
 msgstr "Bild wählen"
 
-#: src/Admin/SettingsPage.php:802
+#: src/Admin/SettingsPage.php:808
 msgid "Remove image"
 msgstr "Bild entfernen"
 
-#: src/Admin/SettingsPage.php:803
+#: src/Admin/SettingsPage.php:809
 msgid "Media library ID of the image (0 = no logo)."
 msgstr "ID des Bildes in der Mediathek (0 = kein Logo)."
 
-#: src/Admin/SettingsPage.php:826
+#: src/Admin/SettingsPage.php:840
 msgid ""
 "Submissions are kept until you delete them. Make sure you delete data you no "
 "longer need."
@@ -2025,33 +2025,33 @@ msgstr ""
 "die Sie nicht mehr benötigen."
 
 #. translators: %s: retention period, e.g. "12 months"
-#: src/Admin/SettingsPage.php:828
+#: src/Admin/SettingsPage.php:842
 #, php-format
 msgid "Submissions are deleted permanently %s after they were received."
 msgstr "Einsendungen werden %s nach dem Eingang endgültig gelöscht."
 
 #. translators: 1: number of submissions, 2: date
-#: src/Admin/SettingsPage.php:831
+#: src/Admin/SettingsPage.php:845
 #, php-format
 msgid "Affects %1$s submissions; earliest deletion on %2$s."
 msgstr "Betrifft %1$s Einsendungen; früheste Löschung am %2$s."
 
 #. translators: %s: number of submissions
-#: src/Admin/SettingsPage.php:833
+#: src/Admin/SettingsPage.php:847
 #, php-format
 msgid "Affects %s submissions; nothing is deleted automatically."
 msgstr "Betrifft %s Einsendungen; es wird nichts automatisch gelöscht."
 
-#: src/Admin/SettingsPage.php:834
+#: src/Admin/SettingsPage.php:848
 msgid "Current setting"
 msgstr "Aktuelle Einstellung"
 
-#: src/Admin/SettingsPage.php:834
+#: src/Admin/SettingsPage.php:848
 msgid "Your change (not saved yet)"
 msgstr "Ihre Änderung (noch nicht gespeichert)"
 
 #. translators: %s: number of forms
-#: src/Admin/SettingsPage.php:841
+#: src/Admin/SettingsPage.php:855
 #, php-format
 msgid "%s form uses its own retention period and is not affected."
 msgid_plural "%s forms use their own retention period and are not affected."
@@ -2062,7 +2062,7 @@ msgstr[1] ""
 "betroffen."
 
 #. translators: %s: number of days
-#: src/Admin/SettingsPage.php:844
+#: src/Admin/SettingsPage.php:858
 #, php-format
 msgid ""
 "I understand that changing the retention period schedules the deletion of "
@@ -2073,7 +2073,7 @@ msgstr ""
 "Änderung)."
 
 #. translators: %s: date
-#: src/Admin/SettingsPage.php:851
+#: src/Admin/SettingsPage.php:865
 #, php-format
 msgid ""
 "Confirmed on %s. Deleting the plugin will also delete all forms and "
@@ -2083,7 +2083,7 @@ msgstr ""
 "Einsendungen gelöscht."
 
 #. translators: 1: number of forms, 2: number of submissions
-#: src/Admin/SettingsPage.php:856
+#: src/Admin/SettingsPage.php:870
 #, php-format
 msgid ""
 "When you delete the plugin, %1$s forms, %2$s submissions and all uploaded "
@@ -2093,11 +2093,11 @@ msgstr ""
 "hochgeladenen Dateien endgültig entfernt. Geben Sie LÖSCHEN ein, um zu "
 "bestätigen."
 
-#: src/Admin/SettingsPage.php:861
+#: src/Admin/SettingsPage.php:875
 msgid "Confirmation word"
 msgstr "Bestätigungswort"
 
-#: src/Admin/SettingsPage.php:866
+#: src/Admin/SettingsPage.php:880
 msgid ""
 "The sender domain differs from your website domain. Many mail servers reject "
 "or mark such messages as spam. Use an address of your own domain or "
@@ -2109,7 +2109,7 @@ msgstr ""
 "Mailanbieter ein."
 
 #. translators: 1: provider, 2: data, 3: purpose
-#: src/Admin/SettingsPage.php:873
+#: src/Admin/SettingsPage.php:887
 #, php-format
 msgid ""
 "%1$s will receive: %2$s. Purpose: %3$s. Update your privacy policy before "
@@ -2118,15 +2118,15 @@ msgstr ""
 "%1$s erhält: %2$s. Zweck: %3$s. Ergänzen Sie Ihre Datenschutzerklärung, "
 "bevor Sie diesen Dienst aktivieren."
 
-#: src/Admin/SettingsPage.php:880
+#: src/Admin/SettingsPage.php:894
 msgid "Provider privacy policy"
 msgstr "Datenschutzerklärung des Anbieters"
 
-#: src/Admin/SettingsPage.php:885 src/Admin/SettingsPage.php:1130
+#: src/Admin/SettingsPage.php:899 src/Admin/SettingsPage.php:1144
 msgid "I have read the data flow and updated the privacy policy."
 msgstr "Ich habe den Datenfluss gelesen und die Datenschutzerklärung ergänzt."
 
-#: src/Admin/SettingsPage.php:892
+#: src/Admin/SettingsPage.php:906
 msgid ""
 "Form-specific options such as recipients, reply-to, subject, confirmation "
 "message, redirect and actions are set in each form, not here. Form import/"
@@ -2137,7 +2137,7 @@ msgstr ""
 "Formular ein, nicht hier. Formular-Import/-Export finden Sie in der "
 "Formularliste, den CSV-Export unter Einträge."
 
-#: src/Admin/SettingsPage.php:893
+#: src/Admin/SettingsPage.php:907
 msgid ""
 "Your theme styles forms by default. Base styles only use local CSS – no "
 "external fonts or files are loaded."
@@ -2145,7 +2145,7 @@ msgstr ""
 "Standardmässig gestaltet Ihr Theme die Formulare. Die Basisstile verwenden "
 "nur lokales CSS – es werden keine externen Schriften oder Dateien geladen."
 
-#: src/Admin/SettingsPage.php:894
+#: src/Admin/SettingsPage.php:908
 msgid ""
 "Form Captain sends e-mails with WordPress (wp_mail). It does not manage SMTP "
 "servers or mail passwords; use an SMTP plugin of your choice for reliable "
@@ -2155,7 +2155,7 @@ msgstr ""
 "Mail-Passwörter werden nicht verwaltet; nutzen Sie für eine zuverlässige "
 "Zustellung ein SMTP-Plugin Ihrer Wahl."
 
-#: src/Admin/SettingsPage.php:895
+#: src/Admin/SettingsPage.php:909
 msgid ""
 "Submissions are stored only in this WordPress database. Form Captain does "
 "not control backups. Deleted submissions remain in existing backups until "
@@ -2168,7 +2168,7 @@ msgstr ""
 "werden abgelaufene Einsendungen automatisch erneut gelöscht; wiederholen Sie "
 "bereits abgeschlossene Löschanfragen."
 
-#: src/Admin/SettingsPage.php:896
+#: src/Admin/SettingsPage.php:910
 msgid ""
 "Honeypot, minimum fill-in time and rate limiting work without cookies and "
 "without sending data to third parties."
@@ -2176,7 +2176,7 @@ msgstr ""
 "Honeypot, Mindest-Ausfüllzeit und Rate-Limit funktionieren ohne Cookies und "
 "ohne Datenübermittlung an Dritte."
 
-#: src/Admin/SettingsPage.php:897
+#: src/Admin/SettingsPage.php:911
 msgid ""
 "Defaults for the CSV export of submissions. Every export can still use other "
 "values."
@@ -2184,25 +2184,25 @@ msgstr ""
 "Vorgaben für den CSV-Export von Einsendungen. Jeder Export kann trotzdem "
 "andere Werte verwenden."
 
-#: src/Admin/SettingsPage.php:913 src/Domain/Fields/FieldTypes.php:23
+#: src/Admin/SettingsPage.php:927 src/Domain/Fields/FieldTypes.php:23
 #: src/Settings/SettingsSchema.php:42
 msgid "Email"
 msgstr "E-Mail"
 
-#: src/Admin/SettingsPage.php:913 src/Frontend/Renderer.php:191
+#: src/Admin/SettingsPage.php:927 src/Frontend/Renderer.php:191
 msgid "Send"
 msgstr "Senden"
 
-#: src/Admin/SettingsPage.php:914
+#: src/Admin/SettingsPage.php:928
 msgid "Schematic preview. The real look depends on your theme."
 msgstr ""
 "Schematische Vorschau. Das tatsächliche Aussehen hängt von Ihrem Theme ab."
 
-#: src/Admin/SettingsPage.php:918
+#: src/Admin/SettingsPage.php:932
 msgid "Privacy policy text"
 msgstr "Text für die Datenschutzerklärung"
 
-#: src/Admin/SettingsPage.php:919
+#: src/Admin/SettingsPage.php:933
 msgid ""
 "Suggested text (not legal advice). It is also available in the WordPress "
 "privacy policy guide."
@@ -2210,15 +2210,15 @@ msgstr ""
 "Textvorschlag (keine Rechtsberatung). Er ist auch im WordPress-Leitfaden für "
 "die Datenschutzerklärung verfügbar."
 
-#: src/Admin/SettingsPage.php:919
+#: src/Admin/SettingsPage.php:933
 msgid "Open the policy guide"
 msgstr "Leitfaden öffnen"
 
-#: src/Admin/SettingsPage.php:929
+#: src/Admin/SettingsPage.php:943
 msgid "Country profile"
 msgstr "Länderprofil"
 
-#: src/Admin/SettingsPage.php:930
+#: src/Admin/SettingsPage.php:944
 msgid ""
 "A country profile suggests settings for your country. Nothing changes until "
 "you have reviewed the suggestion and applied the selected rows. You can "
@@ -2229,60 +2229,60 @@ msgstr ""
 "haben. Jeden Wert können Sie danach wieder ändern."
 
 #. translators: %s: profile name
-#: src/Admin/SettingsPage.php:933
+#: src/Admin/SettingsPage.php:947
 #, php-format
 msgid "Last applied profile: %s"
 msgstr "Zuletzt übernommenes Profil: %s"
 
-#: src/Admin/SettingsPage.php:938
+#: src/Admin/SettingsPage.php:952
 msgid "not legally reviewed"
 msgstr "rechtlich nicht geprüft"
 
-#: src/Admin/SettingsPage.php:941
+#: src/Admin/SettingsPage.php:955
 msgid "Show suggestion"
 msgstr "Vorschlag anzeigen"
 
-#: src/Admin/SettingsPage.php:951 src/Admin/Tables/EntriesListTable.php:207
+#: src/Admin/SettingsPage.php:965 src/Admin/Tables/EntriesListTable.php:207
 msgid "Apply"
 msgstr "Übernehmen"
 
-#: src/Admin/SettingsPage.php:951 src/Admin/SettingsPage.php:1104
-#: src/Admin/SettingsPage.php:1166
+#: src/Admin/SettingsPage.php:965 src/Admin/SettingsPage.php:1118
+#: src/Admin/SettingsPage.php:1180
 msgid "Setting"
 msgstr "Einstellung"
 
-#: src/Admin/SettingsPage.php:951 src/Admin/SettingsPage.php:1104
+#: src/Admin/SettingsPage.php:965 src/Admin/SettingsPage.php:1118
 msgid "Current value"
 msgstr "Aktueller Wert"
 
-#: src/Admin/SettingsPage.php:951
+#: src/Admin/SettingsPage.php:965
 msgid "Suggested value"
 msgstr "Vorgeschlagener Wert"
 
-#: src/Admin/SettingsPage.php:951
+#: src/Admin/SettingsPage.php:965
 msgid "Legal status"
 msgstr "Rechtlicher Stand"
 
-#: src/Admin/SettingsPage.php:958
+#: src/Admin/SettingsPage.php:972
 msgid "invalid"
 msgstr "ungültig"
 
-#: src/Admin/SettingsPage.php:958
+#: src/Admin/SettingsPage.php:972
 msgid "unchanged"
 msgstr "unverändert"
 
 #. translators: %s: date
-#: src/Admin/SettingsPage.php:965
+#: src/Admin/SettingsPage.php:979
 #, php-format
 msgid "Legally reviewed on %s"
 msgstr "Rechtlich geprüft am %s"
 
-#: src/Admin/SettingsPage.php:966
+#: src/Admin/SettingsPage.php:980
 msgid "Not legally reviewed – neutral suggestion, have it checked"
 msgstr "Ungeprüft – neutraler Vorschlag, lassen Sie ihn rechtlich prüfen"
 
 #. translators: 1: postal code pattern, 2: phone number format
-#: src/Admin/SettingsPage.php:983
+#: src/Admin/SettingsPage.php:997
 #, php-format
 msgid ""
 "After applying, the form editor suggests for new fields: postal code "
@@ -2292,20 +2292,20 @@ msgstr ""
 "Postleitzahl „%1$s“, Telefonnummer „%2$s“. Bestehende Felder bleiben "
 "unverändert."
 
-#: src/Admin/SettingsPage.php:984 assets/src/editor.js:843
+#: src/Admin/SettingsPage.php:998 assets/src/editor.js:843
 msgid "Any"
 msgstr "Beliebig"
 
-#: src/Admin/SettingsPage.php:985 assets/src/editor.js:884
+#: src/Admin/SettingsPage.php:999 assets/src/editor.js:884
 msgid "International with + and country code"
 msgstr "International mit + und Ländervorwahl"
 
-#: src/Admin/SettingsPage.php:985 assets/src/editor.js:883
+#: src/Admin/SettingsPage.php:999 assets/src/editor.js:883
 msgid "Any phone number"
 msgstr "Beliebige Telefonnummer"
 
 #. translators: 1: number of submissions, 2: date
-#: src/Admin/SettingsPage.php:995
+#: src/Admin/SettingsPage.php:1009
 #, php-format
 msgid ""
 "The new retention period affects %1$s submissions; earliest deletion on %2$s."
@@ -2314,7 +2314,7 @@ msgstr ""
 "%2$s."
 
 #. translators: %s: number of submissions
-#: src/Admin/SettingsPage.php:997
+#: src/Admin/SettingsPage.php:1011
 #, php-format
 msgid ""
 "The new retention period affects %s submissions; nothing is deleted "
@@ -2323,33 +2323,33 @@ msgstr ""
 "Die neue Aufbewahrungsdauer betrifft %s Einsendungen; nichts wird "
 "automatisch gelöscht."
 
-#: src/Admin/SettingsPage.php:1002
+#: src/Admin/SettingsPage.php:1016
 msgid "I have reviewed the changes and want to apply the selected rows."
 msgstr ""
 "Ich habe die Änderungen geprüft und möchte die ausgewählten Zeilen "
 "übernehmen."
 
-#: src/Admin/SettingsPage.php:1003
+#: src/Admin/SettingsPage.php:1017
 msgid "Apply selected values"
 msgstr "Ausgewählte Werte übernehmen"
 
-#: src/Admin/SettingsPage.php:1005
+#: src/Admin/SettingsPage.php:1019
 msgid "Your settings already match this profile."
 msgstr "Ihre Einstellungen entsprechen bereits diesem Profil."
 
-#: src/Admin/SettingsPage.php:1017 src/Mail/MailBuilder.php:525
+#: src/Admin/SettingsPage.php:1031 src/Mail/MailBuilder.php:527
 msgid "Yes"
 msgstr "Ja"
 
-#: src/Admin/SettingsPage.php:1017 src/Mail/MailBuilder.php:525
+#: src/Admin/SettingsPage.php:1031 src/Mail/MailBuilder.php:527
 msgid "No"
 msgstr "Nein"
 
-#: src/Admin/SettingsPage.php:1025
+#: src/Admin/SettingsPage.php:1039
 msgid "Test e-mail"
 msgstr "Test-E-Mail"
 
-#: src/Admin/SettingsPage.php:1029
+#: src/Admin/SettingsPage.php:1043
 msgid ""
 "Sends a short test message to your own user e-mail address with the default "
 "sender."
@@ -2357,20 +2357,20 @@ msgstr ""
 "Sendet eine kurze Testnachricht mit dem Standard-Absender an die E-Mail-"
 "Adresse Ihres Benutzerkontos."
 
-#: src/Admin/SettingsPage.php:1030
+#: src/Admin/SettingsPage.php:1044
 msgid "Send test e-mail"
 msgstr "Test-E-Mail senden"
 
-#: src/Admin/SettingsPage.php:1036
+#: src/Admin/SettingsPage.php:1050
 msgid "Reset this section"
 msgstr "Diesen Bereich zurücksetzen"
 
-#: src/Admin/SettingsPage.php:1037
+#: src/Admin/SettingsPage.php:1051
 msgid "Reset this section to the defaults?"
 msgstr "Diesen Bereich auf die Standardwerte zurücksetzen?"
 
 #. translators: %s: section name
-#: src/Admin/SettingsPage.php:1041
+#: src/Admin/SettingsPage.php:1055
 #, php-format
 msgid ""
 "Only the section \"%s\" is reset to the defaults. Other sections and "
@@ -2379,7 +2379,7 @@ msgstr ""
 "Nur der Bereich „%s“ wird auf die Standardwerte zurückgesetzt. Andere "
 "Bereiche und bestehende Formulare behalten ihre Werte."
 
-#: src/Admin/SettingsPage.php:1043
+#: src/Admin/SettingsPage.php:1057
 msgid ""
 "Resetting switches automatic deletion off (keep until deleted manually) and "
 "disables data deletion on uninstall. Existing submissions are rescheduled "
@@ -2389,7 +2389,7 @@ msgstr ""
 "manuellen Löschen) und deaktiviert das Löschen der Daten bei der "
 "Deinstallation. Vorhandene Einsendungen werden entsprechend neu geplant."
 
-#: src/Admin/SettingsPage.php:1046
+#: src/Admin/SettingsPage.php:1060
 msgid ""
 "Only administrators keep access. All other roles lose their Form Captain "
 "permissions."
@@ -2397,15 +2397,15 @@ msgstr ""
 "Nur Administratoren behalten den Zugriff. Alle anderen Rollen verlieren ihre "
 "Form-Captain-Berechtigungen."
 
-#: src/Admin/SettingsPage.php:1048
+#: src/Admin/SettingsPage.php:1062
 msgid "I understand the consequences."
 msgstr "Ich verstehe die Folgen."
 
-#: src/Admin/SettingsPage.php:1049
+#: src/Admin/SettingsPage.php:1063
 msgid "Reset section"
 msgstr "Bereich zurücksetzen"
 
-#: src/Admin/SettingsPage.php:1056
+#: src/Admin/SettingsPage.php:1070
 msgid ""
 "Choose which roles may use Form Captain. Entries can contain personal data – "
 "grant reading and exporting only to people who need it."
@@ -2414,23 +2414,23 @@ msgstr ""
 "personenbezogene Daten enthalten – erlauben Sie Lesen und Exportieren nur "
 "Personen, die dies benötigen."
 
-#: src/Admin/SettingsPage.php:1061
+#: src/Admin/SettingsPage.php:1075
 msgid "Role"
 msgstr "Rolle"
 
 #. translators: %s: number of users
-#: src/Admin/SettingsPage.php:1068
+#: src/Admin/SettingsPage.php:1082
 #, php-format
 msgid "%s user"
 msgid_plural "%s users"
 msgstr[0] "%s Benutzer"
 msgstr[1] "%s Benutzer"
 
-#: src/Admin/SettingsPage.php:1074
+#: src/Admin/SettingsPage.php:1088
 msgid "always"
 msgstr "immer"
 
-#: src/Admin/SettingsPage.php:1081
+#: src/Admin/SettingsPage.php:1095
 msgid ""
 "Administrators always keep \"Manage settings\" so nobody can lock themselves "
 "out. Changing permissions also requires the WordPress capability to promote "
@@ -2440,15 +2440,15 @@ msgstr ""
 "aussperren kann. Zum Ändern von Berechtigungen ist zusätzlich das WordPress-"
 "Recht zum Befördern von Benutzern erforderlich."
 
-#: src/Admin/SettingsPage.php:1082
+#: src/Admin/SettingsPage.php:1096
 msgid "Save permissions"
 msgstr "Berechtigungen speichern"
 
-#: src/Admin/SettingsPage.php:1088
+#: src/Admin/SettingsPage.php:1102
 msgid "Export and import settings"
 msgstr "Einstellungen exportieren und importieren"
 
-#: src/Admin/SettingsPage.php:1089
+#: src/Admin/SettingsPage.php:1103
 msgid ""
 "Transfers the settings of this page to another website as a JSON file. "
 "Secrets, role permissions, forms and submissions are not included; data "
@@ -2459,35 +2459,35 @@ msgstr ""
 "enthalten; die Datenlöschung bei Deinstallation muss auf der Zielseite immer "
 "neu bestätigt werden."
 
-#: src/Admin/SettingsPage.php:1092
+#: src/Admin/SettingsPage.php:1106
 msgid "Export settings"
 msgstr "Einstellungen exportieren"
 
-#: src/Admin/SettingsPage.php:1098
+#: src/Admin/SettingsPage.php:1112
 msgid "Import preview"
 msgstr "Importvorschau"
 
 #. translators: 1: plugin version, 2: date
-#: src/Admin/SettingsPage.php:1101
+#: src/Admin/SettingsPage.php:1115
 #, php-format
 msgid "Exported with Form Captain %1$s on %2$s (UTC)."
 msgstr "Exportiert mit Form Captain %1$s am %2$s (UTC)."
 
-#: src/Admin/SettingsPage.php:1104 src/Admin/SettingsPage.php:1166
+#: src/Admin/SettingsPage.php:1118 src/Admin/SettingsPage.php:1180
 msgid "New value"
 msgstr "Neuer Wert"
 
-#: src/Admin/SettingsPage.php:1111
+#: src/Admin/SettingsPage.php:1125
 msgid "The file contains no changes."
 msgstr "Die Datei enthält keine Änderungen."
 
 #. translators: %s: list of setting keys
-#: src/Admin/SettingsPage.php:1122
+#: src/Admin/SettingsPage.php:1136
 #, php-format
 msgid "Unknown keys will be ignored: %s"
 msgstr "Unbekannte Schlüssel werden ignoriert: %s"
 
-#: src/Admin/SettingsPage.php:1127
+#: src/Admin/SettingsPage.php:1141
 msgid ""
 "I understand that changing the retention period schedules the deletion of "
 "existing submissions (never sooner than 14 days after this change)."
@@ -2495,15 +2495,15 @@ msgstr ""
 "Mir ist bewusst, dass eine Änderung der Aufbewahrungsfrist die Löschung "
 "vorhandener Einsendungen einplant (frühestens 14 Tage nach dieser Änderung)."
 
-#: src/Admin/SettingsPage.php:1132
+#: src/Admin/SettingsPage.php:1146
 msgid "Import these settings"
 msgstr "Diese Einstellungen importieren"
 
-#: src/Admin/SettingsPage.php:1138
+#: src/Admin/SettingsPage.php:1152
 msgid "Settings file"
 msgstr "Einstellungsdatei"
 
-#: src/Admin/SettingsPage.php:1139
+#: src/Admin/SettingsPage.php:1153
 msgid ""
 "You see all changes before anything is saved. Invalid values and unknown "
 "keys are reported and not imported."
@@ -2511,24 +2511,24 @@ msgstr ""
 "Vor dem Speichern werden alle Änderungen angezeigt. Ungültige Werte und "
 "unbekannte Schlüssel werden gemeldet und nicht importiert."
 
-#: src/Admin/SettingsPage.php:1140
+#: src/Admin/SettingsPage.php:1154
 msgid "Show import preview"
 msgstr "Importvorschau anzeigen"
 
-#: src/Admin/SettingsPage.php:1146
+#: src/Admin/SettingsPage.php:1160
 msgid "On"
 msgstr "An"
 
-#: src/Admin/SettingsPage.php:1146
+#: src/Admin/SettingsPage.php:1160
 msgid "Off"
 msgstr "Aus"
 
-#: src/Admin/SettingsPage.php:1152
+#: src/Admin/SettingsPage.php:1166
 msgid "Settings change log"
 msgstr "Änderungsprotokoll der Einstellungen"
 
 #. translators: %d: number of months
-#: src/Admin/SettingsPage.php:1154
+#: src/Admin/SettingsPage.php:1168
 #, php-format
 msgid ""
 "Changes of settings and role permissions from the last %d month. Secret "
@@ -2543,31 +2543,31 @@ msgstr[1] ""
 "Änderungen an Einstellungen und Rollenrechten aus den letzten %d Monaten. "
 "Geheime Werte sind maskiert."
 
-#: src/Admin/SettingsPage.php:1157
+#: src/Admin/SettingsPage.php:1171
 msgid "No changes recorded yet."
 msgstr "Noch keine Änderungen aufgezeichnet."
 
-#: src/Admin/SettingsPage.php:1161
+#: src/Admin/SettingsPage.php:1175
 msgid "Settings screen"
 msgstr "Einstellungsseite"
 
-#: src/Admin/SettingsPage.php:1162
+#: src/Admin/SettingsPage.php:1176
 msgid "WP-CLI"
 msgstr "WP-CLI"
 
-#: src/Admin/SettingsPage.php:1166
+#: src/Admin/SettingsPage.php:1180
 msgid "Time"
 msgstr "Zeitpunkt"
 
-#: src/Admin/SettingsPage.php:1166
+#: src/Admin/SettingsPage.php:1180
 msgid "Source"
 msgstr "Quelle"
 
-#: src/Admin/SettingsPage.php:1166
+#: src/Admin/SettingsPage.php:1180
 msgid "Old value"
 msgstr "Alter Wert"
 
-#: src/Admin/SettingsPage.php:1178
+#: src/Admin/SettingsPage.php:1192
 msgid ""
 "Read-only overview for troubleshooting. It never shows submitted values, e-"
 "mail addresses, IP addresses or secrets."
@@ -2575,31 +2575,31 @@ msgstr ""
 "Nur lesende Übersicht zur Fehlersuche. Sie zeigt nie eingesendete Werte, E-"
 "Mail-Adressen, IP-Adressen oder Geheimnisse."
 
-#: src/Admin/SettingsPage.php:1186
+#: src/Admin/SettingsPage.php:1200
 msgid "No problems detected."
 msgstr "Keine Probleme erkannt."
 
-#: src/Admin/SettingsPage.php:1189
+#: src/Admin/SettingsPage.php:1203
 msgid "Environment"
 msgstr "Umgebung"
 
-#: src/Admin/SettingsPage.php:1190
+#: src/Admin/SettingsPage.php:1204
 msgid "Database"
 msgstr "Datenbank"
 
-#: src/Admin/SettingsPage.php:1191
+#: src/Admin/SettingsPage.php:1205
 msgid "Queue and cron"
 msgstr "Warteschlange und Cron"
 
-#: src/Admin/SettingsPage.php:1192
+#: src/Admin/SettingsPage.php:1206
 msgid "E-mail"
 msgstr "E-Mail"
 
-#: src/Admin/SettingsPage.php:1193
+#: src/Admin/SettingsPage.php:1207
 msgid "Integrations and Captain Suite"
 msgstr "Integrationen und Captain Suite"
 
-#: src/Admin/SettingsPage.php:1203
+#: src/Admin/SettingsPage.php:1217
 msgid ""
 "WP-Cron is disabled (DISABLE_WP_CRON). Run this command every minute from "
 "your system cron:"
@@ -2607,35 +2607,35 @@ msgstr ""
 "WP-Cron ist deaktiviert (DISABLE_WP_CRON). Führen Sie diesen Befehl jede "
 "Minute über den System-Cron aus:"
 
-#: src/Admin/SettingsPage.php:1205
+#: src/Admin/SettingsPage.php:1219
 msgid "Recent errors"
 msgstr "Letzte Fehler"
 
-#: src/Admin/SettingsPage.php:1207
+#: src/Admin/SettingsPage.php:1221
 msgid "Time (UTC)"
 msgstr "Zeit (UTC)"
 
-#: src/Admin/SettingsPage.php:1207
+#: src/Admin/SettingsPage.php:1221
 msgid "Level"
 msgstr "Stufe"
 
-#: src/Admin/SettingsPage.php:1207
+#: src/Admin/SettingsPage.php:1221
 msgid "Code"
 msgstr "Code"
 
-#: src/Admin/SettingsPage.php:1207
+#: src/Admin/SettingsPage.php:1221
 msgid "Correlation ID"
 msgstr "Korrelations-ID"
 
-#: src/Admin/SettingsPage.php:1213
+#: src/Admin/SettingsPage.php:1227
 msgid "No warnings or errors recorded."
 msgstr "Keine Warnungen oder Fehler aufgezeichnet."
 
-#: src/Admin/SettingsPage.php:1215 src/Admin/SettingsPage.php:1217
+#: src/Admin/SettingsPage.php:1229 src/Admin/SettingsPage.php:1231
 msgid "Diagnostics report"
 msgstr "Diagnosebericht"
 
-#: src/Admin/SettingsPage.php:1216
+#: src/Admin/SettingsPage.php:1230
 msgid ""
 "Copy this report into a support request. It contains status data, error "
 "codes and correlation IDs only."
@@ -2643,15 +2643,15 @@ msgstr ""
 "Kopieren Sie diesen Bericht in eine Support-Anfrage. Er enthält nur "
 "Statusdaten, Fehlercodes und Korrelations-IDs."
 
-#: src/Admin/SettingsPage.php:1218
+#: src/Admin/SettingsPage.php:1232
 msgid "Copy report"
 msgstr "Bericht kopieren"
 
-#: src/Admin/SettingsPage.php:1223
+#: src/Admin/SettingsPage.php:1237
 msgid "Signing key"
 msgstr "Signaturschlüssel"
 
-#: src/Admin/SettingsPage.php:1224 src/Admin/SettingsPage.php:1229
+#: src/Admin/SettingsPage.php:1238 src/Admin/SettingsPage.php:1243
 msgid ""
 "Renewing the signing key invalidates links and open forms older than 26 "
 "hours. Continue?"
@@ -2659,7 +2659,7 @@ msgstr ""
 "Das Erneuern des Signaturschlüssels macht Links und offene Formulare "
 "ungültig, die älter als 26 Stunden sind. Fortfahren?"
 
-#: src/Admin/SettingsPage.php:1227
+#: src/Admin/SettingsPage.php:1241
 msgid ""
 "The signing key protects submission tokens and signed suite contexts. It is "
 "never displayed. Renew it if you suspect it was exposed."
@@ -2668,11 +2668,11 @@ msgstr ""
 "Kontexte. Er wird nie angezeigt. Erneuern Sie ihn, wenn Sie vermuten, dass "
 "er offengelegt wurde."
 
-#: src/Admin/SettingsPage.php:1228
+#: src/Admin/SettingsPage.php:1242
 msgid "Discard the previous key immediately (suspected compromise)"
 msgstr "Bisherigen Schlüssel sofort verwerfen (Verdacht auf Kompromittierung)"
 
-#: src/Admin/SettingsPage.php:1230
+#: src/Admin/SettingsPage.php:1244
 msgid "Renew signing key"
 msgstr "Signaturschlüssel erneuern"
 
@@ -2971,7 +2971,7 @@ msgstr "Gelesen"
 #: src/Admin/Tables/EntriesListTable.php:126
 #: src/Admin/Tables/FormsListTable.php:103
 #: src/Admin/Tables/FormsListTable.php:139 src/Export/CsvExporter.php:331
-#: src/Privacy/PrivacyIntegration.php:279 assets/src/editor.js:1968
+#: src/Privacy/PrivacyIntegration.php:279 assets/src/editor.js:2017
 msgid "Archived"
 msgstr "Archiviert"
 
@@ -3044,7 +3044,7 @@ msgid "Last modified"
 msgstr "Zuletzt geändert"
 
 #: src/Admin/Tables/FormsListTable.php:100
-#: src/Admin/Tables/FormsListTable.php:137 assets/src/editor.js:1966
+#: src/Admin/Tables/FormsListTable.php:137 assets/src/editor.js:2015
 msgid "Published"
 msgstr "Veröffentlicht"
 
@@ -3053,7 +3053,7 @@ msgid "Drafts"
 msgstr "Entwürfe"
 
 #: src/Admin/Tables/FormsListTable.php:102
-#: src/Admin/Tables/FormsListTable.php:138 assets/src/editor.js:1967
+#: src/Admin/Tables/FormsListTable.php:138 assets/src/editor.js:2016
 msgid "Paused"
 msgstr "Pausiert"
 
@@ -3073,7 +3073,7 @@ msgstr ""
 msgid "Create your first form"
 msgstr "Erstes Formular erstellen"
 
-#: src/Admin/Tables/FormsListTable.php:140 assets/src/editor.js:1965
+#: src/Admin/Tables/FormsListTable.php:140 assets/src/editor.js:2014
 msgid "Draft"
 msgstr "Entwurf"
 
@@ -3089,11 +3089,11 @@ msgstr "Duplizieren"
 msgid "(opens in a new tab)"
 msgstr "(öffnet in einem neuen Tab)"
 
-#: src/Admin/Tables/FormsListTable.php:155 assets/src/editor.js:2269
+#: src/Admin/Tables/FormsListTable.php:155 assets/src/editor.js:2322
 msgid "Pause"
 msgstr "Pausieren"
 
-#: src/Admin/Tables/FormsListTable.php:158 assets/src/editor.js:2272
+#: src/Admin/Tables/FormsListTable.php:158 assets/src/editor.js:2325
 msgid "Resume"
 msgstr "Fortsetzen"
 
@@ -4009,7 +4009,7 @@ msgstr "Ein Import kann nur innerhalb von %d Tagen zurückgenommen werden."
 msgid "Import from another form format"
 msgstr "Aus einem anderen Formularformat importieren"
 
-#: src/Import/ImportAdmin.php:100 assets/src/editor.js:2253
+#: src/Import/ImportAdmin.php:100 assets/src/editor.js:2306
 msgid "Form title"
 msgstr "Formulartitel"
 
@@ -5312,13 +5312,13 @@ msgid "name@example.com"
 msgstr "name@example.com"
 
 #: src/Service/Templates.php:110 src/Settings/FormSettingsSchema.php:74
-#: assets/src/editor.js:1275 assets/src/editor.js:1385
-#: assets/src/editor.js:1442
+#: assets/src/editor.js:1314 assets/src/editor.js:1425
+#: assets/src/editor.js:1483
 msgid "Subject"
 msgstr "Betreff"
 
-#: src/Service/Templates.php:111 assets/src/editor.js:1284
-#: assets/src/editor.js:1447
+#: src/Service/Templates.php:111 assets/src/editor.js:1323
+#: assets/src/editor.js:1488
 msgid "Message"
 msgstr "Nachricht"
 
@@ -5582,11 +5582,11 @@ msgstr ""
 msgid "Send a notification"
 msgstr "Benachrichtigung senden"
 
-#: src/Settings/FormSettingsSchema.php:51
+#: src/Settings/FormSettingsSchema.php:51 assets/src/editor.js:1391
 msgid "Sends an e-mail to the recipients below for every new submission."
 msgstr "Sendet bei jeder neuen Einsendung eine E-Mail an die Empfänger unten."
 
-#: src/Settings/FormSettingsSchema.php:58 assets/src/editor.js:1360
+#: src/Settings/FormSettingsSchema.php:58 assets/src/editor.js:1399
 msgid "Recipients"
 msgstr "Empfänger"
 
@@ -5601,7 +5601,7 @@ msgstr ""
 msgid "Reply-to field"
 msgstr "Feld für die Antwortadresse"
 
-#: src/Settings/FormSettingsSchema.php:67
+#: src/Settings/FormSettingsSchema.php:67 assets/src/editor.js:1412
 msgid "An e-mail field of this form whose value is used as reply-to address."
 msgstr ""
 "Ein E-Mail-Feld dieses Formulars, dessen Wert als Antwortadresse dient."
@@ -5619,7 +5619,7 @@ msgstr "Platzhalter wie {form_title} werden beim Versand ersetzt."
 msgid "Fields in the notification"
 msgstr "Felder in der Benachrichtigung"
 
-#: src/Settings/FormSettingsSchema.php:82
+#: src/Settings/FormSettingsSchema.php:82 assets/src/editor.js:1434
 msgid "All fields not marked as sensitive, or a selection."
 msgstr "Alle nicht als sensibel markierten Felder oder eine Auswahl."
 
@@ -5627,7 +5627,7 @@ msgstr "Alle nicht als sensibel markierten Felder oder eine Auswahl."
 msgid "Send a confirmation e-mail"
 msgstr "Bestätigungs-E-Mail senden"
 
-#: src/Settings/FormSettingsSchema.php:90
+#: src/Settings/FormSettingsSchema.php:90 assets/src/editor.js:1474
 msgid "Needs an e-mail field marked as confirmation recipient."
 msgstr ""
 "Braucht ein E-Mail-Feld, das als Empfänger der Bestätigung markiert ist."
@@ -5636,7 +5636,7 @@ msgstr ""
 msgid "Confirmation subject"
 msgstr "Betreff der Bestätigung"
 
-#: src/Settings/FormSettingsSchema.php:97
+#: src/Settings/FormSettingsSchema.php:97 assets/src/editor.js:1483
 msgid "Required when the confirmation e-mail is on."
 msgstr "Pflicht, wenn die Bestätigungs-E-Mail eingeschaltet ist."
 
@@ -5672,7 +5672,7 @@ msgstr "Zu einer Seite weiterleiten"
 msgid "After sending"
 msgstr "Nach dem Absenden"
 
-#: src/Settings/FormSettingsSchema.php:123
+#: src/Settings/FormSettingsSchema.php:123 assets/src/editor.js:1570
 msgid "Show a message below the form or redirect to a published page."
 msgstr ""
 "Eine Meldung unter dem Formular anzeigen oder auf eine veröffentlichte Seite "
@@ -5682,7 +5682,7 @@ msgstr ""
 msgid "Confirmation message"
 msgstr "Bestätigungsmeldung"
 
-#: src/Settings/FormSettingsSchema.php:131
+#: src/Settings/FormSettingsSchema.php:131 assets/src/editor.js:1581
 msgid "Shown after a successful submission. Empty uses the default text."
 msgstr "Erscheint nach erfolgreichem Absenden. Leer = Standardtext."
 
@@ -5698,7 +5698,7 @@ msgstr "Eine veröffentlichte Seite ohne Passwort."
 msgid "Message while paused"
 msgstr "Meldung während der Pause"
 
-#: src/Settings/FormSettingsSchema.php:147
+#: src/Settings/FormSettingsSchema.php:147 assets/src/editor.js:1686
 msgid "Shown instead of the form while it is paused."
 msgstr "Erscheint statt des Formulars, solange es pausiert ist."
 
@@ -5715,20 +5715,21 @@ msgid "Form styling"
 msgstr "Formulargestaltung"
 
 #: src/Settings/FormSettingsSchema.php:160
-#: src/Settings/FormSettingsSchema.php:167
+#: src/Settings/FormSettingsSchema.php:167 assets/src/editor.js:1526
+#: assets/src/editor.js:1696
 msgid "Copied from the global setting when the form is created."
 msgstr ""
 "Wird beim Anlegen des Formulars aus der globalen Einstellung übernommen."
 
-#: src/Settings/FormSettingsSchema.php:166 assets/src/editor.js:1484
+#: src/Settings/FormSettingsSchema.php:166 assets/src/editor.js:1525
 msgid "Sender name"
 msgstr "Absendername"
 
-#: src/Settings/FormSettingsSchema.php:173 assets/src/editor.js:1491
+#: src/Settings/FormSettingsSchema.php:173 assets/src/editor.js:1533
 msgid "Sender address"
 msgstr "Absenderadresse"
 
-#: src/Settings/FormSettingsSchema.php:174
+#: src/Settings/FormSettingsSchema.php:174 assets/src/editor.js:1534
 msgid ""
 "Copied from the global setting when the form is created. Empty uses the "
 "global sender."
@@ -5741,12 +5742,12 @@ msgid "Use the global setting"
 msgstr "Globale Einstellung verwenden"
 
 #: src/Settings/FormSettingsSchema.php:181 src/Settings/SettingsSchema.php:186
-#: assets/src/editor.js:1505
+#: assets/src/editor.js:1548
 msgid "HTML"
 msgstr "HTML"
 
 #: src/Settings/FormSettingsSchema.php:182 src/Settings/SettingsSchema.php:187
-#: assets/src/editor.js:1506
+#: assets/src/editor.js:1549
 msgid "Plain text"
 msgstr "Nur Text"
 
@@ -5780,7 +5781,7 @@ msgid ""
 msgstr ""
 "Schritte nach einer Einsendung, etwa Benachrichtigungen oder Anonymisierung."
 
-#: src/Settings/FormSettingsSchema.php:221 assets/src/editor.js:1572
+#: src/Settings/FormSettingsSchema.php:221 assets/src/editor.js:1616
 msgid "Submit button text"
 msgstr "Text der Absende-Schaltfläche"
 
@@ -5811,22 +5812,22 @@ msgstr ""
 "Überschrift der Fehlerliste nach einer fehlgeschlagenen Einsendung. Leer = "
 "Standardtext."
 
-#: src/Settings/FormSettingsSchema.php:246 assets/src/editor.js:1602
+#: src/Settings/FormSettingsSchema.php:246 assets/src/editor.js:1646
 msgid "Accept submissions from"
 msgstr "Einsendungen annehmen ab"
 
-#: src/Settings/FormSettingsSchema.php:247
+#: src/Settings/FormSettingsSchema.php:247 assets/src/editor.js:1647
 msgid ""
 "Date and time in the site time zone. Empty means the form is open right away."
 msgstr ""
 "Datum und Uhrzeit in der Zeitzone der Website. Leer = das Formular ist "
 "sofort offen."
 
-#: src/Settings/FormSettingsSchema.php:253 assets/src/editor.js:1611
+#: src/Settings/FormSettingsSchema.php:253 assets/src/editor.js:1656
 msgid "Accept submissions until"
 msgstr "Einsendungen annehmen bis"
 
-#: src/Settings/FormSettingsSchema.php:254
+#: src/Settings/FormSettingsSchema.php:254 assets/src/editor.js:1657
 msgid ""
 "Date and time in the site time zone; must be after the start. Empty means no "
 "end."
@@ -5834,7 +5835,7 @@ msgstr ""
 "Datum und Uhrzeit in der Zeitzone der Website; muss nach dem Beginn liegen. "
 "Leer = kein Ende."
 
-#: src/Settings/FormSettingsSchema.php:260 assets/src/editor.js:1620
+#: src/Settings/FormSettingsSchema.php:260 assets/src/editor.js:1666
 msgid "Maximum number of entries"
 msgstr "Höchstzahl Einsendungen"
 
@@ -5854,23 +5855,23 @@ msgstr ""
 "Erscheint statt des Formulars ausserhalb des Zeitraums oder wenn die "
 "Höchstzahl erreicht ist. Leer = Standardtext."
 
-#: src/Settings/FormSettingsSchema.php:275 assets/src/editor.js:1664
+#: src/Settings/FormSettingsSchema.php:275 assets/src/editor.js:1712
 msgid "As in the global spam settings"
 msgstr "Wie in den globalen Spamschutz-Einstellungen"
 
-#: src/Settings/FormSettingsSchema.php:276 assets/src/editor.js:1665
+#: src/Settings/FormSettingsSchema.php:276 assets/src/editor.js:1713
 msgid "Stricter: always require the captcha"
 msgstr "Strenger: Captcha immer verlangen"
 
-#: src/Settings/FormSettingsSchema.php:277 assets/src/editor.js:1666
+#: src/Settings/FormSettingsSchema.php:277 assets/src/editor.js:1714
 msgid "No captcha for this form"
 msgstr "Kein Captcha für dieses Formular"
 
-#: src/Settings/FormSettingsSchema.php:281 assets/src/editor.js:1660
+#: src/Settings/FormSettingsSchema.php:281 assets/src/editor.js:1708
 msgid "Captcha for this form"
 msgstr "Captcha für dieses Formular"
 
-#: src/Settings/FormSettingsSchema.php:282 assets/src/editor.js:1661
+#: src/Settings/FormSettingsSchema.php:282 assets/src/editor.js:1709
 msgid ""
 "Honeypot, minimum time, blocklist and rate limits always apply. \"Stricter\" "
 "requires the captcha also from visitors without JavaScript (built-in proof "
@@ -5880,7 +5881,7 @@ msgstr ""
 "verlangt das Captcha auch von Besuchern ohne JavaScript (eingebauter Proof "
 "of Work, wenn global kein Captcha gewählt ist)."
 
-#: src/Settings/FormSettingsSchema.php:290 assets/src/editor.js:1248
+#: src/Settings/FormSettingsSchema.php:290 assets/src/editor.js:1287
 msgid "Double opt-in"
 msgstr "Double-Opt-in"
 
@@ -5892,7 +5893,7 @@ msgstr ""
 "Besucher bestätigen ihre Einsendung über einen Link per E-Mail. Unbestätigte "
 "Einsendungen werden automatisch gelöscht."
 
-#: src/Settings/FormSettingsSchema.php:297 assets/src/editor.js:1262
+#: src/Settings/FormSettingsSchema.php:297 assets/src/editor.js:1301
 msgid "E-mail field for the confirmation link"
 msgstr "E-Mail-Feld für den Bestätigungslink"
 
@@ -5931,36 +5932,36 @@ msgid ""
 "Shown after sending, up to 1000 characters. Empty uses the default text."
 msgstr "Erscheint nach dem Absenden, bis 1000 Zeichen. Leer = Standardtext."
 
-#: src/Settings/FormSettingsSchema.php:325 assets/src/editor.js:1303
+#: src/Settings/FormSettingsSchema.php:325 assets/src/editor.js:1342
 msgid "Link valid for (hours)"
 msgstr "Link gültig für (Stunden)"
 
-#: src/Settings/FormSettingsSchema.php:326 assets/src/editor.js:1304
+#: src/Settings/FormSettingsSchema.php:326 assets/src/editor.js:1343
 msgid "1 to 720 hours. Default: 48."
 msgstr "1 bis 720 Stunden. Standard: 48."
 
-#: src/Settings/FormSettingsSchema.php:332 assets/src/editor.js:1312
+#: src/Settings/FormSettingsSchema.php:332 assets/src/editor.js:1351
 msgid "Delete unconfirmed submissions after (days)"
 msgstr "Unbestätigte Einsendungen löschen nach (Tagen)"
 
-#: src/Settings/FormSettingsSchema.php:333 assets/src/editor.js:1313
+#: src/Settings/FormSettingsSchema.php:333 assets/src/editor.js:1352
 msgid "1 to 90 days, at least as long as the link is valid. Default: 7."
 msgstr ""
 "1 bis 90 Tage, mindestens so lange, wie der Link gültig ist. Standard: 7."
 
-#: src/Settings/RetentionPeriod.php:32 assets/src/editor.js:1735
+#: src/Settings/RetentionPeriod.php:32 assets/src/editor.js:1784
 msgid "days"
 msgstr "Tage"
 
-#: src/Settings/RetentionPeriod.php:33 assets/src/editor.js:1736
+#: src/Settings/RetentionPeriod.php:33 assets/src/editor.js:1785
 msgid "months"
 msgstr "Monate"
 
-#: src/Settings/RetentionPeriod.php:34 assets/src/editor.js:1737
+#: src/Settings/RetentionPeriod.php:34 assets/src/editor.js:1786
 msgid "years"
 msgstr "Jahre"
 
-#: src/Settings/RetentionPeriod.php:96 assets/src/editor.js:1712
+#: src/Settings/RetentionPeriod.php:96 assets/src/editor.js:1761
 msgid "Until deleted manually"
 msgstr "Bis zur manuellen Löschung"
 
@@ -5999,7 +6000,7 @@ msgstr ""
 msgid "General"
 msgstr "Allgemein"
 
-#: src/Settings/SettingsSchema.php:41 assets/src/editor.js:1646
+#: src/Settings/SettingsSchema.php:41 assets/src/editor.js:1693
 msgid "Appearance"
 msgstr "Darstellung"
 
@@ -6007,7 +6008,7 @@ msgstr "Darstellung"
 msgid "Privacy & storage"
 msgstr "Datenschutz & Speicherung"
 
-#: src/Settings/SettingsSchema.php:44 assets/src/editor.js:1658
+#: src/Settings/SettingsSchema.php:44 assets/src/editor.js:1706
 msgid "Spam protection"
 msgstr "Spamschutz"
 
@@ -6856,7 +6857,7 @@ msgstr ""
 "wird gesperrt, ältere Datenbankserver werden aber nicht mehr getestet. "
 "Bitten Sie Ihren Hoster um ein Update."
 
-#: assets/src/admin-settings.js:31
+#: assets/src/admin-settings.js:37
 msgid "Copied"
 msgstr "Kopiert"
 
@@ -6969,9 +6970,9 @@ msgstr "Dieses Feld anzeigen, wenn"
 msgid "Hide this field if"
 msgstr "Dieses Feld ausblenden, wenn"
 
-#: assets/src/editor.js:384 assets/src/editor.js:413 assets/src/editor.js:1264
-#: assets/src/editor.js:1544 assets/src/editor.js:1831
-#: assets/src/editor.js:1905
+#: assets/src/editor.js:384 assets/src/editor.js:413 assets/src/editor.js:1303
+#: assets/src/editor.js:1588 assets/src/editor.js:1880
+#: assets/src/editor.js:1954
 msgid "— Select —"
 msgstr "— Auswählen —"
 
@@ -7245,7 +7246,8 @@ msgstr ""
 msgid "Add field"
 msgstr "Feld hinzufügen"
 
-#: assets/src/editor.js:1104 assets/src/editor.js:2290
+#: assets/src/editor.js:1104 assets/src/editor.js:1221
+#: assets/src/editor.js:2343
 msgid "Fields"
 msgstr "Felder"
 
@@ -7265,7 +7267,7 @@ msgstr "Pflicht"
 msgid "conditional"
 msgstr "bedingt"
 
-#: assets/src/editor.js:1147 assets/src/editor.js:1415
+#: assets/src/editor.js:1147 assets/src/editor.js:1456
 msgid "sensitive"
 msgstr "sensibel"
 
@@ -7293,15 +7295,33 @@ msgstr "„%s“ entfernen"
 msgid "Select a field to edit its settings."
 msgstr "Wählen Sie ein Feld aus, um seine Einstellungen zu bearbeiten."
 
-#: assets/src/editor.js:1222 assets/src/editor.js:2029
+#: assets/src/editor.js:1222 assets/src/editor.js:2344
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#: assets/src/editor.js:1223 assets/src/editor.js:2345
+msgid "Confirmation"
+msgstr "Bestätigung"
+
+#: assets/src/editor.js:1224 assets/src/editor.js:2346
+msgid "Form settings"
+msgstr "Formular-Einstellungen"
+
+#. translators: %s: names of the editor tabs, e.g. "Notifications, Form
+#. settings"
+#: assets/src/editor.js:1240
+msgid "Problems in: %s"
+msgstr "Probleme in: %s"
+
+#: assets/src/editor.js:1261 assets/src/editor.js:2078
 msgid "The request failed."
 msgstr "Die Anfrage ist fehlgeschlagen."
 
-#: assets/src/editor.js:1229
+#: assets/src/editor.js:1268
 msgid "Send test to me"
 msgstr "Test an mich senden"
 
-#: assets/src/editor.js:1230
+#: assets/src/editor.js:1269
 msgid ""
 "Sends this e-mail with sample values to your own address (%s), never to the "
 "recipients. Unsaved changes are used."
@@ -7309,12 +7329,12 @@ msgstr ""
 "Sendet diese E-Mail mit Beispielwerten an Ihre eigene Adresse (%s), nie an "
 "die Empfänger. Nicht gespeicherte Änderungen werden verwendet."
 
-#: assets/src/editor.js:1250
+#: assets/src/editor.js:1289
 msgid "Accept submissions only after the visitor confirmed them by e-mail"
 msgstr ""
 "Einsendungen erst annehmen, wenn Besucher sie per E-Mail bestätigt haben"
 
-#: assets/src/editor.js:1251
+#: assets/src/editor.js:1290
 msgid ""
 "Notifications and actions run only after the confirmation. Whether you need "
 "double opt-in (e.g. for newsletters) is a legal question – have the texts "
@@ -7324,15 +7344,15 @@ msgstr ""
 "Double-Opt-in brauchen (z. B. für Newsletter), ist eine Rechtsfrage – lassen "
 "Sie die Texte prüfen."
 
-#: assets/src/editor.js:1266
+#: assets/src/editor.js:1305
 msgid "not required"
 msgstr "kein Pflichtfeld"
 
-#: assets/src/editor.js:1276
+#: assets/src/editor.js:1315
 msgid "Leave empty for the default text in the language of the page."
 msgstr "Leer lassen für den Standardtext in der Sprache der Seite."
 
-#: assets/src/editor.js:1285
+#: assets/src/editor.js:1324
 msgid ""
 "Placeholders: {confirm_link}, {link_hours}, {form_title}, {site_title}, "
 "{field:key}. Without {confirm_link} the link is added below the text. Simple "
@@ -7344,11 +7364,11 @@ msgstr ""
 "Einfaches HTML ist erlaubt: p, br, strong, em, b, i, ul, ol, li, a, h3, h4, "
 "span. Leer lassen für den Standardtext."
 
-#: assets/src/editor.js:1293
+#: assets/src/editor.js:1332
 msgid "Message after submitting"
 msgstr "Meldung nach dem Absenden"
 
-#: assets/src/editor.js:1294
+#: assets/src/editor.js:1333
 msgid ""
 "Shown instead of the success message until the visitor confirmed. Leave "
 "empty for the default text."
@@ -7356,54 +7376,54 @@ msgstr ""
 "Erscheint statt der Erfolgsmeldung, bis Besucher bestätigt haben. Leer "
 "lassen für den Standardtext."
 
-#: assets/src/editor.js:1352
+#: assets/src/editor.js:1391
 msgid "Send an email for every new entry"
 msgstr "Bei jedem neuen Eintrag eine E-Mail senden"
 
-#: assets/src/editor.js:1361
+#: assets/src/editor.js:1400
 msgid "One address per line. {admin_email} stands for %s."
 msgstr "Eine Adresse pro Zeile. {admin_email} steht für %s."
 
-#: assets/src/editor.js:1372
+#: assets/src/editor.js:1411
 msgid "Reply-To field"
 msgstr "Antwort-an-Feld"
 
-#: assets/src/editor.js:1386
+#: assets/src/editor.js:1426
 msgid "Placeholders: %s"
 msgstr "Platzhalter: %s"
 
-#: assets/src/editor.js:1393
+#: assets/src/editor.js:1433
 msgid "Fields in the email"
 msgstr "Felder in der E-Mail"
 
-#: assets/src/editor.js:1396
+#: assets/src/editor.js:1437
 msgid "All fields except sensitive ones"
 msgstr "Alle Felder ausser sensiblen"
 
-#: assets/src/editor.js:1397
+#: assets/src/editor.js:1438
 msgid "Only selected fields"
 msgstr "Nur ausgewählte Felder"
 
-#: assets/src/editor.js:1411
+#: assets/src/editor.js:1452
 msgid "Selected fields"
 msgstr "Ausgewählte Felder"
 
-#: assets/src/editor.js:1432
+#: assets/src/editor.js:1473
 msgid "Confirmation email to the visitor"
 msgstr "Bestätigungs-E-Mail an den Besucher"
 
-#: assets/src/editor.js:1433
+#: assets/src/editor.js:1474
 msgid "Send a confirmation email"
 msgstr "Bestätigungs-E-Mail senden"
 
-#: assets/src/editor.js:1440
+#: assets/src/editor.js:1481
 msgid ""
 "Goes to the email field marked “Send the confirmation email to this address”."
 msgstr ""
 "Geht an das E-Mail-Feld, das mit „Die Bestätigungs-E-Mail an diese Adresse "
 "senden“ markiert ist."
 
-#: assets/src/editor.js:1448
+#: assets/src/editor.js:1489
 msgid ""
 "Placeholders: %s. Simple HTML is allowed: p, br, strong, em, b, i, ul, ol, "
 "li, a, h3, h4, span; everything else is removed. Plain text stays plain text."
@@ -7412,15 +7432,15 @@ msgstr ""
 "ol, li, a, h3, h4, span; alles andere wird entfernt. Reiner Text bleibt "
 "reiner Text."
 
-#: assets/src/editor.js:1458
+#: assets/src/editor.js:1499
 msgid "Include these answers (optional)"
 msgstr "Diese Antworten einfügen (optional)"
 
-#: assets/src/editor.js:1481
+#: assets/src/editor.js:1522
 msgid "Sender"
 msgstr "Absender"
 
-#: assets/src/editor.js:1482
+#: assets/src/editor.js:1523
 msgid ""
 "Copied from the global email settings when the form was created. Changes "
 "here only affect this form."
@@ -7428,59 +7448,59 @@ msgstr ""
 "Beim Erstellen des Formulars aus den globalen E-Mail-Einstellungen "
 "übernommen. Änderungen hier betreffen nur dieses Formular."
 
-#: assets/src/editor.js:1500
+#: assets/src/editor.js:1543
 msgid "E-mail format"
 msgstr "E-Mail-Format"
 
-#: assets/src/editor.js:1501
+#: assets/src/editor.js:1544
 msgid "HTML e-mails always contain a plain-text version as well."
 msgstr "HTML-E-Mails enthalten immer auch eine Textfassung."
 
-#: assets/src/editor.js:1504
+#: assets/src/editor.js:1547
 msgid "As in the global e-mail settings"
 msgstr "Wie in den globalen E-Mail-Einstellungen"
 
-#: assets/src/editor.js:1524
+#: assets/src/editor.js:1567
 msgid "After submitting"
 msgstr "Nach dem Absenden"
 
-#: assets/src/editor.js:1526
+#: assets/src/editor.js:1569
 msgid "Show"
 msgstr "Anzeigen"
 
-#: assets/src/editor.js:1529
+#: assets/src/editor.js:1573
 msgid "A message"
 msgstr "Eine Meldung"
 
-#: assets/src/editor.js:1530
+#: assets/src/editor.js:1574
 msgid "A page of this site"
 msgstr "Eine Seite dieser Website"
 
-#: assets/src/editor.js:1537
+#: assets/src/editor.js:1581
 msgid "Success message"
 msgstr "Erfolgsmeldung"
 
-#: assets/src/editor.js:1541
+#: assets/src/editor.js:1585
 msgid "Page"
 msgstr "Seite"
 
-#: assets/src/editor.js:1542
+#: assets/src/editor.js:1586
 msgid "Only published pages of this site can be chosen."
 msgstr "Es können nur veröffentlichte Seiten dieser Website gewählt werden."
 
-#: assets/src/editor.js:1570
+#: assets/src/editor.js:1614
 msgid "Texts"
 msgstr "Texte"
 
-#: assets/src/editor.js:1573
+#: assets/src/editor.js:1617
 msgid "Up to 60 characters. Empty = “Send”."
 msgstr "Bis zu 60 Zeichen. Leer = „Senden“."
 
-#: assets/src/editor.js:1582
+#: assets/src/editor.js:1626
 msgid "Note on required fields"
 msgstr "Hinweis auf Pflichtfelder"
 
-#: assets/src/editor.js:1583
+#: assets/src/editor.js:1627
 msgid ""
 "Shown above the fields when the form has required fields. An asterisk (*) is "
 "shown as the required marker. Empty = standard text."
@@ -7488,20 +7508,20 @@ msgstr ""
 "Erscheint über den Feldern, wenn das Formular Pflichtfelder hat. Ein "
 "Sternchen (*) wird als Pflichtfeld-Markierung angezeigt. Leer = Standardtext."
 
-#: assets/src/editor.js:1591
+#: assets/src/editor.js:1635
 msgid "Heading of the error summary"
 msgstr "Überschrift der Fehlerübersicht"
 
-#: assets/src/editor.js:1592
+#: assets/src/editor.js:1636
 msgid "Shown above the list of fields to correct. Empty = standard text."
 msgstr ""
 "Erscheint über der Liste der zu korrigierenden Felder. Leer = Standardtext."
 
-#: assets/src/editor.js:1599
+#: assets/src/editor.js:1643
 msgid "Submission period and limit"
 msgstr "Zeitraum und Höchstzahl"
 
-#: assets/src/editor.js:1600
+#: assets/src/editor.js:1644
 msgid ""
 "Times use the time zone of the website. Outside the period or after the "
 "maximum number of entries, visitors see the closed text instead of the form. "
@@ -7511,55 +7531,59 @@ msgstr ""
 "nach Erreichen der Höchstzahl sehen Besucher statt des Formulars den Text "
 "für geschlossene Formulare. Spam und Einträge im Papierkorb zählen nicht."
 
-#: assets/src/editor.js:1621
+#: assets/src/editor.js:1667
 msgid "Empty or 0 = no limit."
 msgstr "Leer oder 0 = keine Grenze."
 
-#: assets/src/editor.js:1629
+#: assets/src/editor.js:1675
 msgid "Text when the form is closed"
 msgstr "Text bei geschlossenem Formular"
 
-#: assets/src/editor.js:1630
+#: assets/src/editor.js:1676
 msgid "Empty = standard text."
 msgstr "Leer = Standardtext."
 
-#: assets/src/editor.js:1637
+#: assets/src/editor.js:1683
 msgid "Pause message"
 msgstr "Pausenmeldung"
 
-#: assets/src/editor.js:1639
+#: assets/src/editor.js:1685
 msgid "Shown while the form is paused"
 msgstr "Wird angezeigt, solange das Formular pausiert ist"
 
-#: assets/src/editor.js:1648
+#: assets/src/editor.js:1695
 msgid "Styling"
 msgstr "Gestaltung"
 
-#: assets/src/editor.js:1651
+#: assets/src/editor.js:1699
 msgid "Use the theme styling"
 msgstr "Theme-Gestaltung verwenden"
 
-#: assets/src/editor.js:1652
+#: assets/src/editor.js:1700
 msgid "Use Form Captain base styling"
 msgstr "Form-Captain-Basisgestaltung verwenden"
 
-#: assets/src/editor.js:1673
+#: assets/src/editor.js:1721
 msgid "Retention"
 msgstr "Aufbewahrung"
 
-#: assets/src/editor.js:1707
+#: assets/src/editor.js:1755
 msgid "Keep entries of this form"
 msgstr "Einträge dieses Formulars aufbewahren"
 
-#: assets/src/editor.js:1710
+#: assets/src/editor.js:1756
+msgid "Overrides the global retention period for this form."
+msgstr "Ersetzt für dieses Formular die globale Aufbewahrungsfrist."
+
+#: assets/src/editor.js:1759
 msgid "As in the global privacy settings"
 msgstr "Wie in den globalen Datenschutz-Einstellungen"
 
-#: assets/src/editor.js:1711
+#: assets/src/editor.js:1760
 msgid "For a fixed period"
 msgstr "Für einen festen Zeitraum"
 
-#: assets/src/editor.js:1747
+#: assets/src/editor.js:1796
 msgid ""
 "Between 1 day and 30 years. Shortening the period never deletes existing "
 "entries sooner than the grace period set in the privacy settings."
@@ -7567,7 +7591,7 @@ msgstr ""
 "Zwischen 1 Tag und 30 Jahren. Eine Verkürzung löscht vorhandene Einträge nie "
 "früher als nach der Schonfrist aus den Datenschutz-Einstellungen."
 
-#: assets/src/editor.js:1771
+#: assets/src/editor.js:1820
 msgid ""
 "Actions pass new entries to connected plugins in the background. Only "
 "mapped, non-sensitive fields are transferred."
@@ -7575,13 +7599,13 @@ msgstr ""
 "Aktionen übergeben neue Einträge im Hintergrund an verbundene Plugins. "
 "Übertragen werden nur zugeordnete, nicht sensible Felder."
 
-#: assets/src/editor.js:1774
+#: assets/src/editor.js:1823
 msgid "Changing actions requires the “Manage integrations” permission."
 msgstr ""
 "Zum Ändern von Aktionen ist die Berechtigung „Integrationen verwalten“ "
 "erforderlich."
 
-#: assets/src/editor.js:1781
+#: assets/src/editor.js:1830
 msgid ""
 "No connector actions are available. Activate a connector under Integrations "
 "first."
@@ -7589,11 +7613,11 @@ msgstr ""
 "Es sind keine Connector-Aktionen verfügbar. Aktivieren Sie zuerst einen "
 "Connector unter Integrationen."
 
-#: assets/src/editor.js:1782
+#: assets/src/editor.js:1831
 msgid "Open integrations"
 msgstr "Integrationen öffnen"
 
-#: assets/src/editor.js:1798
+#: assets/src/editor.js:1847
 msgid ""
 "This action is currently not available (connector inactive or removed). It "
 "will not run."
@@ -7601,105 +7625,105 @@ msgstr ""
 "Diese Aktion ist derzeit nicht verfügbar (Connector inaktiv oder entfernt). "
 "Sie wird nicht ausgeführt."
 
-#: assets/src/editor.js:1848
+#: assets/src/editor.js:1897
 msgid "Field mapping"
 msgstr "Feldzuordnung"
 
-#: assets/src/editor.js:1854
+#: assets/src/editor.js:1903
 msgid "— Not mapped —"
 msgstr "— Nicht zugeordnet —"
 
-#: assets/src/editor.js:1856
+#: assets/src/editor.js:1905
 msgid "sensitive – not allowed"
 msgstr "sensibel – nicht erlaubt"
 
-#: assets/src/editor.js:1892
+#: assets/src/editor.js:1941
 msgid "Remove action"
 msgstr "Aktion entfernen"
 
-#: assets/src/editor.js:1903
+#: assets/src/editor.js:1952
 msgid "Add action"
 msgstr "Aktion hinzufügen"
 
-#: assets/src/editor.js:1922
+#: assets/src/editor.js:1971
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: assets/src/editor.js:1927
+#: assets/src/editor.js:1976
 msgid "No actions configured for this form."
 msgstr "Für dieses Formular sind keine Aktionen konfiguriert."
 
-#: assets/src/editor.js:1942
+#: assets/src/editor.js:1991
 msgid "Preview size"
 msgstr "Vorschaugrösse"
 
-#: assets/src/editor.js:1945
+#: assets/src/editor.js:1994
 msgid "Desktop"
 msgstr "Desktop"
 
-#: assets/src/editor.js:1948
+#: assets/src/editor.js:1997
 msgid "Mobile"
 msgstr "Mobil"
 
-#: assets/src/editor.js:1949
+#: assets/src/editor.js:1998
 msgid "Submissions are disabled in the preview."
 msgstr "Einsendungen sind in der Vorschau deaktiviert."
 
-#: assets/src/editor.js:1954
+#: assets/src/editor.js:2003
 msgid "Form preview"
 msgstr "Formularvorschau"
 
-#: assets/src/editor.js:2111
+#: assets/src/editor.js:2160
 msgid "Remove the field “%s”? Existing entries keep their values."
 msgstr "Das Feld „%s“ entfernen? Vorhandene Einträge behalten ihre Werte."
 
-#: assets/src/editor.js:2147
+#: assets/src/editor.js:2196
 msgid "Draft saved. Please fix the highlighted problems before publishing."
 msgstr ""
 "Entwurf gespeichert. Bitte beheben Sie vor dem Veröffentlichen die "
 "markierten Probleme."
 
-#: assets/src/editor.js:2148
+#: assets/src/editor.js:2197
 msgid "Saved."
 msgstr "Gespeichert."
 
-#: assets/src/editor.js:2172
+#: assets/src/editor.js:2221
 msgid "The form is live."
 msgstr "Das Formular ist live."
 
-#: assets/src/editor.js:2173
+#: assets/src/editor.js:2222
 msgid "The form is paused."
 msgstr "Das Formular ist pausiert."
 
-#: assets/src/editor.js:2174
+#: assets/src/editor.js:2223
 msgid "The form is a draft again."
 msgstr "Das Formular ist wieder ein Entwurf."
 
-#: assets/src/editor.js:2175
+#: assets/src/editor.js:2224
 msgid "Status changed."
 msgstr "Status geändert."
 
-#: assets/src/editor.js:2192
+#: assets/src/editor.js:2241
 msgid "Published. Changes are now live."
 msgstr "Veröffentlicht. Die Änderungen sind jetzt live."
 
-#: assets/src/editor.js:2221
+#: assets/src/editor.js:2270
 msgid "Removed: %s"
 msgstr "Entfernt: %s"
 
-#: assets/src/editor.js:2224
+#: assets/src/editor.js:2273
 msgid "Now required: %s"
 msgstr "Jetzt Pflichtfeld: %s"
 
-#: assets/src/editor.js:2227
+#: assets/src/editor.js:2276
 msgid "Options removed from %1$s: %2$s"
 msgstr "Aus %1$s entfernte Optionen: %2$s"
 
-#: assets/src/editor.js:2230
+#: assets/src/editor.js:2279
 msgid "Type changed: %s"
 msgstr "Typ geändert: %s"
 
-#: assets/src/editor.js:2235
+#: assets/src/editor.js:2284
 msgid ""
 "Saved changes are not live yet. Publish to apply them. Existing entries keep "
 "the version they were submitted with."
@@ -7708,23 +7732,23 @@ msgstr ""
 "übernehmen. Vorhandene Einträge behalten die Version, mit der sie "
 "eingesendet wurden."
 
-#: assets/src/editor.js:2266
+#: assets/src/editor.js:2319
 msgid "Save draft"
 msgstr "Entwurf speichern"
 
-#: assets/src/editor.js:2266
+#: assets/src/editor.js:2319
 msgid "Saved"
 msgstr "Gespeichert"
 
-#: assets/src/editor.js:2282
+#: assets/src/editor.js:2335
 msgid "Publish"
 msgstr "Veröffentlichen"
 
-#: assets/src/editor.js:2282
+#: assets/src/editor.js:2335
 msgid "Publish changes"
 msgstr "Änderungen veröffentlichen"
 
-#: assets/src/editor.js:2285
+#: assets/src/editor.js:2338
 msgid ""
 "Publishing is possible once all problems are fixed and the form has at least "
 "one input field."
@@ -7732,22 +7756,10 @@ msgstr ""
 "Veröffentlichen ist möglich, sobald alle Probleme behoben sind und das "
 "Formular mindestens ein Eingabefeld enthält."
 
-#: assets/src/editor.js:2286
+#: assets/src/editor.js:2339
 msgid "Shortcode:"
 msgstr "Shortcode:"
 
-#: assets/src/editor.js:2291
-msgid "Notifications"
-msgstr "Benachrichtigungen"
-
-#: assets/src/editor.js:2292
-msgid "Confirmation"
-msgstr "Bestätigung"
-
-#: assets/src/editor.js:2293
-msgid "Form settings"
-msgstr "Formular-Einstellungen"
-
-#: assets/src/editor.js:2319
+#: assets/src/editor.js:2372
 msgid "Reload latest version (discards your changes)"
 msgstr "Neueste Version laden (verwirft Ihre Änderungen)"

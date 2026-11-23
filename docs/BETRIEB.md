@@ -112,7 +112,7 @@ Ein Backup enthält Jobs im Zustand zum Sicherungszeitpunkt. Jobs, die nach dem 
 | Kanal | Für | Stand |
 |---|---|---|
 | WordPress.org-Supportforum | Free-Fragen, öffentlich | **entschieden** (Nr. 12); Antwortziel: werktags innerhalb von 3 Werktagen (Vorschlag, intern) |
-| Ticket per E-Mail `[PRO-SUPPORT-KANAL]` | Pro-Kunden je Tarif: Solo/Studio Standard, Agency priorisiert | **entschieden** (Nr. 12); Adresse und veröffentlichte Antwortzeiten folgen mit dem Pro-Verkaufsstart |
+| Ticket per E-Mail `[PRO-SUPPORT-KANAL]` | Pro-Kunden je Tarif: Single/Business Standard, Agency priorisiert | **entschieden** (Nr. 12); Adresse und veröffentlichte Antwortzeiten folgen mit dem Pro-Verkaufsstart |
 | `[SECURITY-KONTAKT]` (eigene `security@…`-Adresse) | vertrauliche Sicherheitsmeldungen | **entschieden** (Nr. 15); konkrete Adresse offen. Richtlinie: `SECURITY.md`, Vorlage `security.txt` in 2.6 |
 | GitHub-Issues | Entwickler/Vertrag (`api-v1.md`), keine Kundendaten | Repository derzeit privat; keine Kundenanfragen über Issues |
 

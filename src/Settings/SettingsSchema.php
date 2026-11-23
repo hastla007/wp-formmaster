@@ -242,7 +242,7 @@ final class SettingsSchema {
 			'privacy.policy_page_hint'          => array(
 				'type'  => 'bool',
 				'label' => __( 'Offer a link to the privacy policy page in consent texts', 'form-captain' ),
-				'help'  => __( 'Consent fields can link to the privacy policy page that is set in WordPress under Settings → Privacy.', 'form-captain' ),
+				'help'  => __( 'Preselects "Link the privacy policy page" for new consent fields in the form editor and in form templates. Existing fields keep their own choice. The link points to the page set in WordPress under Settings → Privacy.', 'form-captain' ),
 			),
 			'privacy.change_log_months'         => array(
 				'type'  => 'int',

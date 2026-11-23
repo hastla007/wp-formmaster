@@ -30,7 +30,7 @@ Gespeichert als eine Option `form_captain_settings` (Array, autoload). Jede Opti
 | Datenschutz | `privacy.retention` | Zeitraum `<Zahl><d\|m\|y>` oder `manual` | `manual` (S9; bestehende Installationen behalten ihren Wert, ohne gespeicherten Wert `12m`) | SET-FC-01; Website-Zustand mahnt, solange keine Frist gesetzt ist (Test `form_captain_retention`); 1 Tag – 30 Jahre; Kalenderrechnung (12m = 1y); Änderung braucht Bestätigung; Filter `form_captain_retention_seconds_v1` gewinnt |
 | Datenschutz | `privacy.trash_days` | int 1–90 | 30 | |
 | Datenschutz | `privacy.delete_data_on_uninstall` | bool | false | erfordert Bestätigungstext |
-| Datenschutz | `privacy.policy_page_hint` | bool | true | Link auf WP-Datenschutzseite in Consent |
+| Datenschutz | `privacy.policy_page_hint` | bool | true | Vorbelegung „Datenschutzerklärung verlinken“ für neue Einwilligungsfelder (Editor und Formularvorlagen); bestehende Felder behalten ihre Wahl |
 | Datenschutz | `privacy.change_log_months` | int 1–120 | 12 | Aufbewahrung des Änderungsprotokolls; Filter `form_captain_change_log_months_v1` gewinnt |
 | Datenschutz | `privacy.grace_days` | int 0–90 | 14 | SET-FC-08; Schonfrist nach Verkürzung; Filter `form_captain_retention_grace_days_v1` (0–365) gewinnt |
 | Datenschutz | `privacy.expiry_notice_days` | int 0–90 | 14 | SET-FC-08; „läuft bald ab“; 0 = aus; Filter `form_captain_expiry_notice_days_v1` gewinnt |

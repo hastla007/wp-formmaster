@@ -6354,12 +6354,8 @@ msgid "Offer a link to the privacy policy page in consent texts"
 msgstr "In Einwilligungstexten einen Link zur Datenschutzerklärung anbieten"
 
 #: src/Settings/SettingsSchema.php:245
-msgid ""
-"Consent fields can link to the privacy policy page that is set in WordPress "
-"under Settings → Privacy."
-msgstr ""
-"Einwilligungsfelder können auf die Datenschutzseite verlinken, die in "
-"WordPress unter Einstellungen → Datenschutz festgelegt ist."
+msgid "Preselects \"Link the privacy policy page\" for new consent fields in the form editor and in form templates. Existing fields keep their own choice. The link points to the page set in WordPress under Settings → Privacy."
+msgstr "Setzt bei neuen Einwilligungsfeldern im Formular-Editor und in Formularvorlagen das Häkchen „Datenschutzerklärung verlinken“. Bestehende Felder behalten ihre eigene Wahl. Der Link führt zu der Seite, die in WordPress unter Einstellungen → Datenschutz festgelegt ist."
 
 #: src/Settings/SettingsSchema.php:251
 msgid "Keep the settings change log for (months)"

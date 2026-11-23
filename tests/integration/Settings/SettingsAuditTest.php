@@ -218,4 +218,24 @@ final class SettingsAuditTest extends TestCase {
 		$res = $this->page()->save_tab( 'privacy', array( 'ext' => array( 'uninstall.remove_all_data' => '1' ) ) );
 		$this->assertArrayHasKey( 'ext.uninstall.remove_all_data', $res['errors'] );
 	}
+
+	public function test_privacy_link_setting_presets_new_consent_fields(): void {
+		$this->as_admin();
+		$this->assertTrue( $this->plugin()->get( \FormCaptain\Admin\EditorPage::class )->bootstrap( 0 )['consentLink'] );
+		$consent = static function ( int $form_id ): array {
+			$form = ( new \FormCaptain\Repository\FormRepository() )->find( $form_id );
+			foreach ( $form['schema']['fields'] as $field ) {
+				if ( 'consent' === $field['type'] ) {
+					return $field;
+				}
+			}
+			return array();
+		};
+		$service = $this->plugin()->get( \FormCaptain\Service\FormService::class );
+		$this->assertTrue( $consent( (int) $service->create_from_template( 'contact' ) )['privacy_link'] );
+
+		Settings::set_group( 'privacy', array( 'policy_page_hint' => false ) );
+		$this->assertFalse( $this->plugin()->get( \FormCaptain\Admin\EditorPage::class )->bootstrap( 0 )['consentLink'] );
+		$this->assertFalse( $consent( (int) $service->create_from_template( 'contact' ) )['privacy_link'] );
+	}
 }

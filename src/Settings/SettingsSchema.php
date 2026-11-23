@@ -675,13 +675,13 @@ final class SettingsSchema {
 		}
 		switch ( $field['type'] ) {
 			case 'bool':
-				return array( ! empty( $raw ) && '0' !== $raw, null );
+				return array( ! empty( $raw ), null );
 			case 'confirm':
 				$word = static fn( mixed $v ): bool => is_string( $v ) && in_array( mb_strtoupper( trim( $v ) ), self::CONFIRM_WORDS, true );
 				if ( $word( $raw ) ) {
 					return array( true, null );
 				}
-				if ( empty( $raw ) || '0' === $raw ) {
+				if ( empty( $raw ) ) {
 					return array( false, null );
 				}
 				return $word( $submitted[ $field['id'] . '_confirm' ] ?? null ) ? array( true, null ) : array( null, __( 'Type DELETE to confirm.', 'form-captain' ) );

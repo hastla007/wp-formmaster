@@ -139,7 +139,11 @@ final class ProofOfWork {
 		return null;
 	}
 
-	/** Browser payload: base64( JSON {algorithm, challenge, number, salt, signature} ). */
+	/**
+	 * Browser payload: base64( JSON {algorithm, challenge, number, salt, signature} ).
+	 *
+	 * @param array<string,mixed> $challenge
+	 */
 	public static function encode( array $challenge, int $number ): string {
 		return base64_encode( // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode
 			(string) json_encode( // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- Dependency-free core.

@@ -385,6 +385,7 @@ final class MailBuilder {
 	 * @param array<int,array<string,mixed>>          $fields
 	 * @param array<string,string|array<int,string>> $values
 	 * @param string[]                                $rejected
+	 * @param array<string,mixed>                     $entry
 	 */
 	private function subject( string $template, array $form, array $fields, array $values, array &$rejected, array $entry = array() ): string {
 		$subject = $this->replace_placeholders( $template, $form, $fields, $values, $entry );
@@ -400,6 +401,7 @@ final class MailBuilder {
 	 * @param array<string,mixed>                     $form
 	 * @param array<int,array<string,mixed>>          $fields
 	 * @param array<string,string|array<int,string>> $values
+	 * @param array<string,mixed>                     $entry
 	 */
 	private function replace_placeholders( string $text, array $form, array $fields, array $values, array $entry = array(), bool $escape = false ): string {
 		$esc  = static fn( string $v ): string => $escape ? esc_html( $v ) : $v;

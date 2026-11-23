@@ -63,7 +63,7 @@ final class FormLimits {
 			$out['closes_at']           = '';
 		}
 		$max = $in['max_entries'] ?? 0;
-		if ( '' !== $max && null !== $max ) {
+		if ( '' !== $max ) {
 			if ( ! is_numeric( $max ) || (int) $max < 0 || (int) $max > self::MAX_ENTRIES || (string) (int) $max !== trim( (string) $max ) ) {
 				$errors['limits.max_entries'] = 'invalid_max_entries';
 			} else {

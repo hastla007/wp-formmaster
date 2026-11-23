@@ -315,7 +315,7 @@ final class SchemaValidator {
 						}
 					}
 				}
-				if ( isset( $rules['min_age'] ) && '' !== $rules['min_age'] && null !== $rules['min_age'] ) {
+				if ( isset( $rules['min_age'] ) && '' !== $rules['min_age'] ) {
 					$age = is_numeric( $rules['min_age'] ) ? (int) $rules['min_age'] : 0;
 					if ( $age >= 1 && $age <= self::MIN_AGE_MAX && (string) $age === trim( (string) $rules['min_age'] ) ) {
 						$out['min_age'] = $age;

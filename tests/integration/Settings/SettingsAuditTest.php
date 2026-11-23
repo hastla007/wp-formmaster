@@ -251,6 +251,8 @@ final class SettingsAuditTest extends TestCase {
 		$html = (string) ob_get_clean();
 		unset( $_GET['tab'] );
 		$this->assertStringContainsString( 'never sooner than 30 days after this change', $html );
+		$this->assertStringNotContainsString( 'The file contains no changes.', $html, 'the retention change is listed, it only needs the confirmation' );
+		$this->assertMatchesRegularExpression( '#<code>privacy\.retention</code></td><td>[^<]*</td><td>[^<]*90#', $html );
 	}
 
 	public function test_addon_values_survive_export_and_import_without_secrets_and_switches(): void {

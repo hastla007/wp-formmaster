@@ -1094,7 +1094,15 @@ final class SettingsPage {
 
 		$json = get_transient( self::import_key() );
 		if ( is_string( $json ) && '' !== $json ) {
-			$p = SettingsTransfer::preview( $json );
+			// Changes as they would be with the confirmations; the checks without them say which are needed.
+			$plain = SettingsTransfer::preview( $json );
+			$p     = SettingsTransfer::preview(
+				$json,
+				array(
+					'retention_confirm' => true,
+					'captcha_confirm'   => true,
+				)
+			);
 			echo '<div class="fc-card fc-import-preview"><h3>' . esc_html__( 'Import preview', 'form-captain' ) . '</h3>';
 			if ( '' !== (string) ( $p['meta']['plugin_version'] ?? '' ) ) {
 				/* translators: 1: plugin version, 2: date */
@@ -1112,9 +1120,9 @@ final class SettingsPage {
 			}
 			$needs_retention = false;
 			$needs_captcha   = false;
-			foreach ( $p['errors'] as $path => $msg ) {
-				$needs_retention = $needs_retention || 'privacy.retention' === $path;
-				$needs_captcha   = $needs_captcha || 'spam.captcha_provider' === $path;
+			foreach ( $plain['errors'] as $path => $msg ) {
+				$needs_retention = $needs_retention || ( 'privacy.retention' === $path && ! isset( $p['errors'][ $path ] ) );
+				$needs_captcha   = $needs_captcha || ( 'spam.captcha_provider' === $path && ! isset( $p['errors'][ $path ] ) );
 				echo '<p class="fc-field-error">' . esc_html( $path . ': ' . $msg ) . '</p>';
 			}
 			if ( $p['unknown'] ) {

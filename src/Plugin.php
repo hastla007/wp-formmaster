@@ -28,6 +28,7 @@ final class Plugin {
 		Jobs\Scheduler::class,
 		Http\RestController::class,
 		Http\AdminPostController::class,
+		Service\DoubleOptIn::class,
 		Frontend\Shortcode::class,
 		Frontend\Block::class,
 		Frontend\Assets::class,

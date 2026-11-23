@@ -58,10 +58,21 @@ final class Assets {
 		$mode = 'base' === $mode ? 'base' : 'inherit';
 		if ( ! wp_style_is( self::HANDLE, 'registered' ) ) {
 			wp_register_style( self::HANDLE, Asset::url( 'frontend.css' ), array(), Asset::version( 'frontend.css' ) );
+			// Dependency-free proof-of-work solver (SET-FC-05); only does work when the token route sends a challenge.
+			wp_register_script(
+				self::HANDLE . '-pow',
+				Asset::url( 'proof-of-work.js' ),
+				array(),
+				Asset::version( 'proof-of-work.js' ),
+				array(
+					'in_footer' => true,
+					'strategy'  => 'defer',
+				)
+			);
 			wp_register_script(
 				self::HANDLE,
 				Asset::url( 'frontend.js' ),
-				array(),
+				array( self::HANDLE . '-pow' ),
 				Asset::version( 'frontend.js' ),
 				array(
 					'in_footer' => true,
@@ -94,9 +105,46 @@ final class Assets {
 		wp_enqueue_style( self::HANDLE );
 		wp_enqueue_script( self::HANDLE );
 		if ( 'base' === $mode && empty( self::$modes['base'] ) ) {
-			$accent = sanitize_hex_color( (string) Settings::get( 'appearance.accent_color' ) ) ?: '#2271b1';
-			wp_add_inline_style( self::HANDLE, '.fc-mode-base{--fc-accent:' . $accent . ';}' );
+			wp_add_inline_style( self::HANDLE, self::base_css() );
+		}
+		if ( empty( self::$modes['custom'] ) ) {
+			self::$modes['custom'] = true;
+			$custom                = self::custom_css();
+			if ( '' !== $custom ) {
+				wp_add_inline_style( self::HANDLE, $custom );
+			}
 		}
 		self::$modes[ $mode ] = true;
+	}
+
+	/**
+	 * Variables of the base styles (SET-FC-32): accent colour and, when changed from the default,
+	 * corner radius, space between fields and font size.
+	 */
+	public static function base_css(): string {
+		$accent = sanitize_hex_color( (string) Settings::get( 'appearance.accent_color' ) ) ?: '#2271b1';
+		$css    = '--fc-accent:' . $accent . ';';
+		$radius = max( 0, min( 24, (int) Settings::get( 'appearance.radius' ) ) );
+		if ( 4 !== $radius ) {
+			$css .= '--fc-radius:' . $radius . 'px;';
+		}
+		$spacing = max( 0, min( 48, (int) Settings::get( 'appearance.spacing' ) ) );
+		if ( 16 !== $spacing ) {
+			$css .= '--fc-gap:' . $spacing . 'px;';
+		}
+		$size = (string) Settings::get( 'appearance.font_size' );
+		if ( in_array( $size, array( '14', '16', '18', '20' ), true ) ) {
+			$css .= 'font-size:' . $size . 'px;';
+		}
+		return '.fc-mode-base{' . $css . '}';
+	}
+
+	/**
+	 * Custom CSS of the operator (SET-FC-32). Stored only by users with unfiltered_html and checked
+	 * on saving; "<" is removed again here so the value can never end the style element.
+	 */
+	public static function custom_css(): string {
+		$css = (string) Settings::get( 'appearance.custom_css' );
+		return trim( str_replace( '<', '', $css ) );
 	}
 }

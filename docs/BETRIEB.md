@@ -112,7 +112,7 @@ Ein Backup enthält Jobs im Zustand zum Sicherungszeitpunkt. Jobs, die nach dem 
 | Kanal | Für | Stand |
 |---|---|---|
 | WordPress.org-Supportforum | Free-Fragen, öffentlich | **entschieden** (Nr. 12); Antwortziel: werktags innerhalb von 3 Werktagen (Vorschlag, intern) |
-| Ticket per E-Mail `[PRO-SUPPORT-KANAL]` | Pro-Kunden je Tarif: Solo/Studio Standard, Agency priorisiert | **entschieden** (Nr. 12); Adresse und veröffentlichte Antwortzeiten folgen mit dem Pro-Verkaufsstart |
+| Ticket per E-Mail `[PRO-SUPPORT-KANAL]` | Pro-Kunden je Tarif: Single/Business Standard, Agency priorisiert | **entschieden** (Nr. 12); Adresse und veröffentlichte Antwortzeiten folgen mit dem Pro-Verkaufsstart |
 | `[SECURITY-KONTAKT]` (eigene `security@…`-Adresse) | vertrauliche Sicherheitsmeldungen | **entschieden** (Nr. 15); konkrete Adresse offen. Richtlinie: `SECURITY.md`, Vorlage `security.txt` in 2.6 |
 | GitHub-Issues | Entwickler/Vertrag (`api-v1.md`), keine Kundendaten | Repository derzeit privat; keine Kundenanfragen über Issues |
 
@@ -284,3 +284,21 @@ wp form-captain status --check         # Exit-Code 0 = ok, 1 = Warnung, 2 = krit
 | Integrationsfehler | Connector-Testverbindung; Zugangsdaten; Ziel-API-Status; Retry erst nach Ursache |
 | Schema | `RELEASE.md` 3.2/3.3 |
 | Submission-Fehler | Korrelations-ID in `fc_log`, DB-Verbindung/Rechte, ggf. S1-Triage |
+
+## 6. Einstellungen per WP-CLI (SET-FC-14)
+
+Gleiche Prüfung wie die Einstellungsseite (`SettingsSchema::sanitize_group()`); jede Änderung steht im Änderungsprotokoll (*Systemstatus*) mit Quelle „WP-CLI“. Geheime Werte werden nie ausgegeben.
+
+```
+wp form-captain settings list [--format=table|json|csv|yaml]   # Schlüssel, Wert, Vorgabe, Typ
+wp form-captain settings get privacy.retention
+wp form-captain settings set spam.rate_limit 10
+wp form-captain settings set privacy.retention 90d --yes       # Aufbewahrung, externer Captcha und Datenlöschung bei Deinstallation nur mit --yes
+wp form-captain settings reset spam --yes                      # ein Bereich: general, appearance, email, privacy, spam
+wp form-captain settings reset --all --yes
+wp form-captain settings export [--file=form-captain-settings.json]
+wp form-captain settings import form-captain-settings.json --dry-run   # nur anzeigen
+wp form-captain settings import form-captain-settings.json [--yes]     # --yes bestätigt eine geänderte Aufbewahrung
+```
+
+Ungültige Werte und unbekannte Schlüssel beim Import werden als Warnung gemeldet und nicht übernommen. Rollenrechte werden nicht per CLI gesetzt (dafür `wp role`/`wp cap`).

@@ -145,7 +145,8 @@ final class ImportService {
 		}
 		$schema['fields'] = $fields;
 
-		$id = $this->forms->create( $preview['title'], $schema, array() );
+		// The button text of the source form is kept (SET-FC-02); FormService shortens it to 60 characters.
+		$id = $this->forms->create( $preview['title'], $schema, '' !== $preview['submit_label'] ? array( 'submit_label' => $preview['submit_label'] ) : array() );
 		if ( is_wp_error( $id ) ) {
 			return $id;
 		}

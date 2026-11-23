@@ -13,6 +13,7 @@ namespace FormCaptain\Domain\Schema;
 
 use FormCaptain\Domain\Fields\FieldTypes;
 use FormCaptain\Domain\HtmlSanitizer;
+use FormCaptain\Domain\ValidationPatterns;
 use FormCaptain\Support\Limits;
 
 final class SchemaValidator {
@@ -20,6 +21,15 @@ final class SchemaValidator {
 	public const CURRENT_VERSION = 1;
 
 	private const OPERATORS = array( 'equals', 'not_equals', 'contains', 'is_empty', 'is_not_empty', 'checked' );
+
+	/** Autofill purposes a field may declare (HTML autocomplete tokens, SET-FC-33). */
+	public const AUTOCOMPLETE = array( 'off', 'name', 'given-name', 'family-name', 'honorific-prefix', 'organization', 'email', 'tel', 'street-address', 'address-line1', 'address-line2', 'postal-code', 'address-level2', 'address-level1', 'country-name', 'bday', 'url' );
+
+	/** Field types that accept an autocomplete purpose. */
+	public const AUTOCOMPLETE_TYPES = array( 'text', 'textarea', 'email', 'tel', 'number', 'select', 'date' );
+
+	/** Highest minimum age that can be required on a date field (SET-FC-30). */
+	public const MIN_AGE_MAX = 120;
 
 	/**
 	 * Validates a schema. Returns normalized schema and list of errors (path => message).
@@ -142,6 +152,13 @@ final class SchemaValidator {
 					$errors[ "$p.consent_text" ] = 'consent_text_required';
 				}
 			}
+			if ( in_array( $type, self::AUTOCOMPLETE_TYPES, true ) && isset( $field['autocomplete'] ) && '' !== $field['autocomplete'] ) {
+				if ( is_string( $field['autocomplete'] ) && in_array( $field['autocomplete'], self::AUTOCOMPLETE, true ) ) {
+					$n['autocomplete'] = $field['autocomplete'];
+				} else {
+					$errors[ "$p.autocomplete" ] = 'invalid_autocomplete';
+				}
+			}
 			if ( 'email' === $type ) {
 				$n['confirmation_recipient'] = ! empty( $field['confirmation_recipient'] );
 				$n['privacy_lookup']         = ! array_key_exists( 'privacy_lookup', $field ) || ! empty( $field['privacy_lookup'] );
@@ -245,10 +262,29 @@ final class SchemaValidator {
 				$out['max_length'] = max( 1, min( $cap, (int) ( $rules['max_length'] ?? $default ) ) );
 				$out['min_length'] = max( 0, min( $out['max_length'], (int) ( $rules['min_length'] ?? 0 ) ) );
 				if ( 'text' === $type && ! empty( $rules['pattern'] ) ) {
-					if ( in_array( $rules['pattern'], array( 'alpha', 'alnum', 'zip_de' ), true ) ) {
-						$out['pattern'] = $rules['pattern'];
+					$pattern = is_string( $rules['pattern'] ) ? $rules['pattern'] : '';
+					if ( ValidationPatterns::CUSTOM === $pattern ) {
+						$custom = is_string( $rules['custom_pattern'] ?? null ) ? trim( $rules['custom_pattern'] ) : '';
+						$check  = ValidationPatterns::check_custom( $custom );
+						if ( null === $check ) {
+							$out['pattern']        = $pattern;
+							$out['custom_pattern'] = $custom;
+						} else {
+							$errors[ "$p.validation.custom_pattern" ] = $check;
+						}
+					} elseif ( isset( ValidationPatterns::all()[ $pattern ] ) ) {
+						$out['pattern'] = $pattern;
 					} else {
 						$errors[ "$p.validation.pattern" ] = 'invalid_pattern';
+					}
+				}
+				break;
+			case 'tel':
+				if ( ! empty( $rules['format'] ) ) {
+					if ( ValidationPatterns::TEL_INTERNATIONAL === $rules['format'] ) {
+						$out['format'] = ValidationPatterns::TEL_INTERNATIONAL;
+					} else {
+						$errors[ "$p.validation.format" ] = 'invalid_pattern';
 					}
 				}
 				break;
@@ -279,6 +315,14 @@ final class SchemaValidator {
 						}
 					}
 				}
+				if ( isset( $rules['min_age'] ) && '' !== $rules['min_age'] ) {
+					$age = is_numeric( $rules['min_age'] ) ? (int) $rules['min_age'] : 0;
+					if ( $age >= 1 && $age <= self::MIN_AGE_MAX && (string) $age === trim( (string) $rules['min_age'] ) ) {
+						$out['min_age'] = $age;
+					} else {
+						$errors[ "$p.validation.min_age" ] = 'invalid_min_age';
+					}
+				}
 				break;
 			case 'checkbox':
 				if ( isset( $rules['min_choices'] ) ) {
@@ -288,6 +332,13 @@ final class SchemaValidator {
 					$out['max_choices'] = max( 1, (int) $rules['max_choices'] );
 				}
 				break;
+		}
+		// Own error message for this field (SET-FC-11); empty = translated default message.
+		if ( FieldTypes::has_value( $type ) && 'hidden' !== $type ) {
+			$message = self::plain( $rules['message'] ?? '', 190 );
+			if ( '' !== $message ) {
+				$out['message'] = $message;
+			}
 		}
 		return $out;
 	}

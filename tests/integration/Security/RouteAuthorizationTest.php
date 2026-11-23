@@ -40,7 +40,8 @@ final class RouteAuthorizationTest extends TestCase {
 	);
 
 	/** Public admin-post actions (OP-PUB-03, protected by the submission token). */
-	private const PUBLIC_HANDLERS = array( 'form_captain_submit' );
+	/** Public by design: submission (token) and double opt-in confirmation (single-use link token, SET-FC-10). */
+	private const PUBLIC_HANDLERS = array( 'form_captain_submit', 'form_captain_confirm' );
 
 	/** @var array{form:array<string,mixed>,entry:int,job:int,preview:string} */
 	private array $fx;
@@ -241,7 +242,7 @@ final class RouteAuthorizationTest extends TestCase {
 			return array( FormsPage::nonce_action( substr( $action, strlen( $forms ) ), $form ), '_wpnonce' );
 		}
 		return match ( $action ) {
-			'form_captain_setup_step', 'form_captain_setup_finish', 'form_captain_setup_page', 'form_captain_dismiss_hint', 'form_captain_test_mail', 'form_captain_rotate_secret' => array( $action, '_wpnonce' ),
+			'form_captain_setup_step', 'form_captain_setup_finish', 'form_captain_setup_page', 'form_captain_dismiss_hint', 'form_captain_test_mail', 'form_captain_rotate_secret', 'form_captain_export_settings', 'form_captain_import_settings', 'form_captain_apply_country_profile' => array( $action, '_wpnonce' ),
 			'form_captain_save_settings' => array( 'form_captain_settings_general', '_wpnonce' ),
 			'form_captain_reset_settings' => array( 'form_captain_reset_general', '_wpnonce' ),
 			'form_captain_connector_toggle' => array( 'form_captain_connector_reference', '_wpnonce' ),

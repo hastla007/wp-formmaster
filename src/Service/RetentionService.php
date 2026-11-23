@@ -6,8 +6,9 @@
  * - Deletes expired entries and trash/spam older than privacy.trash_days, batch-wise with a
  *   time budget; failures do not stop the batch and are retried on the next run.
  * - Purges rate-limit buckets, logs and finished jobs.
- * - Recalculates expires_gmt when the effective retention mode changes, with a 14-day grace
- *   period when the period is shortened.
+ * - Recalculates expires_gmt when the effective retention mode changes, with a grace period
+ *   (setting privacy.grace_days, default 14 days) when the period is shortened.
+ * - Retention modes are periods (Settings\RetentionPeriod): `manual` or amount + unit (d/m/y).
  *
  * @package FormCaptain
  */
@@ -21,6 +22,7 @@ use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
 use FormCaptain\Repository\JobRepository;
+use FormCaptain\Settings\RetentionPeriod;
 use FormCaptain\Settings\Settings;
 use FormCaptain\Support\Clock;
 use FormCaptain\Support\Limits;
@@ -28,13 +30,11 @@ use FormCaptain\Support\Logger;
 
 final class RetentionService {
 
-	public const GRACE_SECONDS     = 14 * DAY_IN_SECONDS;
 	public const OPTION_LAST_RUN   = 'form_captain_last_cleanup_at';
 	public const OPTION_LAST_STATS = 'form_captain_last_cleanup';
 	public const OPTION_FAILURES   = 'form_captain_cleanup_failures';
 	public const OPTION_FORM_MODES = 'form_captain_retention_modes';
 	public const JOB_TYPE          = 'cleanup.retention';
-	public const MODES             = array( '90d', '12m', 'manual' );
 	private const RECALC_BATCH     = 500;
 
 	private bool $registered = false;
@@ -70,14 +70,27 @@ final class RetentionService {
 		return $handlers;
 	}
 
-	/** Normalises stored mode names (spec aliases days_90/months_12 accepted). */
+	/** Normalises stored mode names (periods like 30d/6m/10y, manual; aliases days_90/months_12). */
 	public static function normalize_mode( string $mode ): ?string {
-		return match ( $mode ) {
-			'90d', 'days_90' => '90d',
-			'12m', 'months_12' => '12m',
-			'manual' => 'manual',
-			default => null,
-		};
+		return RetentionPeriod::normalize( $mode );
+	}
+
+	/**
+	 * Grace period after a shortened retention: setting privacy.grace_days (0–90, default 14),
+	 * filter `form_captain_retention_grace_days_v1` wins (0–365).
+	 */
+	public static function grace_days(): int {
+		$days = (int) apply_filters( 'form_captain_retention_grace_days_v1', (int) Settings::get( 'privacy.grace_days' ) );
+		return max( 0, min( 365, $days ) );
+	}
+
+	/**
+	 * Days before the automatic deletion from which submissions are marked as "expiring":
+	 * setting privacy.expiry_notice_days (0 = no notice), filter `form_captain_expiry_notice_days_v1` wins.
+	 */
+	public static function notice_days(): int {
+		$days = (int) apply_filters( 'form_captain_expiry_notice_days_v1', (int) Settings::get( 'privacy.expiry_notice_days' ) );
+		return max( 0, min( 365, $days ) );
 	}
 
 	/**
@@ -90,20 +103,32 @@ final class RetentionService {
 		return $own ?? ( self::normalize_mode( (string) Settings::get( 'privacy.retention' ) ) ?? '12m' );
 	}
 
-	/** Expiry for an entry created at $created_gmt (UTC), null for manual. */
+	/**
+	 * Expiry for an entry created at $created_gmt (UTC), null for manual. Calendar based
+	 * (12m = 1y). The filter `form_captain_retention_seconds_v1` receives the period in seconds
+	 * (null for manual), the mode and the creation time; a different int (at least one day) or
+	 * null replaces it.
+	 */
 	public static function expires_for( string $mode, string $created_gmt ): ?string {
 		$mode = self::normalize_mode( $mode );
-		if ( null === $mode || 'manual' === $mode ) {
+		if ( null === $mode ) {
 			return null;
 		}
-		$utc     = new \DateTimeZone( 'UTC' );
-		$created = new \DateTimeImmutable( $created_gmt, $utc );
-		$expires = $created->add( new \DateInterval( '90d' === $mode ? 'P90D' : 'P12M' ) );
-		return $expires->format( 'Y-m-d H:i:s' );
+		$created  = new \DateTimeImmutable( $created_gmt, new \DateTimeZone( 'UTC' ) );
+		$interval = RetentionPeriod::interval( $mode );
+		$expires  = null === $interval ? null : $created->add( $interval );
+		$seconds  = null === $expires ? null : $expires->getTimestamp() - $created->getTimestamp();
+		if ( has_filter( 'form_captain_retention_seconds_v1' ) ) {
+			$filtered = apply_filters( 'form_captain_retention_seconds_v1', $seconds, $mode, $created_gmt );
+			if ( null === $filtered || ( is_numeric( $filtered ) && (int) $filtered !== $seconds ) ) {
+				$expires = null === $filtered ? null : $created->modify( '+' . max( DAY_IN_SECONDS, (int) $filtered ) . ' seconds' );
+			}
+		}
+		return null === $expires ? null : $expires->format( 'Y-m-d H:i:s' );
 	}
 
 	/**
-	 * New expiry after a mode change: shortening never deletes sooner than 14 days from now,
+	 * New expiry after a mode change: shortening never deletes sooner than the grace period from now,
 	 * and a grace date set earlier is kept (recalculation is idempotent).
 	 */
 	public static function recalculated_expiry( string $mode, string $created_gmt, ?string $current ): ?string {
@@ -111,7 +136,7 @@ final class RetentionService {
 		if ( null === $target ) {
 			return null;
 		}
-		$grace = Clock::plus( self::GRACE_SECONDS );
+		$grace = Clock::plus( self::grace_days() * DAY_IN_SECONDS );
 		if ( $target >= $grace ) {
 			return $target;
 		}
@@ -129,7 +154,7 @@ final class RetentionService {
 	/**
 	 * Cleanup run with batch size and time budget. Repeatable and resumable.
 	 *
-	 * @return array{expired:int,trash:int,failed:int,done:bool,purged_jobs:int,purged_logs:int}
+	 * @return array{expired:int,trash:int,unconfirmed:int,failed:int,done:bool,purged_jobs:int,purged_logs:int}
 	 */
 	public function run( ?int $time_budget = null ): array {
 		$deadline = microtime( true ) + (float) ( $time_budget ?? Limits::get( 'job_batch_seconds' ) );
@@ -137,6 +162,7 @@ final class RetentionService {
 		$stats    = array(
 			'expired'     => 0,
 			'trash'       => 0,
+			'unconfirmed' => 0,
 			'failed'      => 0,
 			'done'        => true,
 			'purged_jobs' => 0,
@@ -147,11 +173,14 @@ final class RetentionService {
 		$skip     = array();
 		$cutoff   = Clock::plus( -max( 1, (int) Settings::get( 'privacy.trash_days' ) ) * DAY_IN_SECONDS );
 
-		foreach ( array( 'expired', 'trash' ) as $kind ) {
+		foreach ( array( 'expired', 'trash', 'unconfirmed' ) as $kind ) {
 			while ( true ) {
-				$ids = 'expired' === $kind
-					? $this->entries->ids_expired( Clock::now(), $batch + count( $skip ) )
-					: $this->entries->ids_trashed_before( $cutoff, $batch + count( $skip ) );
+				$ids = match ( $kind ) {
+					'expired' => $this->entries->ids_expired( Clock::now(), $batch + count( $skip ) ),
+					'trash' => $this->entries->ids_trashed_before( $cutoff, $batch + count( $skip ) ),
+					// Double opt-in never confirmed within the form's period (SET-FC-10).
+					default => $this->entries->ids_unconfirmed_before( Clock::now(), $batch + count( $skip ) ),
+				};
 				$ids = array_values( array_diff( $ids, $skip ) );
 				if ( ! $ids ) {
 					break;
@@ -189,14 +218,14 @@ final class RetentionService {
 			self::OPTION_LAST_STATS,
 			array(
 				'at'      => Clock::now(),
-				'deleted' => $stats['expired'] + $stats['trash'],
+				'deleted' => $stats['expired'] + $stats['trash'] + $stats['unconfirmed'],
 				'failed'  => $stats['failed'],
 				'done'    => $stats['done'],
 			),
 			false
 		);
-		if ( $stats['expired'] + $stats['trash'] + $stats['failed'] > 0 ) {
-			Logger::log( 'info', 'cleanup_run', sprintf( 'expired=%d trash=%d failed=%d done=%d', $stats['expired'], $stats['trash'], $stats['failed'], (int) $stats['done'] ) );
+		if ( $stats['expired'] + $stats['trash'] + $stats['unconfirmed'] + $stats['failed'] > 0 ) {
+			Logger::log( 'info', 'cleanup_run', sprintf( 'expired=%d trash=%d unconfirmed=%d failed=%d done=%d', $stats['expired'], $stats['trash'], $stats['unconfirmed'], $stats['failed'], (int) $stats['done'] ) );
 		}
 		if ( ! $stats['done'] ) {
 			$this->jobs->enqueue( self::JOB_TYPE, self::JOB_TYPE . ':run:' . gmdate( 'Y-m-d-H-i', Clock::timestamp() ), array( 'task' => 'run' ) );
@@ -223,8 +252,15 @@ final class RetentionService {
 	 *
 	 * @return array{count:int,earliest:string|null}
 	 */
-	public function upcoming( int $days = 14, int $form_id = 0 ): array {
-		return $this->entries->expiring_summary( Clock::now(), Clock::plus( max( 1, $days ) * DAY_IN_SECONDS ), $form_id );
+	public function upcoming( ?int $days = null, int $form_id = 0 ): array {
+		$days = $days ?? self::notice_days();
+		if ( $days < 1 ) {
+			return array(
+				'count'    => 0,
+				'earliest' => null,
+			);
+		}
+		return $this->entries->expiring_summary( Clock::now(), Clock::plus( $days * DAY_IN_SECONDS ), $form_id );
 	}
 
 	/**
@@ -324,7 +360,7 @@ final class RetentionService {
 			return JobResult::success();
 		}
 		$stats = $this->run();
-		return JobResult::success( array( 'deleted' => $stats['expired'] + $stats['trash'] ) );
+		return JobResult::success( array( 'deleted' => $stats['expired'] + $stats['trash'] + $stats['unconfirmed'] ) );
 	}
 
 	/**

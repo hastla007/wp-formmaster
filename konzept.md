@@ -77,11 +77,13 @@ Preis- und Funktionsentscheidungen werden aus eigenem Leistungsumfang, Supportko
 
 | Tarif | Jahrespreis (EUR, zzgl. USt.) | Live-Sites | Support |
 |---|---:|---:|---|
-| **Solo** | 59 € | 1 | Standard |
-| **Studio** | 129 € | 5 | Standard |
-| **Agency** | 249 € | 25 | Priorisiert |
+| **Single** (`single`) | 59 € | 1 | Standard |
+| **Business** (`business`) | 129 € | 5 | Standard |
+| **Agency** (`agency`) | 249 € | 25 | Priorisiert |
 
 Alle Tarife enthalten denselben Pro-Funktionsumfang, Updates und Support während der aktiven Laufzeit. Site-Limits zählen Live-Installationen; pro Live-Site ist eine Staging-Aktivierung enthalten, Development-Aktivierungen zählen nicht zum Limit, analog zum vorhandenen License Captain-Modell. Keine Lifetime-Lizenz und keine kostenpflichtigen Einzel-Add-ons zum Start. Preise nicht mit künstlichem „Normalpreis/Rabatt“-Doppelpreis vermarkten. Die Lizenz läuft 12 Monate und verlängert sich zum beim Kauf angezeigten Tarif, sofern im Checkout transparent zugestimmt wurde. Preisänderungen betreffen künftige Verlängerungen nur nach vorheriger Information und im Rahmen der Shopbedingungen.
+
+Tarifnamen und -schlüssel suiteweit `single`/`business`/`agency` (Angleichung 23.11.2026, vorher „Solo/Studio/Agency“; Preise unverändert, netto).
 
 **Begründung:** Entscheidung vom 16.11.2026 (docs/ENTSCHEIDUNGEN.md #9): etwas höhere Startpreise als ursprünglich vorgeschlagen (49/99/199 €), um Supportaufwand und Pflege abzudecken. Der Einstieg liegt nahe an einem bekannten 1-Site-Preisanker, die 5-Site-Stufe deckt kleine Agenturen ab und 25 Sites bilden einen klaren Agency-Tier. Die geringere Startposition gegenüber etablierten Produkten berücksichtigt den kleineren Funktions- und Supportumfang zum Launch. Preise nach den ersten 6 Monaten anhand von Conversion, Supportkosten und Verlängerungsquote neu bewerten; bis dahin keine zusätzliche Tarifstufe einführen.
 
@@ -431,7 +433,7 @@ Implementierung und Tests orientieren sich an den offiziellen Yoast-Entwicklerdo
 - Uninstall löscht Formulare/Einträge nur nach expliziter Admin-Auswahl und dokumentierter Bestätigung.
 - PHP-/WordPress-Mindestversion: WP 7.0+ und PHP 8.5+, WooCommerce 11.2.2+, Datenbank MySQL 9.7+ oder MariaDB 12.3+ (Entscheidung 21); CI-Matrix muss zusätzlich gegen aktuelle stabile Versionen laufen.
 
-**WordPress.org-Platzierung:** Die Trennung folgt den aktuellen Plugin-Richtlinien: Trialware/Funktionssperren im WordPress.org-Free-Plugin sind nicht zulässig; die Richtlinien empfehlen ausdrücklich ein außerhalb des Verzeichnisses angebotenes Add-on für Premiumcode. Lizenzprüfung, Premium-Updater und Pro-Code bleiben daher ausschließlich in form-captain-pro. Upgrade-Hinweise bleiben kontextbezogen, sparsam und wegklickbar. Quelle: [Detailed Plugin Guidelines (Developer.WordPress.org)](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/).
+**WordPress.org-Platzierung:** Die Trennung folgt den aktuellen Plugin-Richtlinien: Trialware/Funktionssperren im WordPress.org-Free-Plugin sind nicht zulässig; die Richtlinien empfehlen ausdrücklich ein außerhalb des Verzeichnisses angebotenes Add-on für Premiumcode. Lizenzprüfung, Premium-Updater und Pro-Code bleiben daher ausschließlich in form-captain-pro. Upgrade-Hinweise bleiben kontextbezogen, sparsam und wegklickbar. **Pro-Hinweise in den Einstellungen (Entscheidung S1 vom 23.11.2026, löst die Regel vom 13.11.2026 „keine ausgegrauten Funktionen, keine Upgrade-Hinweise im Kern“ ab):** Einstellungen, die Form Captain Pro mitbringt, erscheinen im Kern nur als graue Hinweiszeile am Ende des jeweiligen Reiters – Text mit „Pro“-Kennzeichen und einem Satz, was die Einstellung kann. Kein deaktiviertes Eingabefeld, kein Funktionscode, keine Lizenz- oder Rechteprüfung und keine Rechteschlüssel-Namen im Kern; ausblendbar über `general.show_pro_hints`. Das Add-on meldet das echte Feld über `form_captain_settings_fields_v1` mit derselben `id` an und ersetzt damit die Zeile. Was heute frei ist, wandert nicht hinter Pro. Quelle: [Detailed Plugin Guidelines (Developer.WordPress.org)](https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/).
 
 ## 8. Lizenzierung und Verkauf
 

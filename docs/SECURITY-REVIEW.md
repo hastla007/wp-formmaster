@@ -68,7 +68,7 @@ Ohne Befund geprüft (Auswahl): SQL ausschließlich über `prepare`, `ORDER BY` 
 ## 4. Verbleibende Risiken
 
 1. **Drittcode im selben Prozess:** Connectoren/Adapter laufen mit vollen PHP-Rechten. Job-Grant und Scope-Prüfung schützen nur die Contract-API, nicht direkte DB-Zugriffe eines bösartigen Plugins (Vertragsregel, technisch nicht erzwingbar – T-ADP-06).
-2. **Rate-Limit hinter Proxies/CDN:** Ohne korrekt gesetzten Filter `form_captain_client_ip` teilen sich alle Besucher die Proxy-IP (Fehlsperren) bzw. greift das Limit nicht pro Besucher.
+2. **Rate-Limit hinter Proxies/CDN:** Ohne passende Einstellung `spam.client_ip_source` (SET-FC-16) oder Filter `form_captain_client_ip` teilen sich alle Besucher die Proxy-IP (Fehlsperren) bzw. greift das Limit nicht pro Besucher.
 3. **Spam-Maskierung:** Honeypot-/Blocklisten-Treffer antworten wie Erfolg; Missbrauch für Mail-Relay ist durch statische Empfänger und Receipt-Limit begrenzt, Datenbankwachstum durch RL-02…RL-04.
 4. **No-JS-Ergebnisschlüssel in der URL** (SR-11) und **Typ-A-Importquelle im Transient** (nutzergebunden, nur oberflächlich geprüft).
 5. **Neuer Code in Arbeit:** `src/Import/*` (u. a. 1 000-Zeilen-Parser `ShortcodeFormatParser`) und `src/Integrations/CoreActions.php` wurden während des Reviews von anderen Agenten ergänzt. Einstiegspunkte (Capability, Nonce, Nutzerbindung, Escaping) sind geprüft und durch `RouteAuthorizationTest` abgedeckt; der Parser selbst (ReDoS, Grenzfälle) nicht vertieft.

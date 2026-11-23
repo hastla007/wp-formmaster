@@ -189,6 +189,9 @@
 					form.setAttribute( 'data-fc-token-issued', String( data.issued_at || now() ) );
 					form._fcOwnToken = true;
 					form._fcMinSubmitAt = data.min_submit_at || 0;
+					if ( data.pow ) {
+						startPow( form, data.pow );
+					}
 					if ( data._fc_ctx ) {
 						var ctx = form.querySelector( 'input[name="_fc_ctx"]' );
 						if ( ! ctx ) {
@@ -210,6 +213,22 @@
 				return data;
 			} );
 		return form._fcTokenPromise;
+	}
+
+	/* Built-in proof of work (SET-FC-05): solved in the background, nothing to do for the visitor. */
+	function startPow( form, challenge ) {
+		var input = form.querySelector( 'input[name="_fc_pow"]' );
+		if ( ! input ) {
+			input = document.createElement( 'input' );
+			input.type = 'hidden';
+			input.name = '_fc_pow';
+			form.appendChild( input );
+		}
+		input.value = '';
+		var solver = window.formCaptainPow;
+		form._fcPow = solver && solver.solve ? solver.solve( challenge ).then( function ( payload ) {
+			input.value = payload || '';
+		} ).catch( function () {} ) : Promise.resolve();
 	}
 
 	function ensureFreshToken( form, maxAge ) {
@@ -413,6 +432,9 @@
 		ensureFreshToken( form, TOKEN_MAX_AGE )
 			.then( function () {
 				return hadToken ? null : wait( form._fcMinSubmitAt );
+			} )
+			.then( function () {
+				return form._fcPow || null;
 			} )
 			.then( function () {
 				// Forms with file inputs (enctype set by an extension, contract 1.1.0) are sent as

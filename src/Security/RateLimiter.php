@@ -26,17 +26,41 @@ final class RateLimiter {
 	/** Token route limit per IP hash (RL-01). */
 	public const TOKEN_LIMIT = 30;
 
-	/** Flood brake per form (RL-04). */
+	/** Flood brake per form (RL-04): default of the setting spam.form_total (SpamLimits). */
 	public const FORM_TOTAL_LIMIT = 300;
 
 	/** form_captain_submit_v1 per form + source (RL-09). */
 	public const API_LIMIT = 120;
 
-	/** Client IP from REMOTE_ADDR only; proxies via filter `form_captain_client_ip`. */
+	/** Trusted client IP sources (SET-FC-16): setting value => $_SERVER key. */
+	public const IP_SOURCES = array(
+		'remote_addr'      => 'REMOTE_ADDR',
+		'cf_connecting_ip' => 'HTTP_CF_CONNECTING_IP',
+		'x_forwarded_for'  => 'HTTP_X_FORWARDED_FOR',
+		'x_real_ip'        => 'HTTP_X_REAL_IP',
+	);
+
+	/**
+	 * Client IP from REMOTE_ADDR or, when the operator chose one in `spam.client_ip_source`, from a
+	 * proxy header (X-Forwarded-For: first address). Falls back to REMOTE_ADDR when the header is
+	 * missing or invalid. The filter `form_captain_client_ip` still wins.
+	 */
 	public static function client_ip(): string {
-		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( (string) $_SERVER['REMOTE_ADDR'] ) ) : '';
-		$ip = (string) apply_filters( 'form_captain_client_ip', $ip );
+		$remote = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( (string) $_SERVER['REMOTE_ADDR'] ) ) : '';
+		$ip     = self::header_ip( (string) Settings::get( 'spam.client_ip_source' ) ) ?? $remote;
+		$ip     = (string) apply_filters( 'form_captain_client_ip', $ip );
 		return false !== filter_var( $ip, FILTER_VALIDATE_IP ) ? $ip : '0.0.0.0';
+	}
+
+	/** Valid IP from the configured proxy header, or null (direct address or header unusable). */
+	private static function header_ip( string $source ): ?string {
+		$key = self::IP_SOURCES[ $source ] ?? 'REMOTE_ADDR';
+		if ( 'REMOTE_ADDR' === $key || ! isset( $_SERVER[ $key ] ) || ! is_string( $_SERVER[ $key ] ) ) {
+			return null;
+		}
+		$value = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
+		$value = trim( explode( ',', $value )[0] );
+		return false !== filter_var( $value, FILTER_VALIDATE_IP ) ? $value : null;
 	}
 
 	/** IPv6 shortened to /64, IPv4 kept. */
@@ -81,7 +105,7 @@ final class RateLimiter {
 	 */
 	public function hit( string $bucket, int $form_id, int $limit, ?int $window = null ): array {
 		global $wpdb;
-		$window = $window ?? Limits::get( 'rate_window_seconds' );
+		$window = $window ?? SpamLimits::window_seconds();
 		$table  = Tables::name( Tables::RATE_LIMITS );
 		$now    = Clock::now();
 		$cutoff = Clock::plus( -$window );
@@ -121,7 +145,7 @@ final class RateLimiter {
 		$checks   = array(
 			array( self::ip_bucket( 'submit', $form_id, $ip ), $per_form ),
 			array( self::ip_bucket( 'submit_global', 0, $ip ), Limits::get( 'rate_global_per_ip' ) ),
-			array( self::bucket( 'submit_form_total', $form_id, '' ), self::FORM_TOTAL_LIMIT ),
+			array( self::bucket( 'submit_form_total', $form_id, '' ), SpamLimits::get( 'form_total' ) ),
 		);
 		foreach ( $checks as $check ) {
 			$r = $this->hit( $check[0], $form_id, $check[1] );
@@ -151,6 +175,6 @@ final class RateLimiter {
 	public function purge_old(): int {
 		global $wpdb;
 		$table = Tables::name( Tables::RATE_LIMITS );
-		return (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE window_start_gmt < %s LIMIT 5000", Clock::plus( -Limits::get( 'rate_window_seconds' ) ) ) );
+		return (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE window_start_gmt < %s LIMIT 5000", Clock::plus( -SpamLimits::window_seconds() ) ) );
 	}
 }

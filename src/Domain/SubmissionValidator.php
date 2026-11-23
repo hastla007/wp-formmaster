@@ -117,7 +117,7 @@ final class SubmissionValidator {
 
 		$errors = array();
 		foreach ( $codes as $id => $code ) {
-			$errors[ $id ] = self::message( $code, $by_id[ $id ] ?? array() );
+			$errors[ $id ] = self::field_message( $code, $by_id[ $id ] ?? array() );
 		}
 		return array(
 			'values'  => $values,
@@ -249,13 +249,7 @@ final class SubmissionValidator {
 				if ( $len < $min ) {
 					return array( 'code' => 'too_short' );
 				}
-				$pattern = match ( (string) ( $rules['pattern'] ?? '' ) ) {
-					'alpha' => '/^[\p{L}\s\'\-]+$/u',
-					'alnum' => '/^[\p{L}\p{N}\s\'\-]+$/u',
-					'zip_de' => '/^\d{5}$/',
-					default => null,
-				};
-				if ( 'text' === $type && null !== $pattern && ! preg_match( $pattern, $value ) ) {
+				if ( 'text' === $type && ! self::matches_pattern( $rules, $value ) ) {
 					return array( 'code' => 'invalid_pattern' );
 				}
 				return array( 'value' => $value );
@@ -264,6 +258,11 @@ final class SubmissionValidator {
 				return self::email( $value, (int) ( $rules['max_length'] ?? 254 ) );
 
 			case 'tel':
+				if ( ValidationPatterns::TEL_INTERNATIONAL === ( $rules['format'] ?? '' ) ) {
+					// "+", country code, then digits with optional separators; 7 to 15 digits in total (E.164).
+					$digits = strlen( (string) preg_replace( '/\D/', '', $value ) );
+					return preg_match( '/^\+[1-9][0-9 ()\-\/.]{5,30}$/', $value ) && $digits >= 7 && $digits <= 15 ? array( 'value' => $value ) : array( 'code' => 'invalid_tel_international' );
+				}
 				return preg_match( '/^[0-9 +()\-\/.]{3,40}$/', $value ) ? array( 'value' => $value ) : array( 'code' => 'invalid_tel' );
 
 			case 'number':
@@ -291,6 +290,9 @@ final class SubmissionValidator {
 				$max = isset( $rules['max'] ) ? ( 'today' === $rules['max'] ? $today : (string) $rules['max'] ) : null;
 				if ( ( null !== $min && $value < $min ) || ( null !== $max && $value > $max ) ) {
 					return array( 'code' => 'out_of_range' );
+				}
+				if ( ! empty( $rules['min_age'] ) && $value > self::birthdate_limit( $today, (int) $rules['min_age'] ) ) {
+					return array( 'code' => 'too_young' );
 				}
 				return array( 'value' => $value );
 
@@ -361,6 +363,64 @@ final class SubmissionValidator {
 	}
 
 	/**
+	 * Matches a text value against the field's pattern (SET-FC-04). No pattern = always true.
+	 * A custom pattern that fails to run (e.g. backtracking limit) counts as no match.
+	 *
+	 * @param array<string,mixed> $rules
+	 */
+	private static function matches_pattern( array $rules, string $value ): bool {
+		$key = (string) ( $rules['pattern'] ?? '' );
+		if ( '' === $key ) {
+			return true;
+		}
+		if ( ValidationPatterns::CUSTOM === $key ) {
+			$custom = (string) ( $rules['custom_pattern'] ?? '' );
+			if ( null !== ValidationPatterns::check_custom( $custom ) ) {
+				return false;
+			}
+			$regex = ValidationPatterns::custom_regex( $custom );
+		} else {
+			$regex = ValidationPatterns::all()[ $key ]['regex'] ?? null;
+			if ( null === $regex ) {
+				return true; // Pattern of an extension that is no longer active: not enforced.
+			}
+		}
+		return 1 === preg_match( $regex, $value );
+	}
+
+	/**
+	 * Latest birth date (Y-m-d) of a person who is at least $years old on $today (site date).
+	 * Somebody born on 29 February counts as a year older on 28 February of a non-leap year.
+	 */
+	public static function birthdate_limit( string $today, int $years ): string {
+		if ( ! preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/', $today, $m ) ) {
+			$today = gmdate( 'Y-m-d' );
+			preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/', $today, $m );
+		}
+		$year  = (int) $m[1] - $years;
+		$month = (int) $m[2];
+		$day   = (int) $m[3];
+		if ( 2 === $month && 29 === $day && ! checkdate( 2, 29, $year ) ) {
+			$day = 28;
+		}
+		return sprintf( '%04d-%02d-%02d', $year, $month, $day );
+	}
+
+	/**
+	 * Message shown for a field error: the field's own message (validation.message, SET-FC-11)
+	 * or the translated default. Structural problems always use the default text.
+	 *
+	 * @param array<string,mixed> $field
+	 */
+	public static function field_message( string $code, array $field = array() ): string {
+		$own = is_array( $field['validation'] ?? null ) ? trim( (string) ( $field['validation']['message'] ?? '' ) ) : '';
+		if ( '' !== $own && ! in_array( $code, array( 'unknown_field', 'duplicate_value', 'invalid_value' ), true ) ) {
+			return wp_strip_all_tags( $own );
+		}
+		return self::message( $code, $field );
+	}
+
+	/**
 	 * Translated, visitor-safe message for a field error code.
 	 *
 	 * @param array<string,mixed> $field
@@ -401,7 +461,15 @@ final class SubmissionValidator {
 			case 'consent_required':
 				return __( 'Please confirm this checkbox to send the form.', 'form-captain' );
 			case 'invalid_pattern':
-				return __( 'Please check the format of this field.', 'form-captain' );
+				$pattern = (string) ( $rules['pattern'] ?? '' );
+				$known   = '' !== $pattern && ValidationPatterns::CUSTOM !== $pattern ? (string) ( ValidationPatterns::all()[ $pattern ]['message'] ?? '' ) : '';
+				return '' !== $known ? $known : __( 'Please check the format of this field.', 'form-captain' );
+			case 'invalid_tel_international':
+				return __( 'Please enter the phone number in international format, starting with + and the country code (for example +49 30 1234567).', 'form-captain' );
+			case 'too_young':
+				$age = (int) ( $rules['min_age'] ?? 0 );
+				/* translators: %d: minimum age in years */
+				return sprintf( _n( 'You must be at least %d year old.', 'You must be at least %d years old.', $age, 'form-captain' ), $age );
 			case 'unknown_field':
 				return __( 'The submission contained data that does not belong to this form. Please reload the page.', 'form-captain' );
 			case 'duplicate_value':

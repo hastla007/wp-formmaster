@@ -30,6 +30,7 @@
 		ACTIONS[ a.key ] = a;
 	} );
 	var MSG = boot.messages || {};
+	var SUGGEST = boot.fieldSuggestions || {};
 	var KEY_RE = /^[a-z][a-z0-9_]{0,39}$/;
 	var OPTION_RE = /^[A-Za-z0-9_\-]{1,64}$/;
 	var CSS_RE = /^[A-Za-z0-9_\- ]{0,100}$/;
@@ -179,6 +180,10 @@
 		};
 		if ( def.has_placeholder ) {
 			f.placeholder = '';
+		}
+		// Country profile (SET-FC-12): new phone fields start with the suggested format.
+		if ( type === 'tel' && SUGGEST.tel_format ) {
+			f.validation = { format: SUGGEST.tel_format };
 		}
 		if ( type !== 'consent' && type !== 'html' ) {
 			f[ 'default' ] = '';
@@ -835,14 +840,51 @@
 					key: 'pattern',
 					label: __( 'Allowed characters', 'form-captain' ),
 					value: rules.pattern || '',
-					options: [
-						{ value: '', label: __( 'Any', 'form-captain' ) },
-						{ value: 'alpha', label: __( 'Letters only', 'form-captain' ) },
-						{ value: 'alnum', label: __( 'Letters and digits', 'form-captain' ) },
-						{ value: 'zip_de', label: __( 'German postal code', 'form-captain' ) },
-					],
+					options: [ { value: '', label: __( 'Any', 'form-captain' ) } ].concat( boot.patterns || [] ),
 					onChange: function ( v ) {
 						setRule( 'pattern', v );
+					},
+				} )
+			);
+			if ( SUGGEST.zip_pattern && ! rules.pattern ) {
+				limits.push(
+					el( C.Button, {
+						key: 'zipsuggest',
+						variant: 'link',
+						onClick: function () {
+							setRule( 'pattern', SUGGEST.zip_pattern );
+						},
+					},
+					/* translators: %s: postal code pattern, e.g. "German postal code" */
+					sprintf( __( 'Postal code field? Use the suggestion of the country profile: %s', 'form-captain' ), SUGGEST.zip_label ) )
+				);
+			}
+			if ( rules.pattern === 'custom' ) {
+				limits.push(
+					el( C.TextControl, {
+						key: 'custom_pattern',
+						label: __( 'Own pattern (regular expression)', 'form-captain' ),
+						help: __( 'Without delimiters; the whole value must match. Example: [A-Z]{2}-[0-9]{4}. Nested repetitions, back-references and look-arounds are rejected because they can slow down the website.', 'form-captain' ),
+						value: rules.custom_pattern || '',
+						onChange: function ( v ) {
+							setRule( 'custom_pattern', v );
+						},
+					} )
+				);
+			}
+		}
+		if ( f.type === 'tel' ) {
+			limits.push(
+				el( C.SelectControl, {
+					key: 'telformat',
+					label: __( 'Phone number format', 'form-captain' ),
+					value: rules.format || '',
+					options: [
+						{ value: '', label: __( 'Any phone number', 'form-captain' ) },
+						{ value: 'international', label: __( 'International with + and country code', 'form-captain' ) },
+					],
+					onChange: function ( v ) {
+						setRule( 'format', v );
 					},
 				} )
 			);
@@ -893,6 +935,17 @@
 					} )
 				);
 			} );
+			limits.push(
+				el( NumberInput, {
+					key: 'minage',
+					label: __( 'Minimum age (years)', 'form-captain' ),
+					help: __( 'Only dates of persons who are at least this old are accepted. Empty = no age check. Have the required age checked legally for your country and purpose.', 'form-captain' ),
+					value: rules.min_age,
+					onChange: function ( v ) {
+						setRule( 'min_age', v === undefined ? v : parseInt( v, 10 ) || v );
+					},
+				} )
+			);
 		}
 		if ( f.type === 'checkbox' ) {
 			limits.push(
@@ -902,6 +955,34 @@
 				el( NumberInput, { key: 'maxc', label: __( 'Maximum choices', 'form-captain' ), value: rules.max_choices, onChange: function ( v ) {
 					setRule( 'max_choices', v );
 				} } )
+			);
+		}
+		if ( hasValue( f.type ) && f.type !== 'hidden' ) {
+			limits.push(
+				el( C.TextControl, {
+					key: 'vmsg',
+					label: __( 'Own error message', 'form-captain' ),
+					help: __( 'Shown instead of the standard message when the value is missing or invalid. Empty = standard message.', 'form-captain' ),
+					value: rules.message || '',
+					onChange: function ( v ) {
+						setRule( 'message', v );
+					},
+				} )
+			);
+		}
+		if ( ( boot.autocompleteTypes || [] ).indexOf( f.type ) !== -1 ) {
+			limits.push(
+				el( C.SelectControl, {
+					key: 'autocomplete',
+					label: __( 'Autofill (browser)', 'form-captain' ),
+					help: __( 'Tells the browser which saved data fits this field, e.g. name or postal code.', 'form-captain' ),
+					value: f.autocomplete || '',
+					options: [ { value: '', label: __( 'Automatic', 'form-captain' ) } ].concat( boot.autocomplete || [] ),
+					onChange: function ( v ) {
+						set( { autocomplete: v || undefined } );
+					},
+				} ),
+				el( FieldError, { key: 'autocomplete-e', code: err.autocomplete } )
 			);
 		}
 		var ruleErr = Object.keys( err ).filter( function ( k ) {
@@ -1124,6 +1205,123 @@
 		return el( FieldError, { code: props.errors[ props.path ] } );
 	}
 
+	/** "Send test to me" (SET-FC-19): the real mail with sample values, current editor settings. */
+	function TestMailButton( props ) {
+		var state = useState( null );
+		var busy = useState( false );
+		var send = function () {
+			busy[ 1 ]( true );
+			state[ 1 ]( null );
+			apiFetch( { path: boot.restPath + '/test-mail', method: 'POST', data: { kind: props.kind, settings: props.settings } } ).then(
+				function ( res ) {
+					busy[ 1 ]( false );
+					state[ 1 ]( { status: 'success', text: res.message } );
+				},
+				function ( err ) {
+					busy[ 1 ]( false );
+					state[ 1 ]( { status: 'error', text: ( err && err.message ) || __( 'The request failed.', 'form-captain' ) } );
+				}
+			);
+		};
+		return el(
+			'div',
+			{ className: 'fc-test-mail' },
+			el( C.Button, { variant: 'secondary', isBusy: busy[ 0 ], disabled: busy[ 0 ], onClick: send }, __( 'Send test to me', 'form-captain' ) ),
+			el( 'p', { className: 'description' }, sprintf( __( 'Sends this e-mail with sample values to your own address (%s), never to the recipients. Unsaved changes are used.', 'form-captain' ), boot.userEmail || '' ) ),
+			state[ 0 ] && el( 'p', { className: state[ 0 ].status === 'error' ? 'fc-field-error' : 'fc-notice-success', role: state[ 0 ].status === 'error' ? 'alert' : 'status' }, state[ 0 ].text )
+		);
+	}
+
+	/** Double opt-in (SET-FC-10). */
+	function DoubleOptInSection( props ) {
+		var s = props.settings;
+		var d = s.double_opt_in || {};
+		var emails = props.fields.filter( function ( f ) {
+			return f.type === 'email';
+		} );
+		var setD = function ( patch ) {
+			props.onChange( Object.assign( {}, s, { double_opt_in: Object.assign( {}, d, patch ) } ) );
+		};
+		return el(
+			Fragment,
+			null,
+			el( 'h2', null, __( 'Double opt-in', 'form-captain' ) ),
+			el( C.CheckboxControl, {
+				label: __( 'Accept submissions only after the visitor confirmed them by e-mail', 'form-captain' ),
+				help: __( 'Notifications and actions run only after the confirmation. Whether you need double opt-in (e.g. for newsletters) is a legal question – have the texts checked.', 'form-captain' ),
+				checked: !! d.enabled,
+				onChange: function ( v ) {
+					setD( { enabled: v } );
+				},
+			} ),
+			d.enabled &&
+				el(
+					Fragment,
+					null,
+					el( C.SelectControl, {
+						label: __( 'E-mail field for the confirmation link', 'form-captain' ),
+						value: d.email_field || '',
+						options: [ { value: '', label: __( '— Select —', 'form-captain' ) } ].concat(
+							emails.map( function ( f ) {
+								return { value: f.id, label: fieldLabel( f ) + ( f.required ? '' : ' (' + __( 'not required', 'form-captain' ) + ')' ) };
+							} )
+						),
+						onChange: function ( v ) {
+							setD( { email_field: v } );
+						},
+					} ),
+					el( SettingError, { errors: props.errors, path: 'double_opt_in.email_field' } ),
+					el( C.TextControl, {
+						label: __( 'Subject', 'form-captain' ),
+						help: __( 'Leave empty for the default text in the language of the page.', 'form-captain' ),
+						value: d.subject || '',
+						onChange: function ( v ) {
+							setD( { subject: v } );
+						},
+					} ),
+					el( SettingError, { errors: props.errors, path: 'double_opt_in.subject' } ),
+					el( C.TextareaControl, {
+						label: __( 'Message', 'form-captain' ),
+						help: __( 'Placeholders: {confirm_link}, {link_hours}, {form_title}, {site_title}, {field:key}. Without {confirm_link} the link is added below the text. Simple HTML is allowed: p, br, strong, em, b, i, ul, ol, li, a, h3, h4, span. Leave empty for the default text.', 'form-captain' ),
+						rows: 5,
+						value: d.body || '',
+						onChange: function ( v ) {
+							setD( { body: v } );
+						},
+					} ),
+					el( C.TextareaControl, {
+						label: __( 'Message after submitting', 'form-captain' ),
+						help: __( 'Shown instead of the success message until the visitor confirmed. Leave empty for the default text.', 'form-captain' ),
+						rows: 2,
+						value: d.pending_message || '',
+						onChange: function ( v ) {
+							setD( { pending_message: v } );
+						},
+					} ),
+					el( SettingError, { errors: props.errors, path: 'double_opt_in.pending_message' } ),
+					el( NumberInput, {
+						label: __( 'Link valid for (hours)', 'form-captain' ),
+						help: __( '1 to 720 hours. Default: 48.', 'form-captain' ),
+						value: d.link_hours === undefined ? 48 : d.link_hours,
+						onChange: function ( v ) {
+							setD( { link_hours: v } );
+						},
+					} ),
+					el( SettingError, { errors: props.errors, path: 'double_opt_in.link_hours' } ),
+					el( NumberInput, {
+						label: __( 'Delete unconfirmed submissions after (days)', 'form-captain' ),
+						help: __( '1 to 90 days, at least as long as the link is valid. Default: 7.', 'form-captain' ),
+						value: d.delete_after_days === undefined ? 7 : d.delete_after_days,
+						onChange: function ( v ) {
+							setD( { delete_after_days: v } );
+						},
+					} ),
+					el( SettingError, { errors: props.errors, path: 'double_opt_in.delete_after_days' } ),
+					el( TestMailButton, { kind: 'double_opt_in', settings: s } )
+				)
+		);
+	}
+
 	function NotificationsTab( props ) {
 		var s = props.settings;
 		var n = s.notification || {};
@@ -1143,7 +1341,7 @@
 		};
 		var selected = Array.isArray( n.fields ) ? n.fields : null;
 		var cmFields = Array.isArray( cm.fields ) ? cm.fields : [];
-		var placeholders = '{form_title}, {admin_email}, ' + valueFields.slice( 0, 4 ).map( function ( f ) {
+		var placeholders = '{form_title}, {admin_email}, {entry_number}, ' + valueFields.slice( 0, 4 ).map( function ( f ) {
 			return '{field:' + f.key + '}';
 		} ).join( ', ' );
 
@@ -1228,7 +1426,8 @@
 								} );
 							} )
 						),
-					el( SettingError, { errors: props.errors, path: 'notification.fields' } )
+					el( SettingError, { errors: props.errors, path: 'notification.fields' } ),
+					el( TestMailButton, { kind: 'admin', settings: s } )
 				),
 			el( 'h2', null, __( 'Confirmation email to the visitor', 'form-captain' ) ),
 			el( C.CheckboxControl, { label: __( 'Send a confirmation email', 'form-captain' ), checked: !! cm.enabled, onChange: function ( v ) {
@@ -1244,9 +1443,15 @@
 						setCM( { subject: v } );
 					} } ),
 					el( SettingError, { errors: props.errors, path: 'confirmation_mail.subject' } ),
-					el( C.TextareaControl, { label: __( 'Message', 'form-captain' ), rows: 5, value: cm.body || '', onChange: function ( v ) {
-						setCM( { body: v } );
-					} } ),
+					el( C.TextareaControl, {
+						label: __( 'Message', 'form-captain' ),
+						help: sprintf( __( 'Placeholders: %s. Simple HTML is allowed: p, br, strong, em, b, i, ul, ol, li, a, h3, h4, span; everything else is removed. Plain text stays plain text.', 'form-captain' ), placeholders.replace( '{admin_email}, ', '{site_title}, ' ) ),
+						rows: 5,
+						value: cm.body || '',
+						onChange: function ( v ) {
+							setCM( { body: v } );
+						},
+					} ),
 					el(
 						'fieldset',
 						{ className: 'fc-checklist-fields' },
@@ -1269,8 +1474,10 @@
 								},
 							} );
 						} )
-					)
+					),
+					el( TestMailButton, { kind: 'confirmation', settings: s } )
 				),
+			el( DoubleOptInSection, { settings: s, fields: fields, errors: props.errors, onChange: props.onChange } ),
 			el( 'h2', null, __( 'Sender', 'form-captain' ) ),
 			el( 'p', { className: 'description' }, __( 'Copied from the global email settings when the form was created. Changes here only affect this form.', 'form-captain' ) ),
 			el( C.TextControl, {
@@ -1288,7 +1495,20 @@
 					props.onChange( Object.assign( {}, s, { email: Object.assign( {}, s.email || {}, { from_address: v } ) } ) );
 				},
 			} ),
-			el( SettingError, { errors: props.errors, path: 'email.from_address' } )
+			el( SettingError, { errors: props.errors, path: 'email.from_address' } ),
+			el( C.SelectControl, {
+				label: __( 'E-mail format', 'form-captain' ),
+				help: __( 'HTML e-mails always contain a plain-text version as well.', 'form-captain' ),
+				value: ( s.email || {} ).format || 'global',
+				options: [
+					{ value: 'global', label: __( 'As in the global e-mail settings', 'form-captain' ) },
+					{ value: 'html', label: __( 'HTML', 'form-captain' ) },
+					{ value: 'text', label: __( 'Plain text', 'form-captain' ) },
+				],
+				onChange: function ( v ) {
+					props.onChange( Object.assign( {}, s, { email: Object.assign( {}, s.email || {}, { format: v } ) } ) );
+				},
+			} )
 		);
 	}
 
@@ -1336,9 +1556,84 @@
 
 	function FormSettingsTab( props ) {
 		var s = props.settings;
+		var texts = s.texts || {};
+		var lim = s.limits || {};
+		var setTexts = function ( patch ) {
+			props.onChange( Object.assign( {}, s, { texts: Object.assign( {}, texts, patch ) } ) );
+		};
+		var setLimits = function ( patch ) {
+			props.onChange( Object.assign( {}, s, { limits: Object.assign( {}, lim, patch ) } ) );
+		};
 		return el(
 			'div',
 			{ className: 'fc-settings-tab' },
+			el( 'h2', null, __( 'Texts', 'form-captain' ) ),
+			el( C.TextControl, {
+				label: __( 'Submit button text', 'form-captain' ),
+				help: __( 'Up to 60 characters. Empty = “Send”.', 'form-captain' ),
+				maxLength: 60,
+				value: s.submit_label || '',
+				onChange: function ( v ) {
+					props.onChange( Object.assign( {}, s, { submit_label: v } ) );
+				},
+			} ),
+			el( SettingError, { errors: props.errors, path: 'submit_label' } ),
+			el( C.TextControl, {
+				label: __( 'Note on required fields', 'form-captain' ),
+				help: __( 'Shown above the fields when the form has required fields. An asterisk (*) is shown as the required marker. Empty = standard text.', 'form-captain' ),
+				value: texts.required_hint || '',
+				onChange: function ( v ) {
+					setTexts( { required_hint: v } );
+				},
+			} ),
+			el( SettingError, { errors: props.errors, path: 'texts.required_hint' } ),
+			el( C.TextControl, {
+				label: __( 'Heading of the error summary', 'form-captain' ),
+				help: __( 'Shown above the list of fields to correct. Empty = standard text.', 'form-captain' ),
+				value: texts.error_summary || '',
+				onChange: function ( v ) {
+					setTexts( { error_summary: v } );
+				},
+			} ),
+			el( SettingError, { errors: props.errors, path: 'texts.error_summary' } ),
+			el( 'h2', null, __( 'Submission period and limit', 'form-captain' ) ),
+			el( 'p', { className: 'description' }, __( 'Times use the time zone of the website. Outside the period or after the maximum number of entries, visitors see the closed text instead of the form. Spam and entries in the trash do not count.', 'form-captain' ) ),
+			el( C.TextControl, {
+				label: __( 'Accept submissions from', 'form-captain' ),
+				type: 'datetime-local',
+				value: lim.opens_at || '',
+				onChange: function ( v ) {
+					setLimits( { opens_at: v } );
+				},
+			} ),
+			el( SettingError, { errors: props.errors, path: 'limits.opens_at' } ),
+			el( C.TextControl, {
+				label: __( 'Accept submissions until', 'form-captain' ),
+				type: 'datetime-local',
+				value: lim.closes_at || '',
+				onChange: function ( v ) {
+					setLimits( { closes_at: v } );
+				},
+			} ),
+			el( SettingError, { errors: props.errors, path: 'limits.closes_at' } ),
+			el( NumberInput, {
+				label: __( 'Maximum number of entries', 'form-captain' ),
+				help: __( 'Empty or 0 = no limit.', 'form-captain' ),
+				value: lim.max_entries || undefined,
+				onChange: function ( v ) {
+					setLimits( { max_entries: v === undefined ? 0 : v } );
+				},
+			} ),
+			el( SettingError, { errors: props.errors, path: 'limits.max_entries' } ),
+			el( C.TextareaControl, {
+				label: __( 'Text when the form is closed', 'form-captain' ),
+				help: __( 'Empty = standard text.', 'form-captain' ),
+				rows: 2,
+				value: lim.closed_message || '',
+				onChange: function ( v ) {
+					setLimits( { closed_message: v } );
+				},
+			} ),
 			el( 'h2', null, __( 'Pause message', 'form-captain' ) ),
 			el( C.TextareaControl, {
 				label: __( 'Shown while the form is paused', 'form-captain' ),
@@ -1360,20 +1655,29 @@
 					props.onChange( Object.assign( {}, s, { appearance: { mode: v } } ) );
 				},
 			} ),
-			el( 'h2', null, __( 'Retention', 'form-captain' ) ),
+			el( 'h2', null, __( 'Spam protection', 'form-captain' ) ),
 			el( C.SelectControl, {
-				label: __( 'Keep entries of this form', 'form-captain' ),
-				value: ( s.retention || {} ).mode || 'global',
+				label: __( 'Captcha for this form', 'form-captain' ),
+				help: __( 'Honeypot, minimum time, blocklist and rate limits always apply. "Stricter" requires the captcha also from visitors without JavaScript (built-in proof of work if no captcha is chosen globally).', 'form-captain' ),
+				value: ( s.spam || {} ).mode || 'global',
 				options: [
-					{ value: 'global', label: __( 'As in the global privacy settings', 'form-captain' ) },
-					{ value: '90d', label: __( '90 days', 'form-captain' ) },
-					{ value: '12m', label: __( '12 months', 'form-captain' ) },
-					{ value: 'manual', label: __( 'Until deleted manually', 'form-captain' ) },
+					{ value: 'global', label: __( 'As in the global spam settings', 'form-captain' ) },
+					{ value: 'strict', label: __( 'Stricter: always require the captcha', 'form-captain' ) },
+					{ value: 'off', label: __( 'No captcha for this form', 'form-captain' ) },
 				],
+				onChange: function ( v ) {
+					props.onChange( Object.assign( {}, s, { spam: { mode: v } } ) );
+				},
+			} ),
+			el( SettingError, { errors: props.errors || {}, path: 'spam.mode' } ),
+			el( 'h2', null, __( 'Retention', 'form-captain' ) ),
+			el( RetentionControl, {
+				value: ( s.retention || {} ).mode || 'global',
 				onChange: function ( v ) {
 					props.onChange( Object.assign( {}, s, { retention: { mode: v } } ) );
 				},
 			} ),
+			el( SettingError, { errors: props.errors, path: 'retention.mode' } ),
 			el( ExtensionPanels, {
 				scope: 'form',
 				x: s.x,
@@ -1383,6 +1687,65 @@
 					props.onChange( Object.assign( {}, s, { x: Object.keys( x ).length ? x : undefined } ) );
 				},
 			} )
+		);
+	}
+
+	/**
+	 * Retention of one form (SET-FC-01): global setting, a period (amount + unit) or manual.
+	 * The value is stored as "global", "manual" or e.g. "90d", "6m", "10y".
+	 */
+	function RetentionControl( props ) {
+		var value = props.value || 'global';
+		var match = /^(\d*)([dmy])$/.exec( value );
+		var kind = 'global' === value || 'manual' === value ? value : 'period';
+		var amount = match ? match[ 1 ] : '12';
+		var unit = match ? match[ 2 ] : 'm';
+		return el(
+			'div',
+			{ className: 'fc-retention-control' },
+			el( C.SelectControl, {
+				label: __( 'Keep entries of this form', 'form-captain' ),
+				value: kind,
+				options: [
+					{ value: 'global', label: __( 'As in the global privacy settings', 'form-captain' ) },
+					{ value: 'period', label: __( 'For a fixed period', 'form-captain' ) },
+					{ value: 'manual', label: __( 'Until deleted manually', 'form-captain' ) },
+				],
+				onChange: function ( v ) {
+					props.onChange( 'period' === v ? amount + unit : v );
+				},
+			} ),
+			'period' === kind &&
+				el(
+					'div',
+					{ className: 'fc-retention-period' },
+					el( C.TextControl, {
+						label: __( 'Period', 'form-captain' ),
+						type: 'number',
+						min: 1,
+						value: amount,
+						onChange: function ( v ) {
+							props.onChange( String( v ).replace( /[^0-9]/g, '' ) + unit );
+						},
+					} ),
+					el( C.SelectControl, {
+						label: __( 'Unit', 'form-captain' ),
+						value: unit,
+						options: [
+							{ value: 'd', label: __( 'days', 'form-captain' ) },
+							{ value: 'm', label: __( 'months', 'form-captain' ) },
+							{ value: 'y', label: __( 'years', 'form-captain' ) },
+						],
+						onChange: function ( v ) {
+							props.onChange( amount + v );
+						},
+					} )
+				),
+			el(
+				'p',
+				{ className: 'description' },
+				__( 'Between 1 day and 30 years. Shortening the period never deletes existing entries sooner than the grace period set in the privacy settings.', 'form-captain' )
+			)
 		);
 	}
 

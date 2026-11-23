@@ -13,9 +13,12 @@ use FormCaptain\Support\Clock;
 
 final class Migrator {
 
-	public const TARGET_VERSION = 2;
+	public const TARGET_VERSION = 3;
 	public const OPTION_VERSION = 'form_captain_db_version';
 	public const OPTION_STATE   = 'form_captain_migration_state';
+
+	/** Columns of fc_entries added by schema version 3 (checked by verify()). */
+	public const V3_COLUMNS = array( 'entry_number', 'locale', 'confirmation_status', 'confirmation_token', 'confirmed_gmt', 'unconfirmed_until_gmt' );
 
 	/**
 	 * Map of version => callable performing the step. Steps must be idempotent.
@@ -26,6 +29,7 @@ final class Migrator {
 		return array(
 			1 => array( $this, 'install_v1' ),
 			2 => array( $this, 'migrate_v2' ),
+			3 => array( $this, 'migrate_v3' ),
 		);
 	}
 
@@ -132,10 +136,29 @@ final class Migrator {
 	}
 
 	/**
+	 * v3: fc_entries.entry_number (reference numbers, SET-FC-29), fc_entries.locale and the double
+	 * opt-in columns (SET-FC-10, SET-FC-21), each with its index. One step for all of them;
+	 * idempotent via dbDelta() like v2.
+	 */
+	public function migrate_v3(): void {
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( Schema::definitions()[ Tables::ENTRIES ] );
+	}
+
+	/**
 	 * Throws if a table or column expected after $version is missing.
 	 */
 	private function verify( int $version ): void {
 		global $wpdb;
+		if ( $version >= 3 ) {
+			$entries = Tables::name( Tables::ENTRIES );
+			foreach ( self::V3_COLUMNS as $name ) {
+				$column = $wpdb->get_var( $wpdb->prepare( "SHOW COLUMNS FROM {$entries} LIKE %s", $name ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				if ( $name !== $column ) {
+					throw new \RuntimeException( 'missing_column:entries.' . esc_html( $name ) );
+				}
+			}
+		}
 		if ( $version >= 2 ) {
 			$entries = Tables::name( Tables::ENTRIES );
 			$column  = $wpdb->get_var( $wpdb->prepare( "SHOW COLUMNS FROM {$entries} LIKE %s", 'consent_withdrawn_gmt' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared

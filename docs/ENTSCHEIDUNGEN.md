@@ -12,7 +12,7 @@ Getroffen von der Produktverantwortung nach Vorlage mit Empfehlungen. Diese Date
 | 6 | Schonfrist bei verkürzter Aufbewahrung | 14 Tage mit Vorwarnung | wie umgesetzt |
 | 7 | Antwort an Besucher bei Spam | Normale Erfolgsmeldung | wie umgesetzt |
 | 8 | Deaktivierter Connector | Offene Aufträge pausieren, bei Reaktivierung fortsetzen | Job-Status `paused` |
-| 9 | Pro-Preise zum Start | Solo 59 €/1 Site, Studio 129 €/5 Sites, Agency 249 €/25 Sites (jährlich, zzgl. USt.) | konzept.md, TODO.md |
+| 9 | Pro-Preise zum Start | Single 59 €/1 Site, Business 129 €/5 Sites, Agency 249 €/25 Sites (jährlich, zzgl. USt.); Tarifschlüssel suiteweit `single`/`business`/`agency` (Angleichung E7 vom 23.11.2026, vorher „Solo/Studio/Agency“, Preise unverändert) | konzept.md, TODO.md |
 | 10 | WordPress.org | Ja, nach externem Security-Review | docs/WORDPRESS-ORG.md |
 | 11 | Affiliate-Captain-Adapter | Bauen (Partner bleibt `pending`, nie automatische Freigabe/Provision) | an die Affiliate-Captain-Sitzung übergeben (Schnittstelle `wpac_submit_application` + Connector im Affiliate-Repo); Review durch Form Captain |
 | 12 | Support | Free: WordPress.org-Forum; Pro: Ticket per E-Mail mit tarifabhängiger Antwortzeit | readme.txt, docs/BETRIEB.md |

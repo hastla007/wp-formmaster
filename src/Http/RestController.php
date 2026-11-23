@@ -16,6 +16,7 @@ namespace FormCaptain\Http;
 
 use FormCaptain\Plugin;
 use FormCaptain\Repository\FormRepository;
+use FormCaptain\Security\PowCaptcha;
 use FormCaptain\Security\RateLimiter;
 use FormCaptain\Security\SignedContext;
 use FormCaptain\Security\SubmissionToken;
@@ -125,6 +126,10 @@ final class RestController {
 		if ( 'paused' === $form['status'] ) {
 			return self::respond( self::error_body( Errors::FORM_NOT_ACCEPTING ), 409 );
 		}
+		$limits = \FormCaptain\Service\FormLimits::state( $form );
+		if ( ! $limits['open'] ) {
+			return self::respond( self::error_body( Errors::FORM_NOT_ACCEPTING, $limits['message'] ), 409 );
+		}
 		$issued  = $this->plugin->get( SubmissionToken::class )->issue( (string) $form['public_id'] );
 		$body    = array(
 			'success'       => true,
@@ -150,6 +155,10 @@ final class RestController {
 			} else {
 				$body['context_error'] = (string) $signed['code'];
 			}
+		}
+		$pow = PowCaptcha::challenge_for( $form );
+		if ( null !== $pow ) {
+			$body['pow'] = $pow; // Built-in proof of work (SET-FC-05), solved by proof-of-work.js.
 		}
 		return self::respond( $body, 200 );
 	}
@@ -188,6 +197,7 @@ final class RestController {
 				'body_bytes'     => strlen( $body ),
 				'request_id'     => Logger::correlation_id(),
 				'files'          => UploadedFiles::by_field( (array) $request->get_file_params() ),
+				'js'             => true, // Route of frontend.js: a proof-of-work solution is expected.
 			)
 		);
 		return self::from_result( $result );

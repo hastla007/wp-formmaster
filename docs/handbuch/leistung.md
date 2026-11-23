@@ -43,10 +43,10 @@ Der Test bricht ab, wenn eine dieser Abfragen zum Full-Table-Scan (`type=ALL`) w
 ## Einordnung
 
 - **CSV-Export** streamt in Batches (`csv_batch` = 500) direkt in den Ausgabestrom; der Speicherbedarf hängt von der Batchgröße ab, nicht von der Gesamtzahl. Harte Obergrenze: `CsvExporter::MAX_ROWS`, darüber `export_too_large` (Zeitraum eingrenzen).
-- **Rate-Limits:** pro Formular und IP (`spam.rate_limit`, Standard 5 je 10 Minuten), global pro IP (`rate_global_per_ip` = 20) und pro Formular gesamt (300 je Fenster). Verteilte Einsendungen von vielen IPs werden angenommen, bis die Formulargrenze greift.
+- **Rate-Limits:** pro Formular und IP (`spam.rate_limit`, Standard 5 je Zeitfenster `spam.window_minutes` = 10 Minuten), global pro IP über alle Formulare (`spam.global_per_ip`, Standard 20; Filter `form_captain_limits_v1` gewinnt) und pro Formular gesamt (`spam.form_total`, Standard 300 je Fenster). Verteilte Einsendungen von vielen IPs werden angenommen, bis die Formulargrenze greift.
 - **Spam** wird gespeichert (Status „Spam“, Grund `honeypot`), aber erzeugt nie Outbox-Jobs (keine Mails, keine Aktionen) und kein öffentliches Event.
 - **Ohne funktionierenden WP-Cron** bleibt die Queue erhalten; der Admin-Fallback verarbeitet bei Aufrufen von Form-Captain-Seiten höchstens 5 Jobs. Für hohe Last einen System-Cron mit `wp form-captain jobs run` einrichten.
-- Grenzen lassen sich über `form_captain_limits_v1` nur **absenken**; höhere Werte werden auf die Obergrenzen gekappt (z. B. bleibt `job_batch_seconds` bei 20 s).
+- Technische Grenzen lassen sich über `form_captain_limits_v1` nur **absenken**; höhere Werte werden auf die Obergrenzen gekappt (z. B. bleibt `job_batch_seconds` bei 20 s). Ausnahme: Textlängen, Token-Dauer und die globale Grenze je IP sind Einstellungen; der Filter darf sie bis zur harten Obergrenze auch anheben (siehe `docs/spec/budgets.md`).
 
 ## Nicht automatisiert
 

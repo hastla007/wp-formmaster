@@ -91,7 +91,16 @@ final class EntryRepository {
 			'trashed_gmt'     => 'spam' === ( $data['status'] ?? '' ) ? $now : null,
 			'expires_gmt'     => $data['expires_gmt'] ?? null,
 		);
-		$ok  = $wpdb->insert( $this->entries(), $row );
+		if ( isset( $data['entry_number'] ) && '' !== (string) $data['entry_number'] ) {
+			$row['entry_number'] = mb_substr( (string) $data['entry_number'], 0, 40 );
+		}
+		// SET-FC-10/21: only written when set, so callers without these values keep their old row shape.
+		foreach ( array( 'locale', 'confirmation_status', 'unconfirmed_until_gmt' ) as $optional ) {
+			if ( isset( $data[ $optional ] ) && '' !== $data[ $optional ] ) {
+				$row[ $optional ] = (string) $data[ $optional ];
+			}
+		}
+		$ok = $wpdb->insert( $this->entries(), $row );
 		return $ok ? (int) $wpdb->insert_id : 0;
 	}
 
@@ -363,6 +372,38 @@ final class EntryRepository {
 		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$this->entries()} WHERE form_id = %d AND context_json LIKE %s ORDER BY id LIMIT %d", $form_id, $like, $limit ) ) );
 	}
 
+	/**
+	 * Unconfirmed double opt-in entries whose confirmation period ended (SET-FC-10).
+	 *
+	 * @return int[]
+	 */
+	public function ids_unconfirmed_before( string $now, int $limit ): array {
+		global $wpdb;
+		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$this->entries()} WHERE confirmation_status = 'pending' AND unconfirmed_until_gmt IS NOT NULL AND unconfirmed_until_gmt <= %s ORDER BY id LIMIT %d", $now, $limit ) ) );
+	}
+
+	/** Stores the hash of a new double opt-in link token while the entry is still pending. */
+	public function set_confirmation_token( int $id, string $hash ): bool {
+		global $wpdb;
+		return 1 === (int) $wpdb->query( $wpdb->prepare( "UPDATE {$this->entries()} SET confirmation_token = %s WHERE id = %d AND confirmation_status = 'pending'", $hash, $id ) );
+	}
+
+	/** Constant-time check of a double opt-in link token hash against a pending entry. */
+	public function confirmation_token_matches( int $id, string $hash ): bool {
+		global $wpdb;
+		$stored = $wpdb->get_var( $wpdb->prepare( "SELECT confirmation_token FROM {$this->entries()} WHERE id = %d AND confirmation_status = 'pending'", $id ) );
+		return is_string( $stored ) && 64 === strlen( $stored ) && hash_equals( $stored, $hash );
+	}
+
+	/**
+	 * Marks a pending entry as confirmed exactly once; the link token is removed (single use).
+	 * Returns false when the entry was not pending (already confirmed, or concurrent click).
+	 */
+	public function mark_confirmed( int $id, string $when ): bool {
+		global $wpdb;
+		return 1 === (int) $wpdb->query( $wpdb->prepare( "UPDATE {$this->entries()} SET confirmation_status = 'confirmed', confirmed_gmt = %s, confirmation_token = NULL, unconfirmed_until_gmt = NULL, updated_gmt = %s WHERE id = %d AND confirmation_status = 'pending'", $when, $when, $id ) );
+	}
+
 	/** @return int[] trash/spam older than cutoff */
 	public function ids_trashed_before( string $cutoff, int $limit ): array {
 		global $wpdb;
@@ -484,6 +525,12 @@ final class EntryRepository {
 		);
 	}
 
+	/** Entries of a form that count towards its maximum (SET-FC-18): every status except spam and trash. */
+	public function count_accepted( int $form_id ): int {
+		global $wpdb;
+		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$this->entries()} WHERE form_id = %d AND status NOT IN ('trash','spam')", $form_id ) );
+	}
+
 	/** @return array<string,int> status => count */
 	public function status_counts( int $form_id = 0 ): array {
 		global $wpdb;
@@ -509,7 +556,8 @@ final class EntryRepository {
 		}
 		$row['context'] = $row['context_json'] ? (array) json_decode( (string) $row['context_json'], true ) : null;
 		$row['consent'] = $row['consent_json'] ? (array) json_decode( (string) $row['consent_json'], true ) : null;
-		unset( $row['context_json'], $row['consent_json'] );
+		// The double opt-in token hash never leaves the repository (see confirmation_token_matches()).
+		unset( $row['context_json'], $row['consent_json'], $row['confirmation_token'] );
 		return $row;
 	}
 }

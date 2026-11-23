@@ -306,4 +306,41 @@ final class MailJobHandlerTest extends TestCase {
 		$this->assertSame( 'succeeded', $this->jobs()->find( $job )['status'] );
 		$this->assertSame( array(), $this->sent_mails() );
 	}
+
+	/** Hook for add-ons (e.g. PDF of the submission): files from form_captain_mail_attachments_v1. */
+	public function test_mail_attachments_filter_gets_context_and_only_safe_files_are_attached(): void {
+		$form = $this->form();
+		$id   = $this->make_entry( $form, $this->values() );
+		$pdf  = wp_tempnam( 'fc-entry.pdf' );
+		file_put_contents( $pdf, '%PDF-1.4 test' );
+		$seen     = array();
+		$attached = array();
+		$capture  = static function ( $phpmailer ) use ( &$attached ): void {
+			$attached = array_column( $phpmailer->getAttachments(), 0 );
+		};
+		add_action( 'phpmailer_init', $capture, 1000 );
+		add_filter(
+			'form_captain_mail_attachments_v1',
+			static function ( $files, array $context ) use ( $pdf, &$seen ) {
+				$seen[] = $context;
+				return 'admin' === $context['kind'] ? array_merge( (array) $files, array( $pdf, $pdf, '/etc/passwd', WP_CONTENT_DIR . '/../wp-config.php', 'missing.pdf', array( 'x' ) ) ) : $files;
+			},
+			10,
+			2
+		);
+		try {
+			$this->enqueue_mail( $id, (int) $form['id'] );
+			$this->runner()->run();
+		} finally {
+			remove_all_filters( 'form_captain_mail_attachments_v1' );
+			remove_action( 'phpmailer_init', $capture, 1000 );
+		}
+		$this->assertSame( 'admin', $seen[0]['kind'] );
+		$this->assertSame( $id, (int) $seen[0]['entry']['id'] );
+		$this->assertSame( (int) $form['id'], (int) $seen[0]['form']['id'] );
+		$this->assertSame( 'juergen@example.net', $seen[0]['values']['f_mail01'] );
+		$this->assertCount( 1, $this->sent_mails() );
+		$this->assertSame( array( realpath( $pdf ) ), $attached, 'duplicates and files outside wp-content/temp are dropped' );
+		unlink( $pdf );
+	}
 }

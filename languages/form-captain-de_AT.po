@@ -5794,3 +5794,431 @@ msgstr "Der Datenbankserver ist älter als die Mindestanforderung von Form Capta
 #: src/Admin/SiteHealth.php
 msgid "MySQL 9.7 or newer, or MariaDB 12.3 or newer."
 msgstr "MySQL 9.7 oder neuer bzw. MariaDB 12.3 oder neuer."
+
+#: src/Admin/SettingsPage.php:139
+msgid "Unknown country profile."
+msgstr "Unbekanntes Länderprofil."
+
+#: src/Admin/SettingsPage.php:142
+msgid "Please confirm that you have reviewed the suggested changes."
+msgstr "Bitte bestätige, dass du die vorgeschlagenen Änderungen geprüft hast."
+
+#. translators: 1: profile name, 2: number of settings
+#: src/Admin/SettingsPage.php:150
+#, php-format
+msgid "Country profile \"%1$s\" applied: %2$s setting changed."
+msgid_plural "Country profile \"%1$s\" applied: %2$s settings changed."
+msgstr[0] "Länderprofil „%1$s“ übernommen: %2$s Einstellung geändert."
+msgstr[1] "Länderprofil „%1$s“ übernommen: %2$s Einstellungen geändert."
+
+#. translators: %s: profile name
+#: src/Admin/SettingsPage.php:152
+#, php-format
+msgid "Country profile \"%s\" noted. No settings were changed."
+msgstr "Länderprofil „%s“ vermerkt. Es wurden keine Einstellungen geändert."
+
+#: src/Admin/SettingsPage.php:215
+msgid "No existing submissions are affected by this change."
+msgstr "Diese Änderung betrifft keine vorhandenen Einsendungen."
+
+#. translators: 1: number of submissions, 2: date, 3: number of days
+#: src/Admin/SettingsPage.php:223
+#, php-format
+msgid ""
+"This change affects %1$s existing submissions. The earliest automatic "
+"deletion will be on %2$s. Submissions are never deleted sooner than %3$s "
+"days after this change."
+msgstr "Diese Änderung betrifft %1$s vorhandene Einsendungen. Die früheste automatische Löschung erfolgt am %2$s. Einsendungen werden nie früher als %3$s Tage nach dieser Änderung gelöscht."
+
+#: src/Admin/SettingsPage.php:598
+msgid "Delete automatically after"
+msgstr "Automatisch löschen nach"
+
+#: src/Admin/SettingsPage.php:600 assets/src/editor.js:1422
+msgid "Unit"
+msgstr "Einheit"
+
+#. translators: %s: retention period, e.g. "12 months"
+#: src/Admin/SettingsPage.php:634
+#, php-format
+msgid "Submissions are deleted permanently %s after they were received."
+msgstr "Einsendungen werden %s nach dem Eingang endgültig gelöscht."
+
+#: src/Admin/SettingsPage.php:640
+msgid "Current setting"
+msgstr "Aktuelle Einstellung"
+
+#: src/Admin/SettingsPage.php:640
+msgid "Your change (not saved yet)"
+msgstr "Deine Änderung (noch nicht gespeichert)"
+
+#. translators: %s: number of days
+#: src/Admin/SettingsPage.php:650
+#, php-format
+msgid ""
+"I understand that changing the retention period schedules the deletion of "
+"existing submissions (never sooner than %s days after this change)."
+msgstr "Mir ist klar, dass eine geänderte Aufbewahrungsdauer die Löschung vorhandener Einsendungen neu plant (nie früher als %s Tage nach dieser Änderung)."
+
+#: src/Admin/SettingsPage.php:703
+msgid ""
+"Defaults for the CSV export of submissions. Every export can still use other "
+"values."
+msgstr "Vorgaben für den CSV-Export von Einsendungen. Jeder Export kann trotzdem andere Werte verwenden."
+
+#: src/Admin/SettingsPage.php:735
+msgid "Country profile"
+msgstr "Länderprofil"
+
+#: src/Admin/SettingsPage.php:736
+msgid ""
+"A country profile suggests settings for your country. Nothing changes until "
+"you have reviewed the suggestion and applied the selected rows. You can "
+"change every value afterwards."
+msgstr "Ein Länderprofil schlägt Einstellungen für dein Land vor. Nichts ändert sich, bevor du den Vorschlag geprüft und die ausgewählten Zeilen übernommen hast. Jeden Wert kannst du danach wieder ändern."
+
+#. translators: %s: profile name
+#: src/Admin/SettingsPage.php:739
+#, php-format
+msgid "Last applied profile: %s"
+msgstr "Zuletzt übernommenes Profil: %s"
+
+#: src/Admin/SettingsPage.php:742
+msgid "Country"
+msgstr "Land"
+
+#: src/Admin/SettingsPage.php:747
+msgid "Show suggestion"
+msgstr "Vorschlag anzeigen"
+
+#: src/Admin/SettingsPage.php:756
+msgid "Setting"
+msgstr "Einstellung"
+
+#: src/Admin/SettingsPage.php:756
+msgid "Current value"
+msgstr "Aktueller Wert"
+
+#: src/Admin/SettingsPage.php:756
+msgid "Suggested value"
+msgstr "Vorgeschlagener Wert"
+
+#: src/Admin/SettingsPage.php:756
+msgid "Legal status"
+msgstr "Rechtlicher Stand"
+
+#: src/Admin/SettingsPage.php:763
+msgid "invalid"
+msgstr "ungültig"
+
+#: src/Admin/SettingsPage.php:763
+msgid "unchanged"
+msgstr "unverändert"
+
+#. translators: %s: date
+#: src/Admin/SettingsPage.php:770
+#, php-format
+msgid "Legally reviewed on %s"
+msgstr "Rechtlich geprüft am %s"
+
+#: src/Admin/SettingsPage.php:771
+msgid "Not legally reviewed – neutral suggestion, have it checked"
+msgstr "Ungeprüft – neutraler Vorschlag, lass ihn rechtlich prüfen"
+
+#. translators: 1: number of submissions, 2: date
+#: src/Admin/SettingsPage.php:788
+#, php-format
+msgid ""
+"The new retention period affects %1$s submissions; earliest deletion on %2$s."
+msgstr "Die neue Aufbewahrungsdauer betrifft %1$s Einsendungen; früheste Löschung am %2$s."
+
+#. translators: %s: number of submissions
+#: src/Admin/SettingsPage.php:790
+#, php-format
+msgid ""
+"The new retention period affects %s submissions; nothing is deleted "
+"automatically."
+msgstr "Die neue Aufbewahrungsdauer betrifft %s Einsendungen; nichts wird automatisch gelöscht."
+
+#: src/Admin/SettingsPage.php:795
+msgid "I have reviewed the changes and want to apply the selected rows."
+msgstr "Ich habe die Änderungen geprüft und möchte die ausgewählten Zeilen übernehmen."
+
+#: src/Admin/SettingsPage.php:796
+msgid "Apply selected values"
+msgstr "Ausgewählte Werte übernehmen"
+
+#: src/Admin/SettingsPage.php:798
+msgid "Your settings already match this profile."
+msgstr "Deine Einstellungen entsprechen bereits diesem Profil."
+
+#: src/Admin/SystemStatus.php:299
+msgid ""
+"Debug logging is switched on. It writes many log entries; switch the log "
+"level back to \"Information\" under General when you have finished "
+"troubleshooting."
+msgstr "Das Debug-Protokoll ist eingeschaltet. Es schreibt viele Einträge; stell die Protokollstufe unter „Allgemein“ wieder auf „Information“, sobald die Fehlersuche abgeschlossen ist."
+
+#: src/Settings/CountryPresets.php:38
+msgid ""
+"German: the WordPress language \"Deutsch (Sie)\" addresses visitors "
+"formally, \"Deutsch\" informally. Choose it under Settings → General."
+msgstr "Deutsch: Die WordPress-Sprache „Deutsch (Sie)“ spricht Besucher förmlich an, „Deutsch“ mit „du“. Du wählst sie unter Einstellungen → Allgemein."
+
+#: src/Settings/CountryPresets.php:41
+msgid "Germany"
+msgstr "Deutschland"
+
+#: src/Settings/CountryPresets.php:47
+msgid "Austria"
+msgstr "Österreich"
+
+#: src/Settings/CountryPresets.php:53
+msgid "Switzerland"
+msgstr "Schweiz"
+
+#: src/Settings/CountryPresets.php:56
+msgid ""
+"Switzerland: the Federal Act on Data Protection (FADP) applies in addition "
+"to or instead of the GDPR. Swiss German texts usually use \"ss\" instead of "
+"\"ß\"."
+msgstr "Schweiz: Das Datenschutzgesetz (DSG) gilt zusätzlich zur oder anstelle der DSGVO. Schweizer Texte schreiben meist „ss“ statt „ß“."
+
+#: src/Settings/CountryPresets.php:59
+msgid "European Union (general)"
+msgstr "Europäische Union (allgemein)"
+
+#: src/Settings/CountryPresets.php:62
+msgid ""
+"Many spreadsheet programs in EU countries with a decimal comma expect a "
+"semicolon as CSV separator; you can change it after applying the profile."
+msgstr "Viele Tabellenprogramme in EU-Ländern mit Dezimalkomma erwarten ein Semikolon als CSV-Trennzeichen; du kannst es nach dem Übernehmen des Profils ändern."
+
+#: src/Settings/CountryPresets.php:65
+msgid "International (other countries)"
+msgstr "International (andere Länder)"
+
+#: src/Settings/CountryPresets.php:68
+msgid ""
+"Neutral defaults. Check which retention periods and privacy rules apply in "
+"your country."
+msgstr "Neutrale Vorgaben. Prüfe, welche Aufbewahrungsfristen und Datenschutzregeln in deinem Land gelten."
+
+#: src/Settings/RetentionPeriod.php:32 assets/src/editor.js:1425
+msgid "days"
+msgstr "Tage"
+
+#: src/Settings/RetentionPeriod.php:33 assets/src/editor.js:1426
+msgid "months"
+msgstr "Monate"
+
+#: src/Settings/RetentionPeriod.php:34 assets/src/editor.js:1427
+msgid "years"
+msgstr "Jahre"
+
+#. translators: %s: number of days
+#: src/Settings/RetentionPeriod.php:105
+#, php-format
+msgid "%s day"
+msgid_plural "%s days"
+msgstr[0] "%s Tag"
+msgstr[1] "%s Tage"
+
+#. translators: %s: number of months
+#: src/Settings/RetentionPeriod.php:107
+#, php-format
+msgid "%s month"
+msgid_plural "%s months"
+msgstr[0] "%s Monat"
+msgstr[1] "%s Monate"
+
+#. translators: %s: number of years
+#: src/Settings/RetentionPeriod.php:109
+#, php-format
+msgid "%s year"
+msgid_plural "%s years"
+msgstr[0] "%s Jahr"
+msgstr[1] "%s Jahre"
+
+#: src/Settings/RetentionPeriod.php:115
+msgid ""
+"Please enter a period between 1 day and 30 years, or choose manual deletion."
+msgstr "Bitte gib einen Zeitraum zwischen 1 Tag und 30 Jahren ein oder wähle das manuelle Löschen."
+
+#: src/Settings/SettingsSchema.php:42
+msgid "Export"
+msgstr "Export"
+
+#: src/Settings/SettingsSchema.php:72
+msgid "Errors only"
+msgstr "Nur Fehler"
+
+#: src/Settings/SettingsSchema.php:73
+msgid "Warnings and errors"
+msgstr "Warnungen und Fehler"
+
+#: src/Settings/SettingsSchema.php:74
+msgid "Information, warnings and errors (recommended)"
+msgstr "Informationen, Warnungen und Fehler (empfohlen)"
+
+#: src/Settings/SettingsSchema.php:75
+msgid "Everything including debug details"
+msgstr "Alles einschließlich Debug-Details"
+
+#: src/Settings/SettingsSchema.php:77
+msgid "Log level"
+msgstr "Protokollstufe"
+
+#: src/Settings/SettingsSchema.php:78
+msgid ""
+"Which events Form Captain writes to its own log. The log never contains "
+"submitted values, e-mail or IP addresses. Use the debug level only while "
+"troubleshooting; with WP_DEBUG, debug entries are always written."
+msgstr "Welche Ereignisse Form Captain in sein eigenes Protokoll schreibt. Das Protokoll enthält nie eingesendete Werte, E-Mail- oder IP-Adressen. Nutze die Debug-Stufe nur zur Fehlersuche; mit WP_DEBUG werden Debug-Einträge immer geschrieben."
+
+#: src/Settings/SettingsSchema.php:84
+msgid "Maximum length of single-line fields (characters)"
+msgstr "Höchstlänge einzeiliger Felder (Zeichen)"
+
+#: src/Settings/SettingsSchema.php:85
+msgid ""
+"Upper limit for the length you can allow in text fields. Each field keeps "
+"its own maximum within this limit."
+msgstr "Obergrenze für die Länge, die du in Textfeldern erlauben kannst. Jedes Feld behält sein eigenes Maximum innerhalb dieser Grenze."
+
+#: src/Settings/SettingsSchema.php:91
+msgid "Maximum length of paragraph fields (characters)"
+msgstr "Höchstlänge mehrzeiliger Felder (Zeichen)"
+
+#: src/Settings/SettingsSchema.php:92
+msgid ""
+"Upper limit for long free texts such as applications. The accepted request "
+"size grows with this value."
+msgstr "Obergrenze für lange Freitexte, etwa Bewerbungen. Die erlaubte Anfragegröße wächst mit diesem Wert."
+
+#: src/Settings/SettingsSchema.php:97
+msgid "Applied country profile"
+msgstr "Übernommenes Länderprofil"
+
+#: src/Settings/SettingsSchema.php:135
+msgid ""
+"Submissions are stored only in this WordPress database. Choose how long they "
+"are kept: a period between 1 day and 30 years (12 months recommended) or "
+"until you delete them. Statutory retention periods depend on your country "
+"and purpose – have them checked legally. You can change this later."
+msgstr "Einsendungen werden nur in dieser WordPress-Datenbank gespeichert. Wähle, wie lange sie aufbewahrt werden: einen Zeitraum zwischen 1 Tag und 30 Jahren (empfohlen: 12 Monate) oder bis du sie löschst. Gesetzliche Aufbewahrungsfristen hängen von Land und Zweck ab – lass sie rechtlich prüfen. Du kannst das später ändern."
+
+#: src/Settings/SettingsSchema.php:170
+msgid "Grace period after shortening the retention (days)"
+msgstr "Schonfrist nach Verkürzung der Aufbewahrung (Tage)"
+
+#: src/Settings/SettingsSchema.php:171
+msgid ""
+"When you shorten the retention period, existing submissions are deleted no "
+"sooner than this many days after the change, so you can still export them."
+msgstr "Wenn du die Aufbewahrungsdauer verkürzt, werden vorhandene Einsendungen frühestens so viele Tage nach der Änderung gelöscht, damit du sie noch exportieren kannst."
+
+#: src/Settings/SettingsSchema.php:177
+msgid "Mark submissions as expiring (days before deletion)"
+msgstr "Einsendungen als „läuft bald ab“ markieren (Tage vor der Löschung)"
+
+#: src/Settings/SettingsSchema.php:178
+msgid ""
+"Submissions that will be deleted within this many days are marked in the "
+"list and announced above it. 0 turns the notice off."
+msgstr "Einsendungen, die innerhalb dieser Tage gelöscht werden, sind in der Liste markiert und werden darüber angekündigt. 0 schaltet den Hinweis aus."
+
+#: src/Settings/SettingsSchema.php:184
+msgid "Keep log entries for (days)"
+msgstr "Protokolleinträge aufbewahren (Tage)"
+
+#: src/Settings/SettingsSchema.php:185
+msgid ""
+"Technical log entries (no submitted values) are deleted automatically after "
+"this period."
+msgstr "Technische Protokolleinträge (ohne eingesendete Werte) werden nach diesem Zeitraum automatisch gelöscht."
+
+#: src/Settings/SettingsSchema.php:220
+msgid "Direct connection (recommended)"
+msgstr "Direkte Verbindung (empfohlen)"
+
+#: src/Settings/SettingsSchema.php:221
+msgid "CF-Connecting-IP header (Cloudflare)"
+msgstr "Kopfzeile CF-Connecting-IP (Cloudflare)"
+
+#: src/Settings/SettingsSchema.php:222
+msgid "X-Forwarded-For header (first address)"
+msgstr "Kopfzeile X-Forwarded-For (erste Adresse)"
+
+#: src/Settings/SettingsSchema.php:223
+msgid "X-Real-IP header"
+msgstr "Kopfzeile X-Real-IP"
+
+#: src/Settings/SettingsSchema.php:225
+msgid "Visitor address for rate limiting"
+msgstr "Besucheradresse für die Sendebegrenzung"
+
+#: src/Settings/SettingsSchema.php:226
+msgid ""
+"Only choose a header if your website is really behind this service (CDN, "
+"proxy or load balancer). Otherwise visitors can fake the header and bypass "
+"rate limiting. The address is only used for the pseudonymous rate-limit hash "
+"and is never stored."
+msgstr "Wähle eine Kopfzeile nur, wenn deine Website wirklich hinter diesem Dienst steht (CDN, Proxy oder Lastverteiler). Sonst können Besucher die Kopfzeile fälschen und die Sendebegrenzung umgehen. Die Adresse wird nur für den pseudonymen Hash der Sendebegrenzung verwendet und nie gespeichert."
+
+#: src/Settings/SettingsSchema.php:232
+msgid "Submissions per visitor across all forms in the rate-limit window"
+msgstr "Einsendungen je Besucher über alle Formulare im Zeitfenster der Sendebegrenzung"
+
+#: src/Settings/SettingsSchema.php:233
+msgid ""
+"Raise this value for events or kiosks where many people submit from the same "
+"network."
+msgstr "Erhöhe diesen Wert für Veranstaltungen oder Terminals, bei denen viele Menschen aus demselben Netz senden."
+
+#: src/Settings/SettingsSchema.php:239
+msgid "Time to fill in a form (minutes)"
+msgstr "Zeit zum Ausfüllen eines Formulars (Minuten)"
+
+#: src/Settings/SettingsSchema.php:240
+msgid ""
+"How long a loaded form can be submitted. Raise it for long forms; visitors "
+"who exceed it have to reload the page."
+msgstr "Wie lange ein geladenes Formular abgeschickt werden kann. Erhöhe den Wert für lange Formulare; wer länger braucht, muss die Seite neu laden."
+
+#: src/Settings/SettingsSchema.php:245
+msgid "Comma (,)"
+msgstr "Komma (,)"
+
+#: src/Settings/SettingsSchema.php:246
+msgid ""
+"Semicolon (;) – common for spreadsheet programs in German-speaking countries"
+msgstr "Semikolon (;) – üblich für Tabellenprogramme im deutschsprachigen Raum"
+
+#: src/Settings/SettingsSchema.php:248
+msgid "Default CSV separator"
+msgstr "Vorgabe CSV-Trennzeichen"
+
+#: src/Settings/SettingsSchema.php:249
+msgid ""
+"Preselected in the CSV export. You can still choose another separator for "
+"each export."
+msgstr "Im CSV-Export vorausgewählt. Du kannst für jeden Export trotzdem ein anderes Trennzeichen wählen."
+
+#: src/Settings/SettingsSchema.php:253
+msgid "Add UTF-8 byte order mark by default"
+msgstr "UTF-8-Byte-Order-Mark standardmäßig hinzufügen"
+
+#: src/Settings/SettingsSchema.php:254
+msgid "Helps Excel to show umlauts and other special characters correctly."
+msgstr "Hilft Excel, Umlaute und andere Sonderzeichen richtig anzuzeigen."
+
+#: assets/src/editor.js:1401
+msgid "For a fixed period"
+msgstr "Für einen festen Zeitraum"
+
+#: assets/src/editor.js:1437
+msgid ""
+"Between 1 day and 30 years. Shortening the period never deletes existing "
+"entries sooner than the grace period set in the privacy settings."
+msgstr "Zwischen 1 Tag und 30 Jahren. Eine Verkürzung löscht vorhandene Einträge nie früher als nach der Schonfrist aus den Datenschutz-Einstellungen."

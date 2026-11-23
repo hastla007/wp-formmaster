@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace FormCaptain\Service;
 
+use FormCaptain\Integrations\ConnectorEvents;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\JobRepository;
 use FormCaptain\Support\Limits;
@@ -50,6 +51,7 @@ final class EntryDeletionService {
 			return false;
 		}
 		$form_id = (int) $entry['form_id'];
+		ConnectorEvents::remember( $entry ); // reference number etc. for the ID-only deletion event (SET-FC-40)
 
 		// 1. Stop every pending/failed/running job before values disappear (P4-18).
 		$running = 0;

@@ -5,13 +5,14 @@ Nur das in diesem Dokument Aufgeführte ist öffentliche API. Klassen unter `For
 ## Version
 
 ```php
-FORM_CAPTAIN_CONTRACT_VERSION // '1.3.0' (seit 23.11.2026; 1.0.0 → 1.1.0 → 1.2.0 → 1.3.0 jeweils additiv)
+FORM_CAPTAIN_CONTRACT_VERSION // '1.4.0' (seit 23.11.2026; 1.0.0 → 1.1.0 → 1.2.0 → 1.3.0 → 1.4.0 jeweils additiv)
 form_captain_contract_version(): string
 ```
 
 - **1.1.0** (16.11.2026): „Erweiterungspunkte für Pro-Funktionen“, `form_captain_validate_v1`, `context_ref` in `form_captain_get_render_v1`, Versionsbindung `version_for`.
 - **1.2.0** (23.11.2026, Einstellungs-Baustein): `form_captain_settings_fields_v1`, `form_captain_mail_attachments_v1`, `form_captain_editor_extensions_v1`, `form_captain_captcha_providers_v1`, `form_captain_accepted_context_purposes_v1`, `form_captain_minimum_db_versions_v1`, `form_captain_entry_pending_v1` (SET-FC-P4-04) und alle Filter unter „Einstellungen und Geschäftsregeln“. Einige davon kamen nach dem 16.11. noch unter der Nummer 1.1.0 hinzu; ein Add-on, das einen dieser Punkte braucht, prüft auf `1.2.0` oder neuer (vorher wird der Filter nur nicht angewendet).
 - **1.3.0** (23.11.2026, Abschluss der Prüfphase): `form_captain_settings_covered_hints_v1` (Add-on meldet Hinweiszeilen ohne eigenes Einstellungsfeld ab, SET-FC-P6-01), mehrere Dateien je Upload-Feld (Kontext `files` in `form_captain_validate_field_v1`, `multiple_files` in `form_captain_render_field_v1`, SET-FC-39) und `form_captain_pow_nojs_rate_limit_v1` (SET-FC-P4-08). Ein Add-on prüft auf `1.3.0` oder neuer; ältere Kerne geben nur eine Datei (`file`) und kennen den Filter nicht.
+- **1.4.0** (23.11.2026, SET-FC-40): weitere Ereignisse für Formularaktionen – `events` in `form_captain_register_action_v1` nimmt neben `entry_created` auch `entry_status_changed`, `consent_withdrawn` und `entry_deleted` an (Abschnitt „Ereignisse für Formularaktionen“); der Callback bekommt zusätzlich `event` und `event_data`. Ein Add-on prüft auf `1.4.0` oder neuer; ältere Kerne verwerfen die neuen Ereignisnamen still (die Aktion hört dann nur auf `entry_created`) und übergeben weder `event` noch `event_data`. Außerdem `double_opt_in` (bool) in der Formularübersicht von `form_captain_get_form_v1` (wirksames Double-Opt-in, z. B. für die Warnung im Produkteditor von Form Captain Pro, SET-FC-P2-7a); ältere Kerne liefern den Schlüssel nicht.
 
 SemVer: Minor = additive Erweiterungen (neue optionale Payload-Schlüssel, neue Funktionen); Major = inkompatibel, neue Namensfamilie `_v2`, `_v1` bleibt mindestens 12 Monate parallel bestehen. Deprecations werden mit `_deprecated_hook()` angekündigt und im Changelog geführt.
 
@@ -48,7 +49,7 @@ Adapter registrieren sich ausschließlich in oder nach `form_captain_loaded_v1`.
 
 ```php
 [
-  'contract'   => '1.3.0',            // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
+  'contract'   => '1.4.0',            // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
   'entry_id'   => 123,
   'form_id'    => 7,
   'form_public_id' => 'a1b2c3d4e5f6g7h8',
@@ -69,7 +70,7 @@ Gefeuert **einmal** je Entry, nachdem `consent_withdrawn_gmt` gespeichert und of
 
 ```php
 [
-  'contract'       => '1.3.0',        // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
+  'contract'       => '1.4.0',        // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
   'entry_id'       => 123,
   'form_id'        => 7,
   'form_public_id' => 'a1b2c3d4e5f6g7h8',
@@ -79,7 +80,7 @@ Gefeuert **einmal** je Entry, nachdem `consent_withdrawn_gmt` gespeichert und of
 ]
 ```
 
-Nie enthalten: Feldwerte, Kontext, Consent-Text, IP, User-Agent. Adapter dürfen Daten im Fremdsystem nur löschen, wenn das vertraglich konfiguriert ist; Standard ist Kennzeichnen. Nach dem Widerruf erhalten Aktionen für diesen Entry keine Jobs mehr (`fail` mit Code `consent_withdrawn`).
+Nie enthalten: Feldwerte, Kontext, Consent-Text, IP, User-Agent. Adapter dürfen Daten im Fremdsystem nur löschen, wenn das vertraglich konfiguriert ist; Standard ist Kennzeichnen. Nach dem Widerruf erhalten Aktionen für diesen Entry keine Jobs mehr (`fail` mit Code `consent_withdrawn`). **Ausnahme (seit 1.4.0, SET-FC-40):** genau ein Job je Aktion, die das Ereignis `consent_withdrawn` abonniert – der Widerruf selbst, nur mit IDs (Abschnitt „Ereignisse für Formularaktionen“). Danach entsteht für den Entry kein weiterer Job, auch nicht für Statuswechsel oder die Löschung.
 
 ## Funktionen
 
@@ -96,7 +97,7 @@ form_captain_validate_v1( int|string $form_id, array $values, array $only = [] )
 
 Signierter Suite-Kontext: siehe [`suite-kontext.md`](suite-kontext.md).
 
-- `get_form_v1`: Form-DTO `{id, public_id, title, status, version, fields:[{id,key,type,label,required,sensitive,options}]}`; erfordert `form_captain_manage_forms` **oder** `published`-Status (dann ohne `hidden`-Defaults).
+- `get_form_v1`: Form-DTO `{id, public_id, title, status, version, fields:[{id,key,type,label,required,sensitive,options}], double_opt_in}`; `double_opt_in` (bool, seit 1.4.0) ist `true`, wenn Double-Opt-in für das Formular wirksam ist – eingeschaltet und ein E-Mail-Feld der veröffentlichten Version gewählt, nach dem Filter `form_captain_double_opt_in_v1`; dieselbe Prüfung wie bei einer öffentlichen Einsendung (`DoubleOptIn::required_for()`); erfordert `form_captain_manage_forms` **oder** `published`-Status (dann ohne `hidden`-Defaults).
 - `get_entry_v1`: Scopes `meta` (Status, Zeiten, Form-ID, `anonymized`/`anonymized_gmt`, `consent_withdrawn`/`consent_withdrawn_gmt` – additiv seit Schema v2), `values` (alle nicht sensiblen Werte), `sensitive` (auch sensible). Erfordert `form_captain_read_entries`; `sensitive` zusätzlich `form_captain_export_entries`. Im Cron-/Job-Kontext prüft der Kern die Rechte über die vom Admin freigegebene Aktionskonfiguration.
 - `submit_v1`: programmatische Einsendung durch vertrauenswürdigen Servercode; durchläuft dieselbe Validierung, aber kein Honeypot/Mindestzeit. `$context` kann `['signed_context' => '…']` enthalten. Rückgabe: Ergebnisobjekt.
 - `get_render_v1`: HTML für Einbettung (z. B. Pass Captain).
@@ -139,7 +140,7 @@ Zusätzlich: `detail_code` (nur bei vertrauenswürdigen PHP-Aufrufen, z. B. gena
   'connector'    => 'reference',      // Connector-Key oder null
   'settings'     => [ ['key' => 'queue', 'type' => 'text', 'label' => 'Queue', 'required' => true] ],
   'mapping'      => [ ['key' => 'email', 'label' => 'E-Mail', 'types' => ['email'], 'required' => true] ],
-  'events'       => ['entry_created'],
+  'events'       => ['entry_created'],  // seit 1.4.0 auch 'entry_status_changed', 'consent_withdrawn', 'entry_deleted'
   'requires'     => [],               // z. B. ['entitlement' => 'form.workflows'] nur für Pro
 ]
 ```
@@ -147,12 +148,53 @@ Zusätzlich: `detail_code` (nur bei vertrauenswürdigen PHP-Aufrufen, z. B. gena
 Callback-Signatur: `function( array $job ): array` mit
 
 ```php
-$job = ['form_id', 'entry_id', 'idempotency_key', 'action_key', 'instance_id', 'attempt', 'settings' => [...], 'values' => [mapping_key => value], 'context' => [...], 'test_mode' => bool]
+$job = ['form_id', 'entry_id', 'idempotency_key', 'action_key', 'instance_id', 'attempt', 'settings' => [...], 'values' => [mapping_key => value], 'context' => [...], 'test_mode' => bool,
+        'event' => 'entry_created', 'event_data' => [...]] // event/event_data seit 1.4.0; fehlt event (älterer Kern), ist es entry_created
 ```
 
 Rückgabe: `['status' => 'success'|'retry'|'fail', 'code' => '…', 'message' => '…', 'remote_id' => '…']`. Exceptions werden als `retry` mit Code `exception` gewertet.
 
-Idempotency-Key: `form-captain:{site_id}:{entry_id}:{action_key}:{action_instance_id}`.
+Idempotency-Key: `form-captain:{site_id}:{entry_id}:{action_key}:{action_instance_id}` (Ereignis `entry_created`; Schlüssel der übrigen Ereignisse im nächsten Abschnitt).
+
+### Ereignisse für Formularaktionen (seit 1.4.0, SET-FC-40)
+
+Eine Aktion abonniert Ereignisse über `events` (Standard `['entry_created']`; unbekannte Namen werden verworfen, bleibt nichts übrig, gilt `entry_created`). Für jedes Ereignis entsteht je aktivierter Aktionsinstanz des Formulars, deren Definition das Ereignis nennt, ein Job vom Typ `connector.action`; eine Aktion ohne das Ereignis bekommt keinen Job (auch nicht `entry_created`, wenn sie es nicht nennt). Ausgeführt wird wie bisher nur im Outbox-Worker (Connector deaktiviert → Job pausiert, Rechte-Tor, Wiederholungen). Ziele einer Übergabe (`core.handoff`) warten auf die manuelle Bestätigung und bekommen keine Ereignis-Jobs.
+
+| Ereignis | Ausgelöst von | `values` / `context` | Idempotency-Key |
+|---|---|---|---|
+| `entry_created` | Einsendung angenommen (wie bisher) | gemappte Werte, Kontext | `form-captain:{site_id}:{entry_id}:{action_key}:{instance_id}` |
+| `entry_status_changed` | `form_captain_entry_status_changed_v1` | gemappte Werte wie bei `entry_created` (der Worker liest den Eintrag beim Lauf) | `form-captain:{site_id}:{entry_id}:entry_status_changed:{old}-{new}:{mikrosekunden}:{action_key}:{instance_id}` |
+| `consent_withdrawn` | `form_captain_consent_withdrawn_v1` | **nur IDs**: `values` und `context` immer leer, Mapping wird nicht ausgewertet | `form-captain:{site_id}:{entry_id}:consent_withdrawn:{action_key}:{instance_id}` (einmal je Eintrag) |
+| `entry_deleted` | `form_captain_entry_deleted_v1` | **nur IDs**: `values` und `context` immer leer, Mapping wird nicht ausgewertet | `form-captain:{site_id}:{entry_id}:entry_deleted:{action_key}:{instance_id}` (einmal je Eintrag) |
+
+`event_data` (alle Ereignisse; nie Feldwerte, IP, User-Agent, Kontext oder Einwilligungstext):
+
+```php
+[
+  'event'          => 'entry_deleted',     // entry_created | entry_status_changed | consent_withdrawn | entry_deleted
+  'contract'       => '1.4.0',             // Vertragsversion beim Anlegen des Jobs
+  'entry_id'       => 123,
+  'form_id'        => 7,
+  'form_public_id' => 'a1b2c3d4e5f6g7h8',
+  'entry_number'   => '2026-0042' | null,  // Vorgangsnummer, vor der Löschung gelesen
+  'created_gmt'    => '2026-11-16T10:00:00Z',
+  // entry_status_changed:
+  'old_status'     => 'new', 'new_status' => 'archived', 'changed_gmt' => '2026-11-23T10:00:00Z',
+  // consent_withdrawn:
+  'withdrawn_gmt'  => '2026-11-23T10:00:00Z', 'source' => 'admin', 'then' => 'keep' | 'anonymize' | 'delete',
+  // entry_deleted:
+  'deleted_gmt'    => '2026-11-23T10:00:00Z', 'reason' => 'manual' | 'retention' | 'erasure' | 'anonymized' | 'consent_withdrawn',
+]
+```
+
+Regeln:
+- Jobs entstehen nur für Einträge, die Connectoren erhalten konnten: nicht Spam, nicht auf die Double-Opt-in-Bestätigung wartend, nicht importiert. Statuswechsel von oder zu `spam` erzeugen keinen Job.
+- `entry_status_changed` verhält sich wie `entry_created`: Der Job hängt am Eintrag und wird mit ihm storniert (Löschung, Anonymisierung, Widerruf); beim Lauf gelten dieselben Prüfungen (`entry_deleted`, `entry_anonymized`, `consent_withdrawn`, `entry_spam`).
+- `consent_withdrawn` und `entry_deleted` tragen nur IDs. Der Job hängt nicht am Eintrag (`entry_id` steht nur in der Nutzlast), damit eine Löschung oder Anonymisierung direkt nach dem Widerruf ihn nicht storniert; im Callback ist `entry_id` gesetzt, der Eintrag ist aber evtl. nicht mehr lesbar (keine Feldfreigabe). Formular und aktivierte Aktionsinstanz müssen beim Lauf noch bestehen (sonst `form_not_found`, `action_removed`, `action_disabled`).
+- Der Widerruf-Job ist die einzige Ausnahme von „nach dem Widerruf keine Jobs mehr“ (Abschnitt Consent-Widerruf-Payload): Nach dem Widerruf erzeugen weder Statuswechsel noch Löschung oder Anonymisierung einen Job.
+- `entry_deleted` entsteht auch bei der Anonymisierung (`reason` = `anonymized`), aber nur einmal je Eintrag. Keine Jobs beim Löschen eines ganzen Formulars (`form_deleted`, die Aktionsinstanzen verschwinden mit ihm) und beim Rückgängigmachen eines Imports (`import_reverted`).
+- Nennt die Aktion das Ereignis beim Lauf nicht mehr, endet der Job mit `event_not_subscribed`.
+- Ein Testlauf (Integrationen) ruft den Callback mit `event` = `entry_created` und leerem `event_data`.
 
 ### Connector-Registry `form_captain_connectors_v1` (Filter)
 
@@ -190,7 +232,7 @@ Connectoren sind nach Installation **deaktiviert**; nur aktivierte Connectoren d
 | `form_captain_accepted_context_purposes_v1` | (seit Contract 1.1.0) Kontext-Zwecke, die ein Formular annimmt: `( string[] $purposes, int $form_id )`. Für das Add-on, dem ein Zweck gehört und das das Formular zuordnet (z. B. Käuferfragebogen an einem Produkt); Signatur, TTL und Prüfungen bleiben unverändert. |
 | `form_captain_minimum_db_versions_v1` | Mindestversionen des Datenbankservers für die Warnung im Systemstatus und in Site Health: `( array{mysql:string,mariadb:string} $versions )`, Standard `9.7` / `12.3` (Entscheidung 21). Nur zum Absenken für einen vom Betreiber geprüften Server; ungültige Werte werden ignoriert. Ein älterer Server wird nie gesperrt. |
 | `form_captain_pro_active` | Pro meldet sich: `( bool $active )` → bool. Nur für sparsame Hinweise im Free (Dashboard, Integrationen); der Kern zeigt keine Lizenzdaten. Die Hinweiszeilen der Einstellungen richten sich nicht danach, sondern nach angemeldeten Feldern (`form_captain_settings_fields_v1`). |
-| `form_captain_entitlement_granted` | `( bool $granted, string $key )` → bool, Standard `false`. Gefragt für jeden Schlüssel in `requires.entitlement` einer Formularaktion (`form_captain_register_action_v1`); `false` → Aktion nicht verfügbar, Code `entitlement_missing`. Der Kern kennt keine Schlüssel und prüft keine Lizenz; antworten darf nur das Add-on, dem der Schlüssel gehört. *Offen (SET-FC-P6-02, wartet auf Inhaber): ob dieser Teil von Vertrag v1 mit S1 („keine Rechteprüfung im Kern“) vereinbar bleibt.* |
+| `form_captain_entitlement_granted` | `( bool $granted, string $key )` → bool, Standard `false`. Gefragt für jeden Schlüssel in `requires.entitlement` einer Formularaktion (`form_captain_register_action_v1`); `false` → Aktion nicht verfügbar, Code `entitlement_missing`. Der Kern kennt keine Schlüssel und prüft keine Lizenz; antworten darf nur das Add-on, dem der Schlüssel gehört. Das ist ein allgemeines Tor mit Standard „nicht gewährt“, keine Lizenzprüfung; S1 erlaubt es ausdrücklich (Entscheidung 22 (6), SET-FC-P6-02): kein Lizenzcode, keine Rechteschlüssel und keine Lizenzabfragen im Kern. |
 | `form_captain_captcha_providers_v1` | (seit 1.2.0) Externe Captcha-Anbieter für die Auswahl `spam.captcha_provider`: `( array $providers )` → `key => { type: 'captcha', label, data, purpose, privacy_url }`; Schlüssel `^[a-z0-9_]{2,40}$`, nicht `none`/`pow`. Die Prüfung der Einsendung läuft über `form_captain_spam_checks_v1`, wenn `$context['captcha']` der eigene Schlüssel ist. |
 | `form_captain_render_context_v1` | `( string $context, array $form )` → signierter Kontextwert für die Ausgabe (siehe `suite-kontext.md`). |
 | `form_captain_entry_locales_v1` | `( string[] $locales )` → Sprachen, die eine Einsendung als Sprache der Seite mitgeben darf (SET-FC-21); Standard `en_US`, Sprache der Website und installierte Sprachen. |

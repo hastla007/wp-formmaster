@@ -11,13 +11,14 @@ declare(strict_types=1);
 
 namespace FormCaptain\Service;
 
+use FormCaptain\Integrations\ConnectorRegistry;
 use FormCaptain\Integrations\CoreActions;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\JobRepository;
 
 final class OutboxPlanner {
 
-	public function __construct( private JobRepository $jobs, private FormSchemaLoader $loader, private ?EntryRepository $entries = null ) {}
+	public function __construct( private JobRepository $jobs, private FormSchemaLoader $loader, private ?EntryRepository $entries = null, private ?ConnectorRegistry $registry = null ) {}
 
 	/**
 	 * @param array<string,mixed> $form form row (settings + published version)
@@ -51,6 +52,12 @@ final class OutboxPlanner {
 			$key      = (string) ( $action['action_key'] ?? '' );
 			$instance = (string) ( $action['instance_id'] ?? '' );
 			if ( ! preg_match( '/^[a-z0-9_]+\.[a-z0-9_]+$/', $key ) || ! preg_match( '/^a_[0-9a-f]{10}$/', $instance ) ) {
+				continue;
+			}
+			// An action that subscribes only to later events (SET-FC-40) gets no job now. An action
+			// that is not registered right now (provider inactive) is queued as before (no lost jobs).
+			$definition = $this->registry ? $this->registry->action( $key ) : null;
+			if ( null !== $definition && ! in_array( 'entry_created', (array) $definition['events'], true ) ) {
 				continue;
 			}
 			$this->enqueue(

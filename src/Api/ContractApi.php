@@ -19,6 +19,7 @@ use FormCaptain\Integrations\JobGrant;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
+use FormCaptain\Service\DoubleOptIn;
 use FormCaptain\Support\Logger;
 
 final class ContractApi {
@@ -81,12 +82,15 @@ final class ContractApi {
 			);
 		}
 		return array(
-			'id'        => (int) $form['id'],
-			'public_id' => (string) $form['public_id'],
-			'title'     => (string) $form['title'],
-			'status'    => (string) $form['status'],
-			'version'   => $version ? (int) $version['version_no'] : null,
-			'fields'    => $fields,
+			'id'            => (int) $form['id'],
+			'public_id'     => (string) $form['public_id'],
+			'title'         => (string) $form['title'],
+			'status'        => (string) $form['status'],
+			'version'       => $version ? (int) $version['version_no'] : null,
+			'fields'        => $fields,
+			// Since contract 1.4.0: double opt-in effectively active (switched on and an email field of
+			// the published version set) – the same check as for a public submission.
+			'double_opt_in' => null !== DoubleOptIn::required_for( $form, array_values( array_filter( (array) ( $schema['fields'] ?? array() ), 'is_array' ) ) ),
 		);
 	}
 

@@ -357,8 +357,13 @@ final class IntegrationsPage {
 		}
 		echo '<table class="widefat striped fc-jobs"><thead><tr><th>ID</th><th>' . esc_html__( 'Action', 'form-captain' ) . '</th><th>' . esc_html__( 'Entry', 'form-captain' ) . '</th><th>' . esc_html__( 'Status', 'form-captain' ) . '</th><th>' . esc_html__( 'Attempts', 'form-captain' ) . '</th><th>' . esc_html__( 'Last run / next step', 'form-captain' ) . '</th><th>' . esc_html__( 'Manage', 'form-captain' ) . '</th></tr></thead><tbody>';
 		foreach ( $list['items'] as $job ) {
-			$code = (string) ( $job['last_error_code'] ?? '' );
-			echo '<tr><td>' . esc_html( (string) $job['id'] ) . '</td><td><code>' . esc_html( (string) ( $job['payload']['action_key'] ?? $job['type'] ) ) . '</code></td><td>' . esc_html( (string) ( $job['entry_id'] ?? '–' ) ) . '</td>';
+			$code  = (string) ( $job['last_error_code'] ?? '' );
+			$event = (string) ( $job['payload']['event'] ?? 'entry_created' );
+			echo '<tr><td>' . esc_html( (string) $job['id'] ) . '</td><td><code>' . esc_html( (string) ( $job['payload']['action_key'] ?? $job['type'] ) ) . '</code>';
+			if ( 'entry_created' !== $event ) {
+				echo '<br><span class="description">' . esc_html( self::event_label( $event ) ) . '</span>';
+			}
+			echo '</td><td>' . esc_html( (string) ( $job['entry_id'] ?? $job['payload']['entry_id'] ?? '–' ) ) . '</td>';
 			echo '<td>' . esc_html( $this->job_label_for( $job ) ) . '</td><td>' . esc_html( $job['attempts'] . ' / ' . $job['max_attempts'] ) . '</td><td>' . esc_html( (string) $job['updated_gmt'] ) . ' UTC';
 			if ( 'succeeded' === $job['status'] && ! empty( $job['result']['remote_id'] ) ) {
 				echo '<br>' . esc_html__( 'Remote ID:', 'form-captain' ) . ' <code>' . esc_html( (string) $job['result']['remote_id'] ) . '</code>';
@@ -389,5 +394,15 @@ final class IntegrationsPage {
 		wp_nonce_field( 'form_captain_job_' . $id );
 		submit_button( $label, 'small', 'submit', false );
 		echo '</form>';
+	}
+
+	/** Label of a connector event (SET-FC-40) for the job list. */
+	private static function event_label( string $event ): string {
+		return match ( $event ) {
+			'entry_status_changed' => __( 'Event: status changed', 'form-captain' ),
+			'consent_withdrawn' => __( 'Event: consent withdrawn', 'form-captain' ),
+			'entry_deleted' => __( 'Event: submission deleted', 'form-captain' ),
+			default => $event,
+		};
 	}
 }

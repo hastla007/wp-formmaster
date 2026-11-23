@@ -76,7 +76,8 @@ trait ConnectorContractAssertions {
 		$this->assertIsBool( $job['test_mode'] );
 		$this->assertIsArray( $job['values'] );
 		if ( ! $job['test_mode'] ) {
-			$this->assertMatchesRegularExpression( '/^form-captain:\d+:\d+:[a-z0-9_]+\.[a-z0-9_]+:[a-z0-9_]+$/', (string) $job['idempotency_key'] );
+			// entry_created; since contract 1.4.0 also the keys of the later events (api-v1.md).
+			$this->assertMatchesRegularExpression( '/^form-captain:\d+:\d+:(?:(?:entry_status_changed:[a-z]+-[a-z]+:\d+|consent_withdrawn|entry_deleted):)?[a-z0-9_]+\.[a-z0-9_]+:[a-z0-9_]+$/', (string) $job['idempotency_key'] );
 		}
 	}
 

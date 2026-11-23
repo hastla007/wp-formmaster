@@ -218,11 +218,69 @@
 	/* Small components                                                    */
 	/* ------------------------------------------------------------------ */
 
+	var errorSeq = 0;
+
+	/**
+	 * Inline error below a control. Links itself to the control just before it (SET-FC-P5-15):
+	 * aria-invalid="true" and its id in aria-describedby, removed again when the error goes away.
+	 * The WordPress components create their own input ids, so the link is set on the DOM node.
+	 */
 	function FieldError( props ) {
-		if ( ! props.code ) {
+		var ref = useRef( null );
+		var auto = useRef( null );
+		if ( ! auto.current ) {
+			errorSeq += 1;
+			auto.current = 'fc-field-error-' + errorSeq;
+		}
+		var id = props.id || auto.current;
+		var code = props.code;
+		useEffect( function () {
+			var node = ref.current;
+			var control = node ? errorControl( node ) : null;
+			if ( ! control ) {
+				return undefined;
+			}
+			var before = control.getAttribute( 'aria-describedby' );
+			var hadInvalid = control.hasAttribute( 'aria-invalid' );
+			var ids = ( before || '' ).split( /\s+/ ).filter( function ( x ) {
+				return x && x !== id;
+			} );
+			control.setAttribute( 'aria-describedby', ids.concat( [ id ] ).join( ' ' ) );
+			control.setAttribute( 'aria-invalid', 'true' );
+			return function () {
+				var rest = ( control.getAttribute( 'aria-describedby' ) || '' ).split( /\s+/ ).filter( function ( x ) {
+					return x && x !== id;
+				} );
+				if ( rest.length ) {
+					control.setAttribute( 'aria-describedby', rest.join( ' ' ) );
+				} else {
+					control.removeAttribute( 'aria-describedby' );
+				}
+				if ( ! hadInvalid ) {
+					control.removeAttribute( 'aria-invalid' );
+				}
+			};
+		}, [ code, id ] );
+		if ( ! code ) {
 			return null;
 		}
-		return el( 'p', { className: 'fc-field-error', id: props.id, role: 'alert' }, message( props.code ) );
+		return el( 'p', { className: 'fc-field-error', id: id, role: 'alert', ref: ref }, message( code ) );
+	}
+
+	/** Form control an inline error belongs to: the last control in the element before it. */
+	function errorControl( node ) {
+		var prev = node.previousElementSibling;
+		while ( prev && prev.classList && prev.classList.contains( 'fc-field-error' ) ) {
+			prev = prev.previousElementSibling;
+		}
+		if ( ! prev ) {
+			return null;
+		}
+		if ( prev.matches && prev.matches( 'input, select, textarea' ) ) {
+			return prev;
+		}
+		var list = prev.querySelectorAll ? prev.querySelectorAll( 'input:not([type=hidden]), select, textarea' ) : [];
+		return list.length ? list[ list.length - 1 ] : null;
 	}
 
 	function NumberInput( props ) {
@@ -2101,6 +2159,21 @@
 			};
 		}, [ dirty ] );
 
+		// After "Save draft" the button is disabled and the browser drops the focus to <body>; move it
+		// to the notice so keyboard and screen reader users stay at the result (SET-FC-P5-15).
+		var noticeRef = useRef( null );
+		var focusNotice = useRef( false );
+		useEffect( function () {
+			if ( ! focusNotice.current || ! s.notice[ 0 ] || ! noticeRef.current ) {
+				return;
+			}
+			focusNotice.current = false;
+			var active = document.activeElement;
+			if ( ! active || active === document.body ) {
+				noticeRef.current.focus();
+			}
+		}, [ s.notice[ 0 ] ] );
+
 		if ( ! form ) {
 			return el( 'div', { className: 'fc-loading' }, el( C.Spinner ), s.notice[ 0 ] && el( C.Notice, { status: 'error', isDismissible: false }, s.notice[ 0 ].text ) );
 		}
@@ -2192,6 +2265,7 @@
 						s.actionErrors[ 1 ]( res.action_errors || {} );
 						s.busy[ 1 ]( false );
 						var errCount = Object.keys( res.form.errors || {} ).length + Object.keys( res.action_errors || {} ).length;
+						focusNotice.current = true;
 						s.notice[ 1 ]( errCount
 							? { status: 'warning', text: __( 'Draft saved. Please fix the highlighted problems before publishing.', 'form-captain' ) + ' ' + problemTabs( res.form.errors || {}, res.action_errors || {} ) }
 							: { status: 'success', text: __( 'Saved.', 'form-captain' ) } );
@@ -2363,15 +2437,19 @@
 			header,
 			notice &&
 				el(
-					C.Notice,
-					{
-						status: notice.status,
-						onRemove: function () {
-							s.notice[ 1 ]( null );
+					'div',
+					{ ref: noticeRef, tabIndex: -1, className: 'fc-editor-notice' },
+					el(
+						C.Notice,
+						{
+							status: notice.status,
+							onRemove: function () {
+								s.notice[ 1 ]( null );
+							},
+							actions: notice.conflict ? [ { label: __( 'Reload latest version (discards your changes)', 'form-captain' ), onClick: reload } ] : [],
 						},
-						actions: notice.conflict ? [ { label: __( 'Reload latest version (discards your changes)', 'form-captain' ), onClick: reload } ] : [],
-					},
-					notice.text
+						notice.text
+					)
 				),
 			pendingNotice,
 			otherList.length > 0 &&

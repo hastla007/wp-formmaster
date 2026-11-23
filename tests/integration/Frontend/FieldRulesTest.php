@@ -264,4 +264,16 @@ final class FieldRulesTest extends FrontendTestCase {
 		$this->assertSame( 'invalid_autocomplete', $res['errors']['fields.0.autocomplete'], 'only listed purposes' );
 		$this->assertArrayNotHasKey( 'autocomplete', $res['schema']['fields'][1], 'not for radio buttons' );
 	}
+
+	public function test_editor_gets_patterns_autofill_types_and_messages(): void {
+		$this->as_admin();
+		$form = $this->create_published_form();
+		$boot = $this->plugin()->get( \FormCaptain\Admin\EditorPage::class )->bootstrap( (int) $form['id'] );
+		$this->assertSame( array( 'alpha', 'alnum', 'zip_de', 'zip_at', 'zip_ch', 'zip_generic', 'custom' ), array_column( $boot['patterns'], 'value' ) );
+		$this->assertSame( SchemaValidator::AUTOCOMPLETE, array_column( $boot['autocomplete'], 'value' ) );
+		$this->assertSame( SchemaValidator::AUTOCOMPLETE_TYPES, $boot['autocompleteTypes'] );
+		foreach ( array( 'pattern_unsafe', 'pattern_invalid', 'pattern_required', 'invalid_min_age', 'invalid_autocomplete', 'text_too_long', 'invalid_datetime', 'closes_before_opens', 'invalid_max_entries' ) as $code ) {
+			$this->assertArrayHasKey( $code, $boot['messages'], $code );
+		}
+	}
 }

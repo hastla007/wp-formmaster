@@ -29,7 +29,7 @@ final class ValidationPatterns {
 	 * @return array<string,array{label:string,regex:string,message:string}>
 	 */
 	public static function all(): array {
-		$core = array(
+		$core  = array(
 			'alpha'       => array(
 				'label'   => __( 'Letters only', 'form-captain' ),
 				'regex'   => '/^[\p{L}\s\'\-]+$/u',

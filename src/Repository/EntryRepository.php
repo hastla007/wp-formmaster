@@ -94,7 +94,7 @@ final class EntryRepository {
 		if ( isset( $data['entry_number'] ) && '' !== (string) $data['entry_number'] ) {
 			$row['entry_number'] = mb_substr( (string) $data['entry_number'], 0, 40 );
 		}
-		$ok  = $wpdb->insert( $this->entries(), $row );
+		$ok = $wpdb->insert( $this->entries(), $row );
 		return $ok ? (int) $wpdb->insert_id : 0;
 	}
 

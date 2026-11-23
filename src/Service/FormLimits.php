@@ -106,7 +106,7 @@ final class FormLimits {
 		} elseif ( $max > 0 && (int) ( $form['id'] ?? 0 ) > 0 && ( $entries ?? new EntryRepository() )->count_accepted( (int) $form['id'] ) >= $max ) {
 			$reason = 'full';
 		}
-		$state = array(
+		$state    = array(
 			'open'    => '' === $reason,
 			'reason'  => $reason,
 			'message' => '' === $reason ? '' : self::message( $form, $reason, $opens ),

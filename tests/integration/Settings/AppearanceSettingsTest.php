@@ -21,8 +21,8 @@ final class AppearanceSettingsTest extends TestCase {
 	public function set_up(): void {
 		parent::set_up();
 		Assets::reset();
-		$GLOBALS['wp_styles']  = null;
-		$GLOBALS['wp_scripts'] = null;
+		$GLOBALS['wp_styles']  = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- fresh style registry per test.
+		$GLOBALS['wp_scripts'] = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	private function inline_css(): string {

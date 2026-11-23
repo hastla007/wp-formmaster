@@ -86,20 +86,58 @@ final class EditorPage {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'fields';
 		return array(
-			'formId'          => $form_id,
-			'restPath'        => '/' . AdminRest::NS . '/admin/forms/' . $form_id,
-			'fieldTypes'      => $types,
-			'pages'           => $pages,
-			'actions'         => array_values( FormService::action_catalog() ),
-			'canIntegrations' => current_user_can( Capabilities::MANAGE_INTEGRATIONS ),
-			'formsUrl'        => admin_url( 'admin.php?page=form-captain-forms' ),
-			'integrationsUrl' => admin_url( 'admin.php?page=form-captain-integrations' ),
-			'adminEmail'      => (string) get_option( 'admin_email' ),
-			'initialTab'      => in_array( $tab, array( 'fields', 'notifications', 'confirmation', 'settings', 'actions' ), true ) ? $tab : 'fields',
-			'messages'        => self::error_messages() + $ext['messages'], // Core messages win.
-			'extensions'      => $ext['panels'],
-			'proHint'         => DashboardPage::should_show_pro_hint() ? __( 'Need file uploads, multi-step forms or grouped conditions? They are available with Form Captain Pro.', 'form-captain' ) : '',
+			'formId'            => $form_id,
+			'restPath'          => '/' . AdminRest::NS . '/admin/forms/' . $form_id,
+			'fieldTypes'        => $types,
+			'pages'             => $pages,
+			'actions'           => array_values( FormService::action_catalog() ),
+			'canIntegrations'   => current_user_can( Capabilities::MANAGE_INTEGRATIONS ),
+			'formsUrl'          => admin_url( 'admin.php?page=form-captain-forms' ),
+			'integrationsUrl'   => admin_url( 'admin.php?page=form-captain-integrations' ),
+			'adminEmail'        => (string) get_option( 'admin_email' ),
+			'initialTab'        => in_array( $tab, array( 'fields', 'notifications', 'confirmation', 'settings', 'actions' ), true ) ? $tab : 'fields',
+			'messages'          => self::error_messages() + $ext['messages'], // Core messages win.
+			'extensions'        => $ext['panels'],
+			'patterns'          => \FormCaptain\Domain\ValidationPatterns::options(),
+			'autocomplete'      => self::autocomplete_options(),
+			'autocompleteTypes' => \FormCaptain\Domain\Schema\SchemaValidator::AUTOCOMPLETE_TYPES,
+			'proHint'           => DashboardPage::should_show_pro_hint() ? __( 'Need file uploads, multi-step forms or grouped conditions? They are available with Form Captain Pro.', 'form-captain' ) : '',
 		);
+	}
+
+	/**
+	 * Autofill purposes for the field settings (SET-FC-33), in the order of SchemaValidator::AUTOCOMPLETE.
+	 *
+	 * @return array<int,array{value:string,label:string}>
+	 */
+	public static function autocomplete_options(): array {
+		$labels = array(
+			'off'              => __( 'Off (no autofill)', 'form-captain' ),
+			'name'             => __( 'Full name', 'form-captain' ),
+			'given-name'       => __( 'First name', 'form-captain' ),
+			'family-name'      => __( 'Last name', 'form-captain' ),
+			'honorific-prefix' => __( 'Salutation / title', 'form-captain' ),
+			'organization'     => __( 'Company / organisation', 'form-captain' ),
+			'email'            => __( 'Email address', 'form-captain' ),
+			'tel'              => __( 'Phone number', 'form-captain' ),
+			'street-address'   => __( 'Street address (complete)', 'form-captain' ),
+			'address-line1'    => __( 'Street and house number', 'form-captain' ),
+			'address-line2'    => __( 'Address addition', 'form-captain' ),
+			'postal-code'      => __( 'Postal code', 'form-captain' ),
+			'address-level2'   => __( 'City', 'form-captain' ),
+			'address-level1'   => __( 'State / region', 'form-captain' ),
+			'country-name'     => __( 'Country', 'form-captain' ),
+			'bday'             => __( 'Date of birth', 'form-captain' ),
+			'url'              => __( 'Website', 'form-captain' ),
+		);
+		$out    = array();
+		foreach ( \FormCaptain\Domain\Schema\SchemaValidator::AUTOCOMPLETE as $token ) {
+			$out[] = array(
+				'value' => $token,
+				'label' => $labels[ $token ] ?? $token,
+			);
+		}
+		return $out;
 	}
 
 	/** Control types the editor can show for extensions (contract 1.1.0). */
@@ -209,6 +247,15 @@ final class EditorPage {
 			'sensitive_field'                => __( 'Sensitive fields cannot be passed to actions.', 'form-captain' ),
 			'type_mismatch'                  => __( 'This field type cannot be used here.', 'form-captain' ),
 			'required'                       => __( 'This value is required.', 'form-captain' ),
+			'invalid_autocomplete'           => __( 'Choose one of the offered autofill types.', 'form-captain' ),
+			'pattern_required'               => __( 'Please enter the pattern.', 'form-captain' ),
+			'pattern_invalid'                => __( 'The pattern is not a valid regular expression (maximum 200 characters).', 'form-captain' ),
+			'pattern_unsafe'                 => __( 'The pattern uses nested repetitions, back-references or look-arounds. These can slow down the website and are not allowed.', 'form-captain' ),
+			'invalid_min_age'                => __( 'Enter a whole number of years between 1 and 120.', 'form-captain' ),
+			'text_too_long'                  => __( 'The text is too long and was shortened.', 'form-captain' ),
+			'invalid_datetime'               => __( 'Please enter a valid date and time.', 'form-captain' ),
+			'closes_before_opens'            => __( 'The end must be after the start.', 'form-captain' ),
+			'invalid_max_entries'            => __( 'Enter a whole number between 0 and 1,000,000.', 'form-captain' ),
 		);
 	}
 

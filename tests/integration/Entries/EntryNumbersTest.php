@@ -129,7 +129,7 @@ final class EntryNumbersTest extends FrontendTestCase {
 
 	public function test_placeholder_in_mail_and_success_message(): void {
 		$this->numbering( array( 'entry_number_format' => 'REQ-{year}-{number}' ) );
-		$form = $this->create_published_form(
+		$form   = $this->create_published_form(
 			null,
 			array(
 				'notification' => array(
@@ -165,7 +165,7 @@ final class EntryNumbersTest extends FrontendTestCase {
 				),
 			)
 		);
-		$id = $this->make_entry( $form, array( 'f_name01' => 'Anna' ) );
+		$id   = $this->make_entry( $form, array( 'f_name01' => 'Anna' ) );
 		$this->enqueue_mail( $id, (int) $form['id'] );
 		$this->runner()->run();
 		$this->assertSame( "Eintrag $id", $this->sent_mails()[0]->subject );

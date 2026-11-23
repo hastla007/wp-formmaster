@@ -6,7 +6,7 @@
  * - Recipients are static per form ({admin_email} placeholder allowed), never from field values.
  * - From comes from form settings (fallback global settings), never from field values.
  * - Reply-To only from the configured e-mail field after CRLF check and is_email().
- * - Subject placeholders: {form_title}, {site_title}, {field:key} (non-sensitive fields only).
+ * - Subject placeholders: {form_title}, {site_title}, {entry_number}, {field:key} (non-sensitive fields only).
  * - Body: field allowlist (default all non-sensitive), html fields and consent texts never.
  *   HTML is fully escaped and a plain-text alternative is always built.
  *
@@ -20,6 +20,7 @@ namespace FormCaptain\Mail;
 use FormCaptain\Domain\Fields\FieldTypes;
 
 use FormCaptain\Repository\FormRepository;
+use FormCaptain\Service\EntryNumbers;
 use FormCaptain\Settings\Settings;
 
 final class MailBuilder {
@@ -94,7 +95,7 @@ final class MailBuilder {
 			/* translators: %s: form title placeholder */
 			$subject_tpl = sprintf( __( 'New submission: %s', 'form-captain' ), '{form_title}' );
 		}
-		$subject = $this->subject( $subject_tpl, $form, $fields, $values, $rejected );
+		$subject = $this->subject( $subject_tpl, $form, $fields, $values, $rejected, $entry );
 
 		$selection = $settings['fields'] ?? 'all_non_sensitive';
 		$rows      = $this->rows( $fields, $values, $selection );
@@ -157,13 +158,13 @@ final class MailBuilder {
 			/* translators: %s: form title placeholder */
 			$subject_tpl = sprintf( __( 'Thank you for your message: %s', 'form-captain' ), '{form_title}' );
 		}
-		$subject = $this->subject( $subject_tpl, $form, $fields, $values, $rejected );
+		$subject = $this->subject( $subject_tpl, $form, $fields, $values, $rejected, $entry );
 
 		$body = trim( (string) ( $settings['body'] ?? '' ) );
 		if ( '' === $body ) {
 			$body = __( 'Thank you! We have received your message and will get back to you as soon as possible.', 'form-captain' );
 		}
-		$body  = wp_strip_all_tags( $this->replace_placeholders( $body, $form, $fields, $values ) );
+		$body  = wp_strip_all_tags( $this->replace_placeholders( $body, $form, $fields, $values, $entry ) );
 		$opted = isset( $settings['fields'] ) && is_array( $settings['fields'] ) ? $settings['fields'] : array();
 		$rows  = $opted ? $this->rows( $fields, $values, $opted ) : array();
 		$title = (string) ( $form['title'] ?? '' );
@@ -248,8 +249,8 @@ final class MailBuilder {
 	 * @param array<string,string|array<int,string>> $values
 	 * @param string[]                                $rejected
 	 */
-	private function subject( string $template, array $form, array $fields, array $values, array &$rejected ): string {
-		$subject = $this->replace_placeholders( $template, $form, $fields, $values );
+	private function subject( string $template, array $form, array $fields, array $values, array &$rejected, array $entry = array() ): string {
+		$subject = $this->replace_placeholders( $template, $form, $fields, $values, $entry );
 		if ( self::header_unsafe( $subject ) ) {
 			$rejected[] = 'subject';
 			$subject    = self::strip_header( $subject );
@@ -263,10 +264,10 @@ final class MailBuilder {
 	 * @param array<int,array<string,mixed>>          $fields
 	 * @param array<string,string|array<int,string>> $values
 	 */
-	private function replace_placeholders( string $text, array $form, array $fields, array $values ): string {
+	private function replace_placeholders( string $text, array $form, array $fields, array $values, array $entry = array() ): string {
 		$text = str_replace(
-			array( '{form_title}', '{site_title}' ),
-			array( (string) ( $form['title'] ?? '' ), wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES ) ),
+			array( '{form_title}', '{site_title}', '{entry_number}' ),
+			array( (string) ( $form['title'] ?? '' ), wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES ), $entry ? EntryNumbers::display( $entry ) : '' ),
 			$text
 		);
 		return (string) preg_replace_callback(

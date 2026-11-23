@@ -65,6 +65,26 @@ final class SettingsSchema {
 				'label' => __( 'Show occasional hints about Form Captain Pro', 'form-captain' ),
 				'help'  => __( 'Hints are rare and can be dismissed. Free features never depend on Pro.', 'form-captain' ),
 			),
+			'general.entry_number_format'       => array(
+				'type'        => 'string',
+				'max_length'  => 30,
+				'allow_empty' => true,
+				'validate'    => array( \FormCaptain\Service\EntryNumbers::class, 'validate_format' ),
+				'label'       => __( 'Reference number format', 'form-captain' ),
+				'help'        => __( 'Gives every new submission a reference number, for example REQ-{year}-{number}. {number} is the running number, {year} the current year. Use {entry_number} in emails and the success message. Empty = no reference numbers.', 'form-captain' ),
+			),
+			'general.entry_number_digits'       => array(
+				'type'  => 'int',
+				'min'   => 1,
+				'max'   => 10,
+				'label' => __( 'Digits of the running number', 'form-captain' ),
+				'help'  => __( 'The number is filled with leading zeros, e.g. 4 digits give 0042.', 'form-captain' ),
+			),
+			'general.entry_number_yearly_reset' => array(
+				'type'  => 'bool',
+				'label' => __( 'Restart the running number every year', 'form-captain' ),
+				'help'  => __( 'On 1 January (time zone of the website) the running number starts again at 1. Use {year} in the format so numbers stay unique.', 'form-captain' ),
+			),
 			'appearance.mode'                   => array(
 				'type'    => 'enum',
 				'options' => array(
@@ -322,8 +342,22 @@ final class SettingsSchema {
 					/* translators: %d: maximum number of characters */
 					return array( null, sprintf( __( 'Please use at most %d characters.', 'form-captain' ), (int) ( $def['max_length'] ?? 190 ) ) );
 				}
-				if ( '' === $value ) {
+				if ( '' === $value && empty( $def['allow_empty'] ) ) {
 					return array( null, __( 'This field cannot be empty.', 'form-captain' ) );
+				}
+				$invalid = isset( $def['validate'] ) && is_callable( $def['validate'] ) ? call_user_func( $def['validate'], $value ) : null;
+				if ( is_string( $invalid ) && '' !== $invalid ) {
+					return array( null, $invalid );
+				}
+				return array( $value, null );
+			case 'css':
+				$value = trim( str_replace( array( "\r\n", "\r" ), "\n", $raw ) );
+				if ( mb_strlen( $value ) > (int) ( $def['max_length'] ?? 10000 ) ) {
+					/* translators: %d: maximum number of characters */
+					return array( null, sprintf( __( 'Please use at most %d characters.', 'form-captain' ), (int) ( $def['max_length'] ?? 10000 ) ) );
+				}
+				if ( str_contains( $value, '<' ) || preg_match( '/@import/i', $value ) || preg_match( '/[\x00-\x08\x0B\x0C\x0E-\x1F]/', $value ) ) {
+					return array( null, __( 'The CSS must not contain HTML (<) or @import rules.', 'form-captain' ) );
 				}
 				return array( $value, null );
 			case 'text':

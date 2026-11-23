@@ -340,12 +340,13 @@ final class ConsentWithdrawalTest extends TestCase {
 
 			// v1 table without the column, then migration step 2.
 			$wpdb->prefix = $real . 'fcup_';
-			$v1           = str_replace( array( "  consent_withdrawn_gmt datetime DEFAULT NULL,\n", ",\n  KEY consent_withdrawn (consent_withdrawn_gmt)" ), '', Schema::definitions()[ Tables::ENTRIES ] );
+			$v1           = str_replace( array( "  consent_withdrawn_gmt datetime DEFAULT NULL,\n", ",\n  KEY consent_withdrawn (consent_withdrawn_gmt)", "  entry_number varchar(40) DEFAULT NULL,\n", ",\n  KEY entry_number (entry_number)" ), '', Schema::definitions()[ Tables::ENTRIES ] );
 			$this->assertStringNotContainsString( 'consent_withdrawn', $v1 );
 			$wpdb->query( $v1 );
 			$this->assertNotContains( 'consent_withdrawn_gmt', array_column( self::shape( Tables::name( Tables::ENTRIES ) )[0], 0 ) );
 			( new Migrator() )->migrate_v2();
 			( new Migrator() )->migrate_v2(); // idempotent
+			( new Migrator() )->migrate_v3(); // v3 (entry_number) on top, idempotent as well
 			$upgraded = self::shape( Tables::name( Tables::ENTRIES ) );
 		} finally {
 			foreach ( array( 'fcfresh_', 'fcup_' ) as $p ) {
@@ -377,7 +378,7 @@ final class ConsentWithdrawalTest extends TestCase {
 			}
 
 			$this->assertTrue( $migrator->migrate() );
-			$this->assertSame( 2, $migrator->installed_version() );
+			$this->assertSame( Migrator::TARGET_VERSION, $migrator->installed_version() );
 			$this->assertSame( $before, self::shape( $table ) );
 			$this->assertTrue( $migrator->migrate(), 'repeatable' );
 		} finally {
@@ -393,10 +394,10 @@ final class ConsentWithdrawalTest extends TestCase {
 	}
 
 	public function test_downgrade_protection_stays(): void {
-		update_option( Migrator::OPTION_VERSION, 3 );
+		update_option( Migrator::OPTION_VERSION, Migrator::TARGET_VERSION + 1 );
 		$this->assertFalse( ( new Migrator() )->migrate() );
 		$this->assertSame( 'schema_newer_than_plugin', get_option( Migrator::OPTION_STATE )['error'] );
-		$this->assertSame( 3, ( new Migrator() )->installed_version() );
+		$this->assertSame( Migrator::TARGET_VERSION + 1, ( new Migrator() )->installed_version() );
 		update_option( Migrator::OPTION_VERSION, Migrator::TARGET_VERSION );
 		delete_option( Migrator::OPTION_STATE );
 	}

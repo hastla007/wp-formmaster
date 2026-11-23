@@ -465,6 +465,9 @@ final class EntriesPage {
 		if ( $version ) {
 			$this->detail_row( __( 'Form version', 'form-captain' ), (string) $version['version_no'] );
 		}
+		if ( '' !== (string) ( $entry['entry_number'] ?? '' ) ) {
+			$this->detail_row( __( 'Reference number', 'form-captain' ), (string) $entry['entry_number'] );
+		}
 		$this->detail_row( __( 'Submitted', 'form-captain' ), get_date_from_gmt( (string) $entry['created_gmt'], $fmt ) );
 		$this->detail_row( __( 'Last change', 'form-captain' ), get_date_from_gmt( (string) $entry['updated_gmt'], $fmt ) );
 		$this->detail_row( __( 'Status', 'form-captain' ), CsvExporter::status_label( $entry ) );

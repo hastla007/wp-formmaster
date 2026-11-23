@@ -13,7 +13,7 @@ use FormCaptain\Support\Clock;
 
 final class Migrator {
 
-	public const TARGET_VERSION = 2;
+	public const TARGET_VERSION = 3;
 	public const OPTION_VERSION = 'form_captain_db_version';
 	public const OPTION_STATE   = 'form_captain_migration_state';
 
@@ -26,6 +26,7 @@ final class Migrator {
 		return array(
 			1 => array( $this, 'install_v1' ),
 			2 => array( $this, 'migrate_v2' ),
+			3 => array( $this, 'migrate_v3' ),
 		);
 	}
 
@@ -132,10 +133,25 @@ final class Migrator {
 	}
 
 	/**
+	 * v3: fc_entries.entry_number + index (reference numbers, SET-FC-29). Idempotent like v2.
+	 */
+	public function migrate_v3(): void {
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( Schema::definitions()[ Tables::ENTRIES ] );
+	}
+
+	/**
 	 * Throws if a table or column expected after $version is missing.
 	 */
 	private function verify( int $version ): void {
 		global $wpdb;
+		if ( $version >= 3 ) {
+			$entries = Tables::name( Tables::ENTRIES );
+			$column  = $wpdb->get_var( $wpdb->prepare( "SHOW COLUMNS FROM {$entries} LIKE %s", 'entry_number' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			if ( 'entry_number' !== $column ) {
+				throw new \RuntimeException( 'missing_column:entries.entry_number' );
+			}
+		}
 		if ( $version >= 2 ) {
 			$entries = Tables::name( Tables::ENTRIES );
 			$column  = $wpdb->get_var( $wpdb->prepare( "SHOW COLUMNS FROM {$entries} LIKE %s", 'consent_withdrawn_gmt' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared

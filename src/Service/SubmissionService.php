@@ -226,6 +226,10 @@ final class SubmissionService {
 		$entry_id = 0;
 		$tx       = $this->begin();
 		try {
+			if ( null === $spam_reason ) {
+				// Reference number (SET-FC-29); drawn inside the transaction so a rollback returns it.
+				$entry['entry_number'] = EntryNumbers::next( $form );
+			}
 			$entry_id = $this->entries->insert( $entry );
 			if ( $entry_id <= 0 ) {
 				$this->abort( $tx, 0, null );
@@ -347,7 +351,11 @@ final class SubmissionService {
 			'request_id' => $request_id,
 			'errors'     => array(),
 		);
-		return array_merge( $out, self::confirmation( $form, $entry_id, $values ) );
+		$out = array_merge( $out, self::confirmation( $form, $entry_id, $values ) );
+		if ( str_contains( (string) $out['message'], '{entry_number}' ) ) {
+			$out['message'] = str_replace( '{entry_number}', EntryNumbers::display( $this->entries->find( $entry_id ) ?? array( 'id' => $entry_id ) ), (string) $out['message'] );
+		}
+		return $out;
 	}
 
 	/**

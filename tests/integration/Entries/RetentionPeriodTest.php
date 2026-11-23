@@ -242,6 +242,25 @@ final class RetentionPeriodTest extends TestCase {
 		$this->assertSame( 'manual', Settings::get( 'privacy.retention' ) );
 	}
 
+	/** SET-FC-P3-6: an update without database migration keeps 12 months, too. */
+	public function test_update_without_schema_migration_keeps_twelve_months(): void {
+		update_option( Settings::OPTION, array( 'spam' => array( 'rate_limit' => 7 ) ) );
+		$done = get_option( SettingsMigrations::OPTION, array() );
+		unset( $done['retention_legacy_default'] );
+		update_option( SettingsMigrations::OPTION, $done );
+		\FormCaptain\Install\Activator::maybe_upgrade();
+		$this->assertSame( '12m', Settings::get( 'privacy.retention' ) );
+		$this->assertSame( 7, Settings::get( 'spam.rate_limit' ) );
+
+		// A new installation (manual stored) and explicit values stay.
+		update_option( Settings::OPTION, Settings::defaults() );
+		$done = get_option( SettingsMigrations::OPTION, array() );
+		unset( $done['retention_legacy_default'] );
+		update_option( SettingsMigrations::OPTION, $done );
+		SettingsMigrations::run();
+		$this->assertSame( 'manual', Settings::get( 'privacy.retention' ) );
+	}
+
 	public function test_site_health_reminds_while_no_period_is_set(): void {
 		$health = $this->plugin()->get( \FormCaptain\Admin\SiteHealth::class );
 		$this->assertArrayHasKey( 'form_captain_retention', $health->tests( array() )['direct'] );

@@ -418,7 +418,7 @@ final class MailBuilder {
 						if ( ! empty( $field['sensitive'] ) || ! self::mailable_type( (string) $field['type'] ) ) {
 							return '';
 						}
-						return $esc( self::display_value( $field, $values[ $field['id'] ] ?? '' ) );
+						return $esc( self::display_value( $field, $values[ $field['id'] ] ?? '', true ) );
 					}
 				}
 				return '';
@@ -504,7 +504,7 @@ final class MailBuilder {
 			}
 			$rows[] = array(
 				'label' => (string) ( $field['label'] ?? $field['key'] ?? $field['id'] ),
-				'value' => self::display_value( $field, $values[ $field['id'] ] ),
+				'value' => self::display_value( $field, $values[ $field['id'] ], true ),
 			);
 		}
 		return $rows;
@@ -520,11 +520,16 @@ final class MailBuilder {
 	 *
 	 * @param array<string,mixed>       $field
 	 * @param string|array<int,string> $value
+	 * @param bool                      $local_dates date fields in the date format of the site (mails, admin)
+	 *                                               instead of the stored YYYY-MM-DD (CSV keeps ISO).
 	 */
-	public static function display_value( array $field, string|array $value ): string {
+	public static function display_value( array $field, string|array $value, bool $local_dates = false ): string {
 		$type = (string) ( $field['type'] ?? '' );
 		if ( 'consent' === $type ) {
 			return '1' === (string) ( is_array( $value ) ? ( $value[0] ?? '' ) : $value ) ? __( 'Yes', 'form-captain' ) : __( 'No', 'form-captain' );
+		}
+		if ( $local_dates && 'date' === $type && is_string( $value ) ) {
+			return self::local_date( $value );
 		}
 		$labels = array();
 		foreach ( (array) ( $field['options'] ?? array() ) as $option ) {
@@ -542,6 +547,20 @@ final class MailBuilder {
 			$display = is_string( $custom ) ? wp_strip_all_tags( $custom ) : $display;
 		}
 		return $display;
+	}
+
+	/**
+	 * A stored calendar date (YYYY-MM-DD) in the date format of the site (SET-FC-P3-5), e.g. 01.02.2000
+	 * for "d.m.Y". The date has no time zone, so it is formatted in UTC to keep the day. Other values
+	 * are returned unchanged.
+	 */
+	public static function local_date( string $value ): string {
+		if ( ! preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/', $value, $m ) || ! checkdate( (int) $m[2], (int) $m[3], (int) $m[1] ) ) {
+			return $value;
+		}
+		$format = (string) get_option( 'date_format' );
+		$out    = wp_date( '' !== $format ? $format : 'Y-m-d', (int) gmmktime( 12, 0, 0, (int) $m[2], (int) $m[3], (int) $m[1] ), new \DateTimeZone( 'UTC' ) );
+		return is_string( $out ) && '' !== $out ? $out : $value;
 	}
 
 	/**

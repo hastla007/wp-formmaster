@@ -989,13 +989,21 @@ final class SettingsPage {
 		foreach ( $rows as $row ) {
 			if ( 'privacy.retention' === $row['path'] && $row['changed'] ) {
 				$p = $this->retention_estimate( (string) $row['after'] );
-				echo '<p class="fc-warning">' . esc_html(
-					null !== $p['earliest']
-						/* translators: 1: number of submissions, 2: date */
-						? sprintf( __( 'The new retention period affects %1$s submissions; earliest deletion on %2$s.', 'form-captain' ), number_format_i18n( $p['count'] ), self::local_date( $p['earliest'] ) )
-						/* translators: %s: number of submissions */
-						: sprintf( __( 'The new retention period affects %s submissions; nothing is deleted automatically.', 'form-captain' ), number_format_i18n( $p['count'] ) )
-				) . '</p>';
+				if ( null !== $p['earliest'] ) {
+					/* translators: 1: number of submissions, 2: date */
+					$text = sprintf( __( 'The new retention period affects %1$s submissions; earliest deletion on %2$s.', 'form-captain' ), number_format_i18n( $p['count'] ), self::local_date( $p['earliest'] ) );
+				} elseif ( null !== RetentionPeriod::parts( (string) $row['after'] ) ) {
+					// SET-FC-P3-3: a period with no existing submissions still deletes new ones automatically.
+					$text = __( 'No existing submissions are affected by this change.', 'form-captain' ) . ' ' . sprintf(
+						/* translators: %s: retention period */
+						__( 'New submissions are deleted automatically %s after they were received.', 'form-captain' ),
+						RetentionPeriod::label( (string) $row['after'] )
+					);
+				} else {
+					/* translators: %s: number of submissions */
+					$text = sprintf( __( 'The new retention period affects %s submissions; nothing is deleted automatically.', 'form-captain' ), number_format_i18n( $p['count'] ) );
+				}
+				echo '<p class="fc-warning">' . esc_html( $text ) . '</p>';
 			}
 		}
 		if ( array_filter( array_column( $rows, 'changed' ) ) ) {

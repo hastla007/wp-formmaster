@@ -5880,10 +5880,12 @@ msgstr "Double-Opt-in"
 #: src/Settings/FormSettingsSchema.php:291
 msgid ""
 "Visitors confirm their submission with a link sent by e-mail. Unconfirmed "
-"submissions are deleted automatically."
+"submissions are deleted automatically. The periods and texts are suggestions "
+"– have them checked legally."
 msgstr ""
 "Besucher bestätigen ihre Einsendung über einen Link per E-Mail. Unbestätigte "
-"Einsendungen werden automatisch gelöscht."
+"Einsendungen werden automatisch gelöscht. Die Fristen und Texte sind "
+"Vorschläge – lass sie rechtlich prüfen."
 
 #: src/Settings/FormSettingsSchema.php:297 assets/src/editor.js:1262
 msgid "E-mail field for the confirmation link"
@@ -7747,3 +7749,35 @@ msgstr "Geplante Löschung"
 #: src/Privacy/PrivacyIntegration.php
 msgid "No automatic deletion; the submission is deleted manually by the website operator."
 msgstr "Keine automatische Löschung; die Einsendung wird vom Betreiber der Website manuell gelöscht."
+
+#: src/Export/CsvExporter.php
+#, php-format
+msgid "%s – not confirmed yet"
+msgstr "%s – noch nicht bestätigt"
+
+#: src/Admin/EntriesPage.php
+#, php-format
+msgid "Not confirmed yet: the person has not clicked the confirmation link (double opt-in). No notifications or integration deliveries are sent until then. Without confirmation the submission is deleted automatically on %s."
+msgstr "Noch nicht bestätigt: Die Person hat den Bestätigungslink (Double-Opt-in) noch nicht angeklickt. Bis dahin werden keine Benachrichtigungen und keine Übertragungen an Integrationen gesendet. Ohne Bestätigung wird die Einsendung am %s automatisch gelöscht."
+
+#: src/Admin/EntriesPage.php
+msgid "Not confirmed yet: the person has not clicked the confirmation link (double opt-in). No notifications or integration deliveries are sent until then."
+msgstr "Noch nicht bestätigt: Die Person hat den Bestätigungslink (Double-Opt-in) noch nicht angeklickt. Bis dahin werden keine Benachrichtigungen und keine Übertragungen an Integrationen gesendet."
+
+#: src/Admin/EntriesPage.php
+#, php-format
+msgid "Confirmed by the person via the e-mail link (double opt-in) on %s."
+msgstr "Von der Person über den Link in der E-Mail bestätigt (Double-Opt-in) am %s."
+
+#: src/Admin/EntriesPage.php
+msgid "Confirmation link (double opt-in)"
+msgstr "Bestätigungslink (Double-Opt-in)"
+
+#: src/Service/EntryService.php
+msgid "This submission has not been confirmed by e-mail yet (double opt-in). Notifications are sent after the confirmation."
+msgstr "Diese Einsendung wurde noch nicht per E-Mail bestätigt (Double-Opt-in). Benachrichtigungen werden nach der Bestätigung gesendet."
+
+#: src/Admin/SettingsPage.php
+#, php-format
+msgid "New submissions are deleted automatically %s after they were received."
+msgstr "Neue Einsendungen werden %s nach dem Eingang automatisch gelöscht."

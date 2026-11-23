@@ -265,6 +265,9 @@ final class OperationSettingsTest extends TestCase {
 		$this->assertStringContainsString( 'review before the sales start is planned', $html );
 		$this->assertStringContainsString( 'International (other countries) – not legally reviewed', $html );
 		$this->assertStringContainsString( 'value="privacy.retention" checked', $html );
+		// SET-FC-P3-3: without existing submissions the preview must not claim that nothing is deleted.
+		$this->assertStringContainsString( 'New submissions are deleted automatically 12 months after they were received.', $html );
+		$this->assertStringNotContainsString( 'nothing is deleted automatically', $html );
 		$this->assertSame( '90d', Settings::get( 'privacy.retention' ) );
 
 		$res = $this->page()->apply_country_profile( 'DE', array( 'privacy.retention', 'export.delimiter' ), false );
@@ -350,5 +353,15 @@ final class OperationSettingsTest extends TestCase {
 		$this->as_admin();
 		$boot = $this->plugin()->get( \FormCaptain\Admin\EditorPage::class )->bootstrap( 0 );
 		$this->assertEquals( (object) array(), $boot['fieldSuggestions'], 'editor gets an empty object without suggestions' );
+	}
+
+	/** SET-FC-P3-4: privacy.policy_page_hint decides whether new consent fields link the privacy policy page. */
+	public function test_policy_page_hint_reaches_the_editor(): void {
+		$this->as_admin();
+		$editor = $this->plugin()->get( \FormCaptain\Admin\EditorPage::class );
+		$this->assertTrue( $editor->bootstrap( 0 )['consentLink'], 'default: link' );
+		Settings::set_group( 'privacy', array( 'policy_page_hint' => false ) );
+		$this->assertFalse( $editor->bootstrap( 0 )['consentLink'] );
+		$this->assertStringContainsString( 'f.privacy_link = boot.consentLink !== false', (string) file_get_contents( dirname( __DIR__, 3 ) . '/assets/src/editor.js' ) );
 	}
 }

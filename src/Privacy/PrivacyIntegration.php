@@ -300,6 +300,9 @@ final class PrivacyIntegration {
 			}
 			return __( 'Not given', 'form-captain' );
 		}
+		if ( 'date' === $type && is_string( $value ) ) {
+			return \FormCaptain\Mail\MailBuilder::local_date( $value );
+		}
 		$labels = array();
 		foreach ( (array) ( $field['options'] ?? array() ) as $opt ) {
 			if ( is_array( $opt ) && isset( $opt['value'] ) ) {

@@ -197,6 +197,9 @@ final class DoubleOptInTest extends FrontendTestCase {
 		$this->assertStringContainsString( 'already been confirmed', $again['html'] );
 		$this->assertSame( array( $id ), $events );
 		$this->assertCount( 3, $this->job_types( $id ) );
+		// SET-FC-P4-05: without the right token nobody learns that this entry exists or was confirmed.
+		$this->assertSame( 'invalid', $this->doi()->check( $id . '.' . str_repeat( 'A', 32 ) )['code'] );
+		$this->assertStringContainsString( 'invalid', $this->doi()->page( $id . '.' . str_repeat( 'B', 32 ), false )['html'] );
 
 		// Privacy export carries the proof (time only, no IP).
 		$export = $this->plugin()->get( PrivacyIntegration::class )->export_item( $entry );

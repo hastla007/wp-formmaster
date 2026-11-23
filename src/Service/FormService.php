@@ -15,7 +15,7 @@ use FormCaptain\Domain\Schema\SchemaValidator;
 use FormCaptain\Install\Capabilities;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
-use FormCaptain\Settings\Settings;
+use FormCaptain\Settings\FormSettingsSchema;
 use FormCaptain\Support\Clock;
 use FormCaptain\Support\Errors;
 
@@ -111,35 +111,7 @@ final class FormService {
 	 * @return array<string,mixed>
 	 */
 	public function default_settings(): array {
-		return array(
-			'notification'      => array(
-				'enabled'        => true,
-				'to'             => array( '{admin_email}' ),
-				'reply_to_field' => '',
-				/* translators: {form_title} is a placeholder and must not be translated. */
-				'subject'        => __( 'New submission: {form_title}', 'form-captain' ),
-				'fields'         => 'all_non_sensitive',
-			),
-			'confirmation_mail' => array(
-				'enabled' => false,
-				'subject' => '',
-				'body'    => '',
-				'fields'  => array(),
-			),
-			'confirmation'      => array(
-				'type'    => 'message',
-				'message' => __( 'Thank you! Your submission has been received.', 'form-captain' ),
-				'page_id' => 0,
-			),
-			'paused_message'    => __( 'This form is currently not accepting submissions.', 'form-captain' ),
-			'appearance'        => array( 'mode' => 'base' === Settings::get( 'appearance.mode' ) ? 'base' : 'inherit' ),
-			'email'             => array(
-				'from_name'    => (string) Settings::get( 'email.from_name' ),
-				'from_address' => (string) Settings::get( 'email.from_address' ),
-			),
-			'retention'         => array( 'mode' => 'global' ),
-			'actions'           => array(),
-		);
+		return FormSettingsSchema::defaults();
 	}
 
 	// Saving.
@@ -563,124 +535,15 @@ final class FormService {
 	 * @return array{settings:array<string,mixed>,errors:array<string,string>}
 	 */
 	public function sanitize_settings( array $in, array $schema ): array {
-		$errors   = array();
-		$out      = array();
-		$defaults = $this->default_settings();
-		$fields   = array();
+		$fields = array();
 		foreach ( (array) ( $schema['fields'] ?? array() ) as $f ) {
 			$fields[ (string) $f['id'] ] = $f;
 		}
+		// Described values (defaults, sanitizing, cross checks): Settings\FormSettingsSchema (SET-FC-28).
+		$res    = FormSettingsSchema::sanitize( $in, $fields );
+		$out    = $res['settings'];
+		$errors = $res['errors'];
 
-		$n          = is_array( $in['notification'] ?? null ) ? $in['notification'] : array();
-		$recipients = array();
-		$to_raw     = $n['to'] ?? array();
-		if ( is_string( $to_raw ) ) {
-			$to_raw = preg_split( '/[\s,;]+/', $to_raw ) ?: array();
-		}
-		foreach ( (array) $to_raw as $addr ) {
-			$addr = trim( (string) $addr );
-			if ( '' === $addr ) {
-				continue;
-			}
-			if ( '{admin_email}' === $addr || is_email( $addr ) ) {
-				$recipients[] = '{admin_email}' === $addr ? $addr : strtolower( $addr );
-			} else {
-				$errors['notification.to'] = 'invalid_recipient';
-			}
-		}
-		$recipients = array_slice( array_values( array_unique( $recipients ) ), 0, 10 );
-		$enabled    = ! array_key_exists( 'enabled', $n ) || ! empty( $n['enabled'] );
-		if ( $enabled && ! $recipients ) {
-			$errors['notification.to'] = $errors['notification.to'] ?? 'recipient_required';
-		}
-		$reply = (string) ( $n['reply_to_field'] ?? '' );
-		if ( '' !== $reply && ( ! isset( $fields[ $reply ] ) || 'email' !== $fields[ $reply ]['type'] ) ) {
-			$errors['notification.reply_to_field'] = 'invalid_reply_to_field';
-			$reply                                 = '';
-		}
-		// "fields": 'all_non_sensitive' or an explicit list of field IDs (MailBuilder contract).
-		$raw_sel  = is_array( $n['fields'] ?? null ) ? $n['fields'] : ( 'selected' === ( $n['fields'] ?? '' ) ? (array) ( $n['selected_fields'] ?? array() ) : null );
-		$selected = null === $raw_sel ? null : self::value_field_ids( $raw_sel, $fields );
-		if ( null !== $selected && ! $selected ) {
-			$errors['notification.fields'] = 'fields_required';
-		}
-		$subject = self::plain( $n['subject'] ?? '', 190 );
-		if ( $enabled && '' === $subject ) {
-			$subject = $defaults['notification']['subject'];
-		}
-		$out['notification'] = array(
-			'enabled'        => $enabled,
-			'to'             => $recipients,
-			'reply_to_field' => $reply,
-			'subject'        => $subject,
-			'fields'         => null === $selected ? 'all_non_sensitive' : $selected,
-		);
-
-		$c                        = is_array( $in['confirmation_mail'] ?? null ) ? $in['confirmation_mail'] : array();
-		$out['confirmation_mail'] = array(
-			'enabled' => ! empty( $c['enabled'] ),
-			'subject' => self::plain( $c['subject'] ?? '', 190 ),
-			'body'    => mb_substr( sanitize_textarea_field( is_scalar( $c['body'] ?? '' ) ? (string) ( $c['body'] ?? '' ) : '' ), 0, 5000 ),
-			'fields'  => self::value_field_ids( (array) ( $c['fields'] ?? array() ), $fields ),
-		);
-		if ( $out['confirmation_mail']['enabled'] ) {
-			$has_recipient = false;
-			foreach ( $fields as $f ) {
-				if ( 'email' === $f['type'] && ! empty( $f['confirmation_recipient'] ) ) {
-					$has_recipient = true;
-				}
-			}
-			if ( ! $has_recipient ) {
-				$errors['confirmation_mail.enabled'] = 'confirmation_recipient_missing';
-			}
-			if ( '' === $out['confirmation_mail']['subject'] ) {
-				$errors['confirmation_mail.subject'] = 'subject_required';
-			}
-		}
-
-		$conf    = is_array( $in['confirmation'] ?? null ) ? $in['confirmation'] : array();
-		$type    = 'page' === ( $conf['type'] ?? '' ) ? 'page' : 'message';
-		$page_id = absint( $conf['page_id'] ?? 0 );
-		if ( 'page' === $type ) {
-			$page = $page_id ? get_post( $page_id ) : null;
-			if ( ! $page || 'page' !== $page->post_type || 'publish' !== $page->post_status || '' !== (string) $page->post_password ) {
-				$errors['confirmation.page_id'] = 'invalid_page';
-				$type                           = 'message';
-				$page_id                        = 0;
-			}
-		} else {
-			$page_id = 0;
-		}
-		$message = mb_substr( sanitize_textarea_field( is_scalar( $conf['message'] ?? '' ) ? (string) ( $conf['message'] ?? '' ) : '' ), 0, 1000 );
-		if ( '' === trim( $message ) ) {
-			$message = $defaults['confirmation']['message'];
-		}
-		$out['confirmation'] = array(
-			'type'    => $type,
-			'message' => $message,
-			'page_id' => $page_id,
-		);
-
-		$paused                = mb_substr( sanitize_textarea_field( is_scalar( $in['paused_message'] ?? '' ) ? (string) ( $in['paused_message'] ?? '' ) : '' ), 0, 500 );
-		$out['paused_message'] = '' !== trim( $paused ) ? $paused : $defaults['paused_message'];
-
-		$out['appearance'] = array( 'mode' => 'base' === ( $in['appearance']['mode'] ?? '' ) ? 'base' : 'inherit' );
-
-		$email        = is_array( $in['email'] ?? null ) ? $in['email'] : array();
-		$from_address = trim( (string) ( $email['from_address'] ?? '' ) );
-		if ( '' !== $from_address && ! is_email( $from_address ) ) {
-			$errors['email.from_address'] = 'invalid_email';
-			$from_address                 = (string) $defaults['email']['from_address'];
-		}
-		$out['email'] = array(
-			'from_name'    => self::plain( $email['from_name'] ?? '', 190 ),
-			'from_address' => $from_address,
-		);
-
-		$retention        = (string) ( $in['retention']['mode'] ?? 'global' );
-		$out['retention'] = array( 'mode' => in_array( $retention, array( 'global', '90d', '12m', 'manual' ), true ) ? $retention : 'global' );
-
-		$out['actions'] = is_array( $in['actions'] ?? null ) ? array_values( $in['actions'] ) : array();
 		foreach ( array( 'template', 'template_version' ) as $keep ) {
 			if ( isset( $in[ $keep ] ) && is_string( $in[ $keep ] ) && preg_match( '/^[a-z0-9_.\-]{1,40}$/', $in[ $keep ] ) ) {
 				$out[ $keep ] = $in[ $keep ];
@@ -939,16 +802,6 @@ final class FormService {
 		$diff                = FormSchemaDiff::compare( $published, (array) $form['schema'] );
 		$diff['unpublished'] = ! empty( $form['published_version_id'] ) && $published !== $this->validator->validate( (array) $form['schema'] )['schema'];
 		return $diff;
-	}
-
-	/**
-	 * @param array<int|string,mixed>            $ids
-	 * @param array<string,array<string,mixed>> $fields
-	 * @return array<int,string>
-	 */
-	private static function value_field_ids( array $ids, array $fields ): array {
-		$ids = array_map( static fn( $v ) => is_scalar( $v ) ? (string) $v : '', array_values( $ids ) );
-		return array_values( array_unique( array_filter( $ids, static fn( $fid ) => isset( $fields[ $fid ] ) && FieldTypes::has_value( (string) $fields[ $fid ]['type'] ) ) ) );
 	}
 
 	public static function new_instance_id(): string {

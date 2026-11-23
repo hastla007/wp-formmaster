@@ -325,7 +325,7 @@ final class CsvExporter {
 		if ( ! empty( $entry['anonymized_gmt'] ) ) {
 			return __( 'Anonymized', 'form-captain' );
 		}
-		return match ( (string) $entry['status'] ) {
+		$label = match ( (string) $entry['status'] ) {
 			'new' => __( 'New', 'form-captain' ),
 			'read' => __( 'Read', 'form-captain' ),
 			'archived' => __( 'Archived', 'form-captain' ),
@@ -333,6 +333,12 @@ final class CsvExporter {
 			'trash' => __( 'Trash', 'form-captain' ),
 			default => (string) $entry['status'],
 		};
+		// SET-FC-P3-1: unconfirmed double opt-in submissions are marked everywhere (list, detail, CSV).
+		if ( \FormCaptain\Service\DoubleOptIn::STATUS_PENDING === ( $entry['confirmation_status'] ?? null ) ) {
+			/* translators: %s: status of the submission, e.g. "New" */
+			$label = sprintf( __( '%s – not confirmed yet', 'form-captain' ), $label );
+		}
+		return $label;
 	}
 
 	/**

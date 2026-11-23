@@ -11,14 +11,17 @@ declare(strict_types=1);
 
 namespace FormCaptain\Tests\Integration\Frontend;
 
+use FormCaptain\Admin\EntriesPage;
 use FormCaptain\Database\Migrator;
 use FormCaptain\Database\Schema;
 use FormCaptain\Database\Tables;
+use FormCaptain\Export\CsvExporter;
 use FormCaptain\Jobs\JobRunner;
 use FormCaptain\Privacy\PrivacyIntegration;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\JobRepository;
 use FormCaptain\Service\DoubleOptIn;
+use FormCaptain\Service\EntryService;
 use FormCaptain\Service\FormService;
 use FormCaptain\Service\RetentionService;
 use FormCaptain\Service\SubmissionService;
@@ -218,6 +221,46 @@ final class DoubleOptInTest extends FrontendTestCase {
 		$this->plugin()->get( JobRunner::class )->run();
 		$row = $this->plugin()->get( JobRepository::class )->find( $job );
 		$this->assertSame( 'entry_unconfirmed', $row['last_error_code'] );
+	}
+
+	/** SET-FC-P3-1/-2: unconfirmed entries are marked in list, detail and CSV and cannot be notified by hand. */
+	public function test_unconfirmed_entries_are_marked_in_the_admin(): void {
+		$this->as_admin();
+		$form      = $this->doi_form( array( 'delete_after_days' => 5 ) );
+		$pending   = (int) $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) )['entry_id'];
+		$confirmed = (int) $this->service()->submit( $form, $this->payload( $form, array( 'f_name01' => 'B', 'f_mail01' => 'b@example.org' ) ) )['entry_id'];
+		$this->entries()->mark_confirmed( $confirmed, Clock::now() );
+
+		$this->assertSame( 'New – not confirmed yet', CsvExporter::status_label( $this->entries()->find( $pending ) ) );
+		$this->assertSame( 'New', CsvExporter::status_label( $this->entries()->find( $confirmed ) ) );
+
+		$render = function ( int $id ): string {
+			$_GET = array( 'page' => EntriesPage::SLUG, 'view' => (string) $id );
+			ob_start();
+			try {
+				$this->plugin()->get( EntriesPage::class )->render();
+			} finally {
+				$out  = (string) ob_get_clean();
+				$_GET = array();
+			}
+			return $out;
+		};
+		$html  = $render( $pending );
+		$until = (string) $this->entries()->find( $pending )['unconfirmed_until_gmt'];
+		$this->assertStringContainsString( 'fc-doi-pending', $html );
+		$this->assertStringContainsString( get_date_from_gmt( $until, get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ), $html, 'deadline of the double opt-in' );
+		$this->assertStringNotContainsString( 'Will be deleted automatically on', $html, 'no retention date for an unconfirmed entry' );
+		$this->assertStringNotContainsString( 'value="resend"', $html, 'no manual notification before the confirmation' );
+		$this->assertStringContainsString( 'Confirmation link (double opt-in)', $html );
+
+		$html = $render( $confirmed );
+		$this->assertStringContainsString( 'fc-doi-confirmed', $html );
+		$this->assertStringNotContainsString( 'fc-doi-pending', $html );
+
+		$result = $this->plugin()->get( EntryService::class )->resend_notification( $pending );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertNotContains( 'mail.admin', $this->job_types( $pending ) );
+		$this->assertTrue( $this->plugin()->get( EntryService::class )->resend_notification( $confirmed ) );
 	}
 
 	public function test_unconfirmed_entries_are_deleted_after_the_period(): void {

@@ -6,9 +6,9 @@ Dieses Kapitel beschreibt, wie Sie mit Einsendungen arbeiten, wie E-Mails zugest
 
 **Form Captain → Einträge** zeigt alle Einsendungen. Sichtbar nur für Rollen mit dem Recht *Einträge lesen* (standardmäßig nur Administratoren).
 
-- **Liste:** Name und E-Mail (aus dem ersten Text- bzw. E-Mail-Feld, nie aus sensiblen Feldern), Formular, Eingangszeit in der Zeitzone der Website, Status.
+- **Liste:** Name und E-Mail (aus dem ersten Text- bzw. E-Mail-Feld, nie aus sensiblen Feldern), Vorgangsnummer (falls unter *Einstellungen → Allgemein* eingeschaltet; Spam bekommt keine), Formular, Eingangszeit in der Zeitzone der Website, Status.
 - **Reiter:** Alle (ohne Spam/Papierkorb), Neu, Gelesen, Archiviert, Spam, Papierkorb, *Läuft bald ab* (automatische Löschung in den nächsten 14 Tagen).
-- **Filter:** Formular, Zeitraum (von/bis), Einwilligung (widerrufen / nicht widerrufen), Volltextsuche in den Antworten, Seitenweise Anzeige (20 je Seite). Einträge mit widerrufener Einwilligung tragen in der Statusspalte das Badge „Einwilligung widerrufen am …“.
+- **Filter:** Formular, Zeitraum (von/bis), Einwilligung (widerrufen / nicht widerrufen), Volltextsuche in den Antworten und nach der genauen Vorgangsnummer, Seitenweise Anzeige (20 je Seite). Einträge mit widerrufener Einwilligung tragen in der Statusspalte das Badge „Einwilligung widerrufen am …“.
 - **Sammelaktionen:** Als gelesen markieren, Archivieren, Als Spam markieren, Kein Spam, In den Papierkorb, Wiederherstellen, Endgültig löschen. Jede Aktion prüft je Eintrag das passende Recht; nicht erlaubte oder nicht mehr vorhandene Einträge werden übersprungen und gezählt.
 
 ### Detailansicht
@@ -68,6 +68,7 @@ Hinweise:
 - Mehrzeilige Antworten bleiben in einer Zelle (korrekt in Anführungszeichen).
 - Die Datei wird direkt gestreamt und nicht auf dem Server gespeichert. Maximal 100 000 Zeilen je Export, sonst bitte den Zeitraum eingrenzen; höchstens 10 Exporte je Stunde und Nutzer.
 - Gelöschte Einträge sind nie enthalten; anonymisierte erscheinen mit Status „Anonymisiert“ und Platzhaltern.
+- Die Spalte **Reference number** (Vorgangsnummer) ist standardmäßig ausgewählt; Einträge ohne Nummer bleiben leer.
 - Die Spalte **Consent withdrawn** (Einwilligung widerrufen) ist standardmäßig ausgewählt und enthält bei widerrufener Einwilligung Datum und Uhrzeit, sonst bleibt sie leer. Sie können sie abwählen.
 - Jeder Export wird im technischen Protokoll vermerkt (Nutzer-ID, Formular, Zeilenzahl – keine Inhalte).
 

@@ -300,7 +300,9 @@ final class EntryRepository {
 			$params  = array_merge( $params, $ids );
 		}
 		if ( ! empty( $args['search'] ) ) {
-			$where[]  = "EXISTS (SELECT 1 FROM {$this->values()} v WHERE v.entry_id = e.id AND v.value LIKE %s)";
+			// Values or the exact reference number (SET-FC-41).
+			$where[]  = "( e.entry_number = %s OR EXISTS (SELECT 1 FROM {$this->values()} v WHERE v.entry_id = e.id AND v.value LIKE %s) )";
+			$params[] = trim( (string) $args['search'] );
 			$params[] = '%' . $wpdb->esc_like( (string) $args['search'] ) . '%';
 		}
 		if ( ! empty( $args['not_anonymized'] ) ) {

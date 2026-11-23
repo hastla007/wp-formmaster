@@ -69,6 +69,7 @@ final class EntriesListTable extends \WP_List_Table {
 		return array(
 			'cb'        => '<input type="checkbox" />',
 			'entry'     => __( 'Submission', 'form-captain' ),
+			'number'    => __( 'Reference number', 'form-captain' ),
 			'form'      => __( 'Form', 'form-captain' ),
 			'submitted' => __( 'Submitted', 'form-captain' ),
 			'status'    => __( 'Status', 'form-captain' ),
@@ -235,6 +236,16 @@ final class EntriesListTable extends \WP_List_Table {
 		}
 		$out .= '<br /><span class="description">#' . (int) $item['id'] . '</span>';
 		return $out;
+	}
+
+	/**
+	 * Reference number (SET-FC-41); "–" for entries without one (spam, numbering off, older entries).
+	 *
+	 * @param array<string,mixed> $item
+	 */
+	protected function column_number( $item ): string {
+		$number = (string) ( $item['entry_number'] ?? '' );
+		return '' !== $number ? esc_html( $number ) : '<span aria-hidden="true">–</span><span class="screen-reader-text">' . esc_html__( 'No reference number', 'form-captain' ) . '</span>';
 	}
 
 	/** @param array<string,mixed> $item */

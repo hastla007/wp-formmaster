@@ -29,7 +29,7 @@ final class CsvExporter {
 	public const ACTION       = 'form_captain_export_entries';
 	public const NONCE_ACTION = 'form_captain_export_entries';
 	public const MAX_ROWS     = 100000;
-	public const META_COLUMNS = array( 'meta:id', 'meta:created', 'meta:status', 'meta:form_version', 'meta:source_url', 'meta:consent_withdrawn' );
+	public const META_COLUMNS = array( 'meta:id', 'meta:entry_number', 'meta:created', 'meta:status', 'meta:form_version', 'meta:source_url', 'meta:consent_withdrawn' );
 
 	public function __construct( private EntryRepository $entries, private FormRepository $forms ) {}
 
@@ -42,6 +42,7 @@ final class CsvExporter {
 	public function columns( array $form ): array {
 		$cols = array(
 			'meta:id'           => array( 'label' => __( 'Submission ID', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
+			'meta:entry_number' => array( 'label' => __( 'Reference number', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
 			'meta:created'      => array( 'label' => __( 'Submitted at', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
 			'meta:status'       => array( 'label' => __( 'Status', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
 			'meta:form_version' => array( 'label' => __( 'Form version', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
@@ -292,6 +293,9 @@ final class CsvExporter {
 		switch ( $key ) {
 			case 'meta:id':
 				return (string) (int) $entry['id'];
+			case 'meta:entry_number':
+				// SET-FC-41; the format is configurable, so the cell gets the formula guard.
+				return self::escape_cell( (string) ( $entry['entry_number'] ?? '' ) );
 			case 'meta:created':
 				return get_date_from_gmt( (string) $entry['created_gmt'], 'Y-m-d H:i:s' );
 			case 'meta:status':

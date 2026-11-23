@@ -121,7 +121,7 @@ final class EditorPage {
 			'given-name'       => __( 'First name', 'form-captain' ),
 			'family-name'      => __( 'Last name', 'form-captain' ),
 			'honorific-prefix' => __( 'Salutation / title', 'form-captain' ),
-			'organization'     => __( 'Company / organisation', 'form-captain' ),
+			'organization'     => __( 'Company / organization', 'form-captain' ),
 			'email'            => __( 'Email address', 'form-captain' ),
 			'tel'              => __( 'Phone number', 'form-captain' ),
 			'street-address'   => __( 'Street address (complete)', 'form-captain' ),

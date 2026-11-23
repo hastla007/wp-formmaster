@@ -107,7 +107,7 @@ final class DoubleOptIn {
 	/** @param array<string,mixed> $form */
 	public static function pending_message( array $form ): string {
 		$message = trim( wp_strip_all_tags( (string) self::settings( $form )['pending_message'] ) );
-		return '' !== $message ? $message : __( 'Almost done: we have sent you an e-mail. Please confirm your submission with the link in this e-mail.', 'form-captain' );
+		return '' !== $message ? $message : __( 'Almost done: we have sent you an email. Please confirm your submission with the link in this email.', 'form-captain' );
 	}
 
 	/** Deadline after which an unconfirmed entry is deleted. */

@@ -208,7 +208,7 @@ final class DoubleOptInTest extends FrontendTestCase {
 		// Privacy export carries the proof (time only, no IP).
 		$export = $this->plugin()->get( PrivacyIntegration::class )->export_item( $entry );
 		$names  = array_column( $export, 'value', 'name' );
-		$this->assertStringStartsWith( 'Confirmed on', $names['E-mail confirmation (double opt-in)'] );
+		$this->assertStringStartsWith( 'Confirmed on', $names['Email confirmation (double opt-in)'] );
 	}
 
 	public function test_invalid_and_expired_links_do_not_confirm(): void {

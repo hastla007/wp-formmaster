@@ -101,8 +101,8 @@ final class ImportAdmin {
 		echo '<input type="text" class="regular-text" id="fc-type-a-title" name="fc_type_a_title" maxlength="170"></p>';
 		echo '<p><label for="fc-type-a-source">' . esc_html__( 'Form source in shortcode form format type A (max. 256 KB)', 'form-captain' ) . '</label><br>';
 		echo '<textarea id="fc-type-a-source" name="fc_type_a_source" rows="12" class="large-text code" required></textarea></p>';
-		echo '<p class="description">' . esc_html__( 'The source is only analysed, never executed. You will see a preview with a conversion report before anything is saved. The form is created as a draft; the original form remains unchanged.', 'form-captain' ) . '</p>';
-		submit_button( __( 'Analyse and preview', 'form-captain' ), 'secondary', 'submit', false );
+		echo '<p class="description">' . esc_html__( 'The source is only analyzed, never executed. You will see a preview with a conversion report before anything is saved. The form is created as a draft; the original form remains unchanged.', 'form-captain' ) . '</p>';
+		submit_button( __( 'Analyze and preview', 'form-captain' ), 'secondary', 'submit', false );
 		echo '</form>';
 	}
 

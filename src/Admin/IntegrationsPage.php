@@ -85,7 +85,7 @@ final class IntegrationsPage {
 			return self::notice( 'error', array( __( 'Job not found.', 'form-captain' ) ) );
 		}
 		if ( ! $this->jobs->retry( $id ) ) {
-			return self::notice( 'error', array( __( 'Only failed, dead or cancelled jobs can be retried.', 'form-captain' ) ) );
+			return self::notice( 'error', array( __( 'Only failed, dead or canceled jobs can be retried.', 'form-captain' ) ) );
 		}
 		Logger::log( 'info', 'job_manual_retry', 'user ' . get_current_user_id(), array( 'job_id' => $id ) );
 		return self::notice( 'success', array( __( 'Job queued again. It runs with the next worker run.', 'form-captain' ) ) );
@@ -98,10 +98,10 @@ final class IntegrationsPage {
 			return self::notice( 'error', array( __( 'Job not found.', 'form-captain' ) ) );
 		}
 		if ( ! $this->jobs->cancel( $id ) ) {
-			return self::notice( 'error', array( __( 'This job cannot be cancelled.', 'form-captain' ) ) );
+			return self::notice( 'error', array( __( 'This job cannot be canceled.', 'form-captain' ) ) );
 		}
 		Logger::log( 'info', 'job_manual_cancel', 'user ' . get_current_user_id(), array( 'job_id' => $id ) );
-		return self::notice( 'success', array( __( 'Job cancelled.', 'form-captain' ) ) );
+		return self::notice( 'success', array( __( 'Job canceled.', 'form-captain' ) ) );
 	}
 
 	/* --- admin-post ------------------------------------------------------- */
@@ -175,7 +175,7 @@ final class IntegrationsPage {
 			'succeeded' => __( 'Delivered', 'form-captain' ),
 			'failed' => __( 'Failed – will retry', 'form-captain' ),
 			'dead' => __( 'Dead-letter', 'form-captain' ),
-			'cancelled' => __( 'Cancelled', 'form-captain' ),
+			'cancelled' => __( 'Canceled', 'form-captain' ),
 			'paused' => __( 'Paused (connector disabled)', 'form-captain' ),
 			default => $status,
 		};

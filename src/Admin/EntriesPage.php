@@ -237,7 +237,7 @@ final class EntriesPage {
 			'deleted' => __( 'Submission deleted permanently.', 'form-captain' ),
 			'note_added' => __( 'Note added.', 'form-captain' ),
 			'queued' => __( 'The message was queued and will be sent shortly.', 'form-captain' ),
-			'consent_withdrawn' => __( 'Consent withdrawal recorded. Open deliveries were cancelled.', 'form-captain' ),
+			'consent_withdrawn' => __( 'Consent withdrawal recorded. Open deliveries were canceled.', 'form-captain' ),
 			'consent_withdrawn_deleted' => __( 'Consent withdrawal recorded and the submission was deleted permanently.', 'form-captain' ),
 			'bulk_done' => sprintf(
 				/* translators: 1: processed count, 2: skipped count */
@@ -420,7 +420,7 @@ final class EntriesPage {
 			) . '</p></div>';
 		} elseif ( DoubleOptIn::STATUS_CONFIRMED === ( $entry['confirmation_status'] ?? null ) && ! empty( $entry['confirmed_gmt'] ) ) {
 			/* translators: %s: date and time */
-			echo '<p class="description fc-doi-confirmed">' . esc_html( sprintf( __( 'Confirmed by the person via the e-mail link (double opt-in) on %s.', 'form-captain' ), get_date_from_gmt( (string) $entry['confirmed_gmt'], $fmt ) ) ) . '</p>';
+			echo '<p class="description fc-doi-confirmed">' . esc_html( sprintf( __( 'Confirmed by the person via the email link (double opt-in) on %s.', 'form-captain' ), get_date_from_gmt( (string) $entry['confirmed_gmt'], $fmt ) ) ) . '</p>';
 		}
 		if ( 'spam' !== $entry['status'] && \FormCaptain\Security\PowCaptcha::NOTE_WITHOUT_POW === ( $entry['spam_reason'] ?? null ) ) {
 			echo '<div class="notice notice-warning inline fc-without-pow"><p>' . esc_html__( 'Spam check without proof of work: this submission was sent without JavaScript, so the proof-of-work check could not run. Honeypot, minimum time, blocklist and a stricter sending limit applied. Check the content before you rely on it.', 'form-captain' ) . '</p></div>';
@@ -604,7 +604,7 @@ final class EntriesPage {
 			'succeeded' => __( 'Sent', 'form-captain' ),
 			'failed' => __( 'Failed – will retry', 'form-captain' ),
 			'dead' => __( 'Failed permanently', 'form-captain' ),
-			'cancelled' => __( 'Cancelled', 'form-captain' ),
+			'cancelled' => __( 'Canceled', 'form-captain' ),
 			'paused' => __( 'Paused (connector disabled)', 'form-captain' ),
 			default => $status,
 		};
@@ -723,7 +723,7 @@ final class EntriesPage {
 		$id = (int) $entry['id'];
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 		$this->hidden_fields( $entry, 'withdraw_consent' );
-		echo '<p class="description">' . esc_html__( 'Records that the person withdrew their consent. Open notifications and integration deliveries are cancelled and no new ones are sent.', 'form-captain' ) . '</p>';
+		echo '<p class="description">' . esc_html__( 'Records that the person withdrew their consent. Open notifications and integration deliveries are canceled and no new ones are sent.', 'form-captain' ) . '</p>';
 		echo '<fieldset><legend class="screen-reader-text">' . esc_html__( 'What should happen with the submission?', 'form-captain' ) . '</legend>';
 		$choices = array(
 			'keep' => __( 'Keep the submission', 'form-captain' ),

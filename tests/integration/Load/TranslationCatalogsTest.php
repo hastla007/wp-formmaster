@@ -25,10 +25,10 @@ final class TranslationCatalogsTest extends TestCase {
 	 * language name. Each entry is a msgid whose translation may contain it.
 	 */
 	private const SIE_THIRD_PERSON = array(
-		'Read-only overview for troubleshooting. It never shows submitted values, e-mail addresses, IP addresses or secrets.',
+		'Read-only overview for troubleshooting. It never shows submitted values, email addresses, IP addresses or secrets.',
 		'Retention period of this form: %s. It is calculated from the original submission time – rows whose period has already expired are not imported, others are deleted automatically when it ends.',
 		'This action is currently not available (connector inactive or removed). It will not run.',
-		'This website uses forms to receive enquiries. The data you enter is stored in our website database and used to process your request. It is deleted after %s unless longer storage is required. Form data is not passed to third parties unless stated in the form.',
+		'This website uses forms to receive inquiries. The data you enter is stored in our website database and used to process your request. It is deleted after %s unless longer storage is required. Form data is not passed to third parties unless stated in the form.',
 		'German: the WordPress language "Deutsch (Sie)" addresses visitors formally, "Deutsch" informally. Choose it under Settings → General.',
 	);
 

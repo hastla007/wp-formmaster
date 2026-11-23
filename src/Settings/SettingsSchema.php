@@ -70,7 +70,7 @@ final class SettingsSchema {
 			'general.show_pro_hints'            => array(
 				'type'  => 'bool',
 				'label' => __( 'Show occasional hints about Form Captain Pro', 'form-captain' ),
-				'help'  => __( 'Hints are rare and can be dismissed. Settings sections end with grey text rows naming settings that Form Captain Pro adds. Free features never depend on Pro.', 'form-captain' ),
+				'help'  => __( 'Hints are rare and can be dismissed. Settings sections end with gray text rows naming settings that Form Captain Pro adds. Free features never depend on Pro.', 'form-captain' ),
 			),
 			'general.log_level'                 => array(
 				'type'    => 'enum',
@@ -81,7 +81,7 @@ final class SettingsSchema {
 					'debug'   => __( 'Everything including debug details', 'form-captain' ),
 				),
 				'label'   => __( 'Log level', 'form-captain' ),
-				'help'    => __( 'Which events Form Captain writes to its own log. The log never contains submitted values, e-mail or IP addresses. Use the debug level only while troubleshooting; with WP_DEBUG, debug entries are always written.', 'form-captain' ),
+				'help'    => __( 'Which events Form Captain writes to its own log. The log never contains submitted values, email or IP addresses. Use the debug level only while troubleshooting; with WP_DEBUG, debug entries are always written.', 'form-captain' ),
 			),
 			'general.text_max'                  => array(
 				'type'  => 'int',
@@ -133,7 +133,7 @@ final class SettingsSchema {
 			),
 			'appearance.accent_color'           => array(
 				'type'  => 'hex',
-				'label' => __( 'Accent colour', 'form-captain' ),
+				'label' => __( 'Accent color', 'form-captain' ),
 				'help'  => __( 'Used for buttons and focus outlines with base styles only.', 'form-captain' ),
 			),
 			'appearance.radius'                 => array(
@@ -187,30 +187,30 @@ final class SettingsSchema {
 					'text' => __( 'Plain text', 'form-captain' ),
 				),
 				'label'   => __( 'Email format', 'form-captain' ),
-				'help'    => __( 'Format of notification and confirmation e-mails. Plain text works with every mail program.', 'form-captain' ),
+				'help'    => __( 'Format of notification and confirmation emails. Plain text works with every mail program.', 'form-captain' ),
 			),
 			'email.reply_to'                    => array(
 				'type'     => 'email',
 				'optional' => true,
-				'label'    => __( 'Reply-to address for e-mails to visitors', 'form-captain' ),
-				'help'     => __( 'Replies to confirmation and double opt-in e-mails go to this address. Leave empty to use the sender address.', 'form-captain' ),
+				'label'    => __( 'Reply-to address for emails to visitors', 'form-captain' ),
+				'help'     => __( 'Replies to confirmation and double opt-in emails go to this address. Leave empty to use the sender address.', 'form-captain' ),
 			),
 			'email.footer_text'                 => array(
 				'type'       => 'text',
 				'max_length' => 2000,
 				'keep_lines' => true,
-				'label'      => __( 'E-mail footer', 'form-captain' ),
-				'help'       => __( 'Shown at the end of every e-mail Form Captain sends, for example company name, address, register number and contact. Which details are mandatory in business e-mails depends on your country – have this text checked legally.', 'form-captain' ),
+				'label'      => __( 'Email footer', 'form-captain' ),
+				'help'       => __( 'Shown at the end of every email Form Captain sends, for example company name, address, register number and contact. Which details are mandatory in business emails depends on your country – have this text checked legally.', 'form-captain' ),
 			),
 			'email.logo_id'                     => array(
 				'type'  => 'attachment',
-				'label' => __( 'Logo in e-mails', 'form-captain' ),
-				'help'  => __( 'An image from the media library, shown at the top of HTML e-mails. Leave empty for no logo.', 'form-captain' ),
+				'label' => __( 'Logo in emails', 'form-captain' ),
+				'help'  => __( 'An image from the media library, shown at the top of HTML emails. Leave empty for no logo.', 'form-captain' ),
 			),
 			'privacy.retention'                 => array(
 				'type'  => 'retention',
 				'label' => __( 'Keep submissions for', 'form-captain' ),
-				'help'  => __( 'Submissions are stored only in this WordPress database. Choose how long they are kept: a period between 1 day and 30 years or until you delete them. Nothing is deleted automatically until you set a period; the country profiles suggest 12 months for contact enquiries. Statutory retention periods depend on your country and purpose – have them checked legally.', 'form-captain' ),
+				'help'  => __( 'Submissions are stored only in this WordPress database. Choose how long they are kept: a period between 1 day and 30 years or until you delete them. Nothing is deleted automatically until you set a period; the country profiles suggest 12 months for contact inquiries. Statutory retention periods depend on your country and purpose – have them checked legally.', 'form-captain' ),
 			),
 			'privacy.trash_days'                => array(
 				'type'  => 'int',
@@ -289,13 +289,13 @@ final class SettingsSchema {
 				'min'   => 1,
 				'max'   => 100,
 				'label' => __( 'Submissions per form and visitor in the time window', 'form-captain' ),
-				'help'  => __( 'Visitors are recognised by a daily changing pseudonymous hash, never by the stored IP address.', 'form-captain' ),
+				'help'  => __( 'Visitors are recognized by a daily changing pseudonymous hash, never by the stored IP address.', 'form-captain' ),
 			),
 			'spam.blocklist'                    => array(
 				'type'       => 'text',
 				'max_length' => 10000,
 				'label'      => __( 'Blocklist', 'form-captain' ),
-				'help'       => __( 'One word or e-mail domain per line. Matching submissions are stored as spam.', 'form-captain' ),
+				'help'       => __( 'One word or email domain per line. Matching submissions are stored as spam.', 'form-captain' ),
 			),
 			'spam.captcha_provider'             => array(
 				'type'    => 'enum',
@@ -321,8 +321,8 @@ final class SettingsSchema {
 				'type'  => 'int',
 				'min'   => \FormCaptain\Security\SpamLimits::BOUNDS['receipts_per_hour'][0],
 				'max'   => \FormCaptain\Security\SpamLimits::BOUNDS['receipts_per_hour'][1],
-				'label' => __( 'E-mails to one visitor address per hour', 'form-captain' ),
-				'help'  => __( 'Limits confirmation and double opt-in e-mails to the same address, so forms cannot be misused to flood a mailbox. Default: 3.', 'form-captain' ),
+				'label' => __( 'Emails to one visitor address per hour', 'form-captain' ),
+				'help'  => __( 'Limits confirmation and double opt-in emails to the same address, so forms cannot be misused to flood a mailbox. Default: 3.', 'form-captain' ),
 			),
 			'spam.client_ip_source'             => array(
 				'type'    => 'enum',
@@ -399,7 +399,7 @@ final class SettingsSchema {
 			array( 'general', 'webhooks.timeout', __( 'Webhooks', 'form-captain' ), __( 'Send submissions to other systems with signed webhooks.', 'form-captain' ) ),
 			array( 'general', 'woo.reminder_days', __( 'Questionnaire reminder', 'form-captain' ), __( 'Default reminder for buyer questionnaires.', 'form-captain' ) ),
 			array( 'general', 'woo.link_days', __( 'Questionnaire link', 'form-captain' ), __( 'How long the questionnaire link for buyers stays valid.', 'form-captain' ) ),
-			array( 'general', 'woo.reminder_subject', __( 'Questionnaire e-mails', 'form-captain' ), __( 'Texts of the questionnaire e-mails to buyers.', 'form-captain' ) ),
+			array( 'general', 'woo.reminder_subject', __( 'Questionnaire emails', 'form-captain' ), __( 'Texts of the questionnaire emails to buyers.', 'form-captain' ) ),
 			array( 'appearance', 'multistep.progress', __( 'Progress display', 'form-captain' ), __( 'Progress display and step labels for multi-step forms.', 'form-captain' ) ),
 			array( 'appearance', 'pdf.logo_id', __( 'PDF layout', 'form-captain' ), __( 'Logo, letterhead and paper size for PDF documents.', 'form-captain' ) ),
 			array( 'email', 'recipient_rules', __( 'Recipients by rule', 'form-captain' ), __( 'Send notifications to different recipients depending on the answers.', 'form-captain' ) ),
@@ -952,13 +952,13 @@ final class SettingsSchema {
 				return null !== $period ? array( $period, null ) : array( null, RetentionPeriod::error_message() );
 			case 'hex':
 				$raw = strtolower( trim( $raw ) );
-				return preg_match( '/^#[0-9a-f]{6}$/', $raw ) ? array( $raw, null ) : array( null, __( 'Please enter a colour in the format #RRGGBB.', 'form-captain' ) );
+				return preg_match( '/^#[0-9a-f]{6}$/', $raw ) ? array( $raw, null ) : array( null, __( 'Please enter a color in the format #RRGGBB.', 'form-captain' ) );
 			case 'email':
 				if ( ! empty( $def['optional'] ) && '' === trim( $raw ) ) {
 					return array( '', null );
 				}
 				$email = sanitize_email( trim( $raw ) );
-				return ( '' !== $email && is_email( $email ) ) ? array( strtolower( $email ), null ) : array( null, __( 'Please enter a valid e-mail address.', 'form-captain' ) );
+				return ( '' !== $email && is_email( $email ) ) ? array( strtolower( $email ), null ) : array( null, __( 'Please enter a valid email address.', 'form-captain' ) );
 			case 'string':
 				$value = sanitize_text_field( $raw );
 				if ( mb_strlen( $value ) > (int) ( $def['max_length'] ?? 190 ) ) {

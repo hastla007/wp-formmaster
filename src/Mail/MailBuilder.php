@@ -215,7 +215,7 @@ final class MailBuilder {
 		$template = trim( (string) $settings['body'] );
 		if ( '' === $template ) {
 			$template = __( 'Please confirm your submission to "{form_title}" with this link:', 'form-captain' ) . "\n{confirm_link}\n\n"
-				. __( 'The link is valid for {link_hours} hours. If you did not send this form, simply ignore this e-mail; your submission will then be deleted automatically.', 'form-captain' );
+				. __( 'The link is valid for {link_hours} hours. If you did not send this form, simply ignore this email; your submission will then be deleted automatically.', 'form-captain' );
 		}
 		// Hours shortened to the time until the entry would be deleted (SET-FC-P2-6).
 		$hours = (string) DoubleOptIn::link_hours_for( $entry, $form );

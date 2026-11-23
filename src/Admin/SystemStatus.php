@@ -299,7 +299,7 @@ final class SystemStatus {
 			$out['debug_logging'] = __( 'Debug logging is switched on. It writes many log entries; switch the log level back to "Information" under General when you have finished troubleshooting.', 'form-captain' );
 		}
 		if ( array_sum( $d['mail']['failed_24h'] ) > 0 ) {
-			$out['mail'] = __( 'E-mails failed in the last 24 hours. Send a test e-mail and check your mail configuration (e.g. an SMTP plugin).', 'form-captain' );
+			$out['mail'] = __( 'Emails failed in the last 24 hours. Send a test email and check your mail configuration (e.g. an SMTP plugin).', 'form-captain' );
 		}
 		return $out;
 	}

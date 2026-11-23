@@ -223,7 +223,7 @@ final class EntryService {
 			return self::conflict( __( 'Consent for this submission was withdrawn. No further messages are sent.', 'form-captain' ) );
 		}
 		if ( DoubleOptIn::STATUS_PENDING === ( $entry['confirmation_status'] ?? null ) ) {
-			return self::conflict( __( 'This submission has not been confirmed by e-mail yet (double opt-in). Notifications are sent after the confirmation.', 'form-captain' ) );
+			return self::conflict( __( 'This submission has not been confirmed by email yet (double opt-in). Notifications are sent after the confirmation.', 'form-captain' ) );
 		}
 		foreach ( $this->jobs->for_entry( $entry_id ) as $job ) {
 			if ( 'mail.admin' === $job['type'] && in_array( $job['status'], array( 'pending', 'running' ), true ) ) {

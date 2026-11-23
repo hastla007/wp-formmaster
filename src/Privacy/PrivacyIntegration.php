@@ -94,7 +94,7 @@ final class PrivacyIntegration {
 		$period = null !== \FormCaptain\Settings\RetentionPeriod::parts( $mode ) ? \FormCaptain\Settings\RetentionPeriod::label( $mode ) : __( '[retention period]', 'form-captain' );
 		return sprintf(
 			/* translators: %s: retention period */
-			__( 'This website uses forms to receive enquiries. The data you enter is stored in our website database and used to process your request. It is deleted after %s unless longer storage is required. Form data is not passed to third parties unless stated in the form.', 'form-captain' ),
+			__( 'This website uses forms to receive inquiries. The data you enter is stored in our website database and used to process your request. It is deleted after %s unless longer storage is required. Form data is not passed to third parties unless stated in the form.', 'form-captain' ),
 			$period
 		);
 	}
@@ -189,7 +189,7 @@ final class PrivacyIntegration {
 		// Double opt-in proof (SET-FC-10): time of the confirmation only, no IP address.
 		if ( ! empty( $entry['confirmation_status'] ) ) {
 			$items[] = array(
-				'name'  => __( 'E-mail confirmation (double opt-in)', 'form-captain' ),
+				'name'  => __( 'Email confirmation (double opt-in)', 'form-captain' ),
 				'value' => 'confirmed' === $entry['confirmation_status'] && ! empty( $entry['confirmed_gmt'] )
 					/* translators: %s: date and time */
 					? sprintf( __( 'Confirmed on %s', 'form-captain' ), (string) get_date_from_gmt( (string) $entry['confirmed_gmt'], get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) )

@@ -223,7 +223,7 @@ final class Commands {
 		if ( ! $this->jobs->find( $id ) ) {
 			return new \WP_Error( 'job_not_found', 'Job not found.' );
 		}
-		return $this->jobs->retry( $id ) ? true : new \WP_Error( 'job_not_retryable', 'Only failed, dead or cancelled jobs can be retried.' );
+		return $this->jobs->retry( $id ) ? true : new \WP_Error( 'job_not_retryable', 'Only failed, dead or canceled jobs can be retried.' );
 	}
 
 	public function cleanup(): void {

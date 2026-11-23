@@ -2,6 +2,8 @@
 
 Gespeichert als eine Option `form_captain_settings` (Array, autoload). Jede Option ist in `FormCaptain\Settings\SettingsSchema` mit Typ, Default, Sanitizer, Validator, Tab und Capability definiert; unbekannte Schlüssel werden verworfen. Migration ergänzt neue Defaults, ohne bestehende Werte zu überschreiben (P5-21).
 
+**Speicherweg:** nicht die WordPress Settings API (`register_setting`/`options.php`), sondern ein eigener, gleichwertig abgesicherter Weg: `SettingsPage` sendet jeden Reiter an `admin-post.php` (Aktionen `form_captain_save_settings`, `form_captain_reset_settings`), prüft Recht `form_captain_manage_settings` und eine Nonce je Reiter (`form_captain_settings_<reiter>`), lässt die Werte durch `SettingsSchema::sanitize_group()` laufen und meldet Fehler je Feld. Grund: Fehler je Feld mit Sprungmarken, Bestätigungen (Aufbewahrung, Deinstallation) und Teilspeichern eines Reiters lassen sich so ohne Umwege abbilden.
+
 | Tab | Schlüssel | Typ | Default | Hinweis |
 |---|---|---|---|---|
 | Allgemein | `general.setup_completed` | bool | false | Ersteinrichtung |

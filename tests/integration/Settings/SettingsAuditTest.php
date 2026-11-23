@@ -384,4 +384,23 @@ final class SettingsAuditTest extends TestCase {
 		$this->assertSame( '', Settings::get( 'appearance.custom_css' ) );
 		$this->assertSame( '.fc-mode-base{--fc-accent:#2271b1;}', \FormCaptain\Frontend\Assets::base_css(), 'base styles unchanged' );
 	}
+
+	public function test_change_log_ignores_defaults_of_new_keys_and_dropped_obsolete_keys(): void {
+		$stored = get_option( Settings::OPTION );
+		unset( $stored['export'], $stored['spam']['receipts_per_hour'] );
+		$stored['spam']['obsolete'] = 1;
+		update_option( Settings::OPTION, $stored );
+		delete_option( ChangeLog::OPTION );
+
+		Settings::set_group( 'general', array( 'log_level' => 'warning' ) );
+		$this->assertSame( array( 'general.log_level' ), array_column( ChangeLog::latest(), 'key' ) );
+
+		// A key without stored value that gets a non-default value is a real change.
+		$stored = get_option( Settings::OPTION );
+		unset( $stored['spam']['rate_limit'] );
+		update_option( Settings::OPTION, $stored );
+		delete_option( ChangeLog::OPTION );
+		Settings::set_group( 'spam', array( 'rate_limit' => 9 ) );
+		$this->assertSame( array( 'spam.rate_limit' ), array_column( ChangeLog::latest(), 'key' ) );
+	}
 }

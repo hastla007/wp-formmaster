@@ -41,4 +41,25 @@ final class PlatformVersionsTest extends TestCase {
 		$this->assertMatchesRegularExpression( "/wp: \\[ '" . preg_quote( FORM_CAPTAIN_MIN_WP, '/' ) . "\\.[0-9]+', 'latest' \\]/", $ci, 'CI tests the minimum WordPress and the latest' );
 		$this->assertStringContainsString( "'mariadb:12.3', 'mysql:9.7'", $ci, 'CI tests the minimum database servers' );
 	}
+
+	/**
+	 * The plugin's own autoloader runs before Composer's: a site whose plugin folder has vendor/ as a
+	 * link to another checkout (worktree, E2E site) still runs the classes of this folder.
+	 */
+	public function test_own_autoloader_runs_before_composer(): void {
+		$own      = null;
+		$composer = null;
+		foreach ( spl_autoload_functions() as $i => $loader ) {
+			if ( $loader instanceof \Closure && str_ends_with( (string) ( new \ReflectionFunction( $loader ) )->getFileName(), 'src/Autoloader.php' ) ) {
+				$own = $own ?? $i;
+			}
+			if ( is_array( $loader ) && $loader[0] instanceof \Composer\Autoload\ClassLoader ) {
+				$composer = $composer ?? $i;
+			}
+		}
+		$this->assertNotNull( $own );
+		if ( null !== $composer ) {
+			$this->assertLessThan( $composer, $own );
+		}
+	}
 }

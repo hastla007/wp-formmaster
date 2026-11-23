@@ -55,7 +55,7 @@ Lösung (Browser → Server, Formularfeld `_fc_pow`): Base64 von JSON
 7. Einmalverwendung: `challenge` wird im Einmal-Speicher bis Ablauf + 60 s vermerkt; schon vorhanden → `replayed`.
 8. Sonst `ok`.
 
-Der Einmal-Speicher wird erst bei Schritt 7 berührt, also nur für korrekt signierte, richtige Lösungen.
+Der Einmal-Speicher wird erst bei Schritt 7 berührt, also nur für korrekt signierte, richtige Lösungen. Form Captain prüft die Lösung zusätzlich vor der Feldprüfung ohne Einmal-Speicher (`PowCaptcha::precheck()`), zusammen mit Honeypot und Mindestzeit: Ist die Einsendung danach schon Spam, bekommen Erweiterungsfelder (z. B. Datei-Uploads) ihre Daten nicht und speichern nichts (SET-FC-P4-09). Eine wiederverwendete Lösung erkennt erst die eigentliche Prüfung.
 
 ## Parameter
 

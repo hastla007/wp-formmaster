@@ -20,9 +20,10 @@ final class SubmissionValidator {
 	/**
 	 * @param array<int,array<string,mixed>> $fields  normalized schema fields
 	 * @param array<mixed,mixed>             $input   field_id (or key, see accept_keys) => raw value
-	 * @param array{today?:string,accept_keys?:bool,files?:array<string,mixed>,form?:array<string,mixed>} $options
+	 * @param array{today?:string,accept_keys?:bool,files?:array<string,mixed>,form?:array<string,mixed>,skip_extensions?:bool} $options
 	 *        files: field_id => list of uploaded files, or one file (PHP $_FILES shape), for extension
-	 *        field types (contract 1.1.0 / 1.3.0)
+	 *        field types (contract 1.1.0 / 1.3.0); skip_extensions: true when the submission is already
+	 *        spam (SET-FC-P4-09) – extension fields stay empty without asking their validator
 	 * @return array{values:array<string,string|array<int,string>>,errors:array<string,string>,codes:array<string,string>,visible:array<string,bool>,consent:array<string,bool>}
 	 */
 	public function validate( array $fields, array $input, array $options = array() ): array {
@@ -335,6 +336,11 @@ final class SubmissionValidator {
 	 * @return array{value?:string|array<int,string>|null,code?:string}
 	 */
 	private static function validate_extension_field( array $field, string|array|null $value, array $options ): array {
+		if ( ! empty( $options['skip_extensions'] ) ) {
+			// Already spam by honeypot, minimum time or proof of work (SET-FC-P4-09): the extension is
+			// not asked, so it stores no uploaded file for a submission that ends up in spam anyway.
+			return array( 'value' => null );
+		}
 		$id     = (string) $field['id'];
 		$files  = is_array( $options['files'] ?? null ) ? $options['files'] : array();
 		$list   = self::file_list( $files[ $id ] ?? null );

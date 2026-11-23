@@ -243,6 +243,64 @@ final class ProofOfWorkTest extends FrontendTestCase {
 	}
 
 	/**
+	 * SET-FC-P4-09: honeypot, minimum time and proof of work run before the field validation; a
+	 * submission that is spam by them never reaches the validator of an extension field (which would
+	 * store an uploaded file). The proof-of-work pre-check does not use up a valid solution.
+	 */
+	public function test_spam_without_values_is_detected_before_extensions_store_files(): void {
+		$types = static fn( array $t ): array => $t + array( 'demo_file' => array( 'label' => 'Demo file', 'has_value' => true ) );
+		add_filter( 'form_captain_field_types_v1', $types );
+		\FormCaptain\Domain\Fields\FieldTypes::reset();
+		$calls     = 0;
+		$validator = static function ( $result, array $field ) use ( &$calls ) {
+			++$calls;
+			return array( 'value' => 'ref:stored' );
+		};
+		add_filter( 'form_captain_validate_field_v1', $validator, 10, 2 );
+		try {
+			$this->set_spam_setting( 'captcha_provider', 'pow' );
+			add_filter( 'form_captain_pow_max_number_v1', static fn(): int => 1000 );
+			$fields  = array(
+				array( 'id' => 'f_name01', 'type' => 'text', 'key' => 'name', 'label' => 'Name', 'required' => true ),
+				array( 'id' => 'f_file01', 'type' => 'demo_file', 'key' => 'file', 'label' => 'File', 'required' => true ),
+			);
+			$form    = $this->create_published_form( $fields );
+			$service = $this->plugin()->get( SubmissionService::class );
+			$entries = $this->plugin()->get( EntryRepository::class );
+			$solved  = function () use ( $form ): array {
+				$challenge = PowCaptcha::challenge_for( $form );
+				return array( '_fc_pow' => ProofOfWork::encode( $challenge, (int) ProofOfWork::solve( $challenge ) ) );
+			};
+
+			// Honeypot filled: spam, the extension is not asked, a required extension field does not fail.
+			$raw = $solved() + $this->payload( $form, array( 'f_name01' => 'Bot' ) );
+			$raw[ \FormCaptain\Security\SpamGuard::honeypot_name( (string) $form['public_id'] ) ] = 'http://spam.example';
+			$res = $service->submit( $form, $raw, array( 'js' => true ) );
+			$this->assertTrue( $res['success'], 'the bot sees the usual answer' );
+			$this->assertSame( 'honeypot', $entries->find( (int) $res['entry_id'] )['spam_reason'] );
+			$this->assertSame( 0, $calls );
+
+			// Too fast and missing proof of work: also before the validation.
+			$res = $service->submit( $form, $solved() + $this->payload( $form, array( 'f_name01' => 'Fast' ), $this->token( $form, 0 ) ), array( 'js' => true ) );
+			$this->assertSame( 'too_fast', $entries->find( (int) $res['entry_id'] )['spam_reason'] );
+			$res = $service->submit( $form, $this->payload( $form, array( 'f_name01' => 'NoPow' ) ), array( 'js' => true ) );
+			$this->assertSame( PowCaptcha::REASON_MISSING, $entries->find( (int) $res['entry_id'] )['spam_reason'] );
+			$this->assertSame( 0, $calls, 'no file of a spam submission is handed to the extension' );
+
+			// A valid solution passes the pre-check without being used up, then counts once.
+			$raw = $solved() + $this->payload( $form, array( 'f_name01' => 'Ada' ) );
+			$res = $service->submit( $form, $raw, array( 'js' => true ) );
+			$this->assertSame( 'new', $entries->find( (int) $res['entry_id'] )['status'] );
+			$this->assertSame( 1, $calls );
+			$this->assertSame( 'ref:stored', $entries->values_for( (int) $res['entry_id'] )['f_file01'] );
+		} finally {
+			remove_filter( 'form_captain_field_types_v1', $types );
+			remove_filter( 'form_captain_validate_field_v1', $validator, 10 );
+			\FormCaptain\Domain\Fields\FieldTypes::reset();
+		}
+	}
+
+	/**
 	 * SET-FC-P4-01: frontend.js fetches token and challenge together and keeps the token for up to
 	 * 115 minutes. A solution solved at the first focus must still count when the visitor submits
 	 * 100 minutes later, otherwise the entry lands in spam while the visitor sees a success message.

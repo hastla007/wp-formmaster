@@ -72,6 +72,23 @@ final class SpamGuard {
 	}
 
 	/**
+	 * Checks that need no field values (honeypot, minimum time, proof of work without using up the
+	 * solution), run before the field validation (SET-FC-P4-09). Null for trusted submissions.
+	 *
+	 * @param array<string,mixed> $form
+	 * @param array<string,mixed> $raw
+	 * @param array<string,mixed> $meta trusted, issued_at, now, js
+	 */
+	public function precheck( array $form, array $raw, array $meta ): ?string {
+		if ( ! empty( $meta['trusted'] ) ) {
+			return null;
+		}
+		return $this->check_honeypot( (string) ( $form['public_id'] ?? '' ), $raw )
+			?? $this->check_min_time( isset( $meta['issued_at'] ) ? (int) $meta['issued_at'] : null, (int) ( $meta['now'] ?? time() ) )
+			?? PowCaptcha::precheck( $form, $raw, ! empty( $meta['js'] ) );
+	}
+
+	/**
 	 * @param array<string,mixed> $raw
 	 */
 	public function check_honeypot( string $public_id, array $raw ): ?string {

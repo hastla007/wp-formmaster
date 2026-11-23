@@ -2,7 +2,8 @@
 /**
  * Central submission flow (P4-01, P4-02, P4-03, P4-16, P3-10, P3-15, P3-17, P8-13).
  *
- * Order: form status → token/idempotency → limits → rate limit → signed context → validation
+ * Order: form status → token/idempotency → limits → rate limit → signed context → spam pre-checks
+ * without values (honeypot, minimum time, proof of work; SET-FC-P4-09) → validation
  * → spam → transaction (entry, values, context nonce, outbox) → COMMIT → event + worker nudge.
  *
  * @package FormCaptain
@@ -168,15 +169,24 @@ final class SubmissionService {
 			}
 		}
 
-		// 6. Field validation (P3-05, P3-07).
-		$checked = $this->validator->validate(
+		// 6. Field validation (P3-05, P3-07). Checks without field values run first: an already spammy
+		// submission does not hand its files to an extension, which would store them (SET-FC-P4-09).
+		$spam_meta = array(
+			'trusted'   => $trusted,
+			'issued_at' => $issued_at,
+			'now'       => Clock::timestamp(),
+			'js'        => ! empty( $meta['js'] ),
+		);
+		$early     = $this->spam->precheck( $form, $raw, $spam_meta );
+		$checked   = $this->validator->validate(
 			$fields,
 			$input,
 			array(
-				'today'       => wp_date( 'Y-m-d' ),
-				'accept_keys' => $trusted,
-				'files'       => is_array( $meta['files'] ?? null ) ? $meta['files'] : array(),
-				'form'        => $form,
+				'today'           => wp_date( 'Y-m-d' ),
+				'accept_keys'     => $trusted,
+				'files'           => is_array( $meta['files'] ?? null ) ? $meta['files'] : array(),
+				'form'            => $form,
+				'skip_extensions' => null !== $early,
 			)
 		);
 		if ( $checked['errors'] ) {
@@ -192,18 +202,7 @@ final class SubmissionService {
 		$values = $checked['values'];
 
 		// 7. Spam (P3-08, T-SUB-09/10).
-		$spam_reason = $this->spam->check(
-			$form,
-			$raw,
-			$values,
-			$fields,
-			array(
-				'trusted'   => $trusted,
-				'issued_at' => $issued_at,
-				'now'       => Clock::timestamp(),
-				'js'        => ! empty( $meta['js'] ),
-			)
-		);
+		$spam_reason = $this->spam->check( $form, $raw, $values, $fields, $spam_meta );
 
 		// 7b. No JavaScript, no proof-of-work solution (mode "global"): accepted, but with a much
 		// stricter sending limit and a mark on the entry, never dropped silently (SET-FC-P4-08).

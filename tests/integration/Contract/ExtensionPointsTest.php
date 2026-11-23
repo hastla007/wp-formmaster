@@ -51,7 +51,7 @@ final class ExtensionPointsTest extends TestCase {
 		);
 	}
 
-	public function test_contract_version_is_1_2(): void {
+	public function test_contract_version_is_1_3(): void {
 		$this->assertSame( '1.3.0', form_captain_contract_version() );
 	}
 

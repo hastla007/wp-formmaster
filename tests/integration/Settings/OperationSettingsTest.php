@@ -265,6 +265,9 @@ final class OperationSettingsTest extends TestCase {
 		$this->assertStringContainsString( 'review before the sales start is planned', $html );
 		$this->assertStringContainsString( 'International (other countries) – not legally reviewed', $html );
 		$this->assertStringContainsString( 'value="privacy.retention" checked', $html );
+		// SET-FC-P3-3: without existing submissions the preview must not claim that nothing is deleted.
+		$this->assertStringContainsString( 'New submissions are deleted automatically 12 months after they were received.', $html );
+		$this->assertStringNotContainsString( 'nothing is deleted automatically', $html );
 		$this->assertSame( '90d', Settings::get( 'privacy.retention' ) );
 
 		$res = $this->page()->apply_country_profile( 'DE', array( 'privacy.retention', 'export.delimiter' ), false );

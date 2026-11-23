@@ -52,7 +52,7 @@ final class ExtensionPointsTest extends TestCase {
 	}
 
 	public function test_contract_version_is_1_2(): void {
-		$this->assertSame( '1.2.0', form_captain_contract_version() );
+		$this->assertSame( '1.3.0', form_captain_contract_version() );
 	}
 
 	public function test_extension_field_is_rendered_by_the_extension_inside_the_core_frame(): void {
@@ -121,6 +121,71 @@ final class ExtensionPointsTest extends TestCase {
 		$this->assertTrue( $ok['success'], (string) wp_json_encode( $ok ) );
 		$this->assertSame( 'cv.pdf', $seen['name'] );
 		$this->assertSame( 'ref:abc123', $this->plugin()->get( EntryRepository::class )->values_for( (int) $ok['entry_id'] )['f_file01'] );
+	}
+
+	/**
+	 * SET-FC-39 (contract 1.3.0): several files per upload field. The render context says
+	 * `multiple_files`, the validator gets every file as `files` (and the first one as `file`).
+	 */
+	public function test_several_files_per_field_reach_the_extension(): void {
+		$form = $this->create_published_form( $this->fields() );
+		$ctxs = array();
+		$this->hook(
+			'form_captain_render_field_v1',
+			static function ( $html, array $field, array $ctx ) use ( &$ctxs ): string {
+				$ctxs[] = $ctx;
+				return '<input type="file" id="' . esc_attr( $ctx['id'] ) . '" name="' . esc_attr( $ctx['name'] . ( ! empty( $ctx['multiple_files'] ) ? '[]' : '' ) ) . '" multiple>';
+			},
+			10,
+			3
+		);
+		$html = $this->plugin()->get( Renderer::class )->render( $form );
+		$this->assertTrue( $ctxs[0]['multiple_files'] );
+		$this->assertStringContainsString( 'name="fc[f_file01][]"', $html );
+
+		$lists = UploadedFiles::lists_by_field(
+			array(
+				'fc' => array(
+					'name'     => array( 'f_file01' => array( 'a.pdf', 'b.pdf' ), 'f_name01' => 'single.txt', 'f_deep01' => array( array( 'x' ) ) ),
+					'type'     => array( 'f_file01' => array( 'application/pdf', 'application/pdf' ), 'f_name01' => 'text/plain' ),
+					'tmp_name' => array( 'f_file01' => array( '/tmp/phpA', '/tmp/phpB' ), 'f_name01' => '/tmp/phpC' ),
+					'error'    => array( 'f_file01' => array( UPLOAD_ERR_OK, UPLOAD_ERR_OK ), 'f_name01' => UPLOAD_ERR_OK ),
+					'size'     => array( 'f_file01' => array( 10, 20 ), 'f_name01' => 5 ),
+				),
+			)
+		);
+		$this->assertSame( array( 'a.pdf', 'b.pdf' ), array_column( $lists['f_file01'], 'name' ) );
+		$this->assertSame( 20, $lists['f_file01'][1]['size'] );
+		$this->assertSame( array( 'single.txt' ), array_column( $lists['f_name01'], 'name' ), 'a single file input gives a list of one' );
+		$this->assertArrayNotHasKey( 'f_deep01', $lists, 'deeper nesting is ignored' );
+		$this->assertSame( 'a.pdf', UploadedFiles::by_field( array( 'fc' => array( 'name' => array( 'f_file01' => array( 'a.pdf', 'b.pdf' ) ) ) ) )['f_file01']['name'], 'by_field keeps the 1.1.0 shape: first file' );
+
+		$many = array( 'fc' => array( 'name' => array( 'f_file01' => array_fill( 0, 25, 'x.pdf' ) ), 'error' => array( 'f_file01' => array_fill( 0, 25, UPLOAD_ERR_OK ) ) ) );
+		$this->assertCount( UploadedFiles::MAX_FILES, UploadedFiles::lists_by_field( $many )['f_file01'], 'at most 20 files per request' );
+
+		$seen = null;
+		$this->hook(
+			'form_captain_validate_field_v1',
+			static function ( $result, array $field, $value, array $ctx ) use ( &$seen ) {
+				$seen = $ctx;
+				return array( 'value' => array_map( static fn( array $f ): string => 'ref:' . $f['name'], $ctx['files'] ) );
+			},
+			10,
+			4
+		);
+		$service = $this->plugin()->get( SubmissionService::class );
+		$ok      = $service->submit( $form, array( 'f_name01' => 'Ada' ), array( 'trusted' => true, 'idempotency_key' => 'ext-multi', 'files' => $lists ) );
+		$this->assertTrue( $ok['success'], (string) wp_json_encode( $ok ) );
+		$this->assertSame( array( 'a.pdf', 'b.pdf' ), array_column( $seen['files'], 'name' ) );
+		$this->assertSame( 'a.pdf', $seen['file']['name'], 'the first file stays available as `file`' );
+		$this->assertSame( array( 'ref:a.pdf', 'ref:b.pdf' ), $this->plugin()->get( EntryRepository::class )->values_for( (int) $ok['entry_id'] )['f_file01'] );
+
+		// Without files the list is empty, never missing; the 1.1.0 shape (one file) still works.
+		$service->submit( $form, array( 'f_name01' => 'Ada' ), array( 'trusted' => true, 'idempotency_key' => 'ext-none' ) );
+		$this->assertSame( array(), $seen['files'] );
+		$this->assertNull( $seen['file'] );
+		$service->submit( $form, array( 'f_name01' => 'Ada' ), array( 'trusted' => true, 'idempotency_key' => 'ext-one', 'files' => array( 'f_file01' => $lists['f_name01'][0] ) ) );
+		$this->assertSame( array( 'single.txt' ), array_column( $seen['files'], 'name' ) );
 	}
 
 	public function test_extension_field_without_validator_never_stores_a_value(): void {

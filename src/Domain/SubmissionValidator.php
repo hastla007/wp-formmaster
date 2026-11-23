@@ -21,7 +21,8 @@ final class SubmissionValidator {
 	 * @param array<int,array<string,mixed>> $fields  normalized schema fields
 	 * @param array<mixed,mixed>             $input   field_id (or key, see accept_keys) => raw value
 	 * @param array{today?:string,accept_keys?:bool,files?:array<string,mixed>,form?:array<string,mixed>} $options
-	 *        files: field_id => uploaded file data (PHP $_FILES shape) for Pro field types (contract 1.1.0)
+	 *        files: field_id => list of uploaded files, or one file (PHP $_FILES shape), for extension
+	 *        field types (contract 1.1.0 / 1.3.0)
 	 * @return array{values:array<string,string|array<int,string>>,errors:array<string,string>,codes:array<string,string>,visible:array<string,bool>,consent:array<string,bool>}
 	 */
 	public function validate( array $fields, array $input, array $options = array() ): array {
@@ -336,14 +337,16 @@ final class SubmissionValidator {
 	private static function validate_extension_field( array $field, string|array|null $value, array $options ): array {
 		$id     = (string) $field['id'];
 		$files  = is_array( $options['files'] ?? null ) ? $options['files'] : array();
+		$list   = self::file_list( $files[ $id ] ?? null );
 		$result = apply_filters(
 			'form_captain_validate_field_v1',
 			null,
 			$field,
 			$value,
 			array(
-				'file' => $files[ $id ] ?? null,
-				'form' => is_array( $options['form'] ?? null ) ? $options['form'] : array(),
+				'file'  => $list[0] ?? null, // Contract 1.1.0: the first file.
+				'files' => $list,            // Contract 1.3.0 (SET-FC-39): every file of the field, possibly empty.
+				'form'  => is_array( $options['form'] ?? null ) ? $options['form'] : array(),
 			)
 		);
 		if ( is_array( $result ) && ( array_key_exists( 'value', $result ) || isset( $result['code'] ) ) ) {
@@ -360,6 +363,22 @@ final class SubmissionValidator {
 			return array( 'code' => 'invalid_value' );
 		}
 		return ! empty( $field['required'] ) ? array( 'code' => 'required' ) : array( 'value' => null );
+	}
+
+	/**
+	 * Files of one field as a list: accepts a list (UploadedFiles::lists_by_field()) or one file in
+	 * the $_FILES shape (UploadedFiles::by_field(), callers of contract 1.1.0).
+	 *
+	 * @return list<array<string,mixed>>
+	 */
+	private static function file_list( mixed $files ): array {
+		if ( ! is_array( $files ) ) {
+			return array();
+		}
+		if ( isset( $files['name'] ) && ! is_array( $files['name'] ) ) {
+			return array( $files );
+		}
+		return array_values( array_filter( $files, static fn( mixed $file ): bool => is_array( $file ) && isset( $file['name'] ) && is_string( $file['name'] ) ) );
 	}
 
 	/**

@@ -380,8 +380,9 @@ final class SettingsSchema {
 	/**
 	 * Hint rows for settings that an add-on can provide (S1, SET-FC-06). Text only: no input,
 	 * no default, no sanitizer and no feature code. A row is shown at the end of its tab while
-	 * `general.show_pro_hints` is on and no add-on has registered a field with the same `id`
-	 * through `form_captain_settings_fields_v1`.
+	 * `general.show_pro_hints` is on, no add-on has registered a field with the same `id`
+	 * through `form_captain_settings_fields_v1` and no add-on declares the id as covered through
+	 * `form_captain_settings_covered_hints_v1` (contract 1.3.0, SET-FC-P6-01).
 	 *
 	 * @return array<int,array{id:string,tab:string,title:string,text:string,link:string}>
 	 */
@@ -427,8 +428,30 @@ final class SettingsSchema {
 		if ( ! Settings::get( 'general.show_pro_hints' ) ) {
 			return array();
 		}
-		$registered = self::extension_fields();
+		$registered = self::extension_fields() + array_fill_keys( self::covered_hints(), true );
 		return array_values( array_filter( self::pro_hints(), static fn( array $h ): bool => $h['tab'] === $tab && ! isset( $registered[ $h['id'] ] ) ) );
+	}
+
+	/**
+	 * Hint ids an add-on covers without a global settings field of the same id, e.g. a feature that is
+	 * configured per form (Form Captain Pro: `recipient_rules`), SET-FC-P6-01.
+	 *
+	 * @return string[]
+	 */
+	public static function covered_hints(): array {
+		/**
+		 * Hint rows of the settings page that an active add-on covers without registering a settings
+		 * field with the same id (contract 1.3.0). Return the ids of SettingsSchema::pro_hints()
+		 * (e.g. `recipient_rules`); unknown or malformed ids are ignored.
+		 *
+		 * @param string[] $hint_ids
+		 */
+		$ids = apply_filters( 'form_captain_settings_covered_hints_v1', array() );
+		if ( ! is_array( $ids ) ) {
+			return array();
+		}
+		$known = array_column( self::pro_hints(), 'id' );
+		return array_values( array_unique( array_filter( $ids, static fn( mixed $id ): bool => is_string( $id ) && in_array( $id, $known, true ) ) ) );
 	}
 
 	/** Types of add-on fields in the core form (callbacks) and in the storage form. */

@@ -50,7 +50,8 @@ final class SubmissionService {
 	 *                                  honeypot; or a flat field_id/key => value map for trusted callers.
 	 * @param array<string,mixed> $meta trusted, plugin, idempotency_key, request_key, signed_context, ip,
 	 *                                  source_url, source_post_id, user_id, request_id, body_bytes,
-	 *                                  files (field_id => uploaded file, Support\UploadedFiles)
+	 *                                  files (field_id => list of uploaded files or one file,
+	 *                                  Support\UploadedFiles::lists_by_field())
 	 * @return array<string,mixed> result object (api-v1.md)
 	 */
 	public function submit( array $form, array $raw, array $meta = array() ): array {

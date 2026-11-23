@@ -15,6 +15,7 @@ use FormCaptain\Domain\Schema\SchemaValidator;
 use FormCaptain\Install\Capabilities;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
+use FormCaptain\Settings\FormMessagingSettings;
 use FormCaptain\Settings\Settings;
 use FormCaptain\Support\Clock;
 use FormCaptain\Support\Errors;
@@ -136,9 +137,13 @@ final class FormService {
 			'email'             => array(
 				'from_name'    => (string) Settings::get( 'email.from_name' ),
 				'from_address' => (string) Settings::get( 'email.from_address' ),
+				'format'       => 'global',
 			),
 			'retention'         => array( 'mode' => 'global' ),
 			'actions'           => array(),
+			// SET-FC-10, SET-FC-17: see Settings\FormMessagingSettings.
+			'spam'              => array( 'mode' => 'global' ),
+			'double_opt_in'     => FormMessagingSettings::double_opt_in_defaults(),
 		);
 	}
 
@@ -620,7 +625,7 @@ final class FormService {
 		$out['confirmation_mail'] = array(
 			'enabled' => ! empty( $c['enabled'] ),
 			'subject' => self::plain( $c['subject'] ?? '', 190 ),
-			'body'    => mb_substr( sanitize_textarea_field( is_scalar( $c['body'] ?? '' ) ? (string) ( $c['body'] ?? '' ) : '' ), 0, 5000 ),
+			'body'    => FormMessagingSettings::sanitize_body( $c['body'] ?? '' ),
 			'fields'  => self::value_field_ids( (array) ( $c['fields'] ?? array() ), $fields ),
 		);
 		if ( $out['confirmation_mail']['enabled'] ) {
@@ -675,7 +680,11 @@ final class FormService {
 		$out['email'] = array(
 			'from_name'    => self::plain( $email['from_name'] ?? '', 190 ),
 			'from_address' => $from_address,
+			'format'       => FormMessagingSettings::sanitize_email_format( $email['format'] ?? 'global' ),
 		);
+
+		$out['spam']          = FormMessagingSettings::sanitize_spam( $in['spam'] ?? array(), $errors );
+		$out['double_opt_in'] = FormMessagingSettings::sanitize_double_opt_in( $in['double_opt_in'] ?? array(), $fields, $errors );
 
 		$retention        = (string) ( $in['retention']['mode'] ?? 'global' );
 		$out['retention'] = array( 'mode' => in_array( $retention, array( 'global', '90d', '12m', 'manual' ), true ) ? $retention : 'global' );

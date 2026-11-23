@@ -319,6 +319,22 @@ final class ConsentWithdrawalTest extends TestCase {
 		$this->assertMatchesRegularExpression( '/Z$/', (string) $dto['consent_withdrawn_gmt'] );
 	}
 
+	/** Entries table as of schema v2 (without the v3 columns of SET-FC-10/21). */
+	private static function v2_definition(): string {
+		return str_replace(
+			array(
+				"  locale varchar(20) DEFAULT NULL,\n",
+				"  confirmation_status varchar(10) DEFAULT NULL,\n",
+				"  confirmation_token char(64) DEFAULT NULL,\n",
+				"  confirmed_gmt datetime DEFAULT NULL,\n",
+				"  unconfirmed_until_gmt datetime DEFAULT NULL,\n",
+				",\n  KEY unconfirmed (confirmation_status,unconfirmed_until_gmt)",
+			),
+			'',
+			Schema::definitions()[ Tables::ENTRIES ]
+		);
+	}
+
 	/** Columns and indexes of a table, comparable between installations. */
 	private static function shape( string $table ): array {
 		global $wpdb;
@@ -340,7 +356,7 @@ final class ConsentWithdrawalTest extends TestCase {
 
 			// v1 table without the column, then migration step 2.
 			$wpdb->prefix = $real . 'fcup_';
-			$v1           = str_replace( array( "  consent_withdrawn_gmt datetime DEFAULT NULL,\n", ",\n  KEY consent_withdrawn (consent_withdrawn_gmt)" ), '', Schema::definitions()[ Tables::ENTRIES ] );
+			$v1           = str_replace( array( "  consent_withdrawn_gmt datetime DEFAULT NULL,\n", ",\n  KEY consent_withdrawn (consent_withdrawn_gmt)" ), '', self::v2_definition() );
 			$this->assertStringNotContainsString( 'consent_withdrawn', $v1 );
 			$wpdb->query( $v1 );
 			$this->assertNotContains( 'consent_withdrawn_gmt', array_column( self::shape( Tables::name( Tables::ENTRIES ) )[0], 0 ) );
@@ -377,7 +393,7 @@ final class ConsentWithdrawalTest extends TestCase {
 			}
 
 			$this->assertTrue( $migrator->migrate() );
-			$this->assertSame( 2, $migrator->installed_version() );
+			$this->assertSame( Migrator::TARGET_VERSION, $migrator->installed_version() );
 			$this->assertSame( $before, self::shape( $table ) );
 			$this->assertTrue( $migrator->migrate(), 'repeatable' );
 		} finally {
@@ -393,10 +409,10 @@ final class ConsentWithdrawalTest extends TestCase {
 	}
 
 	public function test_downgrade_protection_stays(): void {
-		update_option( Migrator::OPTION_VERSION, 3 );
+		update_option( Migrator::OPTION_VERSION, Migrator::TARGET_VERSION + 1 );
 		$this->assertFalse( ( new Migrator() )->migrate() );
 		$this->assertSame( 'schema_newer_than_plugin', get_option( Migrator::OPTION_STATE )['error'] );
-		$this->assertSame( 3, ( new Migrator() )->installed_version() );
+		$this->assertSame( Migrator::TARGET_VERSION + 1, ( new Migrator() )->installed_version() );
 		update_option( Migrator::OPTION_VERSION, Migrator::TARGET_VERSION );
 		delete_option( Migrator::OPTION_STATE );
 	}

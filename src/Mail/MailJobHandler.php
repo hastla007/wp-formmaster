@@ -18,6 +18,7 @@ use FormCaptain\Jobs\JobResult;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
+use FormCaptain\Service\DoubleOptIn;
 use FormCaptain\Support\Logger;
 use FormCaptain\Support\Secret;
 
@@ -47,9 +48,15 @@ final class MailJobHandler {
 	 * @return array<string,callable>
 	 */
 	public function add_handlers( array $handlers ): array {
-		$handlers['mail.admin']        = array( $this, 'handle_admin' );
-		$handlers['mail.confirmation'] = array( $this, 'handle_confirmation' );
+		$handlers['mail.admin']            = array( $this, 'handle_admin' );
+		$handlers['mail.confirmation']     = array( $this, 'handle_confirmation' );
+		$handlers[ DoubleOptIn::JOB_TYPE ] = array( $this, 'handle_double_opt_in' );
 		return $handlers;
+	}
+
+	/** @param array<string,mixed> $job */
+	public function handle_double_opt_in( array $job ): JobResult {
+		return $this->handle( $job, 'double_opt_in' );
 	}
 
 	/** @param array<string,mixed> $job */
@@ -85,12 +92,64 @@ final class MailJobHandler {
 		if ( ! $form ) {
 			return JobResult::fail( 'form_not_found', 'Form no longer exists' );
 		}
-		$section = 'admin' === $kind ? 'notification' : 'confirmation_mail';
-		if ( empty( $form['settings'][ $section ]['enabled'] ) && empty( $job['payload']['manual'] ) ) {
-			return JobResult::success( array( 'skipped' => 'disabled' ) );
+		$pending = DoubleOptIn::STATUS_PENDING === ( $entry['confirmation_status'] ?? null );
+		if ( 'double_opt_in' === $kind ) {
+			if ( ! $pending ) {
+				return JobResult::success( array( 'skipped' => 'not_pending' ) );
+			}
+		} else {
+			if ( $pending ) {
+				// Nothing leaves the site for an unconfirmed entry (SET-FC-10).
+				return JobResult::fail( 'entry_unconfirmed', 'Entry waits for the double opt-in confirmation' );
+			}
+			$section = 'admin' === $kind ? 'notification' : 'confirmation_mail';
+			if ( empty( $form['settings'][ $section ]['enabled'] ) && empty( $job['payload']['manual'] ) ) {
+				return JobResult::success( array( 'skipped' => 'disabled' ) );
+			}
 		}
-		$values = $this->entries->values_for( $entry_id );
-		$mail   = 'admin' === $kind ? $this->builder->admin( $form, $entry, $values ) : $this->builder->confirmation( $form, $entry, $values );
+		// Mails to the visitor use the language of the page with the form (SET-FC-21).
+		$switched = 'admin' !== $kind && self::switch_locale( (string) ( $entry['locale'] ?? '' ) );
+		try {
+			return $this->deliver( $job, $kind, $entry, $form );
+		} finally {
+			if ( $switched ) {
+				restore_previous_locale();
+			}
+		}
+	}
+
+	/** Switches to an entry's language; true when the caller has to restore the previous one. */
+	public static function switch_locale( string $locale ): bool {
+		if ( '' === $locale || ! function_exists( 'switch_to_locale' ) || $locale === determine_locale() ) {
+			return false;
+		}
+		return switch_to_locale( $locale );
+	}
+
+	/**
+	 * @param array<string,mixed> $job
+	 * @param array<string,mixed> $entry
+	 * @param array<string,mixed> $form
+	 */
+	private function deliver( array $job, string $kind, array $entry, array $form ): JobResult {
+		$entry_id = (int) $entry['id'];
+		$values   = $this->entries->values_for( $entry_id );
+		if ( 'double_opt_in' === $kind ) {
+			$probe = $this->builder->double_opt_in( $form, $entry, $values, home_url( '/' ) );
+			if ( is_wp_error( $probe ) ) {
+				return JobResult::fail( $probe->get_error_code(), $probe->get_error_message() );
+			}
+			if ( ! $this->receipt_allowed( (string) $probe['to'][0] ) ) {
+				return JobResult::fail( 'receipt_rate_limited', 'Too many confirmations to this recipient' );
+			}
+			$link = DoubleOptIn::issue_link( $this->entries, $entry_id );
+			if ( null === $link ) {
+				return JobResult::success( array( 'skipped' => 'not_pending' ) );
+			}
+			$mail = $this->builder->double_opt_in( $form, $entry, $values, $link );
+		} else {
+			$mail = 'admin' === $kind ? $this->builder->admin( $form, $entry, $values ) : $this->builder->confirmation( $form, $entry, $values );
+		}
 		if ( is_wp_error( $mail ) ) {
 			return JobResult::fail( $mail->get_error_code(), $mail->get_error_message() );
 		}
@@ -112,7 +171,7 @@ final class MailJobHandler {
 		if ( ! $sent ) {
 			return JobResult::retry( 'mail_failed', '' !== $error ? Logger::redact( $error ) : 'wp_mail returned false' );
 		}
-		if ( 'confirmation' === $kind ) {
+		if ( 'admin' !== $kind ) {
 			$this->count_receipt( (string) $mail['to'][0] );
 		}
 		return JobResult::success( array( 'recipients' => count( $mail['to'] ) ) );

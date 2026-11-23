@@ -67,6 +67,18 @@ final class OutboxPlanner {
 	}
 
 	/**
+	 * Double opt-in (SET-FC-10): only the confirmation link mail; everything else is planned
+	 * by plan() once the visitor confirmed.
+	 *
+	 * @param array<string,mixed> $form
+	 * @throws \RuntimeException When the job cannot be stored (caller rolls back).
+	 */
+	public function plan_double_opt_in( array $form, int $entry_id ): void {
+		$key = 'form-captain:' . get_current_blog_id() . ':' . $entry_id . ':' . DoubleOptIn::JOB_TYPE;
+		$this->enqueue( DoubleOptIn::JOB_TYPE, $key, array( 'notification' => 'double_opt_in' ), $entry_id, (int) $form['id'] );
+	}
+
+	/**
 	 * @param array<string,mixed> $payload
 	 */
 	private function enqueue( string $type, string $key, array $payload, int $entry_id, int $form_id ): void {

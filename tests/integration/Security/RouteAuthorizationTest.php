@@ -40,7 +40,8 @@ final class RouteAuthorizationTest extends TestCase {
 	);
 
 	/** Public admin-post actions (OP-PUB-03, protected by the submission token). */
-	private const PUBLIC_HANDLERS = array( 'form_captain_submit' );
+	/** Public by design: submission (token) and double opt-in confirmation (single-use link token, SET-FC-10). */
+	private const PUBLIC_HANDLERS = array( 'form_captain_submit', 'form_captain_confirm' );
 
 	/** @var array{form:array<string,mixed>,entry:int,job:int,preview:string} */
 	private array $fx;

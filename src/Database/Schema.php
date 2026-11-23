@@ -12,10 +12,13 @@ namespace FormCaptain\Database;
 final class Schema {
 
 	/**
-	 * Returns CREATE TABLE statements for dbDelta() for the current schema version (2).
+	 * Returns CREATE TABLE statements for dbDelta() for the current schema version (3).
 	 *
 	 * v2 adds fc_entries.consent_withdrawn_gmt (+ index). dbDelta() adds the column
 	 * to existing v1 tables, so install and upgrade produce the same schema.
+	 * v3 adds fc_entries.locale (language of the page with the form, SET-FC-21) and the
+	 * double opt-in columns confirmation_status, confirmation_token (SHA-256 of the link
+	 * token), confirmed_gmt and unconfirmed_until_gmt (+ index, SET-FC-10).
 	 *
 	 * @return array<string,string> table => sql
 	 */
@@ -72,13 +75,19 @@ final class Schema {
   expires_gmt datetime DEFAULT NULL,
   anonymized_gmt datetime DEFAULT NULL,
   consent_withdrawn_gmt datetime DEFAULT NULL,
+  locale varchar(20) DEFAULT NULL,
+  confirmation_status varchar(10) DEFAULT NULL,
+  confirmation_token char(64) DEFAULT NULL,
+  confirmed_gmt datetime DEFAULT NULL,
+  unconfirmed_until_gmt datetime DEFAULT NULL,
   PRIMARY KEY  (id),
   UNIQUE KEY request_key (request_key),
   KEY form_status_created (form_id,status,created_gmt),
   KEY status_created (status,created_gmt),
   KEY expires (expires_gmt),
   KEY trashed (trashed_gmt),
-  KEY consent_withdrawn (consent_withdrawn_gmt)
+  KEY consent_withdrawn (consent_withdrawn_gmt),
+  KEY unconfirmed (confirmation_status,unconfirmed_until_gmt)
 ) ENGINE=InnoDB $c;",
 			Tables::ENTRY_VALUES  => "CREATE TABLE {$t(Tables::ENTRY_VALUES)} (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,

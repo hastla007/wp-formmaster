@@ -30,7 +30,7 @@ final class SubmissionService {
 	public const CODE_DUPLICATE = 'duplicate_request';
 
 	/** Top-level request keys that are never field values. */
-	private const RESERVED = array( '_fc_form', '_fc_token', '_fc_ctx', '_fc_src', 'action', 'fields', 'fc' );
+	private const RESERVED = array( '_fc_form', '_fc_token', '_fc_ctx', '_fc_src', '_fc_locale', '_fc_pow', 'action', 'fields', 'fc' );
 
 	public function __construct(
 		private EntryRepository $entries,
@@ -194,6 +194,9 @@ final class SubmissionService {
 			)
 		);
 
+		// Double opt-in (SET-FC-10): public, non-spam submissions wait for the visitor's confirmation.
+		$doi = null === $spam_reason && ! $trusted ? DoubleOptIn::required_for( $form, $fields ) : null;
+
 		// 8. Transactional write (Outbox pattern).
 		$now   = Clock::now();
 		$entry = array(
@@ -206,7 +209,12 @@ final class SubmissionService {
 			'source_post_id'  => self::source_post_id( $meta['source_post_id'] ?? null ),
 			'user_id'         => ! empty( $meta['user_id'] ) ? (int) $meta['user_id'] : null,
 			'expires_gmt'     => self::expires_gmt( $form, $now ),
+			'locale'          => self::locale( $meta['locale'] ?? ( $trusted ? null : ( $raw['_fc_locale'] ?? null ) ) ),
 		);
+		if ( null !== $doi ) {
+			$entry['confirmation_status']   = DoubleOptIn::STATUS_PENDING;
+			$entry['unconfirmed_until_gmt'] = DoubleOptIn::unconfirmed_until( (int) $doi['delete_after_days'], $now );
+		}
 		if ( null !== $context ) {
 			$entry['context'] = $context;
 		}
@@ -231,7 +239,9 @@ final class SubmissionService {
 				$this->abort( $tx, $entry_id, null );
 				return $fail( Errors::CONTEXT_REPLAYED, array( 'message' => SignedContext::public_message( Errors::CONTEXT_REPLAYED ) ) + ( $trusted ? array( 'detail_code' => 'context_replayed' ) : array() ) );
 			}
-			if ( null === $spam_reason ) {
+			if ( null !== $doi ) {
+				$this->planner->plan_double_opt_in( $form, $entry_id );
+			} elseif ( null === $spam_reason ) {
 				$this->planner->plan( $form, $entry_id );
 			}
 			if ( $tx ) {
@@ -251,9 +261,26 @@ final class SubmissionService {
 			}
 			return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED, $values );
 		}
+		if ( null !== $doi ) {
+			// Notifications, actions and the public event follow the confirmation (DoubleOptIn::confirm()).
+			Scheduler::nudge();
+			return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED, $values, true );
+		}
 		$this->dispatch_event( $form, $fields, $entry_id, (int) $version['version_no'], $values, $context, $request_id, $now );
 		Scheduler::nudge();
 		return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED, $values );
+	}
+
+	/**
+	 * Language of the page that showed the form (SET-FC-21). Only installed languages are kept.
+	 */
+	public static function locale( mixed $locale ): ?string {
+		if ( ! is_string( $locale ) || ! preg_match( '/^[a-z]{2,3}(_[A-Z]{2})?(_[a-z0-9]{1,12})?$/', $locale ) ) {
+			return null;
+		}
+		$known = array_merge( array( 'en_US', get_locale() ), function_exists( 'get_available_languages' ) ? get_available_languages() : array() );
+		$known = (array) apply_filters( 'form_captain_entry_locales_v1', $known );
+		return in_array( $locale, $known, true ) ? $locale : null;
 	}
 
 	/**
@@ -321,7 +348,7 @@ final class SubmissionService {
 				'errors'     => array(),
 			);
 		}
-		return $this->success( $form, (int) $entry['id'], $request_id, self::CODE_DUPLICATE, $this->entries->values_for( (int) $entry['id'] ) );
+		return $this->success( $form, (int) $entry['id'], $request_id, self::CODE_DUPLICATE, $this->entries->values_for( (int) $entry['id'] ), DoubleOptIn::STATUS_PENDING === ( $entry['confirmation_status'] ?? null ) );
 	}
 
 	/**
@@ -329,7 +356,7 @@ final class SubmissionService {
 	 * @param array<string,string|array<int,string>> $values validated values (for conditional confirmations)
 	 * @return array<string,mixed>
 	 */
-	private function success( array $form, int $entry_id, string $request_id, string $code, array $values = array() ): array {
+	private function success( array $form, int $entry_id, string $request_id, string $code, array $values = array(), bool $pending = false ): array {
 		$out = array(
 			'success'    => true,
 			'code'       => $code,
@@ -339,6 +366,10 @@ final class SubmissionService {
 			'request_id' => $request_id,
 			'errors'     => array(),
 		);
+		if ( $pending ) {
+			// Waiting for the double opt-in: no redirect, the visitor is asked to check the inbox.
+			return array_merge( $out, array( 'message' => DoubleOptIn::pending_message( $form ) ) );
+		}
 		return array_merge( $out, self::confirmation( $form, $entry_id, $values ) );
 	}
 
@@ -485,13 +516,14 @@ final class SubmissionService {
 
 	/**
 	 * Fires form_captain_entry_created_v1 after COMMIT (api-v1.md). Values only via allowlist, never sensitive.
+	 * With double opt-in it fires after the confirmation (DoubleOptIn::confirm()).
 	 *
 	 * @param array<string,mixed>                     $form
 	 * @param array<int,array<string,mixed>>          $fields
 	 * @param array<string,string|array<int,string>> $values
 	 * @param array<string,mixed>|null                $context
 	 */
-	private function dispatch_event( array $form, array $fields, int $entry_id, int $version_no, array $values, ?array $context, string $request_id, string $now ): void {
+	public function dispatch_event( array $form, array $fields, int $entry_id, int $version_no, array $values, ?array $context, string $request_id, string $now ): void {
 		$allow = apply_filters( 'form_captain_event_value_allowlist_v1', array(), (int) $form['id'] );
 		$allow = is_array( $allow ) ? array_map( 'strval', $allow ) : array();
 		$out   = array();

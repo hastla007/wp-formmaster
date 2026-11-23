@@ -188,7 +188,23 @@ final class PrivacyIntegration {
 				'value' => self::status_label( (string) $entry['status'] ),
 			),
 		);
-		$known   = array();
+		// Double opt-in proof (SET-FC-10): time of the confirmation only, no IP address.
+		if ( ! empty( $entry['confirmation_status'] ) ) {
+			$items[] = array(
+				'name'  => __( 'E-mail confirmation (double opt-in)', 'form-captain' ),
+				'value' => 'confirmed' === $entry['confirmation_status'] && ! empty( $entry['confirmed_gmt'] )
+					/* translators: %s: date and time */
+					? sprintf( __( 'Confirmed on %s', 'form-captain' ), (string) get_date_from_gmt( (string) $entry['confirmed_gmt'], get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) )
+					: __( 'Not confirmed', 'form-captain' ),
+			);
+		}
+		if ( ! empty( $entry['locale'] ) ) {
+			$items[] = array(
+				'name'  => __( 'Language', 'form-captain' ),
+				'value' => (string) $entry['locale'],
+			);
+		}
+		$known = array();
 		foreach ( (array) ( $schema['fields'] ?? array() ) as $field ) {
 			$id = (string) ( $field['id'] ?? '' );
 			if ( '' === $id || 'html' === ( $field['type'] ?? '' ) ) {

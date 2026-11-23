@@ -17,6 +17,7 @@ use FormCaptain\Repository\FormRepository;
 use FormCaptain\Service\FormService;
 use FormCaptain\Service\PreviewTokens;
 use FormCaptain\Service\Templates;
+use FormCaptain\Settings\FormMessagingSettings;
 use FormCaptain\Support\Asset;
 
 final class EditorPage {
@@ -96,7 +97,7 @@ final class EditorPage {
 			'integrationsUrl' => admin_url( 'admin.php?page=form-captain-integrations' ),
 			'adminEmail'      => (string) get_option( 'admin_email' ),
 			'initialTab'      => in_array( $tab, array( 'fields', 'notifications', 'confirmation', 'settings', 'actions' ), true ) ? $tab : 'fields',
-			'messages'        => self::error_messages() + $ext['messages'], // Core messages win.
+			'messages'        => self::error_messages() + FormMessagingSettings::error_messages() + $ext['messages'], // Core messages win.
 			'extensions'      => $ext['panels'],
 			'proHint'         => DashboardPage::should_show_pro_hint() ? __( 'Need file uploads, multi-step forms or grouped conditions? They are available with Form Captain Pro.', 'form-captain' ) : '',
 		);

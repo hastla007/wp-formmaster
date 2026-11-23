@@ -109,7 +109,9 @@ Neue Formularwerte: einen Eintrag in `definitions()` im passenden Abschnitt erg�
 | EU | 12 Monate | 30 Tage | `,` | ja | Semikolon in Ländern mit Dezimalkomma |
 | OTHER | 12 Monate | 30 Tage | `,` | ja | neutrale Vorgaben |
 
-Filter `form_captain_country_presets_v1` (Array Schlüssel → `label`, `values` [Pfad → Wert], `reviewed` [Pfad → `Y-m-d`], `note`); ungültige Werte werden angezeigt, aber nie übernommen. Postleitzahl-/Telefon-Muster für neue Felder folgen, sobald SET-FC-04 die Länder-Muster liefert.
+Filter `form_captain_country_presets_v1` (Array Schlüssel → `label`, `values` [Pfad → Wert], `reviewed` [Pfad → `Y-m-d`], `note`, `fields`); ungültige Werte werden angezeigt, aber nie übernommen.
+
+**Muster für neue Felder (SET-FC-12 mit SET-FC-04):** Jedes Profil trägt `fields` = `zip_pattern` (Schlüssel aus `Domain\ValidationPatterns`) und `tel_format` (`''` = beliebig, `international`): DE `zip_de`, AT `zip_at`, CH `zip_ch`, EU und OTHER `zip_generic` + `international`. `CountryPresets::field_suggestions()` liefert die Werte des zuletzt übernommenen Profils (`general.country_profile`) an den Editor (`fieldSuggestions`): neue Telefonfelder starten mit dem vorgeschlagenen Format, einzeilige Textfelder ohne Muster zeigen einen Knopf „Vorschlag des Länderprofils übernehmen“. Bestehende Felder ändern sich nie; unbekannte Muster aus dem Filter (auch `custom`) werden verworfen. Die Vorschau des Profils nennt die Vorschläge.
 
 ## Formularwerte aus SET-FC-10/17/19 (Prüfung in `Settings\FormMessagingSettings`, Einträge in `FormSettingsSchema`)
 

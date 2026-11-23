@@ -33,6 +33,8 @@ Geben Sie eine Zahl mit Einheit (Tage, Monate, Jahre) ein oder wählen Sie „bi
 
 *Allgemein → Länderprofil*: Land wählen, „Vorschlag anzeigen“. Die Tabelle zeigt je Einstellung den aktuellen und den vorgeschlagenen Wert sowie den rechtlichen Stand („ungeprüft“ = neutraler Vorschlag). Erst nach Auswahl der Zeilen und Bestätigung wird etwas geändert; alle Werte bleiben danach änderbar. Deutschland, Österreich und Schweiz werden vor dem Verkaufsstart rechtlich geprüft; EU allgemein und International enthalten neutrale, nicht geprüfte Werte. Alle Profile schlagen 12 Monate Aufbewahrung für Kontaktanfragen vor.
 
+Nach dem Übernehmen schlägt der Formular-Editor für **neue** Felder passende Muster vor: Bei einem einzeiligen Textfeld ohne Muster erscheint „Postleitzahl-Feld? Vorschlag des Länderprofils übernehmen“ (Deutschland 5 Ziffern, Österreich und Schweiz 4 Ziffern, EU/International beliebiges Land); neue Telefonfelder starten bei EU und International mit „international mit + und Ländervorwahl“. Bestehende Felder bleiben unverändert.
+
 ## Zurücksetzen
 
 „Diesen Bereich zurücksetzen“ setzt nur den gewählten Bereich auf Standardwerte (Bestätigung nötig). Andere Bereiche und bestehende Formulare bleiben unverändert. Bei Updates werden neue Optionen ergänzt, vorhandene Werte nie überschrieben.

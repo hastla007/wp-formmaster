@@ -30,6 +30,7 @@
 		ACTIONS[ a.key ] = a;
 	} );
 	var MSG = boot.messages || {};
+	var SUGGEST = boot.fieldSuggestions || {};
 	var KEY_RE = /^[a-z][a-z0-9_]{0,39}$/;
 	var OPTION_RE = /^[A-Za-z0-9_\-]{1,64}$/;
 	var CSS_RE = /^[A-Za-z0-9_\- ]{0,100}$/;
@@ -179,6 +180,10 @@
 		};
 		if ( def.has_placeholder ) {
 			f.placeholder = '';
+		}
+		// Country profile (SET-FC-12): new phone fields start with the suggested format.
+		if ( type === 'tel' && SUGGEST.tel_format ) {
+			f.validation = { format: SUGGEST.tel_format };
 		}
 		if ( type !== 'consent' && type !== 'html' ) {
 			f[ 'default' ] = '';
@@ -841,6 +846,19 @@
 					},
 				} )
 			);
+			if ( SUGGEST.zip_pattern && ! rules.pattern ) {
+				limits.push(
+					el( C.Button, {
+						key: 'zipsuggest',
+						variant: 'link',
+						onClick: function () {
+							setRule( 'pattern', SUGGEST.zip_pattern );
+						},
+					},
+					/* translators: %s: postal code pattern, e.g. "German postal code" */
+					sprintf( __( 'Postal code field? Use the suggestion of the country profile: %s', 'form-captain' ), SUGGEST.zip_label ) )
+				);
+			}
 			if ( rules.pattern === 'custom' ) {
 				limits.push(
 					el( C.TextControl, {

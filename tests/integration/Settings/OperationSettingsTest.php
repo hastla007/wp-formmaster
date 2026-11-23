@@ -317,4 +317,38 @@ final class OperationSettingsTest extends TestCase {
 		$this->assertSame( 30, Settings::get( 'privacy.trash_days' ), 'invalid value never applied' );
 		$this->assertSame( 90, Settings::get( 'privacy.log_days' ) );
 	}
+
+	public function test_country_profile_suggests_patterns_for_new_fields(): void {
+		$this->assertSame( array(), CountryPresets::field_suggestions(), 'no profile applied yet' );
+		$expect = array(
+			'DE'    => array( 'zip_de', '' ),
+			'AT'    => array( 'zip_at', '' ),
+			'CH'    => array( 'zip_ch', '' ),
+			'EU'    => array( 'zip_generic', 'international' ),
+			'OTHER' => array( 'zip_generic', 'international' ),
+		);
+		foreach ( $expect as $key => $fields ) {
+			CountryPresets::apply( $key, array() );
+			$s = CountryPresets::field_suggestions();
+			$this->assertSame( $key, $s['profile'] );
+			$this->assertSame( $fields[0], $s['zip_pattern'], $key );
+			$this->assertSame( \FormCaptain\Domain\ValidationPatterns::all()[ $fields[0] ]['label'], $s['zip_label'] );
+			$this->assertSame( $fields[1], $s['tel_format'], $key );
+		}
+		$this->assertSame( 'manual', Settings::get( 'privacy.retention' ), 'applying without selected rows changes no setting' );
+
+		// Unknown patterns of a filtered profile are dropped, never suggested.
+		add_filter(
+			'form_captain_country_presets_v1',
+			static function ( array $p ): array {
+				$p['OTHER']['fields'] = array( 'zip_pattern' => 'custom', 'tel_format' => 'weird' );
+				return $p;
+			}
+		);
+		$this->assertSame( array(), CountryPresets::field_suggestions() );
+
+		$this->as_admin();
+		$boot = $this->plugin()->get( \FormCaptain\Admin\EditorPage::class )->bootstrap( 0 );
+		$this->assertEquals( (object) array(), $boot['fieldSuggestions'], 'editor gets an empty object without suggestions' );
+	}
 }

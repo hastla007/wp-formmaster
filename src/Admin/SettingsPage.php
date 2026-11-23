@@ -939,6 +939,18 @@ final class SettingsPage {
 		if ( '' !== $profiles[ $selected ]['note'] ) {
 			echo '<p class="description">' . esc_html( $profiles[ $selected ]['note'] ) . '</p>';
 		}
+		$suggest = $profiles[ $selected ]['fields'];
+		if ( '' !== $suggest['zip_pattern'] || '' !== $suggest['tel_format'] ) {
+			$patterns = \FormCaptain\Domain\ValidationPatterns::all();
+			echo '<p class="description">' . esc_html(
+				sprintf(
+					/* translators: 1: postal code pattern, 2: phone number format */
+					__( 'After applying, the form editor suggests for new fields: postal code "%1$s", phone number "%2$s". Existing fields stay unchanged.', 'form-captain' ),
+					'' !== $suggest['zip_pattern'] ? $patterns[ $suggest['zip_pattern'] ]['label'] : __( 'Any', 'form-captain' ),
+					'' !== $suggest['tel_format'] ? __( 'International with + and country code', 'form-captain' ) : __( 'Any phone number', 'form-captain' )
+				)
+			) . '</p>';
+		}
 		foreach ( $rows as $row ) {
 			if ( 'privacy.retention' === $row['path'] && $row['changed'] ) {
 				$p = $this->retention_estimate( (string) $row['after'] );

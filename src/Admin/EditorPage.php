@@ -103,6 +103,7 @@ final class EditorPage {
 			'patterns'          => \FormCaptain\Domain\ValidationPatterns::options(),
 			'autocomplete'      => self::autocomplete_options(),
 			'autocompleteTypes' => \FormCaptain\Domain\Schema\SchemaValidator::AUTOCOMPLETE_TYPES,
+			'fieldSuggestions'  => (object) \FormCaptain\Settings\CountryPresets::field_suggestions(),
 			'proHint'           => DashboardPage::should_show_pro_hint() ? __( 'Need file uploads, multi-step forms or grouped conditions? They are available with Form Captain Pro.', 'form-captain' ) : '',
 		);
 	}

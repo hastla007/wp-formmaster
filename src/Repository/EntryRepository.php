@@ -109,18 +109,22 @@ final class EntryRepository {
 	 */
 	public function insert_values( int $entry_id, array $values ): bool {
 		global $wpdb;
+		// One INSERT per 100 values instead of one per field (SET-FC-P6, fewer queries per submission).
+		// The checks of $wpdb->insert() stay: field ids fit the column, values are valid UTF-8.
+		$rows = array();
 		foreach ( $values as $field_id => $value ) {
 			$multi = is_array( $value );
-			$ok    = $wpdb->insert(
-				$this->values(),
-				array(
-					'entry_id' => $entry_id,
-					'field_id' => (string) $field_id,
-					'value'    => $multi ? (string) wp_json_encode( array_values( $value ) ) : (string) $value,
-					'is_multi' => $multi ? 1 : 0,
-				)
-			);
-			if ( ! $ok ) {
+			$text  = $multi ? (string) wp_json_encode( array_values( $value ) ) : (string) $value;
+			$id    = (string) $field_id;
+			if ( '' === $id || strlen( $id ) > 40 || ! mb_check_encoding( $id . $text, 'UTF-8' ) ) {
+				return false;
+			}
+			$rows[] = array( $entry_id, $id, $text, $multi ? 1 : 0 );
+		}
+		foreach ( array_chunk( $rows, 100 ) as $chunk ) {
+			$sql  = "INSERT INTO {$this->values()} (entry_id, field_id, value, is_multi) VALUES " . implode( ', ', array_fill( 0, count( $chunk ), '(%d, %s, %s, %d)' ) );
+			$args = array_merge( ...$chunk );
+			if ( false === $wpdb->query( $wpdb->prepare( $sql, ...$args ) ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- placeholders only, table name is internal.
 				return false;
 			}
 		}

@@ -29,6 +29,8 @@ final class ProofOfWorkTest extends FrontendTestCase {
 	public function tear_down(): void {
 		remove_all_filters( 'form_captain_pow_max_number_v1' );
 		remove_all_filters( 'form_captain_spam_limits_v1' );
+		remove_all_filters( 'form_captain_captcha_providers_v1' );
+		remove_all_filters( 'form_captain_spam_checks_v1' );
 		parent::tear_down();
 	}
 
@@ -90,6 +92,50 @@ final class ProofOfWorkTest extends FrontendTestCase {
 		$this->set_spam_setting( 'captcha_provider', 'pow' );
 		$this->assertSame( 'pow', PowCaptcha::provider_for( $form ) );
 		$this->assertSame( 'none', PowCaptcha::provider_for( array( 'settings' => array( 'spam' => array( 'mode' => 'off' ) ) ) ) );
+	}
+
+	/**
+	 * An external provider registers through its own filter and checks through form_captain_spam_checks_v1
+	 * (SET-FC-P6): a typed check callback is never called with the provider list, so the settings
+	 * screen and the submission both work.
+	 */
+	public function test_external_provider_registers_and_checks_through_separate_filters(): void {
+		add_filter(
+			'form_captain_captcha_providers_v1',
+			static fn( array $providers ): array => $providers + array(
+				'extcap' => array(
+					'type'        => 'captcha',
+					'label'       => 'External captcha',
+					'data'        => 'IP address',
+					'purpose'     => 'Bot check',
+					'privacy_url' => 'https://example.org/privacy',
+				),
+			)
+		);
+		$calls = 0;
+		add_filter(
+			'form_captain_spam_checks_v1',
+			static function ( ?string $reason, array $context, array $values ) use ( &$calls ): ?string {
+				unset( $values );
+				++$calls;
+				return 'extcap' === $context['captcha'] && empty( $context['raw']['extcap_token'] ) ? 'extcap_missing' : $reason;
+			},
+			10,
+			3
+		);
+		$this->assertSame( 'External captcha', SettingsSchema::captcha_options()['extcap'] );
+		$this->assertArrayHasKey( 'extcap', SettingsSchema::captcha_providers() );
+		$this->assertSame( 0, $calls, 'the provider list does not run spam checks' );
+
+		$this->set_spam_setting( 'captcha_provider', 'extcap' );
+		$form    = $this->create_published_form();
+		$service = $this->plugin()->get( SubmissionService::class );
+		$entries = $this->plugin()->get( EntryRepository::class );
+		$res     = $service->submit( $form, $this->payload( $form, $this->valid_fields() ) );
+		$this->assertSame( 'extcap_missing', $entries->find( (int) $res['entry_id'] )['spam_reason'] );
+		$res = $service->submit( $form, array( 'extcap_token' => 'ok' ) + $this->payload( $form, array( 'f_name01' => 'E', 'f_mail01' => 'e@example.org' ) ) );
+		$this->assertSame( 'new', $entries->find( (int) $res['entry_id'] )['status'] );
+		$this->assertSame( 2, $calls );
 	}
 
 	public function test_submissions_with_and_without_solution(): void {

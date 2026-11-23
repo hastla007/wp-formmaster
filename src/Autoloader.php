@@ -29,7 +29,11 @@ final class Autoloader {
 				if ( is_readable( $file ) ) {
 					require_once $file;
 				}
-			}
+			},
+			true,
+			// Before Composer's loader (which prepends itself): the classes always come from this
+			// plugin folder, also when vendor/ is a link to another checkout (worktrees, SET-FC-P6).
+			true
 		);
 	}
 }

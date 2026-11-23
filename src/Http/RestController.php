@@ -125,6 +125,10 @@ final class RestController {
 		if ( 'paused' === $form['status'] ) {
 			return self::respond( self::error_body( Errors::FORM_NOT_ACCEPTING ), 409 );
 		}
+		$limits = \FormCaptain\Service\FormLimits::state( $form );
+		if ( ! $limits['open'] ) {
+			return self::respond( self::error_body( Errors::FORM_NOT_ACCEPTING, $limits['message'] ), 409 );
+		}
 		$issued  = $this->plugin->get( SubmissionToken::class )->issue( (string) $form['public_id'] );
 		$body    = array(
 			'success'       => true,

@@ -15,10 +15,13 @@ namespace FormCaptain\Frontend;
 use FormCaptain\Domain\Fields\FieldTypes;
 
 use FormCaptain\Domain\HtmlSanitizer;
+use FormCaptain\Domain\Schema\SchemaValidator;
+use FormCaptain\Domain\SubmissionValidator;
 use FormCaptain\Install\Capabilities;
 use FormCaptain\Security\SignedContext;
 use FormCaptain\Security\SpamGuard;
 use FormCaptain\Security\SubmissionToken;
+use FormCaptain\Service\FormLimits;
 use FormCaptain\Service\FormSchemaLoader;
 use FormCaptain\Settings\Settings;
 
@@ -68,6 +71,12 @@ final class Renderer {
 						? __( 'This form is archived and not shown to visitors.', 'form-captain' )
 						: __( 'This form is not published yet and not shown to visitors.', 'form-captain' )
 				);
+			}
+			// Submission period and maximum number of entries (SET-FC-18).
+			$limits = FormLimits::state( $form );
+			if ( ! $limits['open'] ) {
+				$out = '<div class="fc-form-wrap fc-form-wrap--closed"><p class="fc-closed" role="status">' . esc_html( $limits['message'] ) . '</p></div>';
+				return ( $editor ? self::editor_notice( __( 'This form is outside its submission period or has reached its maximum number of entries. Visitors see the message below instead of the form.', 'form-captain' ) ) : '' ) . $out;
 			}
 		}
 
@@ -160,11 +169,14 @@ final class Renderer {
 			$has_required = $has_required || ! empty( $field['required'] );
 		}
 		if ( $has_required ) {
-			$html .= '<p class="fc-required-note">' . sprintf(
-				/* translators: %s: required marker (asterisk) */
-				esc_html__( 'Fields marked with %s are required.', 'form-captain' ),
-				'<span class="fc-required">*</span>'
-			) . '</p>';
+			$hint  = trim( (string) ( $form['settings']['texts']['required_hint'] ?? '' ) );
+			$html .= '<p class="fc-required-note">' . ( '' !== $hint
+				? self::mark_asterisk( esc_html( $hint ) )
+				: sprintf(
+					/* translators: %s: required marker (asterisk) */
+					esc_html__( 'Fields marked with %s are required.', 'form-captain' ),
+					'<span class="fc-required">*</span>'
+				) ) . '</p>';
 		}
 
 		$html .= '<div class="fc-fields">';
@@ -207,6 +219,12 @@ final class Renderer {
 			}
 		}
 		return $out . '</div>';
+	}
+
+	/** Shows the first asterisk of an own required-fields hint in the required-marker style. */
+	private static function mark_asterisk( string $escaped ): string {
+		$pos = strpos( $escaped, '*' );
+		return false === $pos ? $escaped : substr_replace( $escaped, '<span class="fc-required">*</span>', $pos, 1 );
 	}
 
 	private static function honeypot( string $public_id, string $prefix ): string {
@@ -341,7 +359,8 @@ final class Renderer {
 				if ( $multiple ) {
 					$input['multiple'] = true;
 				}
-				$out = '<select' . self::attrs( $input ) . '>';
+				$input = self::autocomplete( $input, $field );
+				$out   = '<select' . self::attrs( $input ) . '>';
 				if ( ! $multiple ) {
 					$out .= '<option value="">' . esc_html__( '— Please choose —', 'form-captain' ) . '</option>';
 				}
@@ -364,6 +383,7 @@ final class Renderer {
 				if ( ! empty( $field['placeholder'] ) ) {
 					$input['placeholder'] = (string) $field['placeholder'];
 				}
+				$input = self::autocomplete( $input, $field );
 				return '<div' . self::attrs( $wrap ) . '><label class="fc-label" for="' . esc_attr( $uid ) . '">' . $label . '</label>' . $help
 					. '<textarea' . self::attrs( $input ) . '>' . esc_textarea( is_string( $value ) ? $value : '' ) . '</textarea>' . $error_out . '</div>';
 
@@ -389,6 +409,7 @@ final class Renderer {
 				} elseif ( 'number' === $type ) {
 					$input['inputmode'] = 'decimal';
 				}
+				$input = self::autocomplete( $input, $field );
 				if ( isset( $rules['max_length'] ) && in_array( $type, array( 'text', 'email' ), true ) ) {
 					$input['maxlength'] = (string) $rules['max_length'];
 				}
@@ -397,6 +418,10 @@ final class Renderer {
 						if ( isset( $rules[ $k ] ) ) {
 							$input[ $k ] = 'today' === $rules[ $k ] ? wp_date( 'Y-m-d' ) : (string) $rules[ $k ];
 						}
+					}
+					if ( ! empty( $rules['min_age'] ) ) {
+						$latest       = SubmissionValidator::birthdate_limit( (string) wp_date( 'Y-m-d' ), (int) $rules['min_age'] );
+						$input['max'] = isset( $input['max'] ) && (string) $input['max'] < $latest ? (string) $input['max'] : $latest;
 					}
 				}
 				if ( ! empty( $field['placeholder'] ) ) {
@@ -408,8 +433,20 @@ final class Renderer {
 	}
 
 	/**
-	 * @param array<string,string|bool> $attrs
+	 * Autofill purpose chosen for the field (SET-FC-33); replaces the type default.
+	 *
+	 * @param array<string,mixed> $input
+	 * @param array<string,mixed> $field
+	 * @return array<string,mixed>
 	 */
+	private static function autocomplete( array $input, array $field ): array {
+		$purpose = (string) ( $field['autocomplete'] ?? '' );
+		if ( '' !== $purpose && in_array( $purpose, SchemaValidator::AUTOCOMPLETE, true ) ) {
+			$input['autocomplete'] = $purpose;
+		}
+		return $input;
+	}
+
 	/**
 	 * Merges attributes from an extension (contract 1.1.0). Only `data-fc-x-*` attributes and
 	 * additional CSS classes are accepted; on the form element also enctype="multipart/form-data".

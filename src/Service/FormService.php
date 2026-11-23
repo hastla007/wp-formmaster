@@ -25,6 +25,9 @@ final class FormService {
 
 	public const IMPORT_MAX_BYTES = 262144;
 
+	/** Maximum length of the submit button text (SET-FC-02). */
+	public const SUBMIT_LABEL_MAX = 60;
+
 	/** Allowed status transitions (docs/spec/zustaende.md). */
 	public const TRANSITIONS = array(
 		'draft'     => array( 'published', 'archived' ),
@@ -139,6 +142,13 @@ final class FormService {
 			),
 			'retention'         => array( 'mode' => 'global' ),
 			'actions'           => array(),
+			// Texts and limits per form (SET-FC-02, SET-FC-11, SET-FC-18); empty = translated default.
+			'submit_label'      => '',
+			'texts'             => array(
+				'required_hint' => '',
+				'error_summary' => '',
+			),
+			'limits'            => FormLimits::defaults(),
 		);
 	}
 
@@ -664,6 +674,14 @@ final class FormService {
 		$paused                = mb_substr( sanitize_textarea_field( is_scalar( $in['paused_message'] ?? '' ) ? (string) ( $in['paused_message'] ?? '' ) : '' ), 0, 500 );
 		$out['paused_message'] = '' !== trim( $paused ) ? $paused : $defaults['paused_message'];
 
+		$texts               = is_array( $in['texts'] ?? null ) ? $in['texts'] : array();
+		$out['submit_label'] = self::short_text( $in['submit_label'] ?? '', self::SUBMIT_LABEL_MAX, 'submit_label', $errors );
+		$out['texts']        = array(
+			'required_hint' => self::short_text( $texts['required_hint'] ?? '', 190, 'texts.required_hint', $errors ),
+			'error_summary' => self::short_text( $texts['error_summary'] ?? '', 190, 'texts.error_summary', $errors ),
+		);
+		$out['limits']       = FormLimits::sanitize( $in['limits'] ?? array(), $errors );
+
 		$out['appearance'] = array( 'mode' => 'base' === ( $in['appearance']['mode'] ?? '' ) ? 'base' : 'inherit' );
 
 		$email        = is_array( $in['email'] ?? null ) ? $in['email'] : array();
@@ -989,6 +1007,20 @@ final class FormService {
 	private static function plain_title( string $title ): string {
 		$title = trim( wp_strip_all_tags( $title ) );
 		return mb_substr( '' !== $title ? $title : __( 'Untitled form', 'form-captain' ), 0, 190 );
+	}
+
+	/**
+	 * Single-line text with a length limit; a longer text is shortened and reported (path => text_too_long).
+	 *
+	 * @param array<string,string> $errors
+	 */
+	private static function short_text( mixed $value, int $max, string $path, array &$errors ): string {
+		$value = is_scalar( $value ) ? trim( sanitize_text_field( (string) $value ) ) : '';
+		if ( mb_strlen( $value ) > $max ) {
+			$errors[ $path ] = 'text_too_long';
+			$value           = mb_substr( $value, 0, $max );
+		}
+		return $value;
 	}
 
 	private static function plain( mixed $value, int $max ): string {

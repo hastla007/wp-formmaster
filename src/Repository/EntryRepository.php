@@ -484,6 +484,12 @@ final class EntryRepository {
 		);
 	}
 
+	/** Entries of a form that count towards its maximum (SET-FC-18): every status except spam and trash. */
+	public function count_accepted( int $form_id ): int {
+		global $wpdb;
+		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$this->entries()} WHERE form_id = %d AND status NOT IN ('trash','spam')", $form_id ) );
+	}
+
 	/** @return array<string,int> status => count */
 	public function status_counts( int $form_id = 0 ): array {
 		global $wpdb;

@@ -23,7 +23,7 @@ Absender und Darstellung werden beim Anlegen eines Formulars **kopiert**. Späte
 
 ## Vorgangsnummer
 
-Mit einem Format wie `REQ-{year}-{number}` bekommt jede neue Einsendung eine fortlaufende Nummer (z. B. `REQ-2026-0042`). `{number}` ist Pflicht, `{year}` optional; erlaubt sind außerdem Buchstaben, Ziffern und `- _ / . #`. Mit „jährlich neu beginnen“ startet die Nummer am 1. Januar (Zeitzone der Website) wieder bei 1 – nehmen Sie dann `{year}` ins Format auf. Spam bekommt keine Nummer. Die Nummer steht in der Eintragsansicht und über `{entry_number}` in E-Mails und der Erfolgsmeldung. Ohne Format bleibt die Funktion aus; `{entry_number}` zeigt dann die Eintrags-ID.
+Mit einem Format wie `REQ-{year}-{number}` bekommt jede neue Einsendung eine fortlaufende Nummer (z. B. `REQ-2026-0042`). `{number}` ist Pflicht, `{year}` optional; erlaubt sind außerdem Buchstaben, Ziffern und `- _ / . #`. Mit „jährlich neu beginnen“ startet die Nummer am 1. Januar (Zeitzone der Website) wieder bei 1 – nehmen Sie dann `{year}` ins Format auf. Ohne `{year}` im Format zählt die Nummer über den Jahreswechsel weiter, damit keine Nummer doppelt vergeben wird. Spam bekommt keine Nummer. Die Nummer steht in der Eintragsansicht und über `{entry_number}` in E-Mails und der Erfolgsmeldung. Ohne Format bleibt die Funktion aus; `{entry_number}` zeigt dann die Eintrags-ID.
 
 ## Aufbewahrung ändern
 

@@ -235,6 +235,16 @@ final class SubmissionService {
 		$entry_id = 0;
 		$tx       = $this->begin();
 		try {
+			// Maximum number of entries again, under a lock on the form row: parallel submissions
+			// passed the check in 3b at the same time and would otherwise exceed it (SET-FC-P2-1).
+			if ( (int) ( $form['settings']['limits']['max_entries'] ?? 0 ) > 0 ) {
+				$this->entries->lock_form( $form_id );
+				$limits = FormLimits::state( $form, $this->entries );
+				if ( ! $limits['open'] ) {
+					$this->abort( $tx, 0, null );
+					return $fail( Errors::FORM_NOT_ACCEPTING, array( 'message' => $limits['message'] ) );
+				}
+			}
 			if ( null === $spam_reason ) {
 				// Reference number (SET-FC-29); drawn inside the transaction so a rollback returns it.
 				$entry['entry_number'] = EntryNumbers::next( $form );

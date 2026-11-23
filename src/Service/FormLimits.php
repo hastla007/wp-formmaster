@@ -75,13 +75,18 @@ final class FormLimits {
 		return $out;
 	}
 
-	/** Unix timestamp of a stored date-time in the site time zone, or null if invalid. */
+	/**
+	 * Unix timestamp of a stored date-time in the site time zone, or null if invalid.
+	 * A wall-clock time that the clock change in spring skips (e.g. 02:30 on the last Sunday of
+	 * March in Europe/Berlin) counts as the moment right after the change; before, such a value
+	 * was refused in the editor and ignored when stored, so the form never closed (SET-FC-P2-5).
+	 */
 	public static function timestamp( string $value ): ?int {
-		$dt = \DateTimeImmutable::createFromFormat( '!' . self::DATETIME_FORMAT, $value, wp_timezone() );
-		if ( ! $dt || $dt->format( self::DATETIME_FORMAT ) !== $value ) {
+		if ( ! preg_match( '/^(\d{4})-(\d{2})-(\d{2})T([01]\d|2[0-3]):[0-5]\d$/', $value, $m ) || ! checkdate( (int) $m[2], (int) $m[3], (int) $m[1] ) ) {
 			return null;
 		}
-		return $dt->getTimestamp();
+		$dt = \DateTimeImmutable::createFromFormat( '!' . self::DATETIME_FORMAT, $value, wp_timezone() );
+		return $dt ? $dt->getTimestamp() : null;
 	}
 
 	/**
@@ -103,7 +108,7 @@ final class FormLimits {
 			$reason = 'not_open_yet';
 		} elseif ( null !== $closes && $now >= $closes ) {
 			$reason = 'closed';
-		} elseif ( $max > 0 && (int) ( $form['id'] ?? 0 ) > 0 && ( $entries ?? new EntryRepository() )->count_accepted( (int) $form['id'] ) >= $max ) {
+		} elseif ( $max > 0 && (int) ( $form['id'] ?? 0 ) > 0 && ( $entries ?? new EntryRepository() )->count_accepted( (int) $form['id'], self::pending_since( $form, $now ) ) >= $max ) {
 			$reason = 'full';
 		}
 		$state    = array(
@@ -120,6 +125,17 @@ final class FormLimits {
 			);
 		}
 		return $state;
+	}
+
+	/**
+	 * Unconfirmed double opt-in entries older than the link validity can no longer be confirmed
+	 * and wait only for their deletion; they do not block the maximum (SET-FC-P2-3), so the
+	 * visitor can submit again as the expired-link page asks.
+	 *
+	 * @param array<string,mixed> $form
+	 */
+	private static function pending_since( array $form, int $now ): string {
+		return gmdate( 'Y-m-d H:i:s', $now - (int) DoubleOptIn::settings( $form )['link_hours'] * HOUR_IN_SECONDS );
 	}
 
 	/**

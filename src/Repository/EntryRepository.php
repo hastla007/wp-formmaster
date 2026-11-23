@@ -536,9 +536,27 @@ final class EntryRepository {
 	}
 
 	/** Entries of a form that count towards its maximum (SET-FC-18): every status except spam and trash. */
-	public function count_accepted( int $form_id ): int {
+	/**
+	 * Locks the form row until the end of the current transaction, so the entry count of
+	 * parallel submissions is checked one after the other (maximum number of entries).
+	 */
+	public function lock_form( int $form_id ): void {
 		global $wpdb;
-		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$this->entries()} WHERE form_id = %d AND status NOT IN ('trash','spam')", $form_id ) );
+		$wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . Tables::name( Tables::FORMS ) . ' WHERE id = %d FOR UPDATE', $form_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared
+	}
+
+	/**
+	 * Entries that count towards the maximum of a form: no trash, no spam. With $pending_since,
+	 * unconfirmed double opt-in entries created before that time (link expired, can no longer
+	 * be confirmed) do not count either.
+	 */
+	public function count_accepted( int $form_id, ?string $pending_since = null ): int {
+		global $wpdb;
+		$sql = $wpdb->prepare( "SELECT COUNT(*) FROM {$this->entries()} WHERE form_id = %d AND status NOT IN ('trash','spam')", $form_id );
+		if ( null !== $pending_since ) {
+			$sql .= $wpdb->prepare( " AND NOT ( confirmation_status = 'pending' AND created_gmt < %s )", $pending_since );
+		}
+		return (int) $wpdb->get_var( $sql ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Both parts are prepared above.
 	}
 
 	/** @return array<string,int> status => count */

@@ -20,6 +20,7 @@ use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
 use FormCaptain\Security\SpamLimits;
 use FormCaptain\Service\DoubleOptIn;
+use FormCaptain\Support\Clock;
 use FormCaptain\Support\Logger;
 use FormCaptain\Support\Secret;
 
@@ -140,6 +141,10 @@ final class MailJobHandler {
 			$probe = $this->builder->double_opt_in( $form, $entry, $values, home_url( '/' ) );
 			if ( is_wp_error( $probe ) ) {
 				return JobResult::fail( $probe->get_error_code(), $probe->get_error_message() );
+			}
+			if ( Clock::timestamp() > DoubleOptIn::link_expires( $entry, $form ) ) {
+				// A late attempt (queue stopped, retries) would only mail a link that no longer works (SET-FC-P2-2).
+				return JobResult::fail( 'link_expired', 'The confirmation link would already have expired' );
 			}
 			if ( ! $this->receipt_allowed( (string) $probe['to'][0] ) ) {
 				return JobResult::fail( 'receipt_rate_limited', 'Too many confirmations to this recipient' );

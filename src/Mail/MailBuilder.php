@@ -569,7 +569,9 @@ final class MailBuilder {
 	 * @param array<int,array{label:string,value:string}> $rows
 	 */
 	private function html( string $title, string $intro, array $rows, ?string $link, string $link_label, bool $intro_is_html = false ): string {
-		$out  = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:14px;color:#1d2327;">';
+		// Language of the mail (the job switches to the locale of the submission) for screen readers.
+		$lang = str_replace( '_', '-', (string) preg_replace( '/_(formal|informal)$/', '', determine_locale() ) );
+		$out  = '<!DOCTYPE html><html lang="' . esc_attr( $lang ) . '"><head><meta charset="UTF-8"></head><body style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:14px;color:#1d2327;">';
 		$out .= '<h2 style="font-size:18px;">' . esc_html( $title ) . '</h2>';
 		$out .= $intro_is_html ? '<div>' . $intro . '</div>' : '<p>' . nl2br( esc_html( $intro ) ) . '</p>';
 		if ( $rows ) {

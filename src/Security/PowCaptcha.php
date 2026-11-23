@@ -23,6 +23,7 @@ use FormCaptain\Database\Tables;
 use FormCaptain\Settings\Settings;
 use FormCaptain\Spam\ProofOfWork\ProofOfWork;
 use FormCaptain\Support\Clock;
+use FormCaptain\Support\Limits;
 use FormCaptain\Support\Secret;
 
 final class PowCaptcha {
@@ -40,6 +41,10 @@ final class PowCaptcha {
 		 * @param int $max_number
 		 */
 		$max = (int) apply_filters( 'form_captain_pow_max_number_v1', ProofOfWork::DEFAULT_MAX_NUMBER );
+		// The challenge comes with the submission token and is solved once per token; frontend.js keeps
+		// a token for up to 115 minutes. A shorter validity would let a legitimate but slow visitor's
+		// submission land in spam silently (SET-FC-P4-01), so it lives at least as long as the token.
+		$ttl = max( ProofOfWork::DEFAULT_TTL, Limits::get( 'token_ttl' ) );
 		return new ProofOfWork(
 			Secret::key( 'form-captain/pow/v1' ),
 			static function ( string $challenge, int $expires ): bool {
@@ -50,7 +55,7 @@ final class PowCaptcha {
 				return 1 === (int) $affected;
 			},
 			$max,
-			ProofOfWork::DEFAULT_TTL,
+			$ttl,
 			static fn(): int => Clock::timestamp()
 		);
 	}

@@ -62,7 +62,7 @@ Der Einmal-Speicher wird erst bei Schritt 7 berührt, also nur für korrekt sign
 | Parameter | Vorgabe | Wo |
 |---|---|---|
 | Schwierigkeit `maxnumber` | 50 000 (1 000 … 1 000 000) | technischer Wert; Filter `form_captain_pow_max_number_v1` |
-| Gültigkeit einer Aufgabe | 1 800 s | Konstante `ProofOfWork::DEFAULT_TTL` |
+| Gültigkeit einer Aufgabe | mindestens 1 800 s (`ProofOfWork::DEFAULT_TTL`), in Form Captain so lange wie das Sendetoken (`spam.token_minutes`, Vorgabe 2 h) | Aufgabe und Token werden zusammen geholt; `frontend.js` behält das Token bis 115 min. Eine kürzere Gültigkeit hätte Einsendungen langsamer Besucher still in den Spam gelegt (SET-FC-P4-01). |
 | Schlüssel | `Secret::key( 'form-captain/pow/v1' )` | aus dem Website-Geheimnis abgeleitet, nie ausgegeben |
 | Einmal-Speicher | Zeile in `fc_rate_limits` (`INSERT IGNORE`, Bucket = SHA-256 der Aufgabe) | wird mit den übrigen Sendegrenzen aufgeräumt |
 

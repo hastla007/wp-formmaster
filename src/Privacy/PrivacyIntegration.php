@@ -89,11 +89,8 @@ final class PrivacyIntegration {
 
 	/** Suggested privacy policy text (DS-T-70) with the configured retention period. */
 	public static function policy_text(): string {
-		$period = match ( (string) Settings::get( 'privacy.retention' ) ) {
-			'90d' => __( '90 days', 'form-captain' ),
-			'12m' => __( '12 months', 'form-captain' ),
-			default => __( '[retention period]', 'form-captain' ),
-		};
+		$mode   = (string) Settings::get( 'privacy.retention' );
+		$period = null !== \FormCaptain\Settings\RetentionPeriod::parts( $mode ) ? \FormCaptain\Settings\RetentionPeriod::label( $mode ) : __( '[retention period]', 'form-captain' );
 		return sprintf(
 			/* translators: %s: retention period */
 			__( 'This website uses forms to receive enquiries. The data you enter is stored in our website database and used to process your request. It is deleted after %s unless longer storage is required. Form data is not passed to third parties unless stated in the form.', 'form-captain' ),

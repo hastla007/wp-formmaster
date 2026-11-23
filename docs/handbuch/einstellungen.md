@@ -4,11 +4,12 @@
 
 | Bereich | Was Sie hier einstellen |
 |---|---|
-| **Allgemein** | Ersteinrichtung erledigt, gelegentliche Pro-Hinweise (auch die grauen Pro-Zeilen am Ende der Bereiche). Formularbezogenes (Empfänger, Betreff, Bestätigung, Weiterleitung, Aktionen) stellen Sie im Formular ein. Formular-Import/-Export finden Sie in der Formularliste, CSV-Export bei den Einträgen. |
+| **Allgemein** | Ersteinrichtung erledigt, gelegentliche Pro-Hinweise (auch die grauen Pro-Zeilen am Ende der Bereiche), Protokollstufe (Fehler … Debug), Höchstlänge ein- und mehrzeiliger Felder, Länderprofil als Vorschlag. Formularbezogenes (Empfänger, Betreff, Bestätigung, Weiterleitung, Aktionen) stellen Sie im Formular ein. Formular-Import/-Export finden Sie in der Formularliste, CSV-Export bei den Einträgen. |
 | **Darstellung** | Theme-Stil (Standard) oder Form-Captain-Basisstil mit Akzentfarbe. Es werden keine externen Schriften/Dateien geladen. |
 | **E-Mail** | Standard-Absender für **neue** Formulare und Format. Hinweis, wenn die Absenderdomain nicht zur Website passt. Testmail an Ihre eigene Adresse (max. 3 je 10 min). SMTP-Zugangsdaten verwaltet Form Captain nicht – nutzen Sie dafür ein SMTP-Plugin. |
-| **Datenschutz & Speicherung** | Aufbewahrung 90 Tage / 12 Monate (Standard) / manuell, Papierkorbfrist, Verhalten bei Löschanfragen (löschen oder anonymisieren), Datenlöschung bei Deinstallation, Textvorschlag für die Datenschutzerklärung, Backup-Hinweis. |
-| **Spamschutz** | Honeypot, Mindest-Ausfüllzeit, Rate-Limit, Blockliste. Externe Captchas gibt es nur über Erweiterungen; vor Aktivierung sehen Sie Anbieter, übermittelte Daten und Zweck und müssen bestätigen. |
+| **Datenschutz & Speicherung** | Aufbewahrung als Zeitraum (1 Tag bis 30 Jahre) oder manuell (Vorgabe bei Neuinstallation; der Website-Zustand erinnert, bis eine Frist gesetzt ist), Schonfrist nach Verkürzung, Vorwarnung „läuft bald ab“, Aufbewahrung des Protokolls, Papierkorbfrist, Verhalten bei Löschanfragen (löschen oder anonymisieren), Datenlöschung bei Deinstallation, Textvorschlag für die Datenschutzerklärung, Backup-Hinweis. |
+| **Spamschutz** | Honeypot, Mindest-Ausfüllzeit, Rate-Limit je Formular und über alle Formulare, Zeit zum Ausfüllen, Blockliste, Quelle der Besucheradresse hinter Proxy/CDN (nur wählen, wenn die Website wirklich hinter dem Dienst steht). Externe Captchas gibt es nur über Erweiterungen; vor Aktivierung sehen Sie Anbieter, übermittelte Daten und Zweck und müssen bestätigen. |
+| **Export** | Vorauswahl für den CSV-Export: Trennzeichen (Komma/Semikolon) und UTF-8-BOM. Jeder Export kann andere Werte nutzen. |
 | **Zugriff & Rollen** | Matrix Rolle × Recht. Angezeigt wird, wie viele Nutzer danach Einträge lesen/exportieren können. Administratoren behalten immer „Einstellungen verwalten“. Ändern erfordert zusätzlich das WordPress-Recht „Benutzer befördern“. |
 | **Systemstatus** | Nur lesend: Versionen, Datenbankschema, Warteschlange/Cron, Mail-Fehlercodes, Integrationen, letzte Fehler mit Korrelations-ID, kopierbarer Diagnosebericht. |
 
@@ -22,7 +23,11 @@ Absender und Darstellung werden beim Anlegen eines Formulars **kopiert**. Späte
 
 ## Aufbewahrung ändern
 
-Eine Änderung muss bestätigt werden. Sie sehen vorher je Option die Anzahl betroffener Einträge und das früheste Löschdatum. Es wird nie früher als 14 Tage nach der Änderung gelöscht.
+Geben Sie eine Zahl mit Einheit (Tage, Monate, Jahre) ein oder wählen Sie „bis zum manuellen Löschen“. Eine Änderung muss bestätigt werden: Ohne Häkchen zeigt die Seite die Änderung erneut mit der Anzahl betroffener Einträge und dem frühesten Löschdatum. Es wird nie früher als nach der eingestellten Schonfrist (Standard 14 Tage) gelöscht. Auch jedes Formular kann einen eigenen Zeitraum haben (Formular → Einstellungen → Aufbewahrung). Gesetzliche Fristen hängen von Land und Zweck ab – lassen Sie sie rechtlich prüfen.
+
+## Länderprofil
+
+*Allgemein → Länderprofil*: Land wählen, „Vorschlag anzeigen“. Die Tabelle zeigt je Einstellung den aktuellen und den vorgeschlagenen Wert sowie den rechtlichen Stand („ungeprüft“ = neutraler Vorschlag). Erst nach Auswahl der Zeilen und Bestätigung wird etwas geändert; alle Werte bleiben danach änderbar. Deutschland, Österreich und Schweiz werden vor dem Verkaufsstart rechtlich geprüft; EU allgemein und International enthalten neutrale, nicht geprüfte Werte. Alle Profile schlagen 12 Monate Aufbewahrung für Kontaktanfragen vor.
 
 ## Zurücksetzen
 

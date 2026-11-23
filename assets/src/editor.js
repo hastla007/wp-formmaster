@@ -1361,19 +1361,13 @@
 				},
 			} ),
 			el( 'h2', null, __( 'Retention', 'form-captain' ) ),
-			el( C.SelectControl, {
-				label: __( 'Keep entries of this form', 'form-captain' ),
+			el( RetentionControl, {
 				value: ( s.retention || {} ).mode || 'global',
-				options: [
-					{ value: 'global', label: __( 'As in the global privacy settings', 'form-captain' ) },
-					{ value: '90d', label: __( '90 days', 'form-captain' ) },
-					{ value: '12m', label: __( '12 months', 'form-captain' ) },
-					{ value: 'manual', label: __( 'Until deleted manually', 'form-captain' ) },
-				],
 				onChange: function ( v ) {
 					props.onChange( Object.assign( {}, s, { retention: { mode: v } } ) );
 				},
 			} ),
+			el( SettingError, { errors: props.errors, path: 'retention.mode' } ),
 			el( ExtensionPanels, {
 				scope: 'form',
 				x: s.x,
@@ -1383,6 +1377,65 @@
 					props.onChange( Object.assign( {}, s, { x: Object.keys( x ).length ? x : undefined } ) );
 				},
 			} )
+		);
+	}
+
+	/**
+	 * Retention of one form (SET-FC-01): global setting, a period (amount + unit) or manual.
+	 * The value is stored as "global", "manual" or e.g. "90d", "6m", "10y".
+	 */
+	function RetentionControl( props ) {
+		var value = props.value || 'global';
+		var match = /^(\d*)([dmy])$/.exec( value );
+		var kind = 'global' === value || 'manual' === value ? value : 'period';
+		var amount = match ? match[ 1 ] : '12';
+		var unit = match ? match[ 2 ] : 'm';
+		return el(
+			'div',
+			{ className: 'fc-retention-control' },
+			el( C.SelectControl, {
+				label: __( 'Keep entries of this form', 'form-captain' ),
+				value: kind,
+				options: [
+					{ value: 'global', label: __( 'As in the global privacy settings', 'form-captain' ) },
+					{ value: 'period', label: __( 'For a fixed period', 'form-captain' ) },
+					{ value: 'manual', label: __( 'Until deleted manually', 'form-captain' ) },
+				],
+				onChange: function ( v ) {
+					props.onChange( 'period' === v ? amount + unit : v );
+				},
+			} ),
+			'period' === kind &&
+				el(
+					'div',
+					{ className: 'fc-retention-period' },
+					el( C.TextControl, {
+						label: __( 'Period', 'form-captain' ),
+						type: 'number',
+						min: 1,
+						value: amount,
+						onChange: function ( v ) {
+							props.onChange( String( v ).replace( /[^0-9]/g, '' ) + unit );
+						},
+					} ),
+					el( C.SelectControl, {
+						label: __( 'Unit', 'form-captain' ),
+						value: unit,
+						options: [
+							{ value: 'd', label: __( 'days', 'form-captain' ) },
+							{ value: 'm', label: __( 'months', 'form-captain' ) },
+							{ value: 'y', label: __( 'years', 'form-captain' ) },
+						],
+						onChange: function ( v ) {
+							props.onChange( amount + v );
+						},
+					} )
+				),
+			el(
+				'p',
+				{ className: 'description' },
+				__( 'Between 1 day and 30 years. Shortening the period never deletes existing entries sooner than the grace period set in the privacy settings.', 'form-captain' )
+			)
 		);
 	}
 

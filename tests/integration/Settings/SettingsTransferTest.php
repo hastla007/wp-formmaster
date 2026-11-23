@@ -73,7 +73,7 @@ final class SettingsTransferTest extends TestCase {
 		$this->assertSame( "casino\nspam.example", Settings::get( 'spam.blocklist' ) );
 		$this->assertSame( '#112233', Settings::get( 'appearance.accent_color' ) );
 		$this->assertSame( 3, Settings::get( 'spam.min_seconds' ), 'Invalid value not applied' );
-		$this->assertSame( '12m', Settings::get( 'privacy.retention' ) );
+		$this->assertSame( 'manual', Settings::get( 'privacy.retention' ) );
 		$this->assertFalse( Settings::get( 'privacy.delete_data_on_uninstall' ) );
 		$this->assertArrayHasKey( 'privacy.retention', $res['errors'] );
 		$this->assertSame( 'import', ChangeLog::latest()[0]['source'] );

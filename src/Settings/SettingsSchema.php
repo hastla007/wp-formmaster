@@ -19,10 +19,10 @@ use FormCaptain\Support\Clock;
 final class SettingsSchema {
 
 	/** Tabs in display order. `access` and `status` are not stored in the settings option. */
-	public const TABS = array( 'general', 'appearance', 'email', 'privacy', 'spam', 'access', 'status' );
+	public const TABS = array( 'general', 'appearance', 'email', 'privacy', 'spam', 'export', 'access', 'status' );
 
 	/** Option-backed groups. */
-	public const GROUPS = array( 'general', 'appearance', 'email', 'privacy', 'spam' );
+	public const GROUPS = array( 'general', 'appearance', 'email', 'privacy', 'spam', 'export' );
 
 	/** Accepted confirmation words for "delete data on uninstall" (datenschutz.md 10). */
 	public const CONFIRM_WORDS = array( 'DELETE', 'LÖSCHEN', 'LOESCHEN' );
@@ -42,6 +42,7 @@ final class SettingsSchema {
 			'email'      => __( 'Email', 'form-captain' ),
 			'privacy'    => __( 'Privacy & storage', 'form-captain' ),
 			'spam'       => __( 'Spam protection', 'form-captain' ),
+			'export'     => __( 'Export', 'form-captain' ),
 			'access'     => __( 'Access & roles', 'form-captain' ),
 			'status'     => __( 'System status', 'form-captain' ),
 		);
@@ -68,6 +69,36 @@ final class SettingsSchema {
 				'type'  => 'bool',
 				'label' => __( 'Show occasional hints about Form Captain Pro', 'form-captain' ),
 				'help'  => __( 'Hints are rare and can be dismissed. Settings sections end with grey text rows naming settings that Form Captain Pro adds. Free features never depend on Pro.', 'form-captain' ),
+			),
+			'general.log_level'                 => array(
+				'type'    => 'enum',
+				'options' => array(
+					'error'   => __( 'Errors only', 'form-captain' ),
+					'warning' => __( 'Warnings and errors', 'form-captain' ),
+					'info'    => __( 'Information, warnings and errors (recommended)', 'form-captain' ),
+					'debug'   => __( 'Everything including debug details', 'form-captain' ),
+				),
+				'label'   => __( 'Log level', 'form-captain' ),
+				'help'    => __( 'Which events Form Captain writes to its own log. The log never contains submitted values, e-mail or IP addresses. Use the debug level only while troubleshooting; with WP_DEBUG, debug entries are always written.', 'form-captain' ),
+			),
+			'general.text_max'                  => array(
+				'type'  => 'int',
+				'min'   => 100,
+				'max'   => \FormCaptain\Support\Limits::SETTABLE['text_max'][2],
+				'label' => __( 'Maximum length of single-line fields (characters)', 'form-captain' ),
+				'help'  => __( 'Upper limit for the length you can allow in text fields. Each field keeps its own maximum within this limit.', 'form-captain' ),
+			),
+			'general.textarea_max'              => array(
+				'type'  => 'int',
+				'min'   => 500,
+				'max'   => \FormCaptain\Support\Limits::SETTABLE['textarea_max'][2],
+				'label' => __( 'Maximum length of paragraph fields (characters)', 'form-captain' ),
+				'help'  => __( 'Upper limit for long free texts such as applications. The accepted request size grows with this value.', 'form-captain' ),
+			),
+			'general.country_profile'           => array(
+				'type'     => 'string',
+				'internal' => true,
+				'label'    => __( 'Applied country profile', 'form-captain' ),
 			),
 			'appearance.mode'                   => array(
 				'type'    => 'enum',
@@ -104,14 +135,9 @@ final class SettingsSchema {
 				'help'    => __( 'Format of notification and confirmation e-mails. Plain text works with every mail program.', 'form-captain' ),
 			),
 			'privacy.retention'                 => array(
-				'type'    => 'enum',
-				'options' => array(
-					'90d'    => __( '90 days', 'form-captain' ),
-					'12m'    => __( '12 months (recommended)', 'form-captain' ),
-					'manual' => __( 'Keep until deleted manually', 'form-captain' ),
-				),
-				'label'   => __( 'Keep submissions for', 'form-captain' ),
-				'help'    => __( 'Submissions are stored only in this WordPress database. Choose how long they are kept. You can change this later.', 'form-captain' ),
+				'type'  => 'retention',
+				'label' => __( 'Keep submissions for', 'form-captain' ),
+				'help'  => __( 'Submissions are stored only in this WordPress database. Choose how long they are kept: a period between 1 day and 30 years or until you delete them. Nothing is deleted automatically until you set a period; the country profiles suggest 12 months for contact enquiries. Statutory retention periods depend on your country and purpose – have them checked legally.', 'form-captain' ),
 			),
 			'privacy.trash_days'                => array(
 				'type'  => 'int',
@@ -152,6 +178,27 @@ final class SettingsSchema {
 				'label' => __( 'Keep the settings change log for (months)', 'form-captain' ),
 				'help'  => __( 'Changes of settings and permissions are listed with user, time, old and new value under System status. Secret values are never shown.', 'form-captain' ),
 			),
+			'privacy.grace_days'                => array(
+				'type'  => 'int',
+				'min'   => 0,
+				'max'   => 90,
+				'label' => __( 'Grace period after shortening the retention (days)', 'form-captain' ),
+				'help'  => __( 'When you shorten the retention period, existing submissions are deleted no sooner than this many days after the change, so you can still export them.', 'form-captain' ),
+			),
+			'privacy.expiry_notice_days'        => array(
+				'type'  => 'int',
+				'min'   => 0,
+				'max'   => 90,
+				'label' => __( 'Mark submissions as expiring (days before deletion)', 'form-captain' ),
+				'help'  => __( 'Submissions that will be deleted within this many days are marked in the list and announced above it. 0 turns the notice off.', 'form-captain' ),
+			),
+			'privacy.log_days'                  => array(
+				'type'  => 'int',
+				'min'   => 1,
+				'max'   => 365,
+				'label' => __( 'Keep log entries for (days)', 'form-captain' ),
+				'help'  => __( 'Technical log entries (no submitted values) are deleted automatically after this period.', 'form-captain' ),
+			),
 			'spam.honeypot'                     => array(
 				'type'  => 'bool',
 				'label' => __( 'Hidden honeypot field', 'form-captain' ),
@@ -182,6 +229,45 @@ final class SettingsSchema {
 				'options' => self::captcha_options(),
 				'label'   => __( 'External captcha', 'form-captain' ),
 				'help'    => __( 'Form Captain does not include an external captcha. Extensions can add one; activation is opt-in and shows which data the provider receives.', 'form-captain' ),
+			),
+			'spam.client_ip_source'             => array(
+				'type'    => 'enum',
+				'options' => array(
+					'remote_addr'      => __( 'Direct connection (recommended)', 'form-captain' ),
+					'cf_connecting_ip' => __( 'CF-Connecting-IP header (Cloudflare)', 'form-captain' ),
+					'x_forwarded_for'  => __( 'X-Forwarded-For header (first address)', 'form-captain' ),
+					'x_real_ip'        => __( 'X-Real-IP header', 'form-captain' ),
+				),
+				'label'   => __( 'Visitor address for rate limiting', 'form-captain' ),
+				'help'    => __( 'Only choose a header if your website is really behind this service (CDN, proxy or load balancer). Otherwise visitors can fake the header and bypass rate limiting. The address is only used for the pseudonymous rate-limit hash and is never stored.', 'form-captain' ),
+			),
+			'spam.global_per_ip'                => array(
+				'type'  => 'int',
+				'min'   => 1,
+				'max'   => \FormCaptain\Support\Limits::SETTABLE['rate_global_per_ip'][2],
+				'label' => __( 'Submissions per visitor across all forms in the rate-limit window', 'form-captain' ),
+				'help'  => __( 'Raise this value for events or kiosks where many people submit from the same network.', 'form-captain' ),
+			),
+			'spam.token_minutes'                => array(
+				'type'  => 'int',
+				'min'   => 5,
+				'max'   => (int) ( \FormCaptain\Support\Limits::SETTABLE['token_ttl'][2] / 60 ),
+				'label' => __( 'Time to fill in a form (minutes)', 'form-captain' ),
+				'help'  => __( 'How long a loaded form can be submitted. Raise it for long forms; visitors who exceed it have to reload the page.', 'form-captain' ),
+			),
+			'export.delimiter'                  => array(
+				'type'    => 'enum',
+				'options' => array(
+					',' => __( 'Comma (,)', 'form-captain' ),
+					';' => __( 'Semicolon (;) – common for spreadsheet programs in German-speaking countries', 'form-captain' ),
+				),
+				'label'   => __( 'Default CSV separator', 'form-captain' ),
+				'help'    => __( 'Preselected in the CSV export. You can still choose another separator for each export.', 'form-captain' ),
+			),
+			'export.bom'                        => array(
+				'type'  => 'bool',
+				'label' => __( 'Add UTF-8 byte order mark by default', 'form-captain' ),
+				'help'  => __( 'Helps Excel to show umlauts and other special characters correctly.', 'form-captain' ),
 			),
 		);
 		foreach ( $out as $path => $def ) {
@@ -383,6 +469,7 @@ final class SettingsSchema {
 	 * Sanitizes and validates the submitted values of one group.
 	 *
 	 * Special input keys (not stored): `retention_confirm` (required when the retention changes),
+	 * `retention_kind`/`retention_amount`/`retention_unit` (form inputs for the retention period),
 	 * `uninstall_confirm_word` (required to enable delete_data_on_uninstall), `captcha_confirm`.
 	 *
 	 * @param array<string,mixed> $input raw input (e.g. wp_unslash( $_POST['settings'] ))
@@ -396,6 +483,9 @@ final class SettingsSchema {
 		$current = Settings::all()[ $group ] ?? array();
 		$values  = $current;
 		$errors  = array();
+		if ( 'privacy' === $group && ! array_key_exists( 'retention', $input ) && array_key_exists( 'retention_kind', $input ) ) {
+			$input['retention'] = RetentionPeriod::from_parts( $input['retention_kind'], $input['retention_amount'] ?? '', $input['retention_unit'] ?? '' );
+		}
 		foreach ( $defs as $key => $def ) {
 			if ( ! empty( $def['internal'] ) ) {
 				continue;
@@ -469,6 +559,9 @@ final class SettingsSchema {
 				return array( $int, null );
 			case 'enum':
 				return array_key_exists( $raw, (array) $def['options'] ) ? array( $raw, null ) : array( null, __( 'Please choose one of the offered options.', 'form-captain' ) );
+			case 'retention':
+				$period = RetentionPeriod::normalize( $raw );
+				return null !== $period ? array( $period, null ) : array( null, RetentionPeriod::error_message() );
 			case 'hex':
 				$raw = strtolower( trim( $raw ) );
 				return preg_match( '/^#[0-9a-f]{6}$/', $raw ) ? array( $raw, null ) : array( null, __( 'Please enter a colour in the format #RRGGBB.', 'form-captain' ) );

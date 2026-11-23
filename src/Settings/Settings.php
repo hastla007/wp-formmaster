@@ -13,6 +13,9 @@ final class Settings {
 
 	public const OPTION = 'form_captain_settings';
 
+	/** Retention default of installations before S9 (23.11.2026); kept on update. */
+	public const LEGACY_RETENTION = '12m';
+
 	/** @return array<string,array<string,mixed>> */
 	public static function defaults(): array {
 		$host = wp_parse_url( home_url(), PHP_URL_HOST );
@@ -21,6 +24,10 @@ final class Settings {
 			'general'    => array(
 				'setup_completed' => false,
 				'show_pro_hints'  => true,
+				'log_level'       => 'info',
+				'text_max'        => 1000,
+				'textarea_max'    => 10000,
+				'country_profile' => '',
 			),
 			'appearance' => array(
 				'mode'         => 'inherit',
@@ -32,13 +39,16 @@ final class Settings {
 				'format'       => 'html',
 			),
 			'privacy'    => array(
-				'retention'                 => '12m',
+				'retention'                 => RetentionPeriod::MANUAL,
 				'trash_days'                => 30,
 				'erasure_mode'              => 'delete',
 				'delete_data_on_uninstall'  => false,
 				'delete_data_confirmed_gmt' => '',
 				'policy_page_hint'          => true,
 				'change_log_months'         => 12,
+				'grace_days'                => 14,
+				'expiry_notice_days'        => 14,
+				'log_days'                  => 30,
 			),
 			'spam'       => array(
 				'honeypot'         => true,
@@ -46,6 +56,13 @@ final class Settings {
 				'rate_limit'       => 5,
 				'blocklist'        => '',
 				'captcha_provider' => 'none',
+				'client_ip_source' => 'remote_addr',
+				'global_per_ip'    => 20,
+				'token_minutes'    => 120,
+			),
+			'export'     => array(
+				'delimiter' => ',',
+				'bom'       => true,
 			),
 		);
 	}
@@ -79,6 +96,13 @@ final class Settings {
 		}
 		$all[ $group ] = array_merge( $all[ $group ], array_intersect_key( $values, $all[ $group ] ) );
 		update_option( self::OPTION, $all, true );
+		self::flush_caches();
+	}
+
+	/** Clears caches derived from the settings (limits, log level). */
+	public static function flush_caches(): void {
+		\FormCaptain\Support\Limits::reset();
+		\FormCaptain\Support\Logger::reset_level();
 	}
 
 	public static function reset_group( string $group ): void {
@@ -87,26 +111,38 @@ final class Settings {
 			$all           = self::all();
 			$all[ $group ] = $defaults[ $group ];
 			update_option( self::OPTION, $all, true );
+			self::flush_caches();
 		}
 	}
 
-	/** Adds new defaults without overwriting existing values (P5-21). */
+	/**
+	 * Adds new defaults without overwriting existing values (P5-21).
+	 *
+	 * S9: new installations start without automatic deletion (manual). Existing installations
+	 * that never stored a retention value keep the earlier default of 12 months, so an update
+	 * never changes behaviour.
+	 */
 	public static function ensure_defaults(): void {
 		$stored = get_option( self::OPTION, null );
 		if ( ! is_array( $stored ) ) {
 			add_option( self::OPTION, self::defaults(), '', true );
 			return;
 		}
-		update_option( self::OPTION, self::all(), true );
+		$all = self::all();
+		if ( ! isset( $stored['privacy']['retention'] ) ) {
+			$all['privacy']['retention'] = self::LEGACY_RETENTION;
+		}
+		update_option( self::OPTION, $all, true );
 	}
 
-	/** Retention period in seconds or null for manual deletion. */
+	/**
+	 * Retention period in seconds (counted from now, calendar based) or null for manual deletion.
+	 * Filter `form_captain_retention_seconds_v1` wins (see RetentionService::expires_for()).
+	 */
 	public static function retention_seconds( ?string $mode = null ): ?int {
-		$mode = $mode ?? (string) self::get( 'privacy.retention' );
-		return match ( $mode ) {
-			'90d' => 90 * DAY_IN_SECONDS,
-			'12m' => 365 * DAY_IN_SECONDS,
-			default => null,
-		};
+		$mode    = $mode ?? (string) self::get( 'privacy.retention' );
+		$now     = \FormCaptain\Support\Clock::now();
+		$expires = \FormCaptain\Service\RetentionService::expires_for( $mode, $now );
+		return null === $expires ? null : (int) strtotime( $expires . ' UTC' ) - (int) strtotime( $now . ' UTC' );
 	}
 }

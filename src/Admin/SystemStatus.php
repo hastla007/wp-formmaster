@@ -106,6 +106,11 @@ final class SystemStatus {
 				'blocklist_lines'  => count( array_filter( explode( "\n", (string) Settings::get( 'spam.blocklist' ) ) ) ),
 				'captcha'          => (string) Settings::get( 'spam.captcha_provider' ),
 				'secret_present'   => is_string( get_option( 'form_captain_secret' ) ),
+				'log_level'        => \FormCaptain\Support\Logger::level(),
+				'debug_logging'    => \FormCaptain\Support\Logger::debug_by_setting(),
+				'log_days'         => \FormCaptain\Support\Logger::retention_days(),
+				'client_ip_source' => (string) Settings::get( 'spam.client_ip_source' ),
+				'country_profile'  => (string) Settings::get( 'general.country_profile' ),
 			),
 			'recent_errors' => $this->recent_errors(),
 		);
@@ -289,6 +294,9 @@ final class SystemStatus {
 		$db_warning = \FormCaptain\Support\Requirements::database_warning( (string) ( $d['environment']['database'] ?? '' ) );
 		if ( null !== $db_warning ) {
 			$out['database_version'] = $db_warning;
+		}
+		if ( ! empty( $d['settings']['debug_logging'] ) ) {
+			$out['debug_logging'] = __( 'Debug logging is switched on. It writes many log entries; switch the log level back to "Information" under General when you have finished troubleshooting.', 'form-captain' );
 		}
 		if ( array_sum( $d['mail']['failed_24h'] ) > 0 ) {
 			$out['mail'] = __( 'E-mails failed in the last 24 hours. Send a test e-mail and check your mail configuration (e.g. an SMTP plugin).', 'form-captain' );

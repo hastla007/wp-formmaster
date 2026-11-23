@@ -23,7 +23,7 @@ final class SiteHealth {
 	 * @return array<string,mixed>
 	 */
 	public function tests( array $tests ): array {
-		foreach ( array( 'queue', 'mail', 'cron', 'schema', 'database_version' ) as $name ) {
+		foreach ( array( 'queue', 'mail', 'cron', 'schema', 'database_version', 'retention' ) as $name ) {
 			$tests['direct'][ 'form_captain_' . $name ] = array(
 				'label' => __( 'Form Captain', 'form-captain' ),
 				'test'  => array( $this, 'test_' . $name ),
@@ -110,6 +110,30 @@ final class SiteHealth {
 			$ok ? __( 'All tables exist and the schema version matches.', 'form-captain' ) : __( 'The schema version does not match or a table is missing. Reactivate the plugin; data is never deleted by this.', 'form-captain' ),
 			'critical'
 		);
+	}
+
+	/**
+	 * S9: reminds the operator as long as no retention period is set globally.
+	 *
+	 * @return array<string,mixed>
+	 */
+	public function test_retention(): array {
+		$mode   = (string) \FormCaptain\Settings\Settings::get( 'privacy.retention' );
+		$ok     = null !== \FormCaptain\Settings\RetentionPeriod::parts( $mode );
+		$result = $this->result(
+			'retention',
+			$ok,
+			__( 'Form Captain deletes submissions after a retention period', 'form-captain' ),
+			__( 'Form Captain has no retention period set', 'form-captain' ),
+			$ok
+				/* translators: %s: retention period */
+				? sprintf( __( 'Submissions are deleted automatically %s after they were received. Have the period checked legally.', 'form-captain' ), \FormCaptain\Settings\RetentionPeriod::label( $mode ) )
+				: __( 'Submissions are kept until someone deletes them. Personal data should only be kept as long as needed: set a retention period (a country profile suggests one) and have it checked legally.', 'form-captain' )
+		);
+		if ( ! $ok && current_user_can( 'form_captain_manage_settings' ) ) {
+			$result['actions'] = '<p><a href="' . esc_url( admin_url( 'admin.php?page=form-captain-settings&tab=privacy' ) ) . '">' . esc_html__( 'Set a retention period', 'form-captain' ) . '</a></p>';
+		}
+		return $result;
 	}
 
 	/** @return array<string,mixed> */

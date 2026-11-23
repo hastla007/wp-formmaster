@@ -170,17 +170,21 @@ final class FormSettingsSchema {
 				'help'    => __( 'Copied from the global setting when the form is created. Empty uses the global sender.', 'form-captain' ),
 			),
 
+			// SET-FC-01: `global` or a retention period (manual, 1d…30y, see RetentionPeriod).
 			'retention.mode'              => array(
-				'type'    => 'enum',
-				'options' => array(
-					'global' => __( 'Use the global setting', 'form-captain' ),
-					'90d'    => __( '90 days', 'form-captain' ),
-					'12m'    => __( '12 months', 'form-captain' ),
-					'manual' => __( 'Keep until deleted manually', 'form-captain' ),
-				),
-				'default' => 'global',
-				'label'   => __( 'Keep submissions for', 'form-captain' ),
-				'help'    => __( 'Overrides the global retention period for this form.', 'form-captain' ),
+				'type'     => 'custom',
+				'default'  => 'global',
+				'error'    => 'invalid_retention',
+				'sanitize' => static function ( mixed $raw ): array {
+					$mode = is_scalar( $raw ) ? trim( (string) $raw ) : 'global';
+					if ( in_array( $mode, array( '', 'global', 'inherit' ), true ) ) {
+						return array( 'global', null );
+					}
+					$period = RetentionPeriod::normalize( $mode );
+					return null === $period ? array( 'global', 'invalid_retention' ) : array( $period, null );
+				},
+				'label'    => __( 'Keep submissions for', 'form-captain' ),
+				'help'     => __( 'Overrides the global retention period for this form: "global", "manual" or a period such as 90d, 12m or 2y.', 'form-captain' ),
 			),
 
 			// Stored with save_actions() (OP-FRM-04); sanitize_settings() only passes the list through.

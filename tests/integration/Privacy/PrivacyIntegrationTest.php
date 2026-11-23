@@ -73,6 +73,7 @@ final class PrivacyIntegrationTest extends TestCase {
 	}
 
 	public function test_exporter_and_eraser_are_registered(): void {
+		\FormCaptain\Settings\Settings::set_group( 'privacy', array( 'retention' => '12m' ) ); // S9: new installs default to manual; this test needs a period.
 		$this->assertArrayHasKey( 'form-captain', apply_filters( 'wp_privacy_personal_data_exporters', array() ) );
 		$this->assertArrayHasKey( 'form-captain', apply_filters( 'wp_privacy_personal_data_erasers', array() ) );
 		$this->assertStringContainsString( '12 months', PrivacyIntegration::policy_text() );

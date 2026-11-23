@@ -301,14 +301,9 @@ final class DashboardPage {
 
 		// 5. Privacy / retention.
 		$this->step_open( $steps['privacy'], __( 'Choose privacy and retention', 'form-captain' ) );
-		$labels = array(
-			'90d'    => __( '90 days', 'form-captain' ),
-			'12m'    => __( '12 months', 'form-captain' ),
-			'manual' => __( 'Manual deletion', 'form-captain' ),
-		);
-		$mode   = (string) Settings::get( 'privacy.retention' );
+		$mode = (string) Settings::get( 'privacy.retention' );
 		/* translators: %s: retention period */
-		echo '<p>' . esc_html( sprintf( __( 'Entries are currently kept for: %s', 'form-captain' ), $labels[ $mode ] ?? $mode ) ) . '</p><p>';
+		echo '<p>' . esc_html( sprintf( __( 'Entries are currently kept for: %s', 'form-captain' ), \FormCaptain\Settings\RetentionPeriod::label( $mode ) ) ) . '</p><p>';
 		if ( current_user_can( Capabilities::MANAGE_SETTINGS ) ) {
 			echo '<a href="' . esc_url( admin_url( 'admin.php?page=form-captain-settings&tab=privacy' ) ) . '">' . esc_html__( 'Open privacy settings', 'form-captain' ) . '</a> ';
 		}

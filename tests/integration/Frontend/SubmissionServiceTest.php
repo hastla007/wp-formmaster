@@ -22,6 +22,7 @@ final class SubmissionServiceTest extends FrontendTestCase {
 	}
 
 	public function test_success_stores_entry_values_and_jobs(): void {
+		\FormCaptain\Settings\Settings::set_group( 'privacy', array( 'retention' => '12m' ) ); // S9: new installs default to manual; this test needs a period.
 		$form   = $this->create_published_form(
 			null,
 			array(

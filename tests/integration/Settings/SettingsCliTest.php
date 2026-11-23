@@ -30,7 +30,7 @@ final class SettingsCliTest extends TestCase {
 
 	public function test_list_and_get(): void {
 		$rows = array_column( $this->cli()->settings_list(), null, 'key' );
-		$this->assertSame( '12m', $rows['privacy.retention']['value'] );
+		$this->assertSame( 'manual', $rows['privacy.retention']['value'] );
 		$this->assertSame( 'true', $rows['spam.honeypot']['value'] );
 		$this->assertArrayNotHasKey( 'privacy.delete_data_confirmed_gmt', $rows );
 		$this->assertSame( '5', $this->cli()->settings_get( 'spam.rate_limit' ) );
@@ -51,7 +51,7 @@ final class SettingsCliTest extends TestCase {
 		$err = $this->cli()->settings_set( 'privacy.retention', '90d' );
 		$this->assertInstanceOf( \WP_Error::class, $err );
 		$this->assertStringContainsString( '--yes', $err->get_error_message() );
-		$this->assertSame( '12m', Settings::get( 'privacy.retention' ) );
+		$this->assertSame( 'manual', Settings::get( 'privacy.retention' ) );
 		$this->cli()->settings_set( 'privacy.retention', '90d', true );
 		$this->assertSame( '90d', Settings::get( 'privacy.retention' ) );
 

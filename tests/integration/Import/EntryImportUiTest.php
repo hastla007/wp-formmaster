@@ -380,6 +380,7 @@ final class EntryImportUiTest extends TestCase {
 	// Full flow, report, silence, idempotency.
 
 	public function test_full_flow_reports_without_values_and_is_silent(): void {
+		\FormCaptain\Settings\Settings::set_group( 'privacy', array( 'retention' => '12m' ) ); // S9: new installs default to manual; this test needs a period.
 		global $wpdb;
 		$csv     = self::csv(
 			array(

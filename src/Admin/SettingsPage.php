@@ -17,8 +17,11 @@ use FormCaptain\Install\Capabilities;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
+use FormCaptain\Service\RetentionService;
 use FormCaptain\Settings\AccessControl;
 use FormCaptain\Settings\ChangeLog;
+use FormCaptain\Settings\CountryPresets;
+use FormCaptain\Settings\RetentionPeriod;
 use FormCaptain\Settings\Settings;
 use FormCaptain\Settings\SettingsSchema;
 use FormCaptain\Settings\SettingsTransfer;
@@ -32,7 +35,6 @@ final class SettingsPage {
 	public const SLUG = 'form-captain-settings';
 
 	private const RETENTION_SERVICE = 'FormCaptain\\Service\\RetentionService';
-	private const GRACE_SECONDS     = 14 * DAY_IN_SECONDS;
 
 	public function __construct(
 		private Plugin $plugin,
@@ -48,6 +50,7 @@ final class SettingsPage {
 		add_action( 'admin_post_form_captain_rotate_secret', array( $this, 'handle_rotate_secret' ) );
 		add_action( 'admin_post_form_captain_export_settings', array( $this, 'handle_export' ) );
 		add_action( 'admin_post_form_captain_import_settings', array( $this, 'handle_import' ) );
+		add_action( 'admin_post_form_captain_apply_country_profile', array( $this, 'handle_country_profile' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'form_captain_cleanup', array( self::class, 'expire_previous_secret' ) );
 		add_action( 'after_plugin_row_' . plugin_basename( FORM_CAPTAIN_FILE ), array( $this, 'plugin_row_notice' ) );
@@ -116,11 +119,60 @@ final class SettingsPage {
 		if ( $errors ) {
 			array_unshift( $messages, __( 'Some settings were not saved. Please check the highlighted fields.', 'form-captain' ) );
 		}
-		return array(
+		$notice = array(
 			'type'     => $errors ? 'error' : 'success',
 			'messages' => array_values( array_filter( $messages ) ),
 			'errors'   => $errors,
 		);
+		// SET-FC-01: an unconfirmed retention change is shown again with its preview.
+		$proposed = 'privacy' === $tab && isset( $errors['privacy.retention'] ) ? self::proposed_retention( $input ) : null;
+		if ( null !== $proposed && $proposed !== ( $before['retention'] ?? '' ) ) {
+			$notice['proposed'] = array( 'privacy.retention' => $proposed );
+		}
+		return $notice;
+	}
+
+	/**
+	 * Valid retention period from the submitted inputs, or null.
+	 *
+	 * @param array<string,mixed> $input
+	 */
+	private static function proposed_retention( array $input ): ?string {
+		$raw = array_key_exists( 'retention', $input ) ? $input['retention'] : RetentionPeriod::from_parts( $input['retention_kind'] ?? '', $input['retention_amount'] ?? '', $input['retention_unit'] ?? '' );
+		return RetentionPeriod::normalize( $raw );
+	}
+
+	/**
+	 * Applies the selected rows of a country profile (SET-FC-12).
+	 *
+	 * @param string[] $paths
+	 * @return array{type:string,messages:string[],errors:array<string,string>}
+	 */
+	public function apply_country_profile( string $key, array $paths, bool $confirmed ): array {
+		$profile = CountryPresets::get( $key );
+		if ( null === $profile ) {
+			return self::notice( 'error', array( __( 'Unknown country profile.', 'form-captain' ) ) );
+		}
+		if ( ! $confirmed ) {
+			return self::notice( 'error', array( __( 'Please confirm that you have reviewed the suggested changes.', 'form-captain' ) ) );
+		}
+		$before = (string) Settings::get( 'privacy.retention' );
+		$result = CountryPresets::apply( $key, array_values( array_filter( $paths, 'is_string' ) ) );
+		Logger::log( 'info', 'country_profile_applied', $key . ': ' . implode( ',', $result['applied'] ) );
+		$messages = array(
+			$result['applied']
+				/* translators: 1: profile name, 2: number of settings */
+				? sprintf( _n( 'Country profile "%1$s" applied: %2$s setting changed.', 'Country profile "%1$s" applied: %2$s settings changed.', count( $result['applied'] ), 'form-captain' ), $profile['label'], number_format_i18n( count( $result['applied'] ) ) )
+				/* translators: %s: profile name */
+				: sprintf( __( 'Country profile "%s" noted. No settings were changed.', 'form-captain' ), $profile['label'] ),
+		);
+		$after    = (string) Settings::get( 'privacy.retention' );
+		if ( $after !== $before ) {
+			$messages[] = $this->apply_retention_change( $after );
+		}
+		$notice           = self::notice( $result['errors'] ? 'error' : 'success', $messages );
+		$notice['errors'] = $result['errors'];
+		return $notice;
 	}
 
 	/**
@@ -181,15 +233,19 @@ final class SettingsPage {
 	 */
 	private function apply_retention_change( string $mode ): string {
 		$preview = $this->retention_preview( $mode );
+		if ( null !== RetentionPeriod::parts( $mode ) && null === $preview['earliest'] ) {
+			return __( 'No existing submissions are affected by this change.', 'form-captain' );
+		}
 		if ( null === $preview['earliest'] ) {
 			/* translators: %s: number of submissions */
 			return sprintf( __( 'Automatic deletion is off. %s submissions are kept until you delete them.', 'form-captain' ), number_format_i18n( $preview['count'] ) );
 		}
 		return sprintf(
-			/* translators: 1: number of submissions, 2: date */
-			__( 'This change affects %1$s existing submissions. The earliest automatic deletion will be on %2$s. Submissions are never deleted sooner than 14 days after this change.', 'form-captain' ),
+			/* translators: 1: number of submissions, 2: date, 3: number of days */
+			__( 'This change affects %1$s existing submissions. The earliest automatic deletion will be on %2$s. Submissions are never deleted sooner than %3$s days after this change.', 'form-captain' ),
 			number_format_i18n( $preview['count'] ),
-			self::local_date( $preview['earliest'] )
+			self::local_date( $preview['earliest'] ),
+			number_format_i18n( RetentionService::grace_days() )
 		);
 	}
 
@@ -218,7 +274,7 @@ final class SettingsPage {
 
 	/**
 	 * Cheap estimate for the settings screen (two aggregate queries): entries of forms following
-	 * the global retention and the earliest possible deletion date (14-day grace included).
+	 * the global retention and the earliest possible deletion date (grace period included).
 	 *
 	 * @return array{count:int,earliest:?string}
 	 */
@@ -238,7 +294,7 @@ final class SettingsPage {
 				'earliest' => null,
 			);
 		}
-		$earliest = max( (int) strtotime( $stats['oldest_created'] . ' UTC' ) + $seconds, Clock::timestamp() + self::GRACE_SECONDS );
+		$earliest = max( (int) strtotime( $stats['oldest_created'] . ' UTC' ) + $seconds, Clock::timestamp() + RetentionService::grace_days() * DAY_IN_SECONDS );
 		return array(
 			'count'    => $stats['count'],
 			'earliest' => Clock::at( $earliest ),
@@ -479,6 +535,15 @@ final class SettingsPage {
 		$this->redirect( 'email', $this->send_test_mail() );
 	}
 
+	public function handle_country_profile(): void {
+		$this->guard( 'form_captain_apply_country_profile' );
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- checked in guard().
+		$key   = isset( $_POST['profile'] ) ? sanitize_text_field( wp_unslash( $_POST['profile'] ) ) : '';
+		$paths = isset( $_POST['paths'] ) && is_array( $_POST['paths'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['paths'] ) ) : array();
+		$this->redirect( 'general', $this->apply_country_profile( $key, $paths, ! empty( $_POST['confirm_profile'] ) ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+	}
+
 	public function handle_rotate_secret(): void {
 		$this->guard( 'form_captain_rotate_secret' );
 		if ( empty( $_POST['confirm_rotate'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- checked in guard().
@@ -568,13 +633,16 @@ final class SettingsPage {
 		match ( $tab ) {
 			'access' => $this->render_access(),
 			'status' => $this->render_status(),
-			default => $this->render_group( $tab, $errors ),
+			default => $this->render_group( $tab, $errors, is_array( $notice ) ? (array) ( $notice['proposed'] ?? array() ) : array() ),
 		};
 		echo '</div>';
 	}
 
-	/** @param array<string,string> $errors */
-	private function render_group( string $tab, array $errors ): void {
+	/**
+	 * @param array<string,string> $errors
+	 * @param array<string,mixed>  $proposed unconfirmed values to show again (path => value)
+	 */
+	private function render_group( string $tab, array $errors, array $proposed = array() ): void {
 		$values = Settings::all()[ $tab ];
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="fc-settings-form" novalidate>';
 		echo '<input type="hidden" name="action" value="form_captain_save_settings"><input type="hidden" name="tab" value="' . esc_attr( $tab ) . '">';
@@ -585,7 +653,7 @@ final class SettingsPage {
 			if ( ! empty( $def['internal'] ) ) {
 				continue;
 			}
-			$this->render_field( $tab, $key, $def, $values[ $key ] ?? $def['default'], $errors[ $tab . '.' . $key ] ?? '' );
+			$this->render_field( $tab, $key, $def, $proposed[ $tab . '.' . $key ] ?? $values[ $key ] ?? $def['default'], $errors[ $tab . '.' . $key ] ?? '' );
 		}
 		// Real fields of add-ons (form_captain_settings_fields_v1); storage and checks stay in the add-on.
 		foreach ( SettingsSchema::extension_fields_for( $tab ) as $id => $def ) {
@@ -597,6 +665,9 @@ final class SettingsPage {
 		echo '</form>';
 		if ( 'email' === $tab ) {
 			$this->render_test_mail();
+		}
+		if ( 'general' === $tab ) {
+			$this->render_country_profiles();
 		}
 		$this->render_reset( $tab );
 		$this->render_pro_hints( $tab );
@@ -659,6 +730,18 @@ final class SettingsPage {
 			case 'int':
 				echo '<input type="number" class="small-text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '" min="' . esc_attr( (string) $def['min'] ) . '" max="' . esc_attr( (string) $def['max'] ) . '"' . $aria . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				break;
+			case 'retention':
+				$parts = RetentionPeriod::parts( (string) $value );
+				$max   = max( RetentionPeriod::MAX );
+				echo '<fieldset id="' . esc_attr( $id ) . '"' . $aria . '><legend class="screen-reader-text">' . esc_html( (string) $def['label'] ) . '</legend>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo '<label class="fc-radio"><input type="radio" name="settings[retention_kind]" value="period"' . checked( null !== $parts, true, false ) . '> ' . esc_html__( 'Delete automatically after', 'form-captain' ) . '</label> ';
+				echo '<label for="' . esc_attr( $id ) . '-amount" class="screen-reader-text">' . esc_html__( 'Period', 'form-captain' ) . '</label><input type="number" class="small-text" id="' . esc_attr( $id ) . '-amount" name="settings[retention_amount]" min="1" max="' . esc_attr( (string) $max ) . '" value="' . esc_attr( (string) ( $parts['amount'] ?? 12 ) ) . '"> ';
+				echo '<label for="' . esc_attr( $id ) . '-unit" class="screen-reader-text">' . esc_html__( 'Unit', 'form-captain' ) . '</label><select id="' . esc_attr( $id ) . '-unit" name="settings[retention_unit]">';
+				foreach ( RetentionPeriod::unit_labels() as $unit => $label ) {
+					echo '<option value="' . esc_attr( $unit ) . '"' . selected( $parts['unit'] ?? 'm', $unit, false ) . '>' . esc_html( $label ) . '</option>';
+				}
+				echo '</select><br><label class="fc-radio"><input type="radio" name="settings[retention_kind]" value="manual"' . checked( null === $parts, true, false ) . '> ' . esc_html__( 'Keep until deleted manually', 'form-captain' ) . '</label></fieldset>';
+				break;
 			case 'hex':
 				echo '<input type="color" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"' . $aria . '> <code>' . esc_html( (string) $value ) . '</code>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				break;
@@ -680,20 +763,21 @@ final class SettingsPage {
 
 	private function render_field_after( string $tab, string $key, mixed $value ): void {
 		if ( 'privacy' === $tab && 'retention' === $key ) {
+			$current = (string) Settings::get( 'privacy.retention' );
 			echo '<ul class="fc-retention-preview">';
-			foreach ( array( '90d', '12m', 'manual' ) as $mode ) {
+			foreach ( array_unique( array( $current, (string) $value ) ) as $mode ) {
 				$p    = $this->retention_estimate( $mode );
-				$text = match ( $mode ) {
-					'90d' => __( 'Submissions are deleted permanently 90 days after they were received.', 'form-captain' ),
-					'12m' => __( 'Submissions are deleted permanently 12 months after they were received.', 'form-captain' ),
-					default => __( 'Submissions are kept until you delete them. Make sure you delete data you no longer need.', 'form-captain' ),
-				};
+				$text = null === RetentionPeriod::parts( $mode )
+					? __( 'Submissions are kept until you delete them. Make sure you delete data you no longer need.', 'form-captain' )
+					/* translators: %s: retention period, e.g. "12 months" */
+					: sprintf( __( 'Submissions are deleted permanently %s after they were received.', 'form-captain' ), RetentionPeriod::label( $mode ) );
 				$suffix = null !== $p['earliest']
 					/* translators: 1: number of submissions, 2: date */
 					? sprintf( __( 'Affects %1$s submissions; earliest deletion on %2$s.', 'form-captain' ), number_format_i18n( $p['count'] ), self::local_date( $p['earliest'] ) )
 					/* translators: %s: number of submissions */
 					: sprintf( __( 'Affects %s submissions; nothing is deleted automatically.', 'form-captain' ), number_format_i18n( $p['count'] ) );
-				echo '<li><strong>' . esc_html( (string) SettingsSchema::definitions()['privacy.retention']['options'][ $mode ] ) . ':</strong> ' . esc_html( $text ) . ' <em>' . esc_html( $suffix ) . '</em></li>';
+				$title = $mode === $current ? __( 'Current setting', 'form-captain' ) : __( 'Your change (not saved yet)', 'form-captain' );
+				echo '<li><strong>' . esc_html( $title . ' – ' . RetentionPeriod::label( $mode ) ) . ':</strong> ' . esc_html( $text ) . ' <em>' . esc_html( $suffix ) . '</em></li>';
 			}
 			echo '</ul>';
 			$own = $this->forms_with_own_values()['retention'];
@@ -701,7 +785,8 @@ final class SettingsPage {
 				/* translators: %s: number of forms */
 				echo '<p class="description">' . esc_html( sprintf( _n( '%s form uses its own retention period and is not affected.', '%s forms use their own retention period and are not affected.', $own, 'form-captain' ), number_format_i18n( $own ) ) ) . '</p>';
 			}
-			echo '<p><label><input type="checkbox" name="settings[retention_confirm]" value="1"> ' . esc_html__( 'I understand that changing the retention period schedules the deletion of existing submissions (never sooner than 14 days after this change).', 'form-captain' ) . '</label></p>';
+			/* translators: %s: number of days */
+			echo '<p><label><input type="checkbox" name="settings[retention_confirm]" value="1"> ' . esc_html( sprintf( __( 'I understand that changing the retention period schedules the deletion of existing submissions (never sooner than %s days after this change).', 'form-captain' ), number_format_i18n( RetentionService::grace_days() ) ) ) . '</label></p>';
 		}
 		if ( 'privacy' === $tab && 'delete_data_on_uninstall' === $key ) {
 			$counts = $this->entries->count_for_forms( null );
@@ -754,6 +839,7 @@ final class SettingsPage {
 			'email' => __( 'Form Captain sends e-mails with WordPress (wp_mail). It does not manage SMTP servers or mail passwords; use an SMTP plugin of your choice for reliable delivery.', 'form-captain' ),
 			'privacy' => __( 'Submissions are stored only in this WordPress database. Form Captain does not control backups. Deleted submissions remain in existing backups until those backups expire. After restoring a backup, expired submissions are deleted again automatically; repeat completed erasure requests.', 'form-captain' ),
 			'spam' => __( 'Honeypot, minimum fill-in time and rate limiting work without cookies and without sending data to third parties.', 'form-captain' ),
+			'export' => __( 'Defaults for the CSV export of submissions. Every export can still use other values.', 'form-captain' ),
 			default => '',
 		};
 		if ( '' !== $text ) {
@@ -780,6 +866,94 @@ final class SettingsPage {
 		}
 	}
 
+	/** Country profiles as a reviewed suggestion (SET-FC-12). */
+	private function render_country_profiles(): void {
+		$profiles = CountryPresets::all();
+		$current  = (string) Settings::get( 'general.country_profile' );
+		$selected = isset( $_GET['fc_profile'] ) ? strtoupper( sanitize_key( wp_unslash( $_GET['fc_profile'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only preview.
+		echo '<h2 id="fc-country-profile">' . esc_html__( 'Country profile', 'form-captain' ) . '</h2>';
+		echo '<p>' . esc_html__( 'A country profile suggests settings for your country. Nothing changes until you have reviewed the suggestion and applied the selected rows. You can change every value afterwards.', 'form-captain' ) . '</p>';
+		if ( isset( $profiles[ $current ] ) ) {
+			/* translators: %s: profile name */
+			echo '<p class="description">' . esc_html( sprintf( __( 'Last applied profile: %s', 'form-captain' ), $profiles[ $current ]['label'] ) ) . '</p>';
+		}
+		echo '<form method="get" action="' . esc_url( admin_url( 'admin.php' ) ) . '#fc-country-profile"><input type="hidden" name="page" value="' . esc_attr( self::SLUG ) . '"><input type="hidden" name="tab" value="general">';
+		echo '<label for="fc-profile">' . esc_html__( 'Country', 'form-captain' ) . '</label> <select id="fc-profile" name="fc_profile">';
+		foreach ( $profiles as $key => $p ) {
+			echo '<option value="' . esc_attr( $key ) . '"' . selected( $selected ?: $current, $key, false ) . '>' . esc_html( $p['label'] . ( 'reviewed' === $p['review'] ? '' : ' – ' . __( 'not legally reviewed', 'form-captain' ) ) ) . '</option>';
+		}
+		echo '</select> ';
+		submit_button( __( 'Show suggestion', 'form-captain' ), 'secondary', '', false );
+		echo '</form>';
+		if ( ! isset( $profiles[ $selected ] ) ) {
+			return;
+		}
+		$rows = CountryPresets::diff( $selected );
+		echo '<p class="' . ( 'reviewed' === $profiles[ $selected ]['review'] ? 'description' : 'fc-warning' ) . '"><strong>' . esc_html( $profiles[ $selected ]['label'] ) . ':</strong> ' . esc_html( CountryPresets::review_label( $profiles[ $selected ]['review'] ) ) . '</p>';
+		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="fc-country-preview">';
+		echo '<input type="hidden" name="action" value="form_captain_apply_country_profile"><input type="hidden" name="profile" value="' . esc_attr( $selected ) . '">';
+		wp_nonce_field( 'form_captain_apply_country_profile' );
+		echo '<table class="widefat striped"><thead><tr><th scope="col">' . esc_html__( 'Apply', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'Setting', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'Current value', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'Suggested value', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'Legal status', 'form-captain' ) . '</th></tr></thead><tbody>';
+		foreach ( $rows as $row ) {
+			$def = SettingsSchema::definitions()[ $row['path'] ];
+			echo '<tr><td>';
+			if ( $row['changed'] ) {
+				echo '<label><span class="screen-reader-text">' . esc_html( $row['label'] ) . '</span><input type="checkbox" name="paths[]" value="' . esc_attr( $row['path'] ) . '" checked></label>';
+			} else {
+				echo '<span class="description">' . esc_html( '' !== $row['error'] ? __( 'invalid', 'form-captain' ) : __( 'unchanged', 'form-captain' ) ) . '</span>';
+			}
+			echo '</td><th scope="row">' . esc_html( $row['label'] ) . '</th><td>' . esc_html( self::display_value( $def, $row['before'] ) ) . '</td><td>' . ( $row['changed'] ? '<strong>' . esc_html( self::display_value( $def, $row['after'] ) ) . '</strong>' : esc_html( self::display_value( $def, $row['after'] ) ) ) . '</td><td>';
+			if ( $row['legal'] ) {
+				echo esc_html(
+					'' !== $row['reviewed']
+						/* translators: %s: date */
+						? sprintf( __( 'Legally reviewed on %s', 'form-captain' ), $row['reviewed'] )
+						: __( 'Not legally reviewed – neutral suggestion, have it checked', 'form-captain' )
+				);
+			} else {
+				echo '–';
+			}
+			echo '</td></tr>';
+		}
+		echo '</tbody></table>';
+		if ( '' !== $profiles[ $selected ]['note'] ) {
+			echo '<p class="description">' . esc_html( $profiles[ $selected ]['note'] ) . '</p>';
+		}
+		foreach ( $rows as $row ) {
+			if ( 'privacy.retention' === $row['path'] && $row['changed'] ) {
+				$p = $this->retention_estimate( (string) $row['after'] );
+				echo '<p class="fc-warning">' . esc_html(
+					null !== $p['earliest']
+						/* translators: 1: number of submissions, 2: date */
+						? sprintf( __( 'The new retention period affects %1$s submissions; earliest deletion on %2$s.', 'form-captain' ), number_format_i18n( $p['count'] ), self::local_date( $p['earliest'] ) )
+						/* translators: %s: number of submissions */
+						: sprintf( __( 'The new retention period affects %s submissions; nothing is deleted automatically.', 'form-captain' ), number_format_i18n( $p['count'] ) )
+				) . '</p>';
+			}
+		}
+		if ( array_filter( array_column( $rows, 'changed' ) ) ) {
+			echo '<p><label><input type="checkbox" name="confirm_profile" value="1" required> ' . esc_html__( 'I have reviewed the changes and want to apply the selected rows.', 'form-captain' ) . '</label></p>';
+			submit_button( __( 'Apply selected values', 'form-captain' ), 'primary', 'submit', false );
+		} else {
+			echo '<p>' . esc_html__( 'Your settings already match this profile.', 'form-captain' ) . '</p>';
+		}
+		echo '</form>';
+	}
+
+	/**
+	 * Readable value for the before/after view.
+	 *
+	 * @param array<string,mixed> $def
+	 */
+	private static function display_value( array $def, mixed $value ): string {
+		return match ( $def['type'] ) {
+			'bool' => $value ? __( 'Yes', 'form-captain' ) : __( 'No', 'form-captain' ),
+			'retention' => RetentionPeriod::label( (string) $value ),
+			'enum' => (string) ( $def['options'][ (string) $value ] ?? $value ),
+			default => is_scalar( $value ) ? (string) $value : '',
+		};
+	}
+
 	private function render_test_mail(): void {
 		echo '<h2>' . esc_html__( 'Test e-mail', 'form-captain' ) . '</h2>';
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
@@ -799,7 +973,7 @@ final class SettingsPage {
 		/* translators: %s: section name */
 		echo '<p>' . esc_html( sprintf( __( 'Only the section "%s" is reset to the defaults. Other sections and existing forms keep their values.', 'form-captain' ), $label ) ) . '</p>';
 		if ( 'privacy' === $tab ) {
-			echo '<p class="fc-warning">' . esc_html__( 'Resetting sets the retention to 12 months and disables data deletion on uninstall. Existing submissions are rescheduled accordingly.', 'form-captain' ) . '</p>';
+			echo '<p class="fc-warning">' . esc_html__( 'Resetting switches automatic deletion off (keep until deleted manually) and disables data deletion on uninstall. Existing submissions are rescheduled accordingly.', 'form-captain' ) . '</p>';
 		}
 		if ( 'access' === $tab ) {
 			echo '<p class="fc-warning">' . esc_html__( 'Only administrators keep access. All other roles lose their Form Captain permissions.', 'form-captain' ) . '</p>';

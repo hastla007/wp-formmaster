@@ -202,6 +202,7 @@ final class EditorPage {
 			'subject_required'               => __( 'Please enter a subject.', 'form-captain' ),
 			'invalid_page'                   => __( 'Choose a published page.', 'form-captain' ),
 			'invalid_email'                  => __( 'Invalid email address.', 'form-captain' ),
+			'invalid_retention'              => \FormCaptain\Settings\RetentionPeriod::error_message(),
 			'invalid_action'                 => __( 'Invalid action.', 'form-captain' ),
 			'invalid_action_key'             => __( 'Invalid action.', 'form-captain' ),
 			'connector_not_found'            => __( 'This action is no longer available.', 'form-captain' ),

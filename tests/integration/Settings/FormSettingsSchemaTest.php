@@ -55,7 +55,7 @@ final class FormSettingsSchemaTest extends TestCase {
 				'confirmation'      => array( 'type' => 'page', 'page_id' => 999999, 'message' => '   ' ),
 				'appearance'        => array( 'mode' => 'fancy' ),
 				'email'             => array( 'from_address' => 'broken' ),
-				'retention'         => array( 'mode' => '5y' ),
+				'retention'         => array( 'mode' => 'forever' ),
 				'unknown'           => 'dropped',
 			),
 			$fields
@@ -77,6 +77,7 @@ final class FormSettingsSchemaTest extends TestCase {
 		$this->assertSame( 'inherit', $s['appearance']['mode'] );
 		$this->assertSame( 'invalid_email', $e['email.from_address'] );
 		$this->assertSame( 'global', $s['retention']['mode'] );
+		$this->assertSame( 'invalid_retention', $e['retention.mode'] );
 		$this->assertArrayNotHasKey( 'unknown', $s );
 	}
 

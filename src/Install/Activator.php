@@ -12,6 +12,7 @@ namespace FormCaptain\Install;
 use FormCaptain\Database\Migrator;
 use FormCaptain\Jobs\Scheduler;
 use FormCaptain\Settings\Settings;
+use FormCaptain\Settings\SettingsMigrations;
 use FormCaptain\Support\Secret;
 
 final class Activator {
@@ -21,6 +22,7 @@ final class Activator {
 		Capabilities::install();
 		Secret::key( 'init' );
 		Settings::ensure_defaults();
+		SettingsMigrations::run();
 		Scheduler::schedule();
 		add_option( 'form_captain_activation_redirect', 1, '', false );
 	}
@@ -32,8 +34,10 @@ final class Activator {
 			$migrator->migrate();
 			Capabilities::install();
 			Settings::ensure_defaults();
+			SettingsMigrations::run();
 			return;
 		}
+		SettingsMigrations::run();
 		$state = get_option( Migrator::OPTION_STATE, null );
 		$error = is_array( $state ) ? (string) ( $state['error'] ?? '' ) : '';
 		if ( $migrator->installed_version() > Migrator::TARGET_VERSION ) {

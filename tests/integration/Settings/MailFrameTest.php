@@ -116,6 +116,7 @@ final class MailFrameTest extends TestCase {
 			$this->assertStringContainsString( wp_get_attachment_url( $logo ), $mail->body );
 			$this->assertStringContainsString( "-- \nMuster GmbH", str_replace( "\r\n", "\n", $mail->body ), 'text part uses a signature delimiter' );
 		}
+		$this->assertStringContainsString( '<html lang="en-US">', $mails[0]->body, 'screen readers know the language of the mail' );
 		$confirmation = array_values( array_filter( $mails, static fn( object $m ): bool => 'visitor@example.net' === $m->to[0][0] ) )[0];
 		$this->assertStringContainsString( 'Reply-To: office@example.org', $confirmation->header );
 	}

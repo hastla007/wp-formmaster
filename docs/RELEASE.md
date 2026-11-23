@@ -31,7 +31,7 @@ Jeder Punkt wird im Release-Ticket mit Datum, Person und Nachweis (Log, Screensh
 - [ ] Changelog in `readme.txt` unter `== Changelog ==` als `= x.y.z =` mit Kategorien *Neu*, *Geändert*, *Behoben*, *Sicherheit*, *Migration*. Migrationen mit Hinweis auf Dauer/Risiko; Sicherheitsfixes ohne Exploit-Details bis zur Veröffentlichung.
 - [ ] `== Upgrade Notice ==` für Releases mit Migration oder Verhaltensänderung (max. 300 Zeichen).
 - [ ] Neue/geänderte Schemamigration: Migrationsschritt ist idempotent, hat Verify-Schritt und Integrationstest (siehe Abschnitt 4); Wiederherstellungsweg für irreversible Schritte ist in Abschnitt 3.5 dieses Dokuments für die Version eingetragen, **bevor** das Release gebaut wird (P9-13).
-- [ ] Übersetzungen: POT neu erzeugt, de_DE/de_AT vollständig (P6-07).
+- [ ] Übersetzungen: POT neu erzeugt, de_DE/de_AT (du) und de_DE_formal/de_CH (Sie) vollständig, MO und JSON neu (P6-07, `TranslationCatalogsTest`).
 
 ### 2.2 Qualitätsprüfungen (lokal und CI grün)
 

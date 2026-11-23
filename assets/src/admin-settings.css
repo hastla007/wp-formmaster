@@ -8,7 +8,8 @@
 .fc-policy-text { max-width: 760px; background: #f6f7f7; padding: 12px; border-left: 4px solid #c3c4c7; margin: 0; }
 .fc-reset { margin-top: 24px; max-width: 760px; }
 .fc-reset summary { cursor: pointer; font-weight: 600; }
-.fc-table-scroll { overflow-x: auto; max-width: 100%; }
+.fc-table-scroll { overflow-x: auto; max-width: 100%; position: relative; }
+.fc-settings select, .fc-settings input[type="file"] { max-width: 100%; }
 .fc-role-matrix td, .fc-role-matrix th { text-align: center; vertical-align: middle; }
 .fc-role-matrix th[scope="row"] { text-align: left; }
 .fc-status-table th { width: 220px; }

@@ -182,6 +182,7 @@ final class DoubleOptInTest extends FrontendTestCase {
 		$page = $this->doi()->page( $token, false );
 		$this->assertSame( 200, $page['status'] );
 		$this->assertStringContainsString( 'name="t" value="' . $token . '"', $page['html'] );
+		$this->assertStringStartsWith( '<main><h1>', $page['html'], 'the page has a main landmark' );
 		$this->assertSame( 'pending', $this->entries()->find( $id )['confirmation_status'] );
 
 		$page = $this->doi()->page( $token, true );

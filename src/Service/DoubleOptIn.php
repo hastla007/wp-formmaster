@@ -267,7 +267,7 @@ final class DoubleOptIn {
 		$page  = static fn( int $status, string $html, string $redirect = '' ): array => array(
 			'status'   => $status,
 			'title'    => $title,
-			'html'     => '<h1>' . esc_html( $title ) . '</h1>' . $html,
+			'html'     => '<main><h1>' . esc_html( $title ) . '</h1>' . $html . '</main>',
 			'redirect' => $redirect,
 		);
 		if ( 'already_confirmed' === $result['code'] ) {

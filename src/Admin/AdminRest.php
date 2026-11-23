@@ -228,7 +228,15 @@ final class AdminRest {
 		if ( is_wp_error( $result ) ) {
 			return $this->error( $result );
 		}
-		return $this->form_response( (int) $request['id'] );
+		$response = $this->form_response( (int) $request['id'] );
+		$data     = (array) $response->get_data();
+		if ( ! empty( $data['form'] ) && ! empty( $result['errors'] ) ) {
+			// Values that failed the check were not stored (e.g. an end before the start); without
+			// this the editor would show the emptied field without saying why (SET-FC-P5).
+			$data['form']['errors'] = (object) array_merge( (array) $data['form']['errors'], $result['errors'] );
+			$response->set_data( $data );
+		}
+		return $response;
 	}
 
 	public function update_actions( \WP_REST_Request $request ): \WP_REST_Response {

@@ -677,8 +677,14 @@ final class FormService {
 			'from_address' => $from_address,
 		);
 
-		$retention        = (string) ( $in['retention']['mode'] ?? 'global' );
-		$out['retention'] = array( 'mode' => in_array( $retention, array( 'global', '90d', '12m', 'manual' ), true ) ? $retention : 'global' );
+		// SET-FC-01: `global` or a retention period (manual, 1d…30y); belongs into FormSettingsSchema (SET-FC-28).
+		$retention = is_scalar( $in['retention']['mode'] ?? null ) ? trim( (string) $in['retention']['mode'] ) : 'global';
+		$period    = in_array( $retention, array( '', 'global', 'inherit' ), true ) ? 'global' : \FormCaptain\Settings\RetentionPeriod::normalize( $retention );
+		if ( null === $period ) {
+			$errors['retention.mode'] = 'invalid_retention';
+			$period                   = 'global';
+		}
+		$out['retention'] = array( 'mode' => $period );
 
 		$out['actions'] = is_array( $in['actions'] ?? null ) ? array_values( $in['actions'] ) : array();
 		foreach ( array( 'template', 'template_version' ) as $keep ) {

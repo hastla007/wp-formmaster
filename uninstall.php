@@ -54,6 +54,7 @@ $form_captain_options = array(
 	'form_captain_worker_lock',
 	'form_captain_setup_steps',
 	'form_captain_retention_modes',
+	'form_captain_settings_migrations',
 	'form_captain_cleanup_failures',
 	'form_captain_last_cleanup',
 	'form_captain_last_cleanup_at',

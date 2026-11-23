@@ -14,6 +14,7 @@ use FormCaptain\Install\Capabilities;
 use FormCaptain\Mail\MailBuilder;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
+use FormCaptain\Service\RetentionService;
 use FormCaptain\Support\Clock;
 
 defined( 'ABSPATH' ) || exit;
@@ -86,7 +87,8 @@ final class EntriesListTable extends \WP_List_Table {
 			$args['status'] = $this->filters['status'];
 		}
 		if ( 'expiring' === $this->filters['status'] ) {
-			$ids = $this->entries->ids_expiring_before( Clock::plus( 14 * DAY_IN_SECONDS ), $this->filters['form_id'] );
+			$days = RetentionService::notice_days();
+			$ids  = $days > 0 ? $this->entries->ids_expiring_before( Clock::plus( $days * DAY_IN_SECONDS ), $this->filters['form_id'] ) : array();
 			if ( ! $ids ) {
 				$ids = array( 0 );
 			}
@@ -144,12 +146,14 @@ final class EntriesListTable extends \WP_List_Table {
 				esc_html( number_format_i18n( $info[1] ) )
 			);
 		}
-		$views['expiring'] = sprintf(
-			'<a href="%s"%s>%s</a>',
-			esc_url( add_query_arg( array_filter( array( 'status' => 'expiring', 'form_id' => $this->filters['form_id'] ?: null ) ), $this->base_url ) ),
-			'expiring' === $current ? ' class="current" aria-current="page"' : '',
-			esc_html__( 'Expiring soon', 'form-captain' )
-		);
+		if ( RetentionService::notice_days() > 0 ) {
+			$views['expiring'] = sprintf(
+				'<a href="%s"%s>%s</a>',
+				esc_url( add_query_arg( array_filter( array( 'status' => 'expiring', 'form_id' => $this->filters['form_id'] ?: null ) ), $this->base_url ) ),
+				'expiring' === $current ? ' class="current" aria-current="page"' : '',
+				esc_html__( 'Expiring soon', 'form-captain' )
+			);
+		}
 		return $views;
 	}
 
@@ -244,8 +248,9 @@ final class EntriesListTable extends \WP_List_Table {
 
 	/** @param array<string,mixed> $item */
 	protected function column_submitted( $item ): string {
-		$out = esc_html( get_date_from_gmt( (string) $item['created_gmt'], get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) );
-		if ( ! empty( $item['expires_gmt'] ) && $item['expires_gmt'] <= Clock::plus( 14 * DAY_IN_SECONDS ) && ! in_array( $item['status'], array( 'trash', 'spam' ), true ) ) {
+		$out  = esc_html( get_date_from_gmt( (string) $item['created_gmt'], get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) );
+		$days = RetentionService::notice_days();
+		if ( $days > 0 && ! empty( $item['expires_gmt'] ) && $item['expires_gmt'] <= Clock::plus( $days * DAY_IN_SECONDS ) && ! in_array( $item['status'], array( 'trash', 'spam' ), true ) ) {
 			/* translators: %s: date */
 			$out .= '<br /><span class="fc-badge fc-badge-warning">' . esc_html( sprintf( __( 'Deletion on %s', 'form-captain' ), get_date_from_gmt( (string) $item['expires_gmt'], get_option( 'date_format' ) ) ) ) . '</span>';
 		}

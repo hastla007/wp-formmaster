@@ -312,7 +312,7 @@ final class EntriesPage {
 		}
 		echo '<hr class="wp-header-end" />';
 
-		$upcoming = Plugin::instance()->get( RetentionService::class )->upcoming( 14, $filters['form_id'] );
+		$upcoming = Plugin::instance()->get( RetentionService::class )->upcoming( null, $filters['form_id'] );
 		if ( $upcoming['count'] > 0 && null !== $upcoming['earliest'] ) {
 			echo '<div class="notice notice-warning"><p>' . esc_html(
 				sprintf(
@@ -789,8 +789,10 @@ final class EntriesPage {
 		echo '<tr><th scope="row">' . esc_html__( 'Period', 'form-captain' ) . '</th><td>';
 		echo '<label>' . esc_html__( 'From', 'form-captain' ) . ' <input type="date" name="date_from" /></label> <label>' . esc_html__( 'To', 'form-captain' ) . ' <input type="date" name="date_to" /></label></td></tr>';
 		echo '<tr><th scope="row">' . esc_html__( 'Format', 'form-captain' ) . '</th><td>';
-		echo '<label><input type="checkbox" name="bom" value="1" checked="checked" /> ' . esc_html__( 'Add UTF-8 byte order mark (recommended for Excel)', 'form-captain' ) . '</label><br />';
-		echo '<label>' . esc_html__( 'Separator', 'form-captain' ) . ' <select name="delimiter"><option value=",">,</option><option value=";">;</option></select></label></td></tr>';
+		// SET-FC-31: defaults from the export settings.
+		$delimiter = (string) Settings::get( 'export.delimiter' );
+		echo '<label><input type="checkbox" name="bom" value="1"' . checked( (bool) Settings::get( 'export.bom' ), true, false ) . ' /> ' . esc_html__( 'Add UTF-8 byte order mark (recommended for Excel)', 'form-captain' ) . '</label><br />';
+		echo '<label>' . esc_html__( 'Separator', 'form-captain' ) . ' <select name="delimiter"><option value=","' . selected( $delimiter, ',', false ) . '>,</option><option value=";"' . selected( $delimiter, ';', false ) . '>;</option></select></label></td></tr>';
 		echo '</tbody></table>';
 		submit_button( __( 'Download CSV', 'form-captain' ) );
 		echo '</form>';

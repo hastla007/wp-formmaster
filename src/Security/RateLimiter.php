@@ -32,11 +32,35 @@ final class RateLimiter {
 	/** form_captain_submit_v1 per form + source (RL-09). */
 	public const API_LIMIT = 120;
 
-	/** Client IP from REMOTE_ADDR only; proxies via filter `form_captain_client_ip`. */
+	/** Trusted client IP sources (SET-FC-16): setting value => $_SERVER key. */
+	public const IP_SOURCES = array(
+		'remote_addr'      => 'REMOTE_ADDR',
+		'cf_connecting_ip' => 'HTTP_CF_CONNECTING_IP',
+		'x_forwarded_for'  => 'HTTP_X_FORWARDED_FOR',
+		'x_real_ip'        => 'HTTP_X_REAL_IP',
+	);
+
+	/**
+	 * Client IP from REMOTE_ADDR or, when the operator chose one in `spam.client_ip_source`, from a
+	 * proxy header (X-Forwarded-For: first address). Falls back to REMOTE_ADDR when the header is
+	 * missing or invalid. The filter `form_captain_client_ip` still wins.
+	 */
 	public static function client_ip(): string {
-		$ip = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( (string) $_SERVER['REMOTE_ADDR'] ) ) : '';
-		$ip = (string) apply_filters( 'form_captain_client_ip', $ip );
+		$remote = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( (string) $_SERVER['REMOTE_ADDR'] ) ) : '';
+		$ip     = self::header_ip( (string) Settings::get( 'spam.client_ip_source' ) ) ?? $remote;
+		$ip     = (string) apply_filters( 'form_captain_client_ip', $ip );
 		return false !== filter_var( $ip, FILTER_VALIDATE_IP ) ? $ip : '0.0.0.0';
+	}
+
+	/** Valid IP from the configured proxy header, or null (direct address or header unusable). */
+	private static function header_ip( string $source ): ?string {
+		$key = self::IP_SOURCES[ $source ] ?? 'REMOTE_ADDR';
+		if ( 'REMOTE_ADDR' === $key || ! isset( $_SERVER[ $key ] ) || ! is_string( $_SERVER[ $key ] ) ) {
+			return null;
+		}
+		$value = sanitize_text_field( wp_unslash( $_SERVER[ $key ] ) );
+		$value = trim( explode( ',', $value )[0] );
+		return false !== filter_var( $value, FILTER_VALIDATE_IP ) ? $value : null;
 	}
 
 	/** IPv6 shortened to /64, IPv4 kept. */

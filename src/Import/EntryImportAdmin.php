@@ -250,11 +250,7 @@ final class EntryImportAdmin {
 	/** @param array<string,mixed> $form */
 	private function privacy_notice( array $form ): void {
 		$mode  = RetentionService::mode_for_form( $form );
-		$label = array(
-			'90d'    => __( '90 days', 'form-captain' ),
-			'12m'    => __( '12 months', 'form-captain' ),
-			'manual' => __( 'no automatic deletion', 'form-captain' ),
-		)[ $mode ] ?? $mode;
+		$label = 'manual' === $mode ? __( 'no automatic deletion', 'form-captain' ) : \FormCaptain\Settings\RetentionPeriod::label( $mode );
 		echo '<div class="notice notice-info inline"><p><strong>' . esc_html__( 'Data protection', 'form-captain' ) . '</strong></p><ul class="ul-disc">';
 		echo '<li>' . esc_html__( 'You are responsible for the legal basis of the imported data (for example consent given at the time). Only import data you are allowed to keep and process.', 'form-captain' ) . '</li>';
 		echo '<li>' . esc_html(

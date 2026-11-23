@@ -101,6 +101,57 @@ final class PrivacyIntegrationTest extends TestCase {
 		$this->assertTrue( $this->privacy()->export( 'not-an-email' )['done'] );
 	}
 
+	/** SET-FC-P4-02: storage period, reference number, withdrawal and extension values in the access export. */
+	public function test_export_names_storage_period_withdrawal_and_extension_values(): void {
+		$form    = $this->form();
+		$kept    = $this->entry( $form, 'kept@example.org', array( 'entry_number' => 'K-2026-0007', 'expires_gmt' => '2027-11-23 10:00:00' ) );
+		$this->entries()->update( $kept, array( 'consent_withdrawn_gmt' => '2026-11-20 09:30:00' ) );
+		$pending = $this->entry( $form, 'pending@example.org', array( 'expires_gmt' => '2027-11-23 10:00:00', 'confirmation_status' => 'pending', 'unconfirmed_until_gmt' => '2026-11-30 10:00:00' ) );
+		$manual  = $this->entry( $form, 'manual@example.org' );
+
+		$pairs = array_column( $this->privacy()->export_item( $this->entries()->find( $kept ) ), 'value', 'name' );
+		$this->assertSame( 'K-2026-0007', $pairs['Reference number'] );
+		$this->assertSame( get_date_from_gmt( '2027-11-23 10:00:00', get_option( 'date_format' ) ), $pairs['Scheduled deletion'] );
+		$this->assertArrayHasKey( 'Consent withdrawn', $pairs );
+
+		$pairs = array_column( $this->privacy()->export_item( $this->entries()->find( $pending ) ), 'value', 'name' );
+		$this->assertSame( get_date_from_gmt( '2026-11-30 10:00:00', get_option( 'date_format' ) ), $pairs['Scheduled deletion'], 'unconfirmed entries go earlier' );
+		$this->assertArrayNotHasKey( 'Consent withdrawn', $pairs );
+
+		$this->entries()->update( $manual, array( 'expires_gmt' => null ) );
+		$pairs = array_column( $this->privacy()->export_item( $this->entries()->find( $manual ) ), 'value', 'name' );
+		$this->assertStringContainsString( 'deleted manually', $pairs['Scheduled deletion'] );
+
+		// Extension field types show their readable value (e.g. a file name), not the internal reference.
+		$types = static fn( array $t ): array => $t + array( 'demo_file' => array( 'label' => 'Demo file' ) );
+		$shown = static fn( $display, $field, $value ) => 'demo_file' === ( $field['type'] ?? '' ) ? 'lebenslauf.pdf (12 KB)' : $display;
+		add_filter( 'form_captain_field_types_v1', $types );
+		add_filter( 'form_captain_display_value_v1', $shown, 10, 3 );
+		\FormCaptain\Domain\Fields\FieldTypes::reset();
+		try {
+			$upload_form = $this->create_published_form(
+				array(
+					array( 'id' => 'f_pmail1', 'type' => 'email', 'key' => 'email', 'label' => 'E-Mail' ),
+					array( 'id' => 'f_pfile1', 'type' => 'demo_file', 'key' => 'cv', 'label' => 'Lebenslauf' ),
+				)
+			);
+			$id = $this->entries()->insert(
+				array(
+					'form_id'         => $upload_form['id'],
+					'form_version_id' => $upload_form['published_version_id'],
+					'request_key'     => hash( 'sha256', uniqid( '', true ) ),
+				)
+			);
+			$this->entries()->insert_values( $id, array( 'f_pmail1' => 'file@example.org', 'f_pfile1' => 'upload:0123456789abcdef0123456789abcdef' ) );
+			$pairs = array_column( $this->privacy()->export_item( $this->entries()->find( $id ) ), 'value', 'name' );
+			$this->assertSame( 'lebenslauf.pdf (12 KB)', $pairs['Lebenslauf'] );
+		} finally {
+			remove_filter( 'form_captain_field_types_v1', $types );
+			remove_filter( 'form_captain_display_value_v1', $shown, 10 );
+			\FormCaptain\Domain\Fields\FieldTypes::reset();
+		}
+	}
+
 	public function test_export_matches_logged_in_user_and_paginates(): void {
 		$form = $this->form();
 		$user = self::factory()->user->create( array( 'user_email' => 'member@example.org' ) );

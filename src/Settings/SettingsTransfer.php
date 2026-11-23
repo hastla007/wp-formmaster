@@ -134,6 +134,9 @@ final class SettingsTransfer {
 					$out['skipped'][] = $path;
 					continue;
 				}
+				if ( 'bool' === $defs[ $path ]['type'] && is_string( $value ) && in_array( strtolower( trim( $value ) ), array( '0', 'false', 'no', 'off', '' ), true ) ) {
+					$value = false; // Hand-edited files: "false" must not switch a setting on.
+				}
 				$input[ (string) $key ] = is_bool( $value ) ? ( $value ? '1' : '' ) : $value;
 			}
 			$input['retention_confirm'] = ! empty( $confirm['retention_confirm'] );

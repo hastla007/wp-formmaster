@@ -405,4 +405,15 @@ final class SettingsAuditTest extends TestCase {
 		Settings::set_group( 'spam', array( 'rate_limit' => 9 ) );
 		$this->assertSame( array( 'spam.rate_limit' ), array_column( ChangeLog::latest(), 'key' ) );
 	}
+
+	public function test_import_reads_false_written_as_text_as_off(): void {
+		$data                                 = SettingsTransfer::export();
+		$data['settings']['spam']['honeypot'] = 'false';
+		$data['settings']['export']['bom']    = 'no';
+		$data['settings']['general']['show_pro_hints'] = 'true';
+		SettingsTransfer::import( (string) wp_json_encode( $data ) );
+		$this->assertFalse( Settings::get( 'spam.honeypot' ) );
+		$this->assertFalse( Settings::get( 'export.bom' ) );
+		$this->assertTrue( Settings::get( 'general.show_pro_hints' ) );
+	}
 }

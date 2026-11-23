@@ -1,4 +1,9 @@
-# Form-Workflowvertrag v1 (P8-17 … P8-22)
+# Form-Workflowvertrag v1 (P8-17 … P8-22) — zurückgezogen, nicht normativ
+
+> **Zurückgezogen (Inhaberentscheidung F-12 vom 16.11.2026, analog D13 für Voucher/Affiliate).** Dieses Dokument ist **kein Vertrag** und nicht normativ. Normativ für Workflows der Suite ist allein die Suite-Spezifikation `docs/SPEC-suite-events.md` im Repository `wp-workflowmaster`; der Katalog `form.*` kommt dort als MINOR-Version der Spezifikation vor dem ersten Release. Bis dahin veröffentlicht Form Captain keinen eigenen Suite-/Workflow-Vertrag.
+>
+> - Die Übergabe von Mails an einen Workflow (Filter `form_captain_mail_handoff`, ehemals §4) ist **entfernt** (D10: Kerne behalten ihre Mails, keine Übergabe). Form Captain versendet Admin-Mail und Bestätigung immer selbst.
+> - Verbindlich bleiben unabhängig davon der öffentliche Form-Captain-Vertrag in [`spec/api-v1.md`](spec/api-v1.md) (Events, Read-API, `FORM_CAPTAIN_CONTRACT_VERSION`) und der Connector-Vertrag in [`CONNECTORS.md`](CONNECTORS.md). Die folgenden Abschnitte beschreiben nur noch, wie der Bestand darauf abgebildet ist (Hintergrund).
 
 Der Workflowvertrag führt außer `form_captain_consent_withdrawn_v1` (additiv, Produktentscheidung #4) **keine zusätzlichen Events** ein. Alle Workflow-Zustände werden auf die vorhandenen, nach Commit gefeuerten Events aus [`spec/api-v1.md`](spec/api-v1.md) und auf die Outbox abgebildet. Neue Events kämen nur additiv in einer Minor-Version.
 
@@ -43,9 +48,9 @@ Testlauf (`test_mode`) aller Kernaktionen ist ohne Nebenwirkungen. Bewusst **nic
 
 Tests: `tests/integration/Workflow/CoreActionsTest.php`.
 
-## 4. Native Mail bleibt Standard (P8-20)
+## 4. Native Mail bleibt Standard (P8-20, geändert durch F-12)
 
-Admin-Mail und Bestätigung laufen als eigene Jobs (`mail.admin`, `mail.confirmation`). Eine Erweiterung kann eine einzelne Nachricht explizit übernehmen über den internen Filter `form_captain_mail_handoff` (Rückgabe `'handled'`); jede andere Rückgabe → Fallback `wp_mail()`. Dedupe über den Idempotency-Key des Mail-Jobs. Connector-Fehler beeinflussen die native Mail nicht.
+Admin-Mail und Bestätigung laufen als eigene Jobs (`mail.admin`, `mail.confirmation`) und werden immer vom Kern über `wp_mail()` versendet. Eine Übergabe einzelner Nachrichten an einen Workflow gibt es **nicht** (der frühere interne Filter `form_captain_mail_handoff` ist entfernt, F-12/D10). Dedupe über den Idempotency-Key des Mail-Jobs. Connector-Fehler beeinflussen die native Mail nicht.
 
 ## 5. Diagnose (P8-21)
 

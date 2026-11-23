@@ -20,7 +20,7 @@ SemVer: Minor = additive Erweiterungen (neue optionale Payload-Schlüssel, neue 
 
 Adapter registrieren sich ausschließlich in oder nach `form_captain_loaded_v1`.
 
-## Ereignisse (alle nach Commit)
+## Ereignisse (alle nach Commit; Ausnahme Savepoint-Modus, siehe unten)
 
 | Action | Argumente |
 |---|---|
@@ -34,6 +34,10 @@ Adapter registrieren sich ausschließlich in oder nach `form_captain_loaded_v1`.
 | `form_captain_notification_failed_v1` | `int $entry_id`, `int $form_id`, `string $job_type`, `string $error_code` |
 
 `form_captain_entry_created_v1` wird **nicht** für Spam gefeuert.
+
+**Zeitpunkt „nach Commit“ und Savepoint-Modus (FC-2 b).** Alle Ereignisse feuern nach dem `COMMIT` der eigenen Transaktion oder nach Schreibvorgängen im Autocommit. Ausnahme: Ruft Servercode `form_captain_submit_v1()` innerhalb einer **eigenen, noch offenen Transaktion** auf (`@@autocommit = 0`), öffnet Form Captain keine Transaktion, sondern setzt einen Savepoint (`SAVEPOINT fc_submission`, `src/Service/SubmissionService.php`, `begin()`/`commit()`). `form_captain_entry_created_v1` feuert dann nach `RELEASE SAVEPOINT`, also **vor** dem Commit des Aufrufers. Rollt der Aufrufer danach zurück, gibt es den Eintrag nicht mehr, obwohl das Ereignis gefeuert hat. Das Verhalten ist so gewollt und bleibt (kein Aufschieben bis zum äußeren Commit; WordPress hat dafür keinen Hook). Folgen für Listener: Wer im selben Aufruf über `$wpdb` schreibt (z. B. der Consumer der Suite), schreibt in dieselbe Transaktion und wird mit ihr zurückgerollt; wer etwas außerhalb der Datenbank tut (HTTP, Mail), muss damit rechnen, dass der Eintrag nie bestätigt wird, und den Eintrag vor der Wirkung gegenlesen. Der Suite-Katalog nennt das in `wp-workflowmaster` `docs/SPEC-suite-events.md`, R-4.21. Ohne äußere Transaktion (Formular im Frontend, REST, Import) tritt der Fall nicht auf. Der Filter `form_captain_db_in_outer_transaction` (Savepoints in `EntryRepository`, nur für Testumgebungen) wirkt gleich.
+
+**Suite-Katalog.** Die Abbildung dieser Ereignisse auf Suite-Ereignisse `form.*` (Namen, erlaubte Felder, freigegebene Antworten nur über `form_captain_event_value_allowlist_v1`) steht allein in der Suite-Spezifikation (`wp-workflowmaster`, `docs/SPEC-suite-events.md`, Abschnitt 4.6, ab Version 1.0.0-draft.7). Form Captain veröffentlicht keinen eigenen Suite-Vertrag (F-12, FC-3).
 
 ### Entry-Event-Payload
 

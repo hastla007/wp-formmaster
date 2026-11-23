@@ -28,16 +28,16 @@ Gespeichert als eine Option `form_captain_settings` (Array, autoload). Jede Opti
 | E-Mail | `email.footer_text` | text ≤ 2000, Zeilen bleiben | leer | Fußzeile/Pflichtangaben in allen Mails; Filter `form_captain_mail_footer_v1` gewinnt; Rechtsprüfung |
 | E-Mail | `email.logo_id` | attachment (Bild), 0 = keins | 0 | Logo oben in HTML-Mails |
 | Datenschutz | `privacy.retention` | Zeitraum `<Zahl><d\|m\|y>` oder `manual` | `manual` (S9; bestehende Installationen behalten ihren Wert, ohne gespeicherten Wert `12m`) | SET-FC-01; Website-Zustand mahnt, solange keine Frist gesetzt ist (Test `form_captain_retention`); 1 Tag – 30 Jahre; Kalenderrechnung (12m = 1y); Änderung braucht Bestätigung; Filter `form_captain_retention_seconds_v1` gewinnt |
-| Datenschutz | `privacy.trash_days` | int 1–90 | 30 | |
+| Datenschutz | `privacy.trash_days` | int 1–90 | 30 | Filter `form_captain_trash_days_v1` gewinnt (1–365) |
 | Datenschutz | `privacy.delete_data_on_uninstall` | bool | false | erfordert Bestätigungstext |
-| Datenschutz | `privacy.policy_page_hint` | bool | true | Link auf WP-Datenschutzseite in Consent |
+| Datenschutz | `privacy.policy_page_hint` | bool | true | Vorbelegung „Datenschutzerklärung verlinken“ für neue Einwilligungsfelder (Editor und Formularvorlagen); bestehende Felder behalten ihre Wahl |
 | Datenschutz | `privacy.change_log_months` | int 1–120 | 12 | Aufbewahrung des Änderungsprotokolls; Filter `form_captain_change_log_months_v1` gewinnt |
 | Datenschutz | `privacy.grace_days` | int 0–90 | 14 | SET-FC-08; Schonfrist nach Verkürzung; Filter `form_captain_retention_grace_days_v1` (0–365) gewinnt |
 | Datenschutz | `privacy.expiry_notice_days` | int 0–90 | 14 | SET-FC-08; „läuft bald ab“; 0 = aus; Filter `form_captain_expiry_notice_days_v1` gewinnt |
 | Datenschutz | `privacy.log_days` | int 1–365 | 30 | SET-FC-09; Protokoll-Aufbewahrung; Filter `form_captain_log_days_v1` (bis 3650) gewinnt |
 | Spamschutz | `spam.honeypot` | bool | true | |
-| Spamschutz | `spam.min_seconds` | int 0–60 | 3 | |
-| Spamschutz | `spam.rate_limit` | int 1–100 | 5 | je Zeitfenster / Formular / IP-Hash |
+| Spamschutz | `spam.min_seconds` | int 0–60 | 3 | Filter `form_captain_spam_limits_v1` (Schlüssel `min_seconds`) gewinnt |
+| Spamschutz | `spam.rate_limit` | int 1–100 | 5 | je Zeitfenster / Formular / IP-Hash; Filter `form_captain_spam_limits_v1` (Schlüssel `rate_limit`) gewinnt |
 | Spamschutz | `spam.blocklist` | text ≤ 10 000 | leer | ein Begriff/Domain je Zeile |
 | Spamschutz | `spam.captcha_provider` | enum `none`/`pow`/Erweiterung | `none` | `pow` = eingebauter Proof of Work (docs/spam-proof-of-work.md); externe Anbieter via Erweiterung mit Bestätigung |
 | Spamschutz | `spam.client_ip_source` | enum `remote_addr`/`cf_connecting_ip`/`x_forwarded_for`/`x_real_ip` | `remote_addr` | SET-FC-16; Kopfzeile nur hinter dem Dienst wählen (Warnhinweis); ungültige/fehlende Kopfzeile → `REMOTE_ADDR`; Filter `form_captain_client_ip` gewinnt |
@@ -67,7 +67,7 @@ Neue Formularwerte: einen Eintrag in `definitions()` im passenden Abschnitt erg�
   1. **Rückrufe** (Form der Gruppe A): `type` (`bool|int|enum|string|text|email|hex`), `label`, `help`, je nach Typ `options`/`min`/`max`/`max_length`, `get()` und `set( $wert )`, optional `validate( $wert ): ?string` (Fehlermeldung) und `default` (für „Bereich zurücksetzen“). Der Kern prüft den Typ wie bei eigenen Werten, ruft `validate` und speichert über `set`.
   2. **Speicherort** (Form von Form Captain Pro): `owner`, `label`, `help`, `type` (`checkbox|number|text|textarea|select|multiselect|media|confirm` oder ein Kerntyp; `text` = einzeilig), `default`, `value` (aktueller Wert; fehlt er, liest der Kern den Speicherort), optional `sanitize( $roh, $gesendet ): mixed|WP_Error` und `storage` = {`option`, `key`}: Der Kern schreibt den sauberen Wert in diese Option unter diesem Schlüssel (nie in `form_captain_settings`; ein solches Feld wird verworfen). Ohne `sanitize` prüft der Kern selbst (`min`/`max`, `max_length`, `options`). `confirm` = Schalter mit Bestätigungswort (`DELETE`/`LÖSCHEN`): das Wort als Wert oder Haken plus Wort unter `<id>_confirm`; `multiselect` = Liste erlaubter Optionen.
 
-  Die Felder erscheinen nach den Kernfeldern des Reiters als `settings[ext][<id>]`; Fehler unter `ext.<id>`. Nicht angehakte Kästchen und leere Mehrfachauswahl werden als „aus“ bzw. leere Liste gespeichert. Speicherort und Werte gehören dem Add-on; Kern-Export, -Import und -CLI enthalten sie nicht. Änderungen und Zurücksetzen über die Einstellungsseite stehen im Änderungsprotokoll (Schlüssel = Feld-ID, SET-FC-P4-03); ein Feld mit `secret => true` (oder einer ID wie `…token`, `…secret`, `…api_key`) erscheint dort nur maskiert.
+  Die Felder erscheinen nach den Kernfeldern des Reiters als `settings[ext][<id>]`; Fehler unter `ext.<id>`. Nicht angehakte Kästchen und leere Mehrfachauswahl werden als „aus“ bzw. leere Liste gespeichert. Speicherort und Werte gehören dem Add-on. Jede Änderung und jedes Zurücksetzen (Einstellungsseite, Import, WP-CLI) steht im Änderungsprotokoll (Schlüssel = Feld-`id`, SET-FC-P1-02, SET-FC-P4-03); ein Feld mit `secret => true` (oder einer ID wie `…token`, `…secret`, `…api_key`) erscheint dort nur maskiert. Export/Import (`extensions`) und WP-CLI (`settings list|get|set|reset` unter der Feld-`id`) führen die Werte mit derselben Prüfung des Add-ons; nicht exportiert werden Geheimnisse, `confirm`-Schalter und Felder mit `exportable => false`. Ein eingeschalteter `confirm`-Schalter bleibt beim erneuten Speichern des Reiters ohne neues Bestätigungswort an; nur das Einschalten verlangt das Wort.
 - Eine Hinweiszeile verschwindet, sobald ein Feld mit derselben `id` angemeldet ist (gleich in welchem Reiter). IDs sind an Form Captain Pro angeglichen:
 
 | id | Hinweis | Reiter der Hinweiszeile |
@@ -89,7 +89,7 @@ Neue Formularwerte: einen Eintrag in `definitions()` im passenden Abschnitt erg�
 
 ## Änderungsprotokoll (SET-FC-15)
 
-`FormCaptain\Settings\ChangeLog` hängt an `update_option_form_captain_settings` und schreibt jede Änderung, egal über welchen Weg (Oberfläche, WP-CLI, Import, Code): Zeitpunkt (UTC), Benutzer-ID, Quelle (`ui`, `cli`, `import`, `system`), Schlüssel, alter und neuer Wert. Rollenänderungen erscheinen als `access.<rolle>.<recht>` (alt/neu `true`/`false`). Geheime Werte (`secret => true` in der Definition oder Name mit `secret`, `token`, `password`, `api_key`, `private_key`, `credential`) werden als `••••••` gespeichert, lange Werte auf 200 Zeichen gekürzt. Ablage in der Option `form_captain_settings_changelog` (nicht autoload, höchstens 1000 Einträge), Löschung nach `privacy.change_log_months` Monaten durch die tägliche Bereinigung – nicht nach 30 Tagen wie das technische Protokoll. Ansicht: Reiter *Systemstatus → Änderungsprotokoll* (letzte 50 Einträge).
+`FormCaptain\Settings\ChangeLog` hängt an `update_option_form_captain_settings` und schreibt jede Änderung, egal über welchen Weg (Oberfläche, WP-CLI, Import, Code): Zeitpunkt (UTC), Benutzer-ID, Quelle (`ui`, `cli`, `import`, `system`), Schlüssel, alter und neuer Wert. Rollenänderungen erscheinen als `access.<rolle>.<recht>` (alt/neu `true`/`false`). Geheime Werte (Kernwerte: `secret => true` in der Definition; Add-on-Felder und andere Schlüssel: Name mit `secret`, `token`, `password`, `api_key`, `private_key`, `credential` – `spam.token_minutes` ist eine Zeitgrenze und kein Geheimnis) werden als `••••••` gespeichert, lange Werte auf 200 Zeichen gekürzt. Ablage in der Option `form_captain_settings_changelog` (nicht autoload, höchstens 1000 Einträge), Löschung nach `privacy.change_log_months` Monaten durch die tägliche Bereinigung – nicht nach 30 Tagen wie das technische Protokoll. Ansicht: Reiter *Systemstatus → Änderungsprotokoll* (letzte 50 Einträge).
 
 ## Export und Import der Einstellungen (SET-FC-13)
 
@@ -100,7 +100,7 @@ Neue Formularwerte: einen Eintrag in `definitions()` im passenden Abschnitt erg�
   "keys": [ "general.show_pro_hints", "…" ], "settings": { "general": { "show_pro_hints": true }, "…": {} } }
 ```
 
-- Exportiert werden alle bedienbaren Werte aus `SettingsSchema` außer Geheimnissen (`secret` bzw. Name wie `secret`/`token`/`password`/`api_key`), internen Werten (`privacy.delete_data_confirmed_gmt`) und Werten mit `exportable => false` (`privacy.delete_data_on_uninstall` – Datenlöschung muss am Ziel immer selbst bestätigt werden). Nicht enthalten: Rollenrechte, Formulare, Einsendungen, Werte von Add-ons.
+- Exportiert werden alle bedienbaren Werte aus `SettingsSchema` außer Geheimnissen (Kernwerte mit `secret => true`), internen Werten (`privacy.delete_data_confirmed_gmt`) und Werten mit `exportable => false` (`privacy.delete_data_on_uninstall` – Datenlöschung muss am Ziel immer selbst bestätigt werden). Nicht enthalten: Rollenrechte, Formulare, Einsendungen. Werte von Add-on-Feldern stehen unter `extensions` (`id` → Wert; Format-Version bleibt 1, ältere Versionen ignorieren den Schlüssel).
 - Import in zwei Schritten: Datei hochladen (höchstens 64 KB) → Vorschau alt/neu, gemeldete Fehler und unbekannte Schlüssel (werden nicht übernommen) → „Importieren“. Jede Gruppe läuft durch `SettingsSchema::sanitize_group()`; eine geänderte Aufbewahrung und ein externer Captcha brauchen weiter ihre Bestätigung. Fehlende Schlüssel bleiben unverändert. Eine Datei mit höherer `format_version` wird abgelehnt.
 - Jede Übernahme landet im Änderungsprotokoll mit Quelle `import`.
 

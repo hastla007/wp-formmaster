@@ -5,8 +5,10 @@
  * spam.window_minutes    time window of all submission limits (default 10)
  * spam.form_total        submissions per form and window from all visitors (flood brake, default 300)
  * spam.receipts_per_hour e-mails to one visitor address per hour (confirmation, double opt-in; default 3)
+ * spam.rate_limit        submissions per form and visitor in the window (default 5)
+ * spam.min_seconds       minimum time to fill in a form, 0 = off (default 3)
  *
- * Filter `form_captain_spam_limits_v1` ( array{window_minutes:int,form_total:int,receipts_per_hour:int} )
+ * Filter `form_captain_spam_limits_v1` ( array{window_minutes:int,form_total:int,receipts_per_hour:int,rate_limit:int,min_seconds:int} )
  * wins over the settings; results are kept within the setting bounds. The older budget
  * `rate_window_seconds` of form_captain_limits_v1 still lowers the window when a site filters it.
  * The per-visitor limit across forms is `spam.global_per_ip` (SET-FC-34); RateLimiter reads it as
@@ -29,11 +31,13 @@ final class SpamLimits {
 		'window_minutes'    => array( 1, 1440 ),
 		'form_total'        => array( 10, 100000 ),
 		'receipts_per_hour' => array( 1, 50 ),
+		'rate_limit'        => array( 1, 100 ),
+		'min_seconds'       => array( 0, 60 ),
 	);
 
 	private const LEGACY_WINDOW = 600;
 
-	/** @return array{window_minutes:int,form_total:int,receipts_per_hour:int} */
+	/** @return array{window_minutes:int,form_total:int,receipts_per_hour:int,rate_limit:int,min_seconds:int} */
 	public static function all(): array {
 		$values = array();
 		foreach ( array_keys( self::BOUNDS ) as $key ) {
@@ -45,7 +49,7 @@ final class SpamLimits {
 			$value       = is_array( $filtered ) && isset( $filtered[ $key ] ) && is_numeric( $filtered[ $key ] ) ? (int) $filtered[ $key ] : $values[ $key ];
 			$out[ $key ] = max( $bounds[0], min( $bounds[1], $value ) );
 		}
-		/** @var array{window_minutes:int,form_total:int,receipts_per_hour:int} $out */
+		/** @var array{window_minutes:int,form_total:int,receipts_per_hour:int,rate_limit:int,min_seconds:int} $out */
 		return $out;
 	}
 

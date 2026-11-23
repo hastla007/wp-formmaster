@@ -104,6 +104,7 @@ final class EditorPage {
 			'autocomplete'      => self::autocomplete_options(),
 			'autocompleteTypes' => \FormCaptain\Domain\Schema\SchemaValidator::AUTOCOMPLETE_TYPES,
 			'fieldSuggestions'  => (object) \FormCaptain\Settings\CountryPresets::field_suggestions(),
+			'consentLink'       => (bool) \FormCaptain\Settings\Settings::get( 'privacy.policy_page_hint' ),
 			'proHint'           => DashboardPage::should_show_pro_hint() ? __( 'Need file uploads, multi-step forms or grouped conditions? They are available with Form Captain Pro.', 'form-captain' ) : '',
 		);
 	}

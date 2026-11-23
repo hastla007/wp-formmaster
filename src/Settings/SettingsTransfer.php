@@ -5,7 +5,10 @@
  * File: `{format, format_version, plugin_version, exported_gmt, keys[], settings{group{key}}}`.
  * Exported are all user-editable values of SettingsSchema except secrets, internal values and
  * values marked `exportable => false` (deleting data on uninstall needs its own confirmation).
- * Values of add-ons (form_captain_settings_fields_v1) are not part of the file.
+ * Values of add-on fields (form_captain_settings_fields_v1) go into `extensions{id: value}`, except
+ * secrets, confirm switches and fields with `exportable => false` (SettingsSchema::
+ * is_extension_exportable()). On import they run through the add-on's own check; ids of add-ons
+ * that are not active on the target site are reported as unknown.
  *
  * Import always runs through SettingsSchema::sanitize_group(): invalid values are reported and
  * not applied, unknown keys are reported instead of stored, a retention change and an external
@@ -46,7 +49,7 @@ final class SettingsTransfer {
 			$settings[ $def['group'] ][ $def['key'] ] = $all[ $def['group'] ][ $def['key'] ] ?? $def['default'];
 			$keys[]                                   = $path;
 		}
-		return array(
+		$out = array(
 			'format'         => self::FORMAT,
 			'format_version' => self::FORMAT_VERSION,
 			'plugin_version' => FORM_CAPTAIN_VERSION,
@@ -54,6 +57,16 @@ final class SettingsTransfer {
 			'keys'           => $keys,
 			'settings'       => $settings,
 		);
+		$extensions = array();
+		foreach ( SettingsSchema::extension_fields() as $id => $field ) {
+			if ( SettingsSchema::is_extension_exportable( $field ) ) {
+				$extensions[ $id ] = call_user_func( $field['get'] );
+			}
+		}
+		if ( $extensions ) {
+			$out['extensions'] = $extensions;
+		}
+		return $out;
 	}
 
 	public static function export_json(): string {
@@ -64,18 +77,19 @@ final class SettingsTransfer {
 	 * Parses and checks a file without saving.
 	 *
 	 * @param array{retention_confirm?:bool,captcha_confirm?:bool} $confirm
-	 * @return array{ok:bool,error:string,changes:array<string,array{0:mixed,1:mixed}>,unknown:string[],errors:array<string,string>,skipped:string[],values:array<string,array<string,mixed>>,meta:array<string,mixed>}
+	 * @return array{ok:bool,error:string,changes:array<string,array{0:mixed,1:mixed}>,unknown:string[],errors:array<string,string>,skipped:string[],values:array<string,array<string,mixed>>,extensions:array<string,mixed>,meta:array<string,mixed>}
 	 */
 	public static function preview( string $json, array $confirm = array() ): array {
 		$out = array(
-			'ok'      => false,
-			'error'   => '',
-			'changes' => array(),
-			'unknown' => array(),
-			'errors'  => array(),
-			'skipped' => array(),
-			'values'  => array(),
-			'meta'    => array(),
+			'ok'         => false,
+			'error'      => '',
+			'changes'    => array(),
+			'unknown'    => array(),
+			'errors'     => array(),
+			'skipped'    => array(),
+			'values'     => array(),
+			'extensions' => array(),
+			'meta'       => array(),
 		);
 		if ( strlen( $json ) > self::MAX_BYTES ) {
 			$out['error'] = __( 'The file is too large for a settings export.', 'form-captain' );
@@ -120,6 +134,9 @@ final class SettingsTransfer {
 					$out['skipped'][] = $path;
 					continue;
 				}
+				if ( 'bool' === $defs[ $path ]['type'] && is_string( $value ) && in_array( strtolower( trim( $value ) ), array( '0', 'false', 'no', 'off', '' ), true ) ) {
+					$value = false; // Hand-edited files: "false" must not switch a setting on.
+				}
 				$input[ (string) $key ] = is_bool( $value ) ? ( $value ? '1' : '' ) : $value;
 			}
 			$input['retention_confirm'] = ! empty( $confirm['retention_confirm'] );
@@ -134,8 +151,42 @@ final class SettingsTransfer {
 				}
 			}
 		}
+		self::preview_extensions( $data['extensions'] ?? null, $out );
 		$out['ok'] = true;
 		return $out;
+	}
+
+	/**
+	 * Checks the add-on values of a file (`extensions`) like the settings screen does.
+	 *
+	 * @param array<string,mixed> $out preview result, extended in place
+	 */
+	private static function preview_extensions( mixed $raw, array &$out ): void {
+		if ( ! is_array( $raw ) ) {
+			return;
+		}
+		$fields = SettingsSchema::extension_fields();
+		foreach ( $raw as $id => $value ) {
+			$id = (string) $id;
+			if ( ! isset( $fields[ $id ] ) ) {
+				$out['unknown'][] = sanitize_text_field( $id );
+				continue;
+			}
+			if ( ! SettingsSchema::is_extension_exportable( $fields[ $id ] ) ) {
+				$out['skipped'][] = $id;
+				continue;
+			}
+			list( $clean, $error ) = SettingsSchema::extension_check( $fields[ $id ], $value );
+			if ( null !== $error ) {
+				$out['errors'][ 'ext.' . $id ] = $error;
+				continue;
+			}
+			$before = call_user_func( $fields[ $id ]['get'] );
+			if ( $before !== $clean ) {
+				$out['changes'][ $id ]    = array( $before, $clean );
+				$out['extensions'][ $id ] = $clean;
+			}
+		}
 	}
 
 	/**
@@ -143,7 +194,7 @@ final class SettingsTransfer {
 	 * retention/captcha changes are reported and left unchanged.
 	 *
 	 * @param array{retention_confirm?:bool,captcha_confirm?:bool} $confirm
-	 * @return array{ok:bool,error:string,changes:array<string,array{0:mixed,1:mixed}>,unknown:string[],errors:array<string,string>,skipped:string[],values:array<string,array<string,mixed>>,meta:array<string,mixed>}
+	 * @return array{ok:bool,error:string,changes:array<string,array{0:mixed,1:mixed}>,unknown:string[],errors:array<string,string>,skipped:string[],values:array<string,array<string,mixed>>,extensions:array<string,mixed>,meta:array<string,mixed>}
 	 */
 	public static function import( string $json, array $confirm = array(), string $source = 'import' ): array {
 		$preview = self::preview( $json, $confirm );
@@ -156,6 +207,13 @@ final class SettingsTransfer {
 				foreach ( $preview['values'] as $group => $values ) {
 					Settings::set_group( $group, $values );
 				}
+				$fields  = SettingsSchema::extension_fields();
+				$changed = array();
+				foreach ( $preview['extensions'] as $id => $value ) {
+					call_user_func( $fields[ $id ]['set'], $value );
+					$changed[ $id ] = $preview['changes'][ $id ];
+				}
+				ChangeLog::record( $changed );
 			}
 		);
 		return $preview;

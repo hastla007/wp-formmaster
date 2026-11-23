@@ -41,8 +41,8 @@ final class SettingsTransferTest extends TestCase {
 			$this->assertFalse( \FormCaptain\Settings\SettingsSchema::is_secret( $key ), $key );
 			$this->assertDoesNotMatchRegularExpression( '/secret|password|api_?key/i', $key );
 		}
-		// SET-FC-P4-07: a duration whose name contains "token" is no secret; it is transferred and logged.
-		$this->assertContains( 'spam.token_minutes', $data['keys'] );
+		// SET-FC-P1-01, SET-FC-P4-07: a duration whose name contains "token" is no secret; it is transferred and logged.
+		$this->assertContains( 'spam.token_minutes', $data['keys'], 'a time limit, not a secret token' );
 		$this->assertTrue( \FormCaptain\Settings\SettingsSchema::is_secret( 'spam.captcha_secret_key' ), 'name heuristic still applies' );
 		ChangeLog::with_source( 'cli', static fn() => Settings::set_group( 'spam', array( 'token_minutes' => 240 ) ) );
 		$this->assertSame( '240', ChangeLog::latest()[0]['new'] );

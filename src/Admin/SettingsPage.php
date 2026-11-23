@@ -1094,7 +1094,15 @@ final class SettingsPage {
 
 		$json = get_transient( self::import_key() );
 		if ( is_string( $json ) && '' !== $json ) {
-			$p = SettingsTransfer::preview( $json );
+			// Changes as they would be with the confirmations; the checks without them say which are needed.
+			$plain = SettingsTransfer::preview( $json );
+			$p     = SettingsTransfer::preview(
+				$json,
+				array(
+					'retention_confirm' => true,
+					'captcha_confirm'   => true,
+				)
+			);
 			echo '<div class="fc-card fc-import-preview"><h3>' . esc_html__( 'Import preview', 'form-captain' ) . '</h3>';
 			if ( '' !== (string) ( $p['meta']['plugin_version'] ?? '' ) ) {
 				/* translators: 1: plugin version, 2: date */
@@ -1102,7 +1110,7 @@ final class SettingsPage {
 			}
 			if ( $p['changes'] ) {
 				echo '<table class="widefat striped"><thead><tr><th scope="col">' . esc_html__( 'Setting', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'Current value', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'New value', 'form-captain' ) . '</th></tr></thead><tbody>';
-				$defs = SettingsSchema::definitions();
+				$defs = SettingsSchema::definitions() + SettingsSchema::extension_fields();
 				foreach ( $p['changes'] as $path => $pair ) {
 					echo '<tr><td>' . esc_html( (string) ( $defs[ $path ]['label'] ?? $path ) ) . ' <code>' . esc_html( $path ) . '</code></td><td>' . esc_html( self::show_value( $pair[0] ) ) . '</td><td>' . esc_html( self::show_value( $pair[1] ) ) . '</td></tr>';
 				}
@@ -1112,9 +1120,9 @@ final class SettingsPage {
 			}
 			$needs_retention = false;
 			$needs_captcha   = false;
-			foreach ( $p['errors'] as $path => $msg ) {
-				$needs_retention = $needs_retention || 'privacy.retention' === $path;
-				$needs_captcha   = $needs_captcha || 'spam.captcha_provider' === $path;
+			foreach ( $plain['errors'] as $path => $msg ) {
+				$needs_retention = $needs_retention || ( 'privacy.retention' === $path && ! isset( $p['errors'][ $path ] ) );
+				$needs_captcha   = $needs_captcha || ( 'spam.captcha_provider' === $path && ! isset( $p['errors'][ $path ] ) );
 				echo '<p class="fc-field-error">' . esc_html( $path . ': ' . $msg ) . '</p>';
 			}
 			if ( $p['unknown'] ) {
@@ -1124,7 +1132,8 @@ final class SettingsPage {
 			echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="form_captain_import_settings"><input type="hidden" name="step" value="apply">';
 			wp_nonce_field( 'form_captain_import_settings' );
 			if ( $needs_retention ) {
-				echo '<p><label><input type="checkbox" name="retention_confirm" value="1"> ' . esc_html__( 'I understand that changing the retention period schedules the deletion of existing submissions (never sooner than 14 days after this change).', 'form-captain' ) . '</label></p>';
+				/* translators: %s: number of days */
+				echo '<p><label><input type="checkbox" name="retention_confirm" value="1"> ' . esc_html( sprintf( __( 'I understand that changing the retention period schedules the deletion of existing submissions (never sooner than %s days after this change).', 'form-captain' ), number_format_i18n( RetentionService::grace_days() ) ) ) . '</label></p>';
 			}
 			if ( $needs_captcha ) {
 				echo '<p><label><input type="checkbox" name="captcha_confirm" value="1"> ' . esc_html__( 'I have read the data flow and updated the privacy policy.', 'form-captain' ) . '</label></p>';

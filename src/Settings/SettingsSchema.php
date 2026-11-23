@@ -242,7 +242,7 @@ final class SettingsSchema {
 			'privacy.policy_page_hint'          => array(
 				'type'  => 'bool',
 				'label' => __( 'Offer a link to the privacy policy page in consent texts', 'form-captain' ),
-				'help'  => __( 'Consent fields can link to the privacy policy page that is set in WordPress under Settings → Privacy.', 'form-captain' ),
+				'help'  => __( 'Preselects "Link the privacy policy page" for new consent fields in the form editor and in form templates. Existing fields keep their own choice. The link points to the page set in WordPress under Settings → Privacy.', 'form-captain' ),
 			),
 			'privacy.change_log_months'         => array(
 				'type'  => 'int',
@@ -638,11 +638,10 @@ final class SettingsSchema {
 				}
 				$input[ $id ] = 'multiselect' === $type ? array() : '0';
 			}
-			list( $value, $error ) = self::check_extension_value( $field, $input[ $id ], $input );
-			if ( null === $error && is_callable( $field['validate'] ?? null ) ) {
-				$res   = call_user_func( $field['validate'], $value );
-				$error = is_string( $res ) && '' !== $res ? $res : null;
+			if ( 'confirm' === $type && self::confirm_stays_on( $field, $input[ $id ], $input ) ) {
+				continue; // Already confirmed and still ticked: no new confirmation word needed.
 			}
+			list( $value, $error ) = self::extension_check( $field, $input[ $id ], $input );
 			if ( null !== $error ) {
 				$errors[ 'ext.' . $id ] = $error;
 				continue;
@@ -658,6 +657,49 @@ final class SettingsSchema {
 			'changed' => $changed,
 			'errors'  => $errors,
 		);
+	}
+
+	/**
+	 * Full check of one add-on value: the add-on's `sanitize` or the core check, then `validate`.
+	 * Used by the settings screen, the settings import and WP-CLI.
+	 *
+	 * @param array<string,mixed> $field     normalized field from extension_fields()
+	 * @param array<string,mixed> $submitted other submitted values (confirmation word as `<id>_confirm`)
+	 * @return array{0:mixed,1:?string} [value, error message]
+	 */
+	public static function extension_check( array $field, mixed $raw, array $submitted = array() ): array {
+		list( $value, $error ) = self::check_extension_value( $field, $raw, $submitted );
+		if ( null === $error && is_callable( $field['validate'] ?? null ) ) {
+			$res   = call_user_func( $field['validate'], $value );
+			$error = is_string( $res ) && '' !== $res ? $res : null;
+		}
+		return array( $value, $error );
+	}
+
+	/**
+	 * Whether an add-on value goes into the settings export (SET-FC-P1): not for secrets (by name),
+	 * not for confirm switches (deleting data must be confirmed on the target site) and not when
+	 * the field says `exportable => false`.
+	 *
+	 * @param array<string,mixed> $field
+	 */
+	public static function is_extension_exportable( array $field ): bool {
+		return 'confirm' !== $field['type'] && ! self::is_secret( (string) $field['id'] ) && false !== ( $field['exportable'] ?? true ) && empty( $field['secret'] );
+	}
+
+	/**
+	 * True when a confirm switch is on and the form sends the ticked box again without the word
+	 * (like privacy.delete_data_on_uninstall: the word is only needed to switch it on).
+	 *
+	 * @param array<string,mixed> $field
+	 * @param array<string,mixed> $submitted
+	 */
+	private static function confirm_stays_on( array $field, mixed $raw, array $submitted ): bool {
+		if ( true !== call_user_func( $field['get'] ) || ! is_scalar( $raw ) || ! in_array( strtolower( trim( (string) $raw ) ), array( '1', 'on', 'yes', 'true' ), true ) ) {
+			return false;
+		}
+		$word = $submitted[ $field['id'] . '_confirm' ] ?? '';
+		return ! is_string( $word ) || '' === trim( $word );
 	}
 
 	/**
@@ -936,12 +978,16 @@ final class SettingsSchema {
 	/**
 	 * Secret values (keys, passwords, tokens) are masked in the change log and never exported.
 	 * A definition can mark itself with `secret => true`; names that look like secrets count too,
-	 * unless the definition says `secret => false` (e.g. spam.token_minutes, a duration).
+	 * unless the definition says `secret => false` (e.g. spam.token_minutes, a duration, SET-FC-P1-01,
+	 * SET-FC-P4-07). An add-on field (by its ID) counts when it says `secret => true`.
 	 */
 	public static function is_secret( string $path ): bool {
 		$def = self::definitions()[ $path ] ?? null;
 		if ( is_array( $def ) && array_key_exists( 'secret', $def ) ) {
 			return (bool) $def['secret'];
+		}
+		if ( ! is_array( $def ) && ! empty( self::extension_fields()[ $path ]['secret'] ) ) {
+			return true;
 		}
 		return (bool) preg_match( '/secret|token|password|passwd|api_?key|private_?key|credential/i', $path );
 	}

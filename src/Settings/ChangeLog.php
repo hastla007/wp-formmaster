@@ -76,6 +76,7 @@ final class ChangeLog {
 	public static function on_update( mixed $old, mixed $new ): void {
 		$old     = is_array( $old ) ? $old : array();
 		$new     = is_array( $new ) ? $new : array();
+		$defs    = SettingsSchema::definitions();
 		$changes = array();
 		foreach ( array_unique( array_merge( array_keys( $old ), array_keys( $new ) ) ) as $group ) {
 			$o = is_array( $old[ $group ] ?? null ) ? $old[ $group ] : array();
@@ -83,8 +84,12 @@ final class ChangeLog {
 			foreach ( array_unique( array_merge( array_keys( $o ), array_keys( $n ) ) ) as $key ) {
 				$before = $o[ $key ] ?? null;
 				$after  = $n[ $key ] ?? null;
-				if ( $before !== $after ) {
-					$changes[ $group . '.' . $key ] = array( $before, $after );
+				$path = $group . '.' . $key;
+				// Not a change by anyone: a new key first written with its default, or a key that no longer exists.
+				$filled  = null === $before && isset( $defs[ $path ] ) && $after === $defs[ $path ]['default'];
+				$dropped = null === $after && ! isset( $defs[ $path ] );
+				if ( $before !== $after && ! $filled && ! $dropped ) {
+					$changes[ $path ] = array( $before, $after );
 				}
 			}
 		}

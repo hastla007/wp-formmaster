@@ -21,7 +21,6 @@ use FormCaptain\Security\RateLimiter;
 use FormCaptain\Security\SignedContext;
 use FormCaptain\Security\SubmissionToken;
 use FormCaptain\Service\SubmissionService;
-use FormCaptain\Settings\Settings;
 use FormCaptain\Support\Errors;
 use FormCaptain\Support\Limits;
 use FormCaptain\Support\Logger;
@@ -137,7 +136,7 @@ final class RestController {
 			'token'         => $issued['token'],
 			'issued_at'     => $issued['issued_at'],
 			'expires_at'    => $issued['expires_at'],
-			'min_submit_at' => $issued['issued_at'] + max( 0, (int) Settings::get( 'spam.min_seconds' ) ),
+			'min_submit_at' => $issued['issued_at'] + \FormCaptain\Security\SpamLimits::get( 'min_seconds' ),
 			'request_id'    => Logger::correlation_id(),
 		);
 		$purpose = $request->get_param( 'ctx_purpose' );

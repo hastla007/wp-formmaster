@@ -85,6 +85,15 @@ final class RetentionService {
 	}
 
 	/**
+	 * Days submissions stay in the trash or spam before they are deleted permanently: setting
+	 * privacy.trash_days (1–90), filter `form_captain_trash_days_v1` wins (S2; kept within 1–365).
+	 */
+	public static function trash_days(): int {
+		$days = (int) apply_filters( 'form_captain_trash_days_v1', (int) Settings::get( 'privacy.trash_days' ) );
+		return max( 1, min( 365, $days ) );
+	}
+
+	/**
 	 * Days before the automatic deletion from which submissions are marked as "expiring":
 	 * setting privacy.expiry_notice_days (0 = no notice), filter `form_captain_expiry_notice_days_v1` wins.
 	 */
@@ -171,7 +180,7 @@ final class RetentionService {
 		$failures = get_option( self::OPTION_FAILURES, array() );
 		$failures = is_array( $failures ) ? $failures : array();
 		$skip     = array();
-		$cutoff   = Clock::plus( -max( 1, (int) Settings::get( 'privacy.trash_days' ) ) * DAY_IN_SECONDS );
+		$cutoff   = Clock::plus( -self::trash_days() * DAY_IN_SECONDS );
 
 		foreach ( array( 'expired', 'trash', 'unconfirmed' ) as $kind ) {
 			while ( true ) {

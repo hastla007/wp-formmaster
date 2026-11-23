@@ -5580,7 +5580,7 @@ msgid "Offer a link to the privacy policy page in consent texts"
 msgstr ""
 
 #: src/Settings/SettingsSchema.php:245
-msgid "Consent fields can link to the privacy policy page that is set in WordPress under Settings → Privacy."
+msgid "Preselects \"Link the privacy policy page\" for new consent fields in the form editor and in form templates. Existing fields keep their own choice. The link points to the page set in WordPress under Settings → Privacy."
 msgstr ""
 
 #: src/Settings/SettingsSchema.php:251

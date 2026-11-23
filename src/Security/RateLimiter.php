@@ -141,7 +141,7 @@ final class RateLimiter {
 	 * @return array{allowed:bool,retry_after:int}
 	 */
 	public function check_submission( int $form_id, string $ip ): array {
-		$per_form = max( 1, min( 100, (int) Settings::get( 'spam.rate_limit' ) ) );
+		$per_form = SpamLimits::get( 'rate_limit' );
 		$checks   = array(
 			array( self::ip_bucket( 'submit', $form_id, $ip ), $per_form ),
 			array( self::ip_bucket( 'submit_global', 0, $ip ), Limits::get( 'rate_global_per_ip' ) ),

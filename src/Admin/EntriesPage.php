@@ -451,7 +451,7 @@ final class EntriesPage {
 			if ( ! empty( $field['sensitive'] ) ) {
 				$marks .= ' <span class="fc-badge">' . esc_html__( 'Sensitive', 'form-captain' ) . '</span>';
 			}
-			$value = array_key_exists( $field['id'], $values ) ? MailBuilder::display_value( $field, $values[ $field['id'] ] ) : '';
+			$value = array_key_exists( $field['id'], $values ) ? MailBuilder::display_value( $field, $values[ $field['id'] ], true ) : '';
 			echo '<tr><th scope="row">' . esc_html( $label ) . $marks . '</th><td>' . ( '' !== $value ? nl2br( esc_html( $value ) ) : '<span class="description">&mdash;</span>' ) . '</td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $marks is built from escaped parts.
 		}
 		foreach ( $values as $field_id => $value ) {

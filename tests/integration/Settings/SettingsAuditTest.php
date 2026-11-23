@@ -347,4 +347,41 @@ final class SettingsAuditTest extends TestCase {
 		$this->assertSame( 1, \FormCaptain\Service\RetentionService::trash_days(), 'kept within the bounds' );
 		remove_all_filters( 'form_captain_trash_days_v1' );
 	}
+
+	public function test_update_from_schema_v2_keeps_the_previous_behaviour(): void {
+		// Option exactly as the version before the settings work stored it (database schema v2).
+		update_option(
+			Settings::OPTION,
+			array(
+				'general'    => array( 'setup_completed' => true, 'show_pro_hints' => true ),
+				'appearance' => array( 'mode' => 'base', 'accent_color' => '#2271b1' ),
+				'email'      => array( 'from_name' => 'Site', 'from_address' => 'mail@example.org', 'format' => 'html' ),
+				'privacy'    => array( 'retention' => '12m', 'trash_days' => 30, 'erasure_mode' => 'delete', 'delete_data_on_uninstall' => false, 'delete_data_confirmed_gmt' => '', 'policy_page_hint' => true ),
+				'spam'       => array( 'honeypot' => true, 'min_seconds' => 3, 'rate_limit' => 5, 'blocklist' => '', 'captcha_provider' => 'none' ),
+			)
+		);
+		update_option( \FormCaptain\Database\Migrator::OPTION_VERSION, 2 );
+		delete_option( \FormCaptain\Settings\SettingsMigrations::OPTION );
+		\FormCaptain\Install\Activator::maybe_upgrade();
+		Settings::flush_caches();
+
+		$this->assertSame( \FormCaptain\Database\Migrator::TARGET_VERSION, ( new \FormCaptain\Database\Migrator() )->installed_version() );
+		$this->assertSame( '12m', Settings::get( 'privacy.retention' ), 'automatic deletion stays as it was' );
+		$this->assertSame( 'base', Settings::get( 'appearance.mode' ) );
+		// New values reproduce the earlier fixed behaviour.
+		$this->assertSame( 7200, \FormCaptain\Support\Limits::get( 'token_ttl' ) );
+		$this->assertSame( 20, \FormCaptain\Support\Limits::get( 'rate_global_per_ip' ) );
+		$this->assertSame( 1000, \FormCaptain\Support\Limits::get( 'text_max' ) );
+		$this->assertSame( 10000, \FormCaptain\Support\Limits::get( 'textarea_max' ) );
+		$this->assertSame( 600, \FormCaptain\Security\SpamLimits::window_seconds() );
+		$this->assertSame( 300, \FormCaptain\Security\SpamLimits::get( 'form_total' ) );
+		$this->assertSame( 3, \FormCaptain\Security\SpamLimits::get( 'receipts_per_hour' ) );
+		$this->assertSame( 30, \FormCaptain\Support\Logger::retention_days() );
+		$this->assertSame( 14, \FormCaptain\Service\RetentionService::grace_days() );
+		$this->assertSame( 30, \FormCaptain\Service\RetentionService::trash_days() );
+		$this->assertSame( '', Settings::get( 'general.entry_number_format' ), 'no reference numbers' );
+		$this->assertSame( '', Settings::get( 'email.footer_text' ) );
+		$this->assertSame( '', Settings::get( 'appearance.custom_css' ) );
+		$this->assertSame( '.fc-mode-base{--fc-accent:#2271b1;}', \FormCaptain\Frontend\Assets::base_css(), 'base styles unchanged' );
+	}
 }

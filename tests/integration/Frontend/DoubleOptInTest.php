@@ -263,6 +263,11 @@ final class DoubleOptInTest extends FrontendTestCase {
 		$this->assertTrue( $this->plugin()->get( EntryService::class )->resend_notification( $confirmed ) );
 	}
 
+	/** SET-FC-P3-7: periods and texts of the double opt-in carry the "legal review" hint. */
+	public function test_settings_help_asks_for_a_legal_review(): void {
+		$this->assertStringContainsString( 'have them checked legally', \FormCaptain\Settings\FormSettingsSchema::definitions()['double_opt_in.enabled']['help'] );
+	}
+
 	public function test_unconfirmed_entries_are_deleted_after_the_period(): void {
 		$form      = $this->doi_form( array( 'delete_after_days' => 3 ) );
 		$pending   = (int) $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) )['entry_id'];

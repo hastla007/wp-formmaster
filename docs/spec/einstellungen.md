@@ -89,7 +89,7 @@ Neue Formularwerte: einen Eintrag in `definitions()` im passenden Abschnitt erg�
 
 ## Änderungsprotokoll (SET-FC-15)
 
-`FormCaptain\Settings\ChangeLog` hängt an `update_option_form_captain_settings` und schreibt jede Änderung, egal über welchen Weg (Oberfläche, WP-CLI, Import, Code): Zeitpunkt (UTC), Benutzer-ID, Quelle (`ui`, `cli`, `import`, `system`), Schlüssel, alter und neuer Wert. Rollenänderungen erscheinen als `access.<rolle>.<recht>` (alt/neu `true`/`false`). Geheime Werte (`secret => true` in der Definition oder Name mit `secret`, `token`, `password`, `api_key`, `private_key`, `credential`) werden als `••••••` gespeichert, lange Werte auf 200 Zeichen gekürzt. Ablage in der Option `form_captain_settings_changelog` (nicht autoload, höchstens 1000 Einträge), Löschung nach `privacy.change_log_months` Monaten durch die tägliche Bereinigung – nicht nach 30 Tagen wie das technische Protokoll. Ansicht: Reiter *Systemstatus → Änderungsprotokoll* (letzte 50 Einträge).
+`FormCaptain\Settings\ChangeLog` hängt an `update_option_form_captain_settings` und schreibt jede Änderung, egal über welchen Weg (Oberfläche, WP-CLI, Import, Code): Zeitpunkt (UTC), Benutzer-ID, Quelle (`ui`, `cli`, `import`, `system`), Schlüssel, alter und neuer Wert. Rollenänderungen erscheinen als `access.<rolle>.<recht>` (alt/neu `true`/`false`). Geheime Werte (Kernwerte: `secret => true` in der Definition; Add-on-Felder und andere Schlüssel: Name mit `secret`, `token`, `password`, `api_key`, `private_key`, `credential` – `spam.token_minutes` ist eine Zeitgrenze und kein Geheimnis) werden als `••••••` gespeichert, lange Werte auf 200 Zeichen gekürzt. Ablage in der Option `form_captain_settings_changelog` (nicht autoload, höchstens 1000 Einträge), Löschung nach `privacy.change_log_months` Monaten durch die tägliche Bereinigung – nicht nach 30 Tagen wie das technische Protokoll. Ansicht: Reiter *Systemstatus → Änderungsprotokoll* (letzte 50 Einträge).
 
 ## Export und Import der Einstellungen (SET-FC-13)
 
@@ -100,7 +100,7 @@ Neue Formularwerte: einen Eintrag in `definitions()` im passenden Abschnitt erg�
   "keys": [ "general.show_pro_hints", "…" ], "settings": { "general": { "show_pro_hints": true }, "…": {} } }
 ```
 
-- Exportiert werden alle bedienbaren Werte aus `SettingsSchema` außer Geheimnissen (`secret` bzw. Name wie `secret`/`token`/`password`/`api_key`), internen Werten (`privacy.delete_data_confirmed_gmt`) und Werten mit `exportable => false` (`privacy.delete_data_on_uninstall` – Datenlöschung muss am Ziel immer selbst bestätigt werden). Nicht enthalten: Rollenrechte, Formulare, Einsendungen, Werte von Add-ons.
+- Exportiert werden alle bedienbaren Werte aus `SettingsSchema` außer Geheimnissen (Kernwerte mit `secret => true`), internen Werten (`privacy.delete_data_confirmed_gmt`) und Werten mit `exportable => false` (`privacy.delete_data_on_uninstall` – Datenlöschung muss am Ziel immer selbst bestätigt werden). Nicht enthalten: Rollenrechte, Formulare, Einsendungen, Werte von Add-ons.
 - Import in zwei Schritten: Datei hochladen (höchstens 64 KB) → Vorschau alt/neu, gemeldete Fehler und unbekannte Schlüssel (werden nicht übernommen) → „Importieren“. Jede Gruppe läuft durch `SettingsSchema::sanitize_group()`; eine geänderte Aufbewahrung und ein externer Captcha brauchen weiter ihre Bestätigung. Fehlende Schlüssel bleiben unverändert. Eine Datei mit höherer `format_version` wird abgelehnt.
 - Jede Übernahme landet im Änderungsprotokoll mit Quelle `import`.
 

@@ -924,12 +924,14 @@ final class SettingsSchema {
 
 	/**
 	 * Secret values (keys, passwords, tokens) are masked in the change log and never exported.
-	 * A definition can mark itself with `secret => true`; names that look like secrets count too.
+	 * A core definition marks itself with `secret => true`; for other keys (add-on fields, role
+	 * permissions) names that look like secrets count.
 	 */
 	public static function is_secret( string $path ): bool {
 		$def = self::definitions()[ $path ] ?? null;
-		if ( is_array( $def ) && ! empty( $def['secret'] ) ) {
-			return true;
+		if ( is_array( $def ) ) {
+			// Core values declare it; the name check would also hit e.g. spam.token_minutes (form time limit).
+			return ! empty( $def['secret'] );
 		}
 		return (bool) preg_match( '/secret|token|password|passwd|api_?key|private_?key|credential/i', $path );
 	}

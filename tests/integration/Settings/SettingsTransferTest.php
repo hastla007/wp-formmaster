@@ -38,8 +38,9 @@ final class SettingsTransferTest extends TestCase {
 		$this->assertNotContains( 'privacy.delete_data_on_uninstall', $data['keys'] );
 		$this->assertArrayNotHasKey( 'delete_data_confirmed_gmt', $data['settings']['privacy'] );
 		foreach ( $data['keys'] as $key ) {
-			$this->assertDoesNotMatchRegularExpression( '/secret|token|password|api_?key/i', $key );
+			$this->assertDoesNotMatchRegularExpression( '/secret|password|api_?key/i', $key );
 		}
+		$this->assertContains( 'spam.token_minutes', $data['keys'], 'a time limit, not a secret token (SET-FC-P1-01)' );
 		$json = SettingsTransfer::export_json();
 		$this->assertStringNotContainsString( (string) get_option( 'form_captain_secret' ), $json );
 	}

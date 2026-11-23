@@ -29,13 +29,13 @@ Nummern beziehen sich auf die Detailed Plugin Guidelines.
 | 2 | Entwickler verantwortlich für alle Dateien | Release-ZIP per Allowlist (`bin/build-release.sh`), keine Fremdkopien | Dateiliste im Release-Ticket |
 | 3 | Stabile Version im Verzeichnis | Tags nie ändern, `Stable tag` aktuell | `RELEASE.md` 5 |
 | 4 | Lesbarer Code, keine Verschleierung | Quellen `assets/src` werden mit ausgeliefert, Build reproduzierbar, Build-Werkzeug in readme dokumentiert | Build-Hinweis in readme (Abschnitt 3) |
-| 5 | Keine Trialware, keine gesperrten Funktionen | Free hat keine Lizenzprüfung, keinen Lizenzclient, keine Limits; Pro ist separates Add-on (konzept.md 1, 7) | Code-Suche nach Lizenz-/Premium-Prüfungen im Free = 0 Treffer |
+| 5 | Keine Trialware, keine gesperrten Funktionen | Free hat keine Lizenzprüfung, keinen Lizenzclient, keine Limits; Pro ist separates Add-on (konzept.md 1, 7). Pro-Hinweiszeilen in den Einstellungen (S1, 23.11.2026) sind reiner Text ohne Eingabefeld und ohne Funktionscode – im Free steckt nichts, was freigeschaltet würde; echte Felder meldet nur das Add-on über `form_captain_settings_fields_v1` an | Code-Suche nach Lizenz-/Premium-Prüfungen im Free = 0 Treffer; Wächtertest `SettingsHintsTest` (keine Rechteschlüssel-Namen in `src/`, kein Lizenzbezug im Einstellungscode, Hinweiszeilen ohne Eingabeelement) |
 | 6 | SaaS erlaubt, wenn echter Dienst | Kernbetrieb ohne externen Dienst; Connectoren nur opt-in | – |
 | 7 | Kein Tracking ohne Zustimmung | keine Telemetrie (P9-04); keine externen Requests ohne Konfiguration; Captcha-Provider opt-in | Netzwerkmitschnitt bei Installation/Einrichtung = keine externen Requests |
 | 8 | Kein Ausführen von Fremdcode, kein eigener Updater | Free hat keinen Updater; Updates nur über WordPress.org | Code-Suche `pre_set_site_transient_update_plugins` im Free = 0 |
 | 9 | Nichts Illegales/Unethisches | keine gefälschten Bewertungen, keine Keyword-Stuffing-Tags | readme-Review |
 | 10 | Keine Links/Credits im Frontend ohne Opt-in | kein „Powered by“ im Formular-Output | E2E-Prüfung Frontend-Markup |
-| 11 | Admin-Dashboard nicht kapern | keine globalen Upgrade-Banner (AC-019); Pro-Hinweise sparsam, kontextbezogen, wegklickbar (P6-09); keine Hinweise außerhalb der Form-Captain-Seiten außer Fehlern | manueller Review aller Admin-Seiten |
+| 11 | Admin-Dashboard nicht kapern | keine globalen Upgrade-Banner (AC-019); Pro-Hinweise sparsam, kontextbezogen, wegklickbar (P6-09); Pro-Hinweiszeilen nur am Ende der Reiter der eigenen Einstellungsseite, grau, ohne Pop-up oder Zähler, abschaltbar über „Pro-Hinweise zeigen“ (`general.show_pro_hints`); keine Hinweise außerhalb der Form-Captain-Seiten außer Fehlern | manueller Review aller Admin-Seiten; `SettingsHintsTest` |
 | 12 | readme ohne Spam | max. 5 Tags, keine Konkurrenznamen, keine Keyword-Listen | Abschnitt 3 |
 | 13 | Standard-WordPress-Bibliotheken nutzen | Admin-UI mit `wp.element`/`wp.components` (ADR 0002), kein gebündeltes jQuery/React | Build-Manifest |
 | 14 | Häufige Commits vermeiden | SVN nur für Releases, nicht als Entwicklungs-Repository | – |

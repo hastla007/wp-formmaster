@@ -5,7 +5,7 @@ Gespeichert als eine Option `form_captain_settings` (Array, autoload). Jede Opti
 | Tab | Schlüssel | Typ | Default | Hinweis |
 |---|---|---|---|---|
 | Allgemein | `general.setup_completed` | bool | false | Ersteinrichtung |
-| Allgemein | `general.show_pro_hints` | bool | true | sparsame, wegklickbare Hinweise |
+| Allgemein | `general.show_pro_hints` | bool | true | sparsame, wegklickbare Hinweise; blendet auch die Pro-Hinweiszeilen aus |
 | Darstellung | `appearance.mode` | enum `inherit`/`base` | `inherit` | `base` lädt Basis-CSS |
 | Darstellung | `appearance.accent_color` | hex | `#2271b1` | nur bei `base` |
 | E-Mail | `email.from_name` | string ≤ 190 | Site-Name | Default für neue Formulare |
@@ -31,3 +31,16 @@ Alle Tabs erfordern `form_captain_manage_settings`. Systemstatus ist schreibgesc
 Die Werte im `settings_json` eines Formulars sind in `FormCaptain\Settings\FormSettingsSchema` beschrieben: je Pfad (`notification.to`, `confirmation.message`, `paused_message` …) Typ, Vorgabe, Beschriftung, Hilfetext und Prüfung. `FormService::default_settings()` und `FormService::sanitize_settings()` lesen nur diese Liste; Regeln über mehrere Werte (Empfänger nötig, Bestätigungsseite gültig, Betreff der Bestätigungsmail) stehen in `FormSettingsSchema::checks()`. Ungültige Werte fallen auf die sichere Vorgabe zurück und werden als Fehlercode (`pfad => code`) gemeldet. Nicht in der Liste: `template`/`template_version` (Herkunft) und `x` (Werte von Erweiterungen, Vertrag 1.1.0).
 
 Neue Formularwerte: einen Eintrag in `definitions()` im passenden Abschnitt ergänzen (Reihenfolge = gespeicherte Reihenfolge), Hilfetext Pflicht (Test `FormSettingsSchemaTest`).
+
+## Pro-Hinweiszeilen und Felder von Erweiterungen (S1, SET-FC-06)
+
+- `SettingsSchema::pro_hints()`: feste Liste `{id, tab, title, text, link}`, nur Text. Ausgabe am Ende des Reiters (nach Formular und „Zurücksetzen“) als graue Zeile mit „Pro“-Kennzeichen, solange `general.show_pro_hints` an ist und keine Erweiterung ein Feld mit derselben `id` angemeldet hat. Kein Eingabeelement, kein Standardwert, keine Prüfung, keine Rechteschlüssel-Namen. `link` ist leer, solange es keine Produktseite gibt (`SettingsSchema::PRO_INFO_URL`, offene Entscheidung E-6 in `WORDPRESS-ORG.md`).
+- Filter `form_captain_settings_fields_v1` (Liste von Feldern): `id` (`a-z0-9_-`), `tab` (einer der gespeicherten Reiter `general`, `appearance`, `email`, `privacy`, `spam`), `type` (`bool|int|enum|string|text|email|hex`), `label`, `help`, je nach Typ `options`/`min`/`max`/`max_length`, Rückrufe `get()` und `set( $wert )`, optional `validate( $wert ): ?string` (Fehlermeldung) und `default` (für „Bereich zurücksetzen“). Das Feld erscheint nach den Kernfeldern des Reiters als `settings[ext][<id>]`; der Kern prüft den Typ wie bei eigenen Werten, ruft `validate` und speichert über `set`. Speicherort und Werte gehören dem Add-on; Kern-Export, -Import und -CLI enthalten sie nicht. Fehler erscheinen unter `ext.<id>`.
+
+| id | Reiter |
+|---|---|
+| `upload_defaults`, `upload_multiple`, `draft_lifetime`, `form_translations`, `limit_per_person`, `webhooks`, `webhook_delivery`, `questionnaire_reminder`, `questionnaire_link`, `questionnaire_mails` | Allgemein |
+| `step_progress`, `pdf_layout` | Darstellung |
+| `recipient_rules`, `pdf_attachment`, `email_designer` | E-Mail |
+| `upload_retention` | Datenschutz |
+| `upload_virus_scan` | Spamschutz |

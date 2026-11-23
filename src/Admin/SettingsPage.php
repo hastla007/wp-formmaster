@@ -79,9 +79,11 @@ final class SettingsPage {
 		list( $values, $errors ) = SettingsSchema::sanitize_group( $tab, $input );
 		$retention_note          = ( 'privacy' === $tab && ( $values['retention'] ?? '' ) !== ( $before['retention'] ?? '' ) ) ? $this->apply_retention_change( (string) $values['retention'] ) : '';
 		Settings::set_group( $tab, $values );
+		$ext      = SettingsSchema::save_extension_fields( $tab, is_array( $input['ext'] ?? null ) ? $input['ext'] : array() );
+		$errors  += $ext['errors'];
 		$messages = array();
 		$changed  = array_keys( array_diff_assoc( array_map( 'strval', $values ), array_map( 'strval', $before ) ) );
-		if ( $changed ) {
+		if ( $changed || $ext['changed'] ) {
 			$messages[] = __( 'Settings saved.', 'form-captain' );
 			Logger::log( 'info', 'settings_saved', $tab . ': ' . implode( ',', $changed ) );
 		} elseif ( ! $errors ) {
@@ -149,6 +151,7 @@ final class SettingsPage {
 			$messages[] = $this->apply_retention_change( (string) $default['retention'] );
 		}
 		Settings::reset_group( $tab );
+		SettingsSchema::reset_extension_fields( $tab );
 		Logger::log( 'info', 'settings_reset', $tab );
 		return self::notice( 'success', $messages );
 	}
@@ -449,7 +452,7 @@ final class SettingsPage {
 			if ( $errors ) {
 				echo '<ul class="fc-error-list">';
 				foreach ( $errors as $path => $msg ) {
-					$def = SettingsSchema::definitions()[ $path ] ?? null;
+					$def = SettingsSchema::definitions()[ $path ] ?? ( str_starts_with( (string) $path, 'ext.' ) ? ( SettingsSchema::extension_fields()[ substr( (string) $path, 4 ) ] ?? null ) : null );
 					echo '<li><a href="#fc-' . esc_attr( str_replace( '.', '-', (string) $path ) ) . '">' . esc_html( (string) ( $def['label'] ?? $path ) ) . '</a>: ' . esc_html( (string) $msg ) . '</li>';
 				}
 				echo '</ul>';
@@ -479,6 +482,10 @@ final class SettingsPage {
 			}
 			$this->render_field( $tab, $key, $def, $values[ $key ] ?? $def['default'], $errors[ $tab . '.' . $key ] ?? '' );
 		}
+		// Real fields of add-ons (form_captain_settings_fields_v1); storage and checks stay in the add-on.
+		foreach ( SettingsSchema::extension_fields_for( $tab ) as $id => $def ) {
+			$this->render_field( 'ext', $id, $def, call_user_func( $def['get'] ), $errors[ 'ext.' . $id ] ?? '', 'settings[ext]' );
+		}
 		echo '</tbody></table>';
 		$this->render_tab_extras( $tab, $values );
 		submit_button( __( 'Save changes', 'form-captain' ) );
@@ -487,16 +494,43 @@ final class SettingsPage {
 			$this->render_test_mail();
 		}
 		$this->render_reset( $tab );
+		$this->render_pro_hints( $tab );
+	}
+
+	/**
+	 * Grey hint rows at the end of a tab (S1): text only, no input, hidden with general.show_pro_hints.
+	 */
+	private function render_pro_hints( string $tab ): void {
+		$hints = SettingsSchema::visible_pro_hints( $tab );
+		if ( ! $hints ) {
+			return;
+		}
+		$heading = 'fc-pro-hints-' . $tab;
+		echo '<section class="fc-pro-hints" aria-labelledby="' . esc_attr( $heading ) . '">';
+		echo '<h2 id="' . esc_attr( $heading ) . '" class="fc-pro-hints-title">' . esc_html__( 'More settings with Form Captain Pro', 'form-captain' ) . '</h2><ul>';
+		$links = array();
+		foreach ( $hints as $hint ) {
+			echo '<li class="fc-pro-hint-row" data-fc-hint="' . esc_attr( $hint['id'] ) . '"><span class="fc-pro-badge">' . esc_html__( 'Pro', 'form-captain' ) . '</span> <strong>' . esc_html( $hint['title'] ) . '</strong> – ' . esc_html( $hint['text'] ) . '</li>';
+			if ( '' !== $hint['link'] ) {
+				$links[ $hint['link'] ] = true;
+			}
+		}
+		echo '</ul><p class="description">';
+		foreach ( array_keys( $links ) as $link ) {
+			echo '<a href="' . esc_url( (string) $link ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Learn more about Form Captain Pro', 'form-captain' ) . '</a> ';
+		}
+		echo esc_html__( 'You can hide these hints in the General section.', 'form-captain' ) . '</p></section>';
 	}
 
 	/**
 	 * @param array<string,mixed> $def
 	 */
-	private function render_field( string $tab, string $key, array $def, mixed $value, string $error ): void {
+	private function render_field( string $tab, string $key, array $def, mixed $value, string $error, string $name_base = 'settings' ): void {
 		$id   = 'fc-' . $tab . '-' . str_replace( '_', '-', $key );
-		$name = 'settings[' . $key . ']';
-		$aria = $error ? ' aria-invalid="true" aria-describedby="' . esc_attr( $id ) . '-error"' : '';
+		$name = $name_base . '[' . $key . ']';
 		$help = (string) ( $def['help'] ?? '' );
+		$desc = trim( ( $error ? $id . '-error ' : '' ) . ( '' !== $help ? $id . '-help' : '' ) );
+		$aria = ( $error ? ' aria-invalid="true"' : '' ) . ( '' !== $desc ? ' aria-describedby="' . esc_attr( $desc ) . '"' : '' );
 		echo '<tr id="fc-' . esc_attr( $tab . '-' . $key ) . '"><th scope="row"><label for="' . esc_attr( $id ) . '">' . esc_html( (string) $def['label'] ) . '</label></th><td>';
 		switch ( $def['type'] ) {
 			case 'bool':
@@ -533,7 +567,7 @@ final class SettingsPage {
 			echo '<p class="fc-field-error" id="' . esc_attr( $id ) . '-error">' . esc_html( $error ) . '</p>';
 		}
 		if ( '' !== $help ) {
-			echo '<p class="description">' . esc_html( $help ) . '</p>';
+			echo '<p class="description" id="' . esc_attr( $id ) . '-help">' . esc_html( $help ) . '</p>';
 		}
 		$this->render_field_after( $tab, $key, $value );
 		echo '</td></tr>';

@@ -4,13 +4,17 @@
 
 | Bereich | Was Sie hier einstellen |
 |---|---|
-| **Allgemein** | Ersteinrichtung erledigt, gelegentliche Pro-Hinweise. Formularbezogenes (Empfänger, Betreff, Bestätigung, Weiterleitung, Aktionen) stellen Sie im Formular ein. Formular-Import/-Export finden Sie in der Formularliste, CSV-Export bei den Einträgen. |
+| **Allgemein** | Ersteinrichtung erledigt, gelegentliche Pro-Hinweise (auch die grauen Pro-Zeilen am Ende der Bereiche). Formularbezogenes (Empfänger, Betreff, Bestätigung, Weiterleitung, Aktionen) stellen Sie im Formular ein. Formular-Import/-Export finden Sie in der Formularliste, CSV-Export bei den Einträgen. |
 | **Darstellung** | Theme-Stil (Standard) oder Form-Captain-Basisstil mit Akzentfarbe. Es werden keine externen Schriften/Dateien geladen. |
 | **E-Mail** | Standard-Absender für **neue** Formulare und Format. Hinweis, wenn die Absenderdomain nicht zur Website passt. Testmail an Ihre eigene Adresse (max. 3 je 10 min). SMTP-Zugangsdaten verwaltet Form Captain nicht – nutzen Sie dafür ein SMTP-Plugin. |
 | **Datenschutz & Speicherung** | Aufbewahrung 90 Tage / 12 Monate (Standard) / manuell, Papierkorbfrist, Verhalten bei Löschanfragen (löschen oder anonymisieren), Datenlöschung bei Deinstallation, Textvorschlag für die Datenschutzerklärung, Backup-Hinweis. |
 | **Spamschutz** | Honeypot, Mindest-Ausfüllzeit, Rate-Limit, Blockliste. Externe Captchas gibt es nur über Erweiterungen; vor Aktivierung sehen Sie Anbieter, übermittelte Daten und Zweck und müssen bestätigen. |
 | **Zugriff & Rollen** | Matrix Rolle × Recht. Angezeigt wird, wie viele Nutzer danach Einträge lesen/exportieren können. Administratoren behalten immer „Einstellungen verwalten“. Ändern erfordert zusätzlich das WordPress-Recht „Benutzer befördern“. |
 | **Systemstatus** | Nur lesend: Versionen, Datenbankschema, Warteschlange/Cron, Mail-Fehlercodes, Integrationen, letzte Fehler mit Korrelations-ID, kopierbarer Diagnosebericht. |
+
+## Pro-Hinweiszeilen
+
+Am Ende einiger Bereiche stehen graue Zeilen mit „Pro“-Kennzeichen. Sie nennen nur, welche Einstellung Form Captain Pro an dieser Stelle ergänzt; es gibt dort nichts anzuklicken oder freizuschalten, und alle freien Funktionen bleiben frei. Ist das Add-on aktiv und die Funktion verfügbar, erscheint an derselben Stelle das echte Feld. Ausblenden: *Allgemein → Pro-Hinweise zeigen* abwählen.
 
 ## Globale Standards und Formularwerte
 

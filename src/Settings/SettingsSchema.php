@@ -27,6 +27,9 @@ final class SettingsSchema {
 	/** Accepted confirmation words for "delete data on uninstall" (datenschutz.md 10). */
 	public const CONFIRM_WORDS = array( 'DELETE', 'LÖSCHEN', 'LOESCHEN' );
 
+	/** Target of the "Learn more" link below the hint rows; empty = no link (product page still open). */
+	public const PRO_INFO_URL = '';
+
 	public static function capability(): string {
 		return Capabilities::MANAGE_SETTINGS;
 	}
@@ -63,7 +66,7 @@ final class SettingsSchema {
 			'general.show_pro_hints'            => array(
 				'type'  => 'bool',
 				'label' => __( 'Show occasional hints about Form Captain Pro', 'form-captain' ),
-				'help'  => __( 'Hints are rare and can be dismissed. Free features never depend on Pro.', 'form-captain' ),
+				'help'  => __( 'Hints are rare and can be dismissed. Settings sections end with grey text rows naming settings that Form Captain Pro adds. Free features never depend on Pro.', 'form-captain' ),
 			),
 			'appearance.mode'                   => array(
 				'type'    => 'enum',
@@ -97,6 +100,7 @@ final class SettingsSchema {
 					'text' => __( 'Plain text', 'form-captain' ),
 				),
 				'label'   => __( 'Email format', 'form-captain' ),
+				'help'    => __( 'Format of notification and confirmation e-mails. Plain text works with every mail program.', 'form-captain' ),
 			),
 			'privacy.retention'                 => array(
 				'type'    => 'enum',
@@ -113,6 +117,7 @@ final class SettingsSchema {
 				'min'   => 1,
 				'max'   => 90,
 				'label' => __( 'Delete trash and spam after (days)', 'form-captain' ),
+				'help'  => __( 'Submissions in the trash or marked as spam are deleted permanently after this number of days.', 'form-captain' ),
 			),
 			'privacy.erasure_mode'              => array(
 				'type'    => 'enum',
@@ -136,6 +141,7 @@ final class SettingsSchema {
 			'privacy.policy_page_hint'          => array(
 				'type'  => 'bool',
 				'label' => __( 'Offer a link to the privacy policy page in consent texts', 'form-captain' ),
+				'help'  => __( 'Consent fields can link to the privacy policy page that is set in WordPress under Settings → Privacy.', 'form-captain' ),
 			),
 			'spam.honeypot'                     => array(
 				'type'  => 'bool',
@@ -147,6 +153,7 @@ final class SettingsSchema {
 				'min'   => 0,
 				'max'   => 60,
 				'label' => __( 'Minimum time to fill in a form (seconds)', 'form-captain' ),
+				'help'  => __( 'Submissions sent faster than this are treated as spam. 0 turns the check off.', 'form-captain' ),
 			),
 			'spam.rate_limit'                   => array(
 				'type'  => 'int',
@@ -177,6 +184,149 @@ final class SettingsSchema {
 			$out[ $path ]['cap']     = self::capability();
 		}
 		return $out;
+	}
+
+	/**
+	 * Hint rows for settings that an add-on can provide (S1, SET-FC-06). Text only: no input,
+	 * no default, no sanitizer and no feature code. A row is shown at the end of its tab while
+	 * `general.show_pro_hints` is on and no add-on has registered a field with the same `id`
+	 * through `form_captain_settings_fields_v1`.
+	 *
+	 * @return array<int,array{id:string,tab:string,title:string,text:string,link:string}>
+	 */
+	public static function pro_hints(): array {
+		$rows = array(
+			array( 'general', 'upload_defaults', __( 'File types and size', 'form-captain' ), __( 'Default file types and size limit for upload fields.', 'form-captain' ) ),
+			array( 'general', 'upload_multiple', __( 'Several files', 'form-captain' ), __( 'Allow several files per upload field.', 'form-captain' ) ),
+			array( 'general', 'draft_lifetime', __( 'Saved drafts', 'form-captain' ), __( 'How long visitors can continue a saved multi-step form.', 'form-captain' ) ),
+			array( 'general', 'form_translations', __( 'Languages', 'form-captain' ), __( 'Translate form texts with WPML or Polylang.', 'form-captain' ) ),
+			array( 'general', 'limit_per_person', __( 'Limits per person', 'form-captain' ), __( 'One submission per person and waiting list.', 'form-captain' ) ),
+			array( 'general', 'webhooks', __( 'Webhooks', 'form-captain' ), __( 'Send submissions to other systems with signed webhooks.', 'form-captain' ) ),
+			array( 'general', 'webhook_delivery', __( 'Webhook delivery', 'form-captain' ), __( 'Retries and time limit for webhook deliveries.', 'form-captain' ) ),
+			array( 'general', 'questionnaire_reminder', __( 'Questionnaire reminder', 'form-captain' ), __( 'Default reminder for buyer questionnaires.', 'form-captain' ) ),
+			array( 'general', 'questionnaire_link', __( 'Questionnaire link', 'form-captain' ), __( 'How long the questionnaire link for buyers stays valid.', 'form-captain' ) ),
+			array( 'general', 'questionnaire_mails', __( 'Questionnaire e-mails', 'form-captain' ), __( 'Texts of the questionnaire e-mails to buyers.', 'form-captain' ) ),
+			array( 'appearance', 'step_progress', __( 'Progress display', 'form-captain' ), __( 'Progress display and step labels for multi-step forms.', 'form-captain' ) ),
+			array( 'appearance', 'pdf_layout', __( 'PDF layout', 'form-captain' ), __( 'Logo, letterhead and paper size for PDF documents.', 'form-captain' ) ),
+			array( 'email', 'recipient_rules', __( 'Recipients by rule', 'form-captain' ), __( 'Send notifications to different recipients depending on the answers.', 'form-captain' ) ),
+			array( 'email', 'pdf_attachment', __( 'PDF attachment', 'form-captain' ), __( 'Attach the submission as a PDF to the notification.', 'form-captain' ) ),
+			array( 'email', 'email_designer', __( 'E-mail designer', 'form-captain' ), __( 'Design your own e-mail templates.', 'form-captain' ) ),
+			array( 'privacy', 'upload_retention', __( 'Delete files earlier', 'form-captain' ), __( 'Delete uploaded files earlier than the submission itself.', 'form-captain' ) ),
+			array( 'spam', 'upload_virus_scan', __( 'Virus scan', 'form-captain' ), __( 'Check uploaded files with a virus scanner.', 'form-captain' ) ),
+		);
+		$out  = array();
+		foreach ( $rows as $r ) {
+			$out[] = array(
+				'id'    => $r[1],
+				'tab'   => $r[0],
+				'title' => $r[2],
+				'text'  => $r[3],
+				'link'  => self::PRO_INFO_URL,
+			);
+		}
+		return $out;
+	}
+
+	/**
+	 * Hint rows to show at the end of one tab (empty when hints are switched off).
+	 *
+	 * @return array<int,array{id:string,tab:string,title:string,text:string,link:string}>
+	 */
+	public static function visible_pro_hints( string $tab ): array {
+		if ( ! Settings::get( 'general.show_pro_hints' ) ) {
+			return array();
+		}
+		$registered = self::extension_fields();
+		return array_values( array_filter( self::pro_hints(), static fn( array $h ): bool => $h['tab'] === $tab && ! isset( $registered[ $h['id'] ] ) ) );
+	}
+
+	/**
+	 * Real settings fields of add-ons (filter `form_captain_settings_fields_v1`). The add-on keeps
+	 * storage and checks: `get` returns the current value, `set` stores a value that passed the
+	 * type check of sanitize_value() and the optional `validate` callback (returns an error message
+	 * or null). The core only renders the field in its tab and calls these callbacks on save.
+	 *
+	 * Field: id (a-z, 0-9, _ and -), tab (one of GROUPS), type (bool|int|enum|string|text|email|hex),
+	 * label, help, options/min/max/max_length as for core settings, get, set, optional validate and
+	 * optional default (used by "Reset this section").
+	 *
+	 * @return array<string,array<string,mixed>> id => field
+	 */
+	public static function extension_fields(): array {
+		$out = array();
+		foreach ( (array) apply_filters( 'form_captain_settings_fields_v1', array() ) as $field ) {
+			if ( ! is_array( $field ) ) {
+				continue;
+			}
+			$id   = (string) ( $field['id'] ?? '' );
+			$type = (string) ( $field['type'] ?? '' );
+			if ( ! preg_match( '/^[a-z0-9][a-z0-9_-]{1,79}$/', $id ) || isset( $out[ $id ] ) || ! in_array( (string) ( $field['tab'] ?? '' ), self::GROUPS, true )
+				|| ! in_array( $type, array( 'bool', 'int', 'enum', 'string', 'text', 'email', 'hex' ), true )
+				|| ! is_callable( $field['get'] ?? null ) || ! is_callable( $field['set'] ?? null ) || '' === trim( (string) ( $field['label'] ?? '' ) ) ) {
+				continue;
+			}
+			if ( ( 'enum' === $type && ! is_array( $field['options'] ?? null ) ) || ( 'int' === $type && ( ! is_numeric( $field['min'] ?? null ) || ! is_numeric( $field['max'] ?? null ) ) ) ) {
+				continue;
+			}
+			$field['label'] = (string) $field['label'];
+			$field['help']  = (string) ( $field['help'] ?? '' );
+			$field['key']   = $id;
+			$field['group'] = (string) $field['tab'];
+			$out[ $id ]     = $field;
+		}
+		return $out;
+	}
+
+	/**
+	 * Extension fields of one tab.
+	 *
+	 * @return array<string,array<string,mixed>>
+	 */
+	public static function extension_fields_for( string $tab ): array {
+		return array_filter( self::extension_fields(), static fn( array $f ): bool => $f['tab'] === $tab );
+	}
+
+	/**
+	 * Validates and stores the posted values of the extension fields of one tab.
+	 *
+	 * @param array<string,mixed> $input posted values keyed by field ID
+	 * @return array{changed:array<string,array{0:mixed,1:mixed}>,errors:array<string,string>} changed id => [old, new]; errors "ext.id" => message
+	 */
+	public static function save_extension_fields( string $tab, array $input ): array {
+		$changed = array();
+		$errors  = array();
+		foreach ( self::extension_fields_for( $tab ) as $id => $field ) {
+			if ( 'bool' !== $field['type'] && ! array_key_exists( $id, $input ) ) {
+				continue;
+			}
+			list( $value, $error ) = 'bool' === $field['type'] ? array( ! empty( $input[ $id ] ), null ) : self::sanitize_value( $field, $input[ $id ] );
+			if ( null === $error && is_callable( $field['validate'] ?? null ) ) {
+				$res   = call_user_func( $field['validate'], $value );
+				$error = is_string( $res ) && '' !== $res ? $res : null;
+			}
+			if ( null !== $error ) {
+				$errors[ 'ext.' . $id ] = $error;
+				continue;
+			}
+			$old = call_user_func( $field['get'] );
+			if ( $old !== $value ) {
+				call_user_func( $field['set'], $value );
+				$changed[ $id ] = array( $old, $value );
+			}
+		}
+		return array(
+			'changed' => $changed,
+			'errors'  => $errors,
+		);
+	}
+
+	/** Resets extension fields of one tab that declare a default. */
+	public static function reset_extension_fields( string $tab ): void {
+		foreach ( self::extension_fields_for( $tab ) as $field ) {
+			if ( array_key_exists( 'default', $field ) ) {
+				call_user_func( $field['set'], $field['default'] );
+			}
+		}
 	}
 
 	/**

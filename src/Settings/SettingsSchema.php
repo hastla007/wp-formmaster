@@ -637,6 +637,9 @@ final class SettingsSchema {
 				}
 				$input[ $id ] = 'multiselect' === $type ? array() : '0';
 			}
+			if ( 'confirm' === $type && self::confirm_stays_on( $field, $input[ $id ], $input ) ) {
+				continue; // Already confirmed and still ticked: no new confirmation word needed.
+			}
 			list( $value, $error ) = self::check_extension_value( $field, $input[ $id ], $input );
 			if ( null === $error && is_callable( $field['validate'] ?? null ) ) {
 				$res   = call_user_func( $field['validate'], $value );
@@ -652,10 +655,26 @@ final class SettingsSchema {
 				$changed[ $id ] = array( $old, $value );
 			}
 		}
+		ChangeLog::record( $changed );
 		return array(
 			'changed' => $changed,
 			'errors'  => $errors,
 		);
+	}
+
+	/**
+	 * True when a confirm switch is on and the form sends the ticked box again without the word
+	 * (like privacy.delete_data_on_uninstall: the word is only needed to switch it on).
+	 *
+	 * @param array<string,mixed> $field
+	 * @param array<string,mixed> $submitted
+	 */
+	private static function confirm_stays_on( array $field, mixed $raw, array $submitted ): bool {
+		if ( true !== call_user_func( $field['get'] ) || ! is_scalar( $raw ) || ! in_array( strtolower( trim( (string) $raw ) ), array( '1', 'on', 'yes', 'true' ), true ) ) {
+			return false;
+		}
+		$word = $submitted[ $field['id'] . '_confirm' ] ?? '';
+		return ! is_string( $word ) || '' === trim( $word );
 	}
 
 	/**
@@ -706,11 +725,17 @@ final class SettingsSchema {
 
 	/** Resets extension fields of one tab that declare a default. */
 	public static function reset_extension_fields( string $tab ): void {
-		foreach ( self::extension_fields_for( $tab ) as $field ) {
+		$changed = array();
+		foreach ( self::extension_fields_for( $tab ) as $id => $field ) {
 			if ( array_key_exists( 'default', $field ) ) {
+				$old = call_user_func( $field['get'] );
 				call_user_func( $field['set'], $field['default'] );
+				if ( $old !== $field['default'] ) {
+					$changed[ $id ] = array( $old, $field['default'] );
+				}
 			}
 		}
+		ChangeLog::record( $changed );
 	}
 
 	/**

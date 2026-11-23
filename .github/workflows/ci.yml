@@ -2,11 +2,17 @@ name: CI
 
 on:
   push:
-    branches: [ main, 'claude/**' ]
+    # Branches are checked through their pull request only; push runs only for main (no double runs).
+    branches: [ main ]
   pull_request:
 
 permissions:
   contents: read
+
+concurrency:
+  # A new push to a pull request cancels its older run; runs on main are never cancelled.
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   static:

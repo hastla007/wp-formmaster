@@ -21,7 +21,8 @@ final class SettingsMigrations {
 	/** @return array<string,callable> step name => callable */
 	private static function steps(): array {
 		return array(
-			'retention_periods' => array( self::class, 'retention_periods' ),
+			'retention_periods'        => array( self::class, 'retention_periods' ),
+			'retention_legacy_default' => array( self::class, 'retention_legacy_default' ),
 		);
 	}
 
@@ -36,6 +37,21 @@ final class SettingsMigrations {
 			$step();
 			$done[ $name ] = gmdate( 'Y-m-d H:i:s' );
 			update_option( self::OPTION, $done, true );
+		}
+	}
+
+	/**
+	 * S9 / SET-FC-P3-6: an existing installation that never stored a retention value keeps the
+	 * earlier default of 12 months, also when the update brings no database migration (then
+	 * Settings::ensure_defaults() does not run). New installations store `manual` before this
+	 * step runs, so they are not touched.
+	 */
+	public static function retention_legacy_default(): void {
+		$stored = get_option( Settings::OPTION, null );
+		if ( is_array( $stored ) && ! isset( $stored['privacy']['retention'] ) ) {
+			$stored['privacy']              = is_array( $stored['privacy'] ?? null ) ? $stored['privacy'] : array();
+			$stored['privacy']['retention'] = Settings::LEGACY_RETENTION;
+			update_option( Settings::OPTION, $stored, true );
 		}
 	}
 

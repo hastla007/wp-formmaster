@@ -59,6 +59,16 @@ final class AdminScreensTest extends TestCase {
 		$this->assertSame( $before + 1, did_action( 'form_captain_admin_menu_built_v1' ) );
 	}
 
+	public function test_dashboard_renders_once(): void {
+		$this->as_admin();
+		$this->build_menu();
+		$hook = (string) $this->plugin()->get( Menu::class )->hooks()['form-captain'];
+		$this->assertSame( 'toplevel_page_form-captain', $hook );
+		global $wp_filter;
+		$this->assertCount( 1, $wp_filter[ $hook ]->callbacks[10] ?? array(), 'top-level page and submenu "Dashboard" share one callback' );
+		remove_all_actions( $hook );
+	}
+
 	public function test_editor_role_sees_nothing(): void {
 		$this->as_role( 'editor' );
 		global $menu;

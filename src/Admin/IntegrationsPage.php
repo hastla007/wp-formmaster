@@ -226,11 +226,9 @@ final class IntegrationsPage {
 
 		echo '<div class="wrap fc-integrations"><h1>' . esc_html__( 'Integrations', 'form-captain' ) . '</h1>';
 		echo '<p class="fc-tab-intro">' . esc_html__( 'Connectors are separate plugins that pass selected form data to other systems. Installed connectors stay disabled until you activate them. Connectors receive only the fields you map in a form – sensitive fields are blocked.', 'form-captain' ) . '</p>';
-		$pro = apply_filters( 'form_captain_pro_active', false );
-		if ( $pro ) {
-			$status = is_array( $pro ) ? (string) ( $pro['license_status'] ?? '' ) : '';
-			/* translators: %s: licence status */
-			echo '<p><strong>' . esc_html__( 'Form Captain Pro is active.', 'form-captain' ) . '</strong> ' . ( '' !== $status ? esc_html( sprintf( __( 'Licence status: %s', 'form-captain' ), $status ) ) : '' ) . '</p>';
+		// The add-on only says that it is there (bool); the core shows nothing about its activation (S1).
+		if ( apply_filters( 'form_captain_pro_active', false ) ) {
+			echo '<p><strong>' . esc_html__( 'Form Captain Pro is active.', 'form-captain' ) . '</strong></p>';
 		}
 		if ( is_array( $notice ) && ! empty( $notice['messages'] ) ) {
 			echo '<div class="notice notice-' . ( 'error' === $notice['type'] ? 'error' : 'success' ) . ' is-dismissible" role="status">';

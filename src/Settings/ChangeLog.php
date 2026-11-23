@@ -76,6 +76,7 @@ final class ChangeLog {
 	public static function on_update( mixed $old, mixed $new ): void {
 		$old     = is_array( $old ) ? $old : array();
 		$new     = is_array( $new ) ? $new : array();
+		$defs    = SettingsSchema::definitions();
 		$changes = array();
 		foreach ( array_unique( array_merge( array_keys( $old ), array_keys( $new ) ) ) as $group ) {
 			$o = is_array( $old[ $group ] ?? null ) ? $old[ $group ] : array();
@@ -83,8 +84,12 @@ final class ChangeLog {
 			foreach ( array_unique( array_merge( array_keys( $o ), array_keys( $n ) ) ) as $key ) {
 				$before = $o[ $key ] ?? null;
 				$after  = $n[ $key ] ?? null;
-				if ( $before !== $after ) {
-					$changes[ $group . '.' . $key ] = array( $before, $after );
+				$path   = $group . '.' . $key;
+				// Not a change by anyone: a new key first written with its default, or a key that no longer exists.
+				$filled  = null === $before && isset( $defs[ $path ] ) && $after === $defs[ $path ]['default'];
+				$dropped = null === $after && ! isset( $defs[ $path ] );
+				if ( $before !== $after && ! $filled && ! $dropped ) {
+					$changes[ $path ] = array( $before, $after );
 				}
 			}
 		}
@@ -108,9 +113,28 @@ final class ChangeLog {
 	}
 
 	/**
-	 * @param array<string,array{0:mixed,1:mixed}> $changes path => [old, new]
+	 * Records changes of add-on fields (form_captain_settings_fields_v1, SET-FC-P4-03). They live in the
+	 * add-on's own option, so the hook on Form Captain's option never sees them. Key = field ID; a field
+	 * marked `secret` (or with a secret-looking ID) is masked.
+	 *
+	 * @param array<string,array{0:mixed,1:mixed}> $changed id => [old, new]
+	 * @param array<string,array<string,mixed>>    $fields  id => normalized field
 	 */
-	public static function record( array $changes ): void {
+	public static function record_extension( array $changed, array $fields ): void {
+		$secret = array();
+		foreach ( array_keys( $changed ) as $id ) {
+			if ( ! empty( $fields[ $id ]['secret'] ) ) {
+				$secret[] = (string) $id;
+			}
+		}
+		self::record( $changed, $secret );
+	}
+
+	/**
+	 * @param array<string,array{0:mixed,1:mixed}> $changes path => [old, new]
+	 * @param string[]                             $secret  further paths to mask
+	 */
+	public static function record( array $changes, array $secret = array() ): void {
 		if ( ! $changes ) {
 			return;
 		}
@@ -119,14 +143,14 @@ final class ChangeLog {
 		$user    = get_current_user_id();
 		$source  = self::current_source();
 		foreach ( $changes as $path => $pair ) {
-			$secret    = SettingsSchema::is_secret( (string) $path );
+			$masked    = in_array( (string) $path, $secret, true ) || SettingsSchema::is_secret( (string) $path );
 			$entries[] = array(
 				'time'   => $now,
 				'user'   => $user,
 				'source' => $source,
 				'key'    => (string) $path,
-				'old'    => $secret ? self::mask( $pair[0] ) : self::shorten( $pair[0] ),
-				'new'    => $secret ? self::mask( $pair[1] ) : self::shorten( $pair[1] ),
+				'old'    => $masked ? self::mask( $pair[0] ) : self::shorten( $pair[0] ),
+				'new'    => $masked ? self::mask( $pair[1] ) : self::shorten( $pair[1] ),
 			);
 		}
 		if ( count( $entries ) > self::MAX_ENTRIES ) {

@@ -106,6 +106,23 @@ final class FormLimitsTest extends FrontendTestCase {
 		$this->assertStringContainsString( 'This form opens on', FormLimits::state( $form, null, (int) strtotime( '2026-11-30 12:00 UTC' ) )['message'] );
 	}
 
+	/** SET-FC-P2-5: a time skipped by the clock change in spring is accepted and takes effect. */
+	public function test_time_in_the_spring_clock_change_gap_is_kept_and_closes_the_form(): void {
+		$errors = array();
+		$clean  = FormLimits::sanitize( array( 'closes_at' => '2026-03-29T02:30' ), $errors );
+		$this->assertSame( array(), $errors );
+		$this->assertSame( '2026-03-29T02:30', $clean['closes_at'] );
+		$this->assertSame( (int) strtotime( '2026-03-29 01:30 UTC' ), FormLimits::timestamp( '2026-03-29T02:30' ), 'moment after the change (03:30 CEST)' );
+
+		$form = $this->limited_form( array( 'closes_at' => '2026-03-29T02:30' ) );
+		$this->assertSame( 'closed', FormLimits::state( $form, null, (int) strtotime( '2026-03-29 02:00 UTC' ) )['reason'] );
+		$this->assertTrue( FormLimits::state( $form, null, (int) strtotime( '2026-03-29 00:59 UTC' ) )['open'] );
+
+		foreach ( array( '2026-02-30T10:00', '2026-03-29T24:00', '2026-03-29T02:60', '26-03-29T02:30' ) as $invalid ) {
+			$this->assertNull( FormLimits::timestamp( $invalid ), $invalid );
+		}
+	}
+
 	public function test_closed_form_is_not_rendered_and_refuses_submissions(): void {
 		$form = $this->limited_form(
 			array(
@@ -161,6 +178,34 @@ final class FormLimitsTest extends FrontendTestCase {
 		$this->assertSame( $second['entry_id'], $retry['entry_id'] );
 
 		$this->assertStringContainsString( 'fc-closed', $this->plugin()->get( Renderer::class )->render( $form ) );
+	}
+
+	/**
+	 * SET-FC-P2-1: parallel submissions all passed the first check and exceeded the maximum.
+	 * The first check is simulated as stale (a parallel request saw the form still open); the
+	 * check under the form lock inside the transaction must refuse the submission.
+	 */
+	public function test_maximum_is_checked_again_inside_the_transaction(): void {
+		$form  = $this->limited_form( array( 'max_entries' => 1 ) );
+		$first = $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) );
+		$this->assertTrue( $first['success'] );
+
+		$calls = 0;
+		$stale = static function ( array $state ) use ( &$calls ): array {
+			++$calls;
+			return 1 === $calls ? array( 'open' => true, 'reason' => '', 'message' => '' ) : $state;
+		};
+		add_filter( 'form_captain_form_limits_v1', $stale );
+		try {
+			$late = $this->service()->submit( $form, $this->payload( $form, array( 'f_name01' => 'Parallel', 'f_mail01' => 'parallel@example.org' ) ) );
+		} finally {
+			remove_filter( 'form_captain_form_limits_v1', $stale );
+		}
+		$this->assertSame( 2, $calls, 'checked before and inside the transaction' );
+		$this->assertFalse( $late['success'] );
+		$this->assertSame( Errors::FORM_NOT_ACCEPTING, $late['code'] );
+		$this->assertSame( 1, $this->plugin()->get( EntryRepository::class )->count_accepted( (int) $form['id'] ) );
+		$this->assertSame( 0, $this->count_rows( 'fc_jobs', 'entry_id NOT IN (SELECT id FROM ' . $GLOBALS['wpdb']->prefix . 'fc_entries)' ), 'no jobs of a refused submission' );
 	}
 
 	public function test_filter_can_change_the_result(): void {

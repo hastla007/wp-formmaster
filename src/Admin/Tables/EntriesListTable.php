@@ -250,9 +250,11 @@ final class EntriesListTable extends \WP_List_Table {
 	protected function column_submitted( $item ): string {
 		$out  = esc_html( get_date_from_gmt( (string) $item['created_gmt'], get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ) );
 		$days = RetentionService::notice_days();
-		if ( $days > 0 && ! empty( $item['expires_gmt'] ) && $item['expires_gmt'] <= Clock::plus( $days * DAY_IN_SECONDS ) && ! in_array( $item['status'], array( 'trash', 'spam' ), true ) ) {
+		// SET-FC-P3-1: unconfirmed double opt-in submissions are deleted at their own deadline.
+		$until = \FormCaptain\Service\DoubleOptIn::STATUS_PENDING === ( $item['confirmation_status'] ?? null ) && ! empty( $item['unconfirmed_until_gmt'] ) ? (string) $item['unconfirmed_until_gmt'] : (string) ( $item['expires_gmt'] ?? '' );
+		if ( $days > 0 && '' !== $until && $until <= Clock::plus( $days * DAY_IN_SECONDS ) && ! in_array( $item['status'], array( 'trash', 'spam' ), true ) ) {
 			/* translators: %s: date */
-			$out .= '<br /><span class="fc-badge fc-badge-warning">' . esc_html( sprintf( __( 'Deletion on %s', 'form-captain' ), get_date_from_gmt( (string) $item['expires_gmt'], get_option( 'date_format' ) ) ) ) . '</span>';
+			$out .= '<br /><span class="fc-badge fc-badge-warning">' . esc_html( sprintf( __( 'Deletion on %s', 'form-captain' ), get_date_from_gmt( $until, get_option( 'date_format' ) ) ) ) . '</span>';
 		}
 		return $out;
 	}

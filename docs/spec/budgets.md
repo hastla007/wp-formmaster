@@ -36,4 +36,4 @@ Alle Werte sind Konstanten in `FormCaptain\Support\Limits` und über den Filter 
 | Rücknahme eines Importlaufs möglich | 7 Tage | `REVERT_DAYS` |
 | Importprotokoll (`form_captain_entry_import_runs`) | 30 Tage, max. 50 Läufe, je Lauf max. 200 Zeilenbefunde | – |
 
-**Datenbanken:** MySQL 8.0+ und MariaDB 10.6+ (InnoDB). Ältere Versionen werden nicht getestet; MyISAM wird erkannt und im Systemstatus gewarnt.
+**Datenbanken:** MySQL 9.7+ und MariaDB 12.3+ (InnoDB, Entscheidung 21; CI-Matrix `mysql:9.7`/`mariadb:12.3`). Ältere Server werden nicht getestet und nicht gesperrt: Systemstatus und Website-Zustand warnen (Filter `form_captain_minimum_db_versions_v1`); MyISAM wird erkannt und im Systemstatus gewarnt.

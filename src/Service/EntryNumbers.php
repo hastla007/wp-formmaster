@@ -64,9 +64,16 @@ final class EntryNumbers {
 		if ( '' === $format || null !== self::validate_format( $format ) ) {
 			return null;
 		}
-		$year   = (string) wp_date( 'Y', $timestamp ?? Clock::timestamp() );
-		$yearly = (bool) Settings::get( 'general.entry_number_yearly_reset' );
-		$seq    = self::increment( self::COUNTER_OPTION . ( $yearly ? $year : 'all' ) );
+		$year = (string) wp_date( 'Y', $timestamp ?? Clock::timestamp() );
+		// Without {year} in the format a restart on 1 January would repeat last year's numbers;
+		// the counter then keeps running (SET-FC-P2-4).
+		$reset  = (bool) Settings::get( 'general.entry_number_yearly_reset' );
+		$yearly = $reset && str_contains( $format, '{year}' );
+		$option = self::COUNTER_OPTION . ( $yearly ? $year : 'all' );
+		if ( $reset && ! $yearly ) {
+			self::seed_running_counter( $option );
+		}
+		$seq = self::increment( $option );
 		if ( $seq <= 0 ) {
 			return null;
 		}
@@ -90,6 +97,21 @@ final class EntryNumbers {
 	public static function display( array $entry ): string {
 		$number = (string) ( $entry['entry_number'] ?? '' );
 		return '' !== $number ? $number : (string) (int) ( $entry['id'] ?? 0 );
+	}
+
+	/**
+	 * Creates the counter without restart once, after the highest yearly counter, so numbers
+	 * already given by the yearly counters with a format without {year} are not given again.
+	 */
+	private static function seed_running_counter( string $option ): void {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		if ( null !== $wpdb->get_var( $wpdb->prepare( "SELECT option_id FROM {$wpdb->options} WHERE option_name = %s", $option ) ) ) {
+			return;
+		}
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$highest = (int) $wpdb->get_var( $wpdb->prepare( "SELECT MAX(CAST(option_value AS UNSIGNED)) FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( self::COUNTER_OPTION ) . '%' ) );
+		add_option( $option, (string) $highest, '', false );
 	}
 
 	/** Atomic +1 on a counter row; returns the new value or 0 on failure. */

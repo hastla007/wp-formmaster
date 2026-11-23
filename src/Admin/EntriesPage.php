@@ -25,6 +25,7 @@ use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
 use FormCaptain\Repository\JobRepository;
 use FormCaptain\Service\ConsentService;
+use FormCaptain\Service\DoubleOptIn;
 use FormCaptain\Service\EntryService;
 use FormCaptain\Service\RetentionService;
 use FormCaptain\Settings\Settings;
@@ -328,7 +329,7 @@ final class EntriesPage {
 				sprintf(
 					/* translators: %s: number of days */
 					__( 'Items in the trash are deleted permanently after %s days.', 'form-captain' ),
-					number_format_i18n( (int) Settings::get( 'privacy.trash_days' ) )
+					number_format_i18n( \FormCaptain\Service\RetentionService::trash_days() )
 				)
 			) . '</p>';
 		}
@@ -408,7 +409,20 @@ final class EntriesPage {
 		if ( ! empty( $entry['consent_withdrawn_gmt'] ) ) {
 			echo '<div class="notice notice-warning inline"><p>' . EntriesListTable::consent_withdrawn_badge( $entry ) . ' ' . esc_html__( 'No further messages or integration deliveries are sent for this submission.', 'form-captain' ) . '</p></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- badge is escaped.
 		}
-		if ( ! empty( $entry['expires_gmt'] ) ) {
+		$unconfirmed = DoubleOptIn::STATUS_PENDING === ( $entry['confirmation_status'] ?? null );
+		if ( $unconfirmed ) {
+			// SET-FC-P3-1: an unconfirmed submission is deleted after the double opt-in deadline, not after the retention period.
+			echo '<div class="notice notice-warning inline fc-doi-pending"><p>' . esc_html(
+				! empty( $entry['unconfirmed_until_gmt'] )
+					/* translators: %s: date */
+					? sprintf( __( 'Not confirmed yet: the person has not clicked the confirmation link (double opt-in). No notifications or integration deliveries are sent until then. Without confirmation the submission is deleted automatically on %s.', 'form-captain' ), get_date_from_gmt( (string) $entry['unconfirmed_until_gmt'], $fmt ) )
+					: __( 'Not confirmed yet: the person has not clicked the confirmation link (double opt-in). No notifications or integration deliveries are sent until then.', 'form-captain' )
+			) . '</p></div>';
+		} elseif ( DoubleOptIn::STATUS_CONFIRMED === ( $entry['confirmation_status'] ?? null ) && ! empty( $entry['confirmed_gmt'] ) ) {
+			/* translators: %s: date and time */
+			echo '<p class="description fc-doi-confirmed">' . esc_html( sprintf( __( 'Confirmed by the person via the e-mail link (double opt-in) on %s.', 'form-captain' ), get_date_from_gmt( (string) $entry['confirmed_gmt'], $fmt ) ) ) . '</p>';
+		}
+		if ( ! empty( $entry['expires_gmt'] ) && ! $unconfirmed ) {
 			/* translators: %s: date */
 			echo '<p class="description">' . esc_html( sprintf( __( 'Will be deleted automatically on %s.', 'form-captain' ), get_date_from_gmt( (string) $entry['expires_gmt'], (string) get_option( 'date_format' ) ) ) ) . '</p>';
 		}
@@ -437,7 +451,7 @@ final class EntriesPage {
 			if ( ! empty( $field['sensitive'] ) ) {
 				$marks .= ' <span class="fc-badge">' . esc_html__( 'Sensitive', 'form-captain' ) . '</span>';
 			}
-			$value = array_key_exists( $field['id'], $values ) ? MailBuilder::display_value( $field, $values[ $field['id'] ] ) : '';
+			$value = array_key_exists( $field['id'], $values ) ? MailBuilder::display_value( $field, $values[ $field['id'] ], true ) : '';
 			echo '<tr><th scope="row">' . esc_html( $label ) . $marks . '</th><td>' . ( '' !== $value ? nl2br( esc_html( $value ) ) : '<span class="description">&mdash;</span>' ) . '</td></tr>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $marks is built from escaped parts.
 		}
 		foreach ( $values as $field_id => $value ) {
@@ -556,7 +570,7 @@ final class EntriesPage {
 			}
 			echo '</tbody></table>';
 		}
-		if ( current_user_can( Capabilities::EDIT_ENTRIES ) && ! in_array( $entry['status'], array( 'spam', 'trash' ), true ) && empty( $entry['consent_withdrawn_gmt'] ) ) {
+		if ( current_user_can( Capabilities::EDIT_ENTRIES ) && ! in_array( $entry['status'], array( 'spam', 'trash' ), true ) && empty( $entry['consent_withdrawn_gmt'] ) && DoubleOptIn::STATUS_PENDING !== ( $entry['confirmation_status'] ?? null ) ) {
 			echo '<p>';
 			$this->action_form( $entry, 'resend', __( 'Send admin notification again', 'form-captain' ), array(), 'secondary' );
 			echo '</p>';
@@ -569,6 +583,7 @@ final class EntriesPage {
 		return match ( (string) $job['type'] ) {
 			'mail.admin' => __( 'Admin notification', 'form-captain' ),
 			'mail.confirmation' => __( 'Confirmation to submitter', 'form-captain' ),
+			DoubleOptIn::JOB_TYPE => __( 'Confirmation link (double opt-in)', 'form-captain' ),
 			'connector.action' => sprintf(
 				/* translators: %s: action key */
 				__( 'Integration: %s', 'form-captain' ),

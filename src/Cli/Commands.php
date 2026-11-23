@@ -100,7 +100,7 @@ final class Commands {
 			'form-captain settings list',
 			array( $this, 'cli_settings_list' ),
 			array(
-				'shortdesc' => 'Lists all global settings with value and default (secrets masked).',
+				'shortdesc' => 'Lists all global settings and add-on settings with value and default (secrets masked).',
 				'synopsis'  => array( $format ),
 			)
 		);
@@ -139,7 +139,7 @@ final class Commands {
 			'form-captain settings reset',
 			array( $this, 'cli_settings_reset' ),
 			array(
-				'shortdesc' => 'Resets one section (general, appearance, email, privacy, spam) or all sections to the defaults.',
+				'shortdesc' => 'Resets one section (general, appearance, email, privacy, spam, export or an add-on section) including its add-on settings, or all sections, to the defaults.',
 				'synopsis'  => array(
 					array(
 						'type'     => 'positional',
@@ -252,11 +252,25 @@ final class Commands {
 				'type'    => (string) $def['type'],
 			);
 		}
+		// Fields of add-ons (form_captain_settings_fields_v1), e.g. Form Captain Pro, by their id.
+		foreach ( SettingsSchema::extension_fields() as $id => $field ) {
+			$secret = SettingsSchema::is_secret( $id );
+			$rows[] = array(
+				'key'     => $id,
+				'value'   => $secret ? '••••••' : self::cli_value( call_user_func( $field['get'] ) ),
+				'default' => $secret ? '' : self::cli_value( $field['default'] ?? '' ),
+				'type'    => (string) $field['type'],
+			);
+		}
 		return $rows;
 	}
 
 	public function settings_get( string $path ): string|\WP_Error {
-		$def = SettingsSchema::definitions()[ $path ] ?? null;
+		$def   = SettingsSchema::definitions()[ $path ] ?? null;
+		$field = $def ? null : ( SettingsSchema::extension_fields()[ $path ] ?? null );
+		if ( $field ) {
+			return SettingsSchema::is_secret( $path ) ? '••••••' : self::cli_value( call_user_func( $field['get'] ) );
+		}
 		if ( ! $def || ! empty( $def['internal'] ) ) {
 			return new \WP_Error( 'unknown_setting', 'Unknown setting. See: wp form-captain settings list' );
 		}
@@ -270,6 +284,9 @@ final class Commands {
 	 */
 	public function settings_set( string $path, string $value, bool $yes = false ): array|\WP_Error {
 		$def = SettingsSchema::definitions()[ $path ] ?? null;
+		if ( ! $def && isset( SettingsSchema::extension_fields()[ $path ] ) ) {
+			return $this->extension_set( SettingsSchema::extension_fields()[ $path ], $value, $yes );
+		}
 		if ( ! $def || ! empty( $def['internal'] ) ) {
 			return new \WP_Error( 'unknown_setting', 'Unknown setting. See: wp form-captain settings list' );
 		}
@@ -301,22 +318,62 @@ final class Commands {
 		return array( $old, Settings::get( $path ) );
 	}
 
+	/**
+	 * Sets one add-on value with the add-on's own check, like the settings screen.
+	 *
+	 * @param array<string,mixed> $field
+	 * @return array{0:mixed,1:mixed}|\WP_Error [old, new]
+	 */
+	private function extension_set( array $field, string $value, bool $yes ): array|\WP_Error {
+		$id   = (string) $field['id'];
+		$type = (string) $field['type'];
+		if ( in_array( $type, array( 'bool', 'confirm' ), true ) ) {
+			$flag = strtolower( trim( $value ) );
+			if ( ! in_array( $flag, array( '1', 'true', 'yes', 'on', '0', 'false', 'no', 'off', '' ), true ) ) {
+				return new \WP_Error( 'invalid_value', 'Please use true or false.' );
+			}
+			$value = in_array( $flag, array( '1', 'true', 'yes', 'on' ), true ) ? '1' : '0';
+		}
+		$old = call_user_func( $field['get'] );
+		if ( 'confirm' === $type && '1' === $value && true === $old ) {
+			return array( $old, $old ); // Already confirmed.
+		}
+		if ( 'confirm' === $type && '1' === $value && ! $yes ) {
+			return new \WP_Error( 'invalid_value', 'Switching this on deletes data later. Add --yes to confirm.' );
+		}
+		$submitted             = 'confirm' === $type && $yes ? array( $id . '_confirm' => SettingsSchema::CONFIRM_WORDS[0] ) : array();
+		list( $clean, $error ) = SettingsSchema::extension_check( $field, $value, $submitted );
+		if ( null !== $error ) {
+			return new \WP_Error( 'invalid_value', wp_strip_all_tags( $error ) );
+		}
+		if ( $old !== $clean ) {
+			call_user_func( $field['set'], $clean );
+			ChangeLog::with_source( 'cli', static fn() => ChangeLog::record( array( $id => array( $old, $clean ) ) ) );
+		}
+		return array( $old, $clean );
+	}
+
 	/** @return true|\WP_Error */
 	public function settings_reset( string $section, bool $all, bool $yes ): bool|\WP_Error {
 		if ( ! $yes ) {
 			return new \WP_Error( 'confirmation_required', 'Resetting changes stored settings (a different retention period reschedules the deletion of submissions). Add --yes to confirm.' );
 		}
-		$groups = $all ? SettingsSchema::GROUPS : array( $section );
+		$ext_tabs = array_keys( SettingsSchema::extension_tabs() );
+		$groups   = $all ? array_merge( SettingsSchema::GROUPS, $ext_tabs ) : array( $section );
 		foreach ( $groups as $group ) {
-			if ( ! in_array( $group, SettingsSchema::GROUPS, true ) ) {
-				return new \WP_Error( 'unknown_section', 'Unknown section. Use one of: ' . implode( ', ', SettingsSchema::GROUPS ) . ' or --all.' );
+			if ( ! in_array( $group, SettingsSchema::GROUPS, true ) && ! in_array( $group, $ext_tabs, true ) ) {
+				return new \WP_Error( 'unknown_section', 'Unknown section. Use one of: ' . implode( ', ', array_merge( SettingsSchema::GROUPS, $ext_tabs ) ) . ' or --all.' );
 			}
 		}
 		ChangeLog::with_source(
 			'cli',
 			static function () use ( $groups ): void {
 				foreach ( $groups as $group ) {
-					Settings::reset_group( $group );
+					if ( in_array( $group, SettingsSchema::GROUPS, true ) ) {
+						Settings::reset_group( $group );
+					}
+					// Add-on fields of the section, like "Reset this section" on the settings screen.
+					SettingsSchema::reset_extension_fields( $group );
 				}
 			}
 		);
@@ -324,7 +381,7 @@ final class Commands {
 	}
 
 	/**
-	 * @return array{ok:bool,error:string,changes:array<string,array{0:mixed,1:mixed}>,unknown:string[],errors:array<string,string>,skipped:string[],values:array<string,array<string,mixed>>,meta:array<string,mixed>}
+	 * @return array{ok:bool,error:string,changes:array<string,array{0:mixed,1:mixed}>,unknown:string[],errors:array<string,string>,skipped:string[],values:array<string,array<string,mixed>>,extensions:array<string,mixed>,meta:array<string,mixed>}
 	 */
 	public function settings_import( string $json, bool $dry_run, bool $yes ): array {
 		$confirm = array(

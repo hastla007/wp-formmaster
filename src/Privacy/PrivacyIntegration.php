@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace FormCaptain\Privacy;
 
+use FormCaptain\Domain\Fields\FieldTypes;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
@@ -195,6 +196,27 @@ final class PrivacyIntegration {
 					: __( 'Not confirmed', 'form-captain' ),
 			);
 		}
+		// Art. 15 (1) (d) GDPR: how long the data is kept (SET-FC-P4-02); plus reference number and
+		// a withdrawn consent, both part of what is stored about the person.
+		if ( ! empty( $entry['entry_number'] ) ) {
+			$items[] = array(
+				'name'  => __( 'Reference number', 'form-captain' ),
+				'value' => (string) $entry['entry_number'],
+			);
+		}
+		$deletion = self::scheduled_deletion( $entry );
+		$items[]  = array(
+			'name'  => __( 'Scheduled deletion', 'form-captain' ),
+			'value' => null !== $deletion
+				? (string) get_date_from_gmt( $deletion, get_option( 'date_format' ) )
+				: __( 'No automatic deletion; the submission is deleted manually by the website operator.', 'form-captain' ),
+		);
+		if ( ! empty( $entry['consent_withdrawn_gmt'] ) ) {
+			$items[] = array(
+				'name'  => __( 'Consent withdrawn', 'form-captain' ),
+				'value' => (string) get_date_from_gmt( (string) $entry['consent_withdrawn_gmt'], get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ),
+			);
+		}
 		if ( ! empty( $entry['locale'] ) ) {
 			$items[] = array(
 				'name'  => __( 'Language', 'form-captain' ),
@@ -243,6 +265,23 @@ final class PrivacyIntegration {
 	}
 
 	/**
+	 * Earliest automatic deletion of an entry (UTC), or null when it is only deleted manually.
+	 * Unconfirmed double opt-in entries are deleted at the end of their confirmation period.
+	 *
+	 * @param array<string,mixed> $entry
+	 */
+	public static function scheduled_deletion( array $entry ): ?string {
+		$dates = array();
+		if ( ! empty( $entry['expires_gmt'] ) ) {
+			$dates[] = (string) $entry['expires_gmt'];
+		}
+		if ( 'pending' === ( $entry['confirmation_status'] ?? '' ) && ! empty( $entry['unconfirmed_until_gmt'] ) ) {
+			$dates[] = (string) $entry['unconfirmed_until_gmt'];
+		}
+		return $dates ? min( $dates ) : null;
+	}
+
+	/**
 	 * @param array<string,mixed>         $field
 	 * @param string|array<int,string>    $value
 	 * @param array<string,mixed>         $entry
@@ -261,15 +300,25 @@ final class PrivacyIntegration {
 			}
 			return __( 'Not given', 'form-captain' );
 		}
+		if ( 'date' === $type && is_string( $value ) ) {
+			return \FormCaptain\Mail\MailBuilder::local_date( $value );
+		}
 		$labels = array();
 		foreach ( (array) ( $field['options'] ?? array() ) as $opt ) {
 			if ( is_array( $opt ) && isset( $opt['value'] ) ) {
 				$labels[ (string) $opt['value'] ] = (string) ( $opt['label'] ?? $opt['value'] );
 			}
 		}
-		$list = is_array( $value ) ? $value : array( $value );
-		$list = array_map( static fn( $v ) => $labels[ (string) $v ] ?? (string) $v, $list );
-		return implode( ', ', $list );
+		$list    = is_array( $value ) ? $value : array( $value );
+		$list    = array_map( static fn( $v ) => $labels[ (string) $v ] ?? (string) $v, $list );
+		$display = implode( ', ', $list );
+		if ( empty( FieldTypes::all()[ $type ]['core'] ) ) {
+			// Extension field types describe their value as plain text (contract 1.1.0), e.g. a file
+			// name instead of an internal file reference – as in e-mails and the entry screen.
+			$custom  = apply_filters( 'form_captain_display_value_v1', $display, $field, $value );
+			$display = is_string( $custom ) ? wp_strip_all_tags( $custom ) : $display;
+		}
+		return $display;
 	}
 
 	private static function status_label( string $status ): string {

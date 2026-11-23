@@ -235,6 +235,16 @@ final class SubmissionService {
 		$entry_id = 0;
 		$tx       = $this->begin();
 		try {
+			// Maximum number of entries again, under a lock on the form row: parallel submissions
+			// passed the check in 3b at the same time and would otherwise exceed it (SET-FC-P2-1).
+			if ( (int) ( $form['settings']['limits']['max_entries'] ?? 0 ) > 0 ) {
+				$this->entries->lock_form( $form_id );
+				$limits = FormLimits::state( $form, $this->entries );
+				if ( ! $limits['open'] ) {
+					$this->abort( $tx, 0, null );
+					return $fail( Errors::FORM_NOT_ACCEPTING, array( 'message' => $limits['message'] ) );
+				}
+			}
 			if ( null === $spam_reason ) {
 				// Reference number (SET-FC-29); drawn inside the transaction so a rollback returns it.
 				$entry['entry_number'] = EntryNumbers::next( $form );
@@ -276,6 +286,20 @@ final class SubmissionService {
 		}
 		if ( null !== $doi ) {
 			// Notifications, actions and the public event follow the confirmation (DoubleOptIn::confirm()).
+			try {
+				/**
+				 * A public entry was stored and waits for the double opt-in confirmation (SET-FC-P4-04).
+				 * Extensions that keep data of this request (e.g. uploaded files) link it to the entry
+				 * here; form_captain_entry_created_v1 only fires in the later confirmation request.
+				 * No values are passed: the entry is not confirmed yet.
+				 *
+				 * @param int $entry_id
+				 * @param int $form_id
+				 */
+				do_action( 'form_captain_entry_pending_v1', $entry_id, $form_id );
+			} catch ( \Throwable $e ) {
+				Logger::log( 'error', 'event_listener_failed', get_class( $e ), array( 'form_id' => $form_id, 'entry_id' => $entry_id ) );
+			}
 			Scheduler::nudge();
 			return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED, $values, true );
 		}

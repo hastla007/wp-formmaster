@@ -59,6 +59,38 @@ final class SettingsChangeLogTest extends TestCase {
 		$this->assertLessThanOrEqual( 201, mb_strlen( $all[1]['new'] ) );
 	}
 
+	/** SET-FC-P4-03: values of add-on fields live in the add-on's option and are logged too. */
+	public function test_addon_field_changes_and_resets_are_recorded_and_secrets_masked(): void {
+		$this->as_admin();
+		$fields = static fn( $f ) => array_merge(
+			(array) $f,
+			array(
+				array( 'id' => 'uploads.max_files', 'tab' => 'uploads', 'label' => 'Files', 'type' => 'number', 'min' => 1, 'max' => 10, 'default' => 1, 'storage' => array( 'option' => 'fc_test_log_addon', 'key' => 'uploads.max_files' ) ),
+				array( 'id' => 'uploads.scan_key', 'tab' => 'uploads', 'label' => 'Scanner key', 'type' => 'text', 'secret' => true, 'storage' => array( 'option' => 'fc_test_log_addon', 'key' => 'uploads.scan_key' ) ),
+			)
+		);
+		add_filter( 'form_captain_settings_fields_v1', $fields );
+		try {
+			$this->page()->save_tab( 'uploads', array( 'ext' => array( 'uploads.max_files' => '4', 'uploads.scan_key' => 'k-very-secret' ) ) );
+			$log = array_column( ChangeLog::latest(), null, 'key' );
+			$this->assertSame( '4', $log['uploads.max_files']['new'] );
+			$this->assertSame( 'ui', $log['uploads.max_files']['source'] );
+			$this->assertSame( '••••••', $log['uploads.scan_key']['new'] );
+			$this->assertStringNotContainsString( 'very-secret', (string) wp_json_encode( ChangeLog::all() ) );
+
+			delete_option( ChangeLog::OPTION );
+			$this->page()->reset_tab( 'uploads' );
+			$log = ChangeLog::latest();
+			$this->assertCount( 1, $log, 'only fields with a default are reset' );
+			$this->assertSame( 'uploads.max_files', $log[0]['key'] );
+			$this->assertSame( '4', $log[0]['old'] );
+			$this->assertSame( '1', $log[0]['new'] );
+		} finally {
+			remove_filter( 'form_captain_settings_fields_v1', $fields );
+			delete_option( 'fc_test_log_addon' );
+		}
+	}
+
 	public function test_role_changes_are_recorded_with_role_and_capability(): void {
 		$this->as_admin();
 		$this->page()->save_tab( 'access', array( 'roles' => array( 'editor' => array( Capabilities::READ_ENTRIES => '1' ) ) ) );

@@ -11,14 +11,17 @@ declare(strict_types=1);
 
 namespace FormCaptain\Tests\Integration\Frontend;
 
+use FormCaptain\Admin\EntriesPage;
 use FormCaptain\Database\Migrator;
 use FormCaptain\Database\Schema;
 use FormCaptain\Database\Tables;
+use FormCaptain\Export\CsvExporter;
 use FormCaptain\Jobs\JobRunner;
 use FormCaptain\Privacy\PrivacyIntegration;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\JobRepository;
 use FormCaptain\Service\DoubleOptIn;
+use FormCaptain\Service\EntryService;
 use FormCaptain\Service\FormService;
 use FormCaptain\Service\RetentionService;
 use FormCaptain\Service\SubmissionService;
@@ -145,8 +148,18 @@ final class DoubleOptInTest extends FrontendTestCase {
 				$events[] = $e['entry_id'];
 			}
 		);
+		$pending = array();
+		add_action(
+			'form_captain_entry_pending_v1',
+			static function ( int $entry_id, int $form_id ) use ( &$pending ): void {
+				$pending[] = array( $entry_id, $form_id );
+			},
+			10,
+			2
+		);
 		$res = $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() + array( 'f_name01' => 'Erika' ) ) );
 		$this->assertTrue( $res['success'] );
+		$this->assertSame( array( array( (int) $res['entry_id'], (int) $form['id'] ) ), $pending, 'SET-FC-P4-04: extensions can link request data (uploads) right away' );
 		$this->assertStringContainsString( 'confirm', $res['message'] );
 		$this->assertArrayNotHasKey( 'redirect_url', $res );
 		$id    = (int) $res['entry_id'];
@@ -169,6 +182,7 @@ final class DoubleOptInTest extends FrontendTestCase {
 		$page = $this->doi()->page( $token, false );
 		$this->assertSame( 200, $page['status'] );
 		$this->assertStringContainsString( 'name="t" value="' . $token . '"', $page['html'] );
+		$this->assertStringStartsWith( '<main><h1>', $page['html'], 'the page has a main landmark' );
 		$this->assertSame( 'pending', $this->entries()->find( $id )['confirmation_status'] );
 
 		$page = $this->doi()->page( $token, true );
@@ -180,12 +194,16 @@ final class DoubleOptInTest extends FrontendTestCase {
 		$this->assertNull( $entry['unconfirmed_until_gmt'] );
 		$this->assertSame( array( DoubleOptIn::JOB_TYPE, 'mail.admin', 'connector.action' ), $this->job_types( $id ) );
 		$this->assertSame( array( $id ), $events );
+		$this->assertCount( 1, $pending, 'the confirmation does not fire the pending action again' );
 
 		// Single use: a second click changes nothing.
 		$again = $this->doi()->page( $token, true );
 		$this->assertStringContainsString( 'already been confirmed', $again['html'] );
 		$this->assertSame( array( $id ), $events );
 		$this->assertCount( 3, $this->job_types( $id ) );
+		// SET-FC-P4-05: without the right token nobody learns that this entry exists or was confirmed.
+		$this->assertSame( 'invalid', $this->doi()->check( $id . '.' . str_repeat( 'A', 32 ) )['code'] );
+		$this->assertStringContainsString( 'invalid', $this->doi()->page( $id . '.' . str_repeat( 'B', 32 ), false )['html'] );
 
 		// Privacy export carries the proof (time only, no IP).
 		$export = $this->plugin()->get( PrivacyIntegration::class )->export_item( $entry );
@@ -210,6 +228,36 @@ final class DoubleOptInTest extends FrontendTestCase {
 		$this->assertSame( array( DoubleOptIn::JOB_TYPE ), $this->job_types( $id ) );
 	}
 
+	/** SET-FC-P2-2: a late delivery attempt does not mail a link that has already expired. */
+	public function test_no_mail_with_an_already_expired_link(): void {
+		$form = $this->doi_form( array( 'link_hours' => 1 ) );
+		$id   = (int) $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) )['entry_id'];
+
+		Clock::freeze( time() + 2 * HOUR_IN_SECONDS ); // Queue stopped for two hours.
+		$this->plugin()->get( JobRunner::class )->run();
+		$this->assertSame( array(), tests_retrieve_phpmailer_instance()->mock_sent, 'no mail with a dead link' );
+		$job = $this->plugin()->get( JobRepository::class )->for_entry( $id )[0];
+		$this->assertSame( 'link_expired', $job['last_error_code'] );
+	}
+
+	/**
+	 * SET-FC-P2-3: unconfirmed entries whose link has expired do not block the maximum of the
+	 * form; the expired-link page asks the visitor to submit again.
+	 */
+	public function test_expired_unconfirmed_entries_do_not_block_the_maximum(): void {
+		$form  = $this->doi_form( array( 'link_hours' => 1, 'delete_after_days' => 1 ), array( 'limits' => array( 'max_entries' => 1 ) ) );
+		$first = $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) );
+		$this->assertTrue( $first['success'] );
+		$this->assertFalse( \FormCaptain\Service\FormLimits::state( $form )['open'], 'a confirmable entry holds its place' );
+
+		$payload = $this->payload( $form, array( 'f_name01' => 'Erika', 'f_mail01' => 'erika@example.org' ) );
+		Clock::freeze( time() + HOUR_IN_SECONDS + 120 ); // Link expired, the new form token is still valid.
+		$this->assertTrue( \FormCaptain\Service\FormLimits::state( $form )['open'], 'expired link: the place is free again' );
+		$again = $this->service()->submit( $form, $payload );
+		$this->assertTrue( $again['success'] );
+		$this->assertFalse( \FormCaptain\Service\FormLimits::state( $form )['open'] );
+	}
+
 	public function test_admin_mails_are_refused_for_unconfirmed_entries(): void {
 		$form = $this->doi_form();
 		$res  = $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) );
@@ -218,6 +266,51 @@ final class DoubleOptInTest extends FrontendTestCase {
 		$this->plugin()->get( JobRunner::class )->run();
 		$row = $this->plugin()->get( JobRepository::class )->find( $job );
 		$this->assertSame( 'entry_unconfirmed', $row['last_error_code'] );
+	}
+
+	/** SET-FC-P3-1/-2: unconfirmed entries are marked in list, detail and CSV and cannot be notified by hand. */
+	public function test_unconfirmed_entries_are_marked_in_the_admin(): void {
+		$this->as_admin();
+		$form      = $this->doi_form( array( 'delete_after_days' => 5 ) );
+		$pending   = (int) $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) )['entry_id'];
+		$confirmed = (int) $this->service()->submit( $form, $this->payload( $form, array( 'f_name01' => 'B', 'f_mail01' => 'b@example.org' ) ) )['entry_id'];
+		$this->entries()->mark_confirmed( $confirmed, Clock::now() );
+
+		$this->assertSame( 'New – not confirmed yet', CsvExporter::status_label( $this->entries()->find( $pending ) ) );
+		$this->assertSame( 'New', CsvExporter::status_label( $this->entries()->find( $confirmed ) ) );
+
+		$render = function ( int $id ): string {
+			$_GET = array( 'page' => EntriesPage::SLUG, 'view' => (string) $id );
+			ob_start();
+			try {
+				$this->plugin()->get( EntriesPage::class )->render();
+			} finally {
+				$out  = (string) ob_get_clean();
+				$_GET = array();
+			}
+			return $out;
+		};
+		$html  = $render( $pending );
+		$until = (string) $this->entries()->find( $pending )['unconfirmed_until_gmt'];
+		$this->assertStringContainsString( 'fc-doi-pending', $html );
+		$this->assertStringContainsString( get_date_from_gmt( $until, get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) ), $html, 'deadline of the double opt-in' );
+		$this->assertStringNotContainsString( 'Will be deleted automatically on', $html, 'no retention date for an unconfirmed entry' );
+		$this->assertStringNotContainsString( 'value="resend"', $html, 'no manual notification before the confirmation' );
+		$this->assertStringContainsString( 'Confirmation link (double opt-in)', $html );
+
+		$html = $render( $confirmed );
+		$this->assertStringContainsString( 'fc-doi-confirmed', $html );
+		$this->assertStringNotContainsString( 'fc-doi-pending', $html );
+
+		$result = $this->plugin()->get( EntryService::class )->resend_notification( $pending );
+		$this->assertInstanceOf( \WP_Error::class, $result );
+		$this->assertNotContains( 'mail.admin', $this->job_types( $pending ) );
+		$this->assertTrue( $this->plugin()->get( EntryService::class )->resend_notification( $confirmed ) );
+	}
+
+	/** SET-FC-P3-7: periods and texts of the double opt-in carry the "legal review" hint. */
+	public function test_settings_help_asks_for_a_legal_review(): void {
+		$this->assertStringContainsString( 'have them checked legally', \FormCaptain\Settings\FormSettingsSchema::definitions()['double_opt_in.enabled']['help'] );
 	}
 
 	public function test_unconfirmed_entries_are_deleted_after_the_period(): void {

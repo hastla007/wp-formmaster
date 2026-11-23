@@ -17,7 +17,6 @@ use FormCaptain\Install\Capabilities;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\JobRepository;
-use FormCaptain\Settings\Settings;
 use FormCaptain\Support\Clock;
 use FormCaptain\Support\Errors;
 use FormCaptain\Support\Logger;
@@ -107,7 +106,7 @@ final class EntryService {
 		if ( 'trash' !== $entry['status'] ) {
 			return self::conflict( __( 'Only submissions in the trash can be restored.', 'form-captain' ) );
 		}
-		$days = max( 1, (int) Settings::get( 'privacy.trash_days' ) );
+		$days = RetentionService::trash_days();
 		if ( ! empty( $entry['trashed_gmt'] ) && strtotime( $entry['trashed_gmt'] . ' UTC' ) < Clock::timestamp() - $days * DAY_IN_SECONDS ) {
 			return self::conflict( __( 'The restore period for this submission has expired.', 'form-captain' ) );
 		}
@@ -222,6 +221,9 @@ final class EntryService {
 		}
 		if ( ! empty( $entry['consent_withdrawn_gmt'] ) ) {
 			return self::conflict( __( 'Consent for this submission was withdrawn. No further messages are sent.', 'form-captain' ) );
+		}
+		if ( DoubleOptIn::STATUS_PENDING === ( $entry['confirmation_status'] ?? null ) ) {
+			return self::conflict( __( 'This submission has not been confirmed by e-mail yet (double opt-in). Notifications are sent after the confirmation.', 'form-captain' ) );
 		}
 		foreach ( $this->jobs->for_entry( $entry_id ) as $job ) {
 			if ( 'mail.admin' === $job['type'] && in_array( $job['status'], array( 'pending', 'running' ), true ) ) {

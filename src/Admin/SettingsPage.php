@@ -646,7 +646,10 @@ final class SettingsPage {
 		}
 		echo '</nav>';
 		if ( is_array( $notice ) && ! empty( $notice['messages'] ) ) {
-			echo '<div class="notice notice-' . ( 'error' === $notice['type'] ? 'error' : 'success' ) . ' is-dismissible" role="status">';
+			// An error list gets the focus on load (admin-settings.js), so keyboard and screen reader users start there.
+			$is_error = 'error' === $notice['type'];
+			// "inline": WordPress would move the notice after load, which takes the focus away again.
+			echo '<div class="notice is-dismissible ' . ( $is_error ? 'notice-error inline fc-error-summary" tabindex="-1" role="alert">' : 'notice-success" role="status">' );
 			foreach ( (array) $notice['messages'] as $m ) {
 				echo '<p>' . esc_html( (string) $m ) . '</p>';
 			}
@@ -654,7 +657,7 @@ final class SettingsPage {
 				echo '<ul class="fc-error-list">';
 				foreach ( $errors as $path => $msg ) {
 					$def = SettingsSchema::definitions()[ $path ] ?? ( str_starts_with( (string) $path, 'ext.' ) ? ( SettingsSchema::extension_fields()[ substr( (string) $path, 4 ) ] ?? null ) : null );
-					echo '<li><a href="#fc-' . esc_attr( str_replace( '.', '-', (string) $path ) ) . '">' . esc_html( (string) ( $def['label'] ?? $path ) ) . '</a>: ' . esc_html( (string) $msg ) . '</li>';
+					echo '<li><a href="#' . esc_attr( self::control_id( (string) $path ) ) . '">' . esc_html( (string) ( $def['label'] ?? $path ) ) . '</a>: ' . esc_html( (string) $msg ) . '</li>';
 				}
 				echo '</ul>';
 			}
@@ -733,12 +736,15 @@ final class SettingsPage {
 	 * @param array<string,mixed> $def
 	 */
 	private function render_field( string $tab, string $key, array $def, mixed $value, string $error, string $name_base = 'settings' ): void {
-		$id   = 'fc-' . $tab . '-' . str_replace( array( '_', '.' ), '-', $key );
+		$id   = self::control_id( $tab . '.' . $key );
 		$name = $name_base . '[' . $key . ']';
 		$help = (string) ( $def['help'] ?? '' );
 		$desc = trim( ( $error ? $id . '-error ' : '' ) . ( '' !== $help ? $id . '-help' : '' ) );
 		$aria = ( $error ? ' aria-invalid="true"' : '' ) . ( '' !== $desc ? ' aria-describedby="' . esc_attr( $desc ) . '"' : '' );
-		echo '<tr id="fc-' . esc_attr( $tab . '-' . str_replace( '.', '-', $key ) ) . '"><th scope="row"><label for="' . esc_attr( $id ) . '">' . esc_html( (string) $def['label'] ) . '</label></th><td>';
+		// Groups of radios or checkboxes are named by their legend; a label must point to a form control.
+		$group = in_array( $def['type'], array( 'retention', 'multiselect' ), true ) || ( 'enum' === $def['type'] && count( (array) $def['options'] ) <= 3 );
+		$title = $group ? '<span class="fc-group-label">' . esc_html( (string) $def['label'] ) . '</span>' : '<label for="' . esc_attr( $id ) . '">' . esc_html( (string) $def['label'] ) . '</label>';
+		echo '<tr id="' . esc_attr( $id ) . '-row"><th scope="row">' . $title . '</th><td>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $title built from escaped parts.
 		switch ( $def['type'] ) {
 			case 'bool':
 				echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="0"><label><input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="1"' . checked( (bool) $value, true, false ) . $aria . '> ' . esc_html__( 'Enabled', 'form-captain' ) . '</label>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $aria built from escaped parts.
@@ -814,6 +820,14 @@ final class SettingsPage {
 		}
 		$this->render_field_after( $tab, $key, $value );
 		echo '</td></tr>';
+	}
+
+	/**
+	 * Id of the control of a setting ("tab.key", or "ext.<id>" for fields of add-ons). The error list
+	 * links here, the row carries the same id with "-row".
+	 */
+	public static function control_id( string $path ): string {
+		return 'fc-' . str_replace( array( '_', '.' ), '-', $path );
 	}
 
 	private function render_field_after( string $tab, string $key, mixed $value ): void {
@@ -989,18 +1003,26 @@ final class SettingsPage {
 		foreach ( $rows as $row ) {
 			if ( 'privacy.retention' === $row['path'] && $row['changed'] ) {
 				$p = $this->retention_estimate( (string) $row['after'] );
-				echo '<p class="fc-warning">' . esc_html(
-					null !== $p['earliest']
-						/* translators: 1: number of submissions, 2: date */
-						? sprintf( __( 'The new retention period affects %1$s submissions; earliest deletion on %2$s.', 'form-captain' ), number_format_i18n( $p['count'] ), self::local_date( $p['earliest'] ) )
-						/* translators: %s: number of submissions */
-						: sprintf( __( 'The new retention period affects %s submissions; nothing is deleted automatically.', 'form-captain' ), number_format_i18n( $p['count'] ) )
-				) . '</p>';
+				if ( null !== $p['earliest'] ) {
+					/* translators: 1: number of submissions, 2: date */
+					$text = sprintf( __( 'The new retention period affects %1$s submissions; earliest deletion on %2$s.', 'form-captain' ), number_format_i18n( $p['count'] ), self::local_date( $p['earliest'] ) );
+				} elseif ( null !== RetentionPeriod::parts( (string) $row['after'] ) ) {
+					// SET-FC-P3-3: a period with no existing submissions still deletes new ones automatically.
+					$text = __( 'No existing submissions are affected by this change.', 'form-captain' ) . ' ' . sprintf(
+						/* translators: %s: retention period */
+						__( 'New submissions are deleted automatically %s after they were received.', 'form-captain' ),
+						RetentionPeriod::label( (string) $row['after'] )
+					);
+				} else {
+					/* translators: %s: number of submissions */
+					$text = sprintf( __( 'The new retention period affects %s submissions; nothing is deleted automatically.', 'form-captain' ), number_format_i18n( $p['count'] ) );
+				}
+				echo '<p class="fc-warning">' . esc_html( $text ) . '</p>';
 			}
 		}
 		if ( array_filter( array_column( $rows, 'changed' ) ) ) {
 			echo '<p><label><input type="checkbox" name="confirm_profile" value="1" required> ' . esc_html__( 'I have reviewed the changes and want to apply the selected rows.', 'form-captain' ) . '</label></p>';
-			submit_button( __( 'Apply selected values', 'form-captain' ), 'primary', 'submit', false );
+			submit_button( __( 'Apply selected values', 'form-captain' ), 'primary', 'submit', false, array( 'id' => 'fc-submit-profile' ) );
 		} else {
 			echo '<p>' . esc_html__( 'Your settings already match this profile.', 'form-captain' ) . '</p>';
 		}
@@ -1027,7 +1049,7 @@ final class SettingsPage {
 		echo '<input type="hidden" name="action" value="form_captain_test_mail">';
 		wp_nonce_field( 'form_captain_test_mail' );
 		echo '<p>' . esc_html__( 'Sends a short test message to your own user e-mail address with the default sender.', 'form-captain' ) . '</p>';
-		submit_button( __( 'Send test e-mail', 'form-captain' ), 'secondary', 'submit', false );
+		submit_button( __( 'Send test e-mail', 'form-captain' ), 'secondary', 'submit', false, array( 'id' => 'fc-submit-test-mail' ) );
 		echo '</form>';
 	}
 
@@ -1046,7 +1068,7 @@ final class SettingsPage {
 			echo '<p class="fc-warning">' . esc_html__( 'Only administrators keep access. All other roles lose their Form Captain permissions.', 'form-captain' ) . '</p>';
 		}
 		echo '<p><label><input type="checkbox" name="confirm_reset" value="1" required> ' . esc_html__( 'I understand the consequences.', 'form-captain' ) . '</label></p>';
-		submit_button( __( 'Reset section', 'form-captain' ), 'delete', 'submit', false );
+		submit_button( __( 'Reset section', 'form-captain' ), 'delete', 'submit', false, array( 'id' => 'fc-submit-reset' ) );
 		echo '</form></details>';
 	}
 
@@ -1089,12 +1111,20 @@ final class SettingsPage {
 		echo '<p>' . esc_html__( 'Transfers the settings of this page to another website as a JSON file. Secrets, role permissions, forms and submissions are not included; data deletion on uninstall must always be confirmed on the target site.', 'form-captain' ) . '</p>';
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="fc-inline-form"><input type="hidden" name="action" value="form_captain_export_settings">';
 		wp_nonce_field( 'form_captain_export_settings' );
-		submit_button( __( 'Export settings', 'form-captain' ), 'secondary', 'submit', false );
+		submit_button( __( 'Export settings', 'form-captain' ), 'secondary', 'submit', false, array( 'id' => 'fc-submit-export' ) );
 		echo '</form>';
 
 		$json = get_transient( self::import_key() );
 		if ( is_string( $json ) && '' !== $json ) {
-			$p = SettingsTransfer::preview( $json );
+			// Changes as they would be with the confirmations; the checks without them say which are needed.
+			$plain = SettingsTransfer::preview( $json );
+			$p     = SettingsTransfer::preview(
+				$json,
+				array(
+					'retention_confirm' => true,
+					'captcha_confirm'   => true,
+				)
+			);
 			echo '<div class="fc-card fc-import-preview"><h3>' . esc_html__( 'Import preview', 'form-captain' ) . '</h3>';
 			if ( '' !== (string) ( $p['meta']['plugin_version'] ?? '' ) ) {
 				/* translators: 1: plugin version, 2: date */
@@ -1102,7 +1132,7 @@ final class SettingsPage {
 			}
 			if ( $p['changes'] ) {
 				echo '<table class="widefat striped"><thead><tr><th scope="col">' . esc_html__( 'Setting', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'Current value', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'New value', 'form-captain' ) . '</th></tr></thead><tbody>';
-				$defs = SettingsSchema::definitions();
+				$defs = SettingsSchema::definitions() + SettingsSchema::extension_fields();
 				foreach ( $p['changes'] as $path => $pair ) {
 					echo '<tr><td>' . esc_html( (string) ( $defs[ $path ]['label'] ?? $path ) ) . ' <code>' . esc_html( $path ) . '</code></td><td>' . esc_html( self::show_value( $pair[0] ) ) . '</td><td>' . esc_html( self::show_value( $pair[1] ) ) . '</td></tr>';
 				}
@@ -1112,9 +1142,9 @@ final class SettingsPage {
 			}
 			$needs_retention = false;
 			$needs_captcha   = false;
-			foreach ( $p['errors'] as $path => $msg ) {
-				$needs_retention = $needs_retention || 'privacy.retention' === $path;
-				$needs_captcha   = $needs_captcha || 'spam.captcha_provider' === $path;
+			foreach ( $plain['errors'] as $path => $msg ) {
+				$needs_retention = $needs_retention || ( 'privacy.retention' === $path && ! isset( $p['errors'][ $path ] ) );
+				$needs_captcha   = $needs_captcha || ( 'spam.captcha_provider' === $path && ! isset( $p['errors'][ $path ] ) );
 				echo '<p class="fc-field-error">' . esc_html( $path . ': ' . $msg ) . '</p>';
 			}
 			if ( $p['unknown'] ) {
@@ -1124,12 +1154,13 @@ final class SettingsPage {
 			echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="form_captain_import_settings"><input type="hidden" name="step" value="apply">';
 			wp_nonce_field( 'form_captain_import_settings' );
 			if ( $needs_retention ) {
-				echo '<p><label><input type="checkbox" name="retention_confirm" value="1"> ' . esc_html__( 'I understand that changing the retention period schedules the deletion of existing submissions (never sooner than 14 days after this change).', 'form-captain' ) . '</label></p>';
+				/* translators: %s: number of days */
+				echo '<p><label><input type="checkbox" name="retention_confirm" value="1"> ' . esc_html( sprintf( __( 'I understand that changing the retention period schedules the deletion of existing submissions (never sooner than %s days after this change).', 'form-captain' ), number_format_i18n( RetentionService::grace_days() ) ) ) . '</label></p>';
 			}
 			if ( $needs_captcha ) {
 				echo '<p><label><input type="checkbox" name="captcha_confirm" value="1"> ' . esc_html__( 'I have read the data flow and updated the privacy policy.', 'form-captain' ) . '</label></p>';
 			}
-			submit_button( __( 'Import these settings', 'form-captain' ), 'primary', 'submit', false );
+			submit_button( __( 'Import these settings', 'form-captain' ), 'primary', 'submit', false, array( 'id' => 'fc-submit-import' ) );
 			echo '</form></div>';
 		}
 
@@ -1137,7 +1168,7 @@ final class SettingsPage {
 		wp_nonce_field( 'form_captain_import_settings' );
 		echo '<p><label for="fc-settings-file">' . esc_html__( 'Settings file', 'form-captain' ) . '</label> <input type="file" id="fc-settings-file" name="settings_file" accept=".json,application/json" aria-describedby="fc-settings-file-help"></p>';
 		echo '<p class="description" id="fc-settings-file-help">' . esc_html__( 'You see all changes before anything is saved. Invalid values and unknown keys are reported and not imported.', 'form-captain' ) . '</p>';
-		submit_button( __( 'Show import preview', 'form-captain' ), 'secondary', 'submit', false );
+		submit_button( __( 'Show import preview', 'form-captain' ), 'secondary', 'submit', false, array( 'id' => 'fc-submit-import-preview' ) );
 		echo '</form>';
 	}
 
@@ -1227,7 +1258,7 @@ final class SettingsPage {
 		echo '<p>' . esc_html__( 'The signing key protects submission tokens and signed suite contexts. It is never displayed. Renew it if you suspect it was exposed.', 'form-captain' ) . '</p>';
 		echo '<p><label><input type="checkbox" name="discard_previous" value="1"> ' . esc_html__( 'Discard the previous key immediately (suspected compromise)', 'form-captain' ) . '</label></p>';
 		echo '<p><label><input type="checkbox" name="confirm_rotate" value="1" required> ' . esc_html__( 'Renewing the signing key invalidates links and open forms older than 26 hours. Continue?', 'form-captain' ) . '</label></p>';
-		submit_button( __( 'Renew signing key', 'form-captain' ), 'secondary', 'submit', false );
+		submit_button( __( 'Renew signing key', 'form-captain' ), 'secondary', 'submit', false, array( 'id' => 'fc-submit-rotate' ) );
 		echo '</form>';
 	}
 }

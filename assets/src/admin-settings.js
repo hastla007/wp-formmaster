@@ -8,6 +8,12 @@
 		return s;
 	};
 
+	/* After a failed save the error list comes first: focus it like the error summary of the forms. */
+	var summary = document.querySelector( '.fc-settings .fc-error-summary' );
+	if ( summary ) {
+		summary.focus();
+	}
+
 	document.addEventListener( 'submit', function ( event ) {
 		var form = event.target;
 		if ( form && form.getAttribute && form.getAttribute( 'data-fc-confirm' ) ) {

@@ -62,13 +62,13 @@ Der Einmal-Speicher wird erst bei Schritt 7 berührt, also nur für korrekt sign
 | Parameter | Vorgabe | Wo |
 |---|---|---|
 | Schwierigkeit `maxnumber` | 50 000 (1 000 … 1 000 000) | technischer Wert; Filter `form_captain_pow_max_number_v1` |
-| Gültigkeit einer Aufgabe | 1 800 s | Konstante `ProofOfWork::DEFAULT_TTL` |
+| Gültigkeit einer Aufgabe | mindestens 1 800 s (`ProofOfWork::DEFAULT_TTL`), in Form Captain so lange wie das Sendetoken (`spam.token_minutes`, Vorgabe 2 h) | Aufgabe und Token werden zusammen geholt; `frontend.js` behält das Token bis 115 min. Eine kürzere Gültigkeit hätte Einsendungen langsamer Besucher still in den Spam gelegt (SET-FC-P4-01). |
 | Schlüssel | `Secret::key( 'form-captain/pow/v1' )` | aus dem Website-Geheimnis abgeleitet, nie ausgegeben |
 | Einmal-Speicher | Zeile in `fc_rate_limits` (`INSERT IGNORE`, Bucket = SHA-256 der Aufgabe) | wird mit den übrigen Sendegrenzen aufgeräumt |
 
 ## Einbindung in Form Captain
 
-- Auswahl: Einstellung `spam.captcha_provider` = `pow` (Vorgabe bleibt `none`; keine Drittland-Bestätigung nötig). Externe Anbieter weiterhin über `form_captain_spam_checks_v1`.
+- Auswahl: Einstellung `spam.captcha_provider` = `pow` (Vorgabe bleibt `none`; keine Drittland-Bestätigung nötig). Externe Anbieter melden sich über `form_captain_captcha_providers_v1` an (Auswahl in der Einstellung) und prüfen die Einsendung über `form_captain_spam_checks_v1`, wenn `$context['captcha']` ihr Schlüssel ist (siehe `docs/spec/api-v1.md`).
 - Je Formular `spam.mode`: `global` (Einstellung gilt), `strict` (Captcha immer, `pow` falls global keiner gewählt, kein Fallback ohne JS), `off` (kein Captcha für dieses Formular; übrige Prüfungen bleiben).
 - Spam-Gründe der Einsendung: `pow_missing`, `pow_invalid`, `pow_replayed`. Wie bei allen Spam-Gründen sieht der Besucher eine normale Erfolgsmeldung, die Einsendung landet im Spam.
 - Die REST-Route des Formular-Skripts erwartet eine Lösung; die No-JS-Route (`admin-post.php`) nur bei `strict`.

@@ -56,6 +56,10 @@ final class Templates {
 		}
 		$schema = $data['schema'];
 		foreach ( $schema['fields'] as $i => $field ) {
+			if ( 'consent' === ( $field['type'] ?? '' ) && array_key_exists( 'privacy_link', $field ) ) {
+				// New consent fields follow privacy.policy_page_hint, like in the field editor.
+				$schema['fields'][ $i ]['privacy_link'] = (bool) \FormCaptain\Settings\Settings::get( 'privacy.policy_page_hint' );
+			}
 			foreach ( array( 'label', 'help', 'placeholder', 'consent_text' ) as $prop ) {
 				if ( isset( $field[ $prop ] ) && is_string( $field[ $prop ] ) ) {
 					$schema['fields'][ $i ][ $prop ] = self::t( $field[ $prop ] );

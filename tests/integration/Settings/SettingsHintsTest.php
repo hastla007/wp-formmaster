@@ -105,6 +105,65 @@ final class SettingsHintsTest extends TestCase {
 		}
 	}
 
+	/**
+	 * Guard over the whole free plugin (S1, SET-FC-P6): no entitlement key names of any Captain add-on,
+	 * no licence client, and words about licences only where they are known and explained:
+	 * ConnectorRegistry (requires.entitlement of contract v1, waits for the owner: SET-FC-P6-02),
+	 * the detection of the separate plugin "License Captain" on the dashboard and two comments.
+	 * A new place fails here and has to be explained in docs/WORDPRESS-ORG.md first.
+	 */
+	public function test_whole_core_has_no_licence_code_outside_known_places(): void {
+		$root  = (string) realpath( FORM_CAPTAIN_DIR );
+		$known = array(
+			'src/Integrations/ConnectorRegistry.php' => 6,
+			'src/Admin/DashboardPage.php'            => 1,
+			'src/Service/FormService.php'            => 1,
+			'src/Domain/Schema/SchemaValidator.php'  => 1,
+		);
+		$found = array();
+		$files = array( $root . '/form-captain.php', $root . '/uninstall.php' );
+		foreach ( array( 'src', 'includes', 'templates', 'blocks', 'assets/src' ) as $dir ) {
+			if ( ! is_dir( $root . '/' . $dir ) ) {
+				continue;
+			}
+			foreach ( new \RecursiveIteratorIterator( new \RecursiveDirectoryIterator( $root . '/' . $dir, \FilesystemIterator::SKIP_DOTS ) ) as $file ) {
+				if ( in_array( $file->getExtension(), array( 'php', 'js', 'jsx', 'json' ), true ) ) {
+					$files[] = $file->getPathname();
+				}
+			}
+		}
+		foreach ( $files as $path ) {
+			$rel = ltrim( substr( $path, strlen( $root ) ), '/' );
+			foreach ( (array) file( $path ) as $line ) {
+				$line = (string) $line;
+				$this->assertDoesNotMatchRegularExpression( '/[\'"](?:form|voucher|pass|review|affiliate|workflow)\.(?!(?:css|js|json|php|min|svg|png)[\'"])[a-z_]+[\'"]/', $line, "Entitlement key name in $rel" );
+				$this->assertDoesNotMatchRegularExpression( '/license_?(key|server|client)|LicenseManager|LicenseClient|wplc/i', $line, "Licence client in $rel" );
+				if ( preg_match( '/^\s*\*\s*License( URI)?:/', $line ) ) {
+					continue; // GPL header of the plugin file.
+				}
+				if ( preg_match( '/licen[cs]|entitlement|premium/i', $line ) ) {
+					$found[ $rel ] = ( $found[ $rel ] ?? 0 ) + 1;
+				}
+			}
+		}
+		ksort( $found );
+		ksort( $known );
+		$this->assertSame( $known, $found, 'Lines that mention licences or entitlements in the free plugin' );
+	}
+
+	/**
+	 * Every hint row names a field that Form Captain Pro announces together with the feature, so the row
+	 * disappears as soon as the feature runs (S1). The same list is checked against the add-on in
+	 * captain-pro tests/Addons/FormSettingsTest.php. recipient_rules has no add-on field yet
+	 * (SET-FC-P6-01, waits for the owner).
+	 */
+	public function test_hint_ids_are_ids_of_addon_fields(): void {
+		$this->assertSame(
+			array( 'uploads.types', 'uploads.max_files', 'multistep.draft_days', 'webhooks.timeout', 'woo.reminder_days', 'woo.link_days', 'woo.reminder_subject', 'multistep.progress', 'pdf.logo_id', 'recipient_rules', 'pdf.attach_notification', 'uploads.file_retention_days' ),
+			array_column( SettingsSchema::pro_hints(), 'id' )
+		);
+	}
+
 	public function test_hints_off_shows_no_rows(): void {
 		Settings::set_group( 'general', array( 'show_pro_hints' => false ) );
 		$this->assertSame( array(), SettingsSchema::visible_pro_hints( 'general' ) );
@@ -238,7 +297,7 @@ final class SettingsHintsTest extends TestCase {
 		$labels = SettingsSchema::tab_labels();
 		$this->assertSame( array( 'general', 'appearance', 'email', 'privacy', 'spam', 'export', 'uploads', 'woocommerce', 'access', 'status' ), array_keys( $labels ) );
 		$this->assertNotContains( 'uploads.types', array_column( SettingsSchema::visible_pro_hints( 'general' ), 'id' ), 'hint row disappears with the field' );
-		$this->assertContains( 'webhooks', array_column( SettingsSchema::visible_pro_hints( 'general' ), 'id' ) );
+		$this->assertContains( 'webhooks.timeout', array_column( SettingsSchema::visible_pro_hints( 'general' ), 'id' ) );
 
 		$html = $this->render_tab( 'uploads' );
 		$this->assertStringContainsString( 'tab=uploads', $html );

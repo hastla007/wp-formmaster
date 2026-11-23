@@ -204,7 +204,7 @@
 			f.label = __( 'Consent', 'form-captain' );
 			f.required = true;
 			f.consent_text = __( 'I agree that my details will be stored to process my request.', 'form-captain' );
-			f.privacy_link = true;
+			f.privacy_link = boot.consentLink !== false; // Setting privacy.policy_page_hint.
 			f.consent_revision = 1;
 		}
 		if ( type === 'email' ) {
@@ -1201,6 +1201,45 @@
 	/* Settings tabs                                                       */
 	/* ------------------------------------------------------------------ */
 
+	/** Editor tab that shows the setting at this error path (form errors other than fields). */
+	function settingTabOf( path ) {
+		if ( /^(schema|fields?)\b/.test( path ) ) {
+			return 'fields';
+		}
+		if ( /^actions\b/.test( path ) ) {
+			return 'actions';
+		}
+		if ( /^confirmation\./.test( path ) ) {
+			return 'confirmation';
+		}
+		return /^(notification|confirmation_mail|email|double_opt_in)\./.test( path ) ? 'notifications' : 'settings';
+	}
+
+	/** "Problems in: Fields, Notifications" for the notice after saving. */
+	function problemTabs( formErrors, actionErrors ) {
+		var titles = {
+			fields: __( 'Fields', 'form-captain' ),
+			notifications: __( 'Notifications', 'form-captain' ),
+			confirmation: __( 'Confirmation', 'form-captain' ),
+			settings: __( 'Form settings', 'form-captain' ),
+			actions: __( 'Actions', 'form-captain' ),
+		};
+		var found = {};
+		Object.keys( formErrors ).forEach( function ( k ) {
+			found[ settingTabOf( k ) ] = true;
+		} );
+		if ( Object.keys( actionErrors ).length ) {
+			found.actions = true;
+		}
+		var names = Object.keys( titles ).filter( function ( t ) {
+			return found[ t ];
+		} ).map( function ( t ) {
+			return titles[ t ];
+		} );
+		/* translators: %s: names of the editor tabs, e.g. "Notifications, Form settings" */
+		return names.length ? sprintf( __( 'Problems in: %s', 'form-captain' ), names.join( ', ' ) ) : '';
+	}
+
 	function SettingError( props ) {
 		return el( FieldError, { code: props.errors[ props.path ] } );
 	}
@@ -1349,7 +1388,7 @@
 			'div',
 			{ className: 'fc-settings-tab' },
 			el( 'h2', null, __( 'Admin notification', 'form-captain' ) ),
-			el( C.CheckboxControl, { label: __( 'Send an email for every new entry', 'form-captain' ), checked: n.enabled !== false, onChange: function ( v ) {
+			el( C.CheckboxControl, { label: __( 'Send an email for every new entry', 'form-captain' ), help: __( 'Sends an e-mail to the recipients below for every new submission.', 'form-captain' ), checked: n.enabled !== false, onChange: function ( v ) {
 				setN( { enabled: v } );
 			} } ),
 			n.enabled !== false &&
@@ -1370,6 +1409,7 @@
 					el( SettingError, { errors: props.errors, path: 'notification.to' } ),
 					el( C.SelectControl, {
 						label: __( 'Reply-To field', 'form-captain' ),
+						help: __( 'An e-mail field of this form whose value is used as reply-to address.', 'form-captain' ),
 						value: n.reply_to_field || '',
 						options: [ { value: '', label: __( 'None', 'form-captain' ) } ].concat(
 							emails.map( function ( f ) {
@@ -1391,6 +1431,7 @@
 					} ),
 					el( C.RadioControl, {
 						label: __( 'Fields in the email', 'form-captain' ),
+						help: __( 'All fields not marked as sensitive, or a selection.', 'form-captain' ),
 						selected: selected ? 'selected' : 'all_non_sensitive',
 						options: [
 							{ value: 'all_non_sensitive', label: __( 'All fields except sensitive ones', 'form-captain' ) },
@@ -1430,7 +1471,7 @@
 					el( TestMailButton, { kind: 'admin', settings: s } )
 				),
 			el( 'h2', null, __( 'Confirmation email to the visitor', 'form-captain' ) ),
-			el( C.CheckboxControl, { label: __( 'Send a confirmation email', 'form-captain' ), checked: !! cm.enabled, onChange: function ( v ) {
+			el( C.CheckboxControl, { label: __( 'Send a confirmation email', 'form-captain' ), help: __( 'Needs an e-mail field marked as confirmation recipient.', 'form-captain' ), checked: !! cm.enabled, onChange: function ( v ) {
 				setCM( { enabled: v } );
 			} } ),
 			cm.enabled &&
@@ -1439,7 +1480,7 @@
 					null,
 					el( 'p', { className: 'description' }, __( 'Goes to the email field marked “Send the confirmation email to this address”.', 'form-captain' ) ),
 					el( SettingError, { errors: props.errors, path: 'confirmation_mail.enabled' } ),
-					el( C.TextControl, { label: __( 'Subject', 'form-captain' ), value: cm.subject || '', onChange: function ( v ) {
+					el( C.TextControl, { label: __( 'Subject', 'form-captain' ), help: __( 'Required when the confirmation e-mail is on.', 'form-captain' ), value: cm.subject || '', onChange: function ( v ) {
 						setCM( { subject: v } );
 					} } ),
 					el( SettingError, { errors: props.errors, path: 'confirmation_mail.subject' } ),
@@ -1482,6 +1523,7 @@
 			el( 'p', { className: 'description' }, __( 'Copied from the global email settings when the form was created. Changes here only affect this form.', 'form-captain' ) ),
 			el( C.TextControl, {
 				label: __( 'Sender name', 'form-captain' ),
+				help: __( 'Copied from the global setting when the form is created.', 'form-captain' ),
 				value: ( s.email || {} ).from_name || '',
 				onChange: function ( v ) {
 					props.onChange( Object.assign( {}, s, { email: Object.assign( {}, s.email || {}, { from_name: v } ) } ) );
@@ -1489,6 +1531,7 @@
 			} ),
 			el( C.TextControl, {
 				label: __( 'Sender address', 'form-captain' ),
+				help: __( 'Copied from the global setting when the form is created. Empty uses the global sender.', 'form-captain' ),
 				type: 'email',
 				value: ( s.email || {} ).from_address || '',
 				onChange: function ( v ) {
@@ -1524,6 +1567,7 @@
 			el( 'h2', null, __( 'After submitting', 'form-captain' ) ),
 			el( C.RadioControl, {
 				label: __( 'Show', 'form-captain' ),
+				help: __( 'Show a message below the form or redirect to a published page.', 'form-captain' ),
 				selected: c.type || 'message',
 				options: [
 					{ value: 'message', label: __( 'A message', 'form-captain' ) },
@@ -1534,7 +1578,7 @@
 				},
 			} ),
 			( c.type || 'message' ) === 'message'
-				? el( C.TextareaControl, { label: __( 'Success message', 'form-captain' ), rows: 3, value: c.message || '', onChange: function ( v ) {
+				? el( C.TextareaControl, { label: __( 'Success message', 'form-captain' ), help: __( 'Shown after a successful submission. Empty uses the default text.', 'form-captain' ), rows: 3, value: c.message || '', onChange: function ( v ) {
 					set( { message: v } );
 				} } )
 				: el( C.SelectControl, {
@@ -1600,6 +1644,7 @@
 			el( 'p', { className: 'description' }, __( 'Times use the time zone of the website. Outside the period or after the maximum number of entries, visitors see the closed text instead of the form. Spam and entries in the trash do not count.', 'form-captain' ) ),
 			el( C.TextControl, {
 				label: __( 'Accept submissions from', 'form-captain' ),
+				help: __( 'Date and time in the site time zone. Empty means the form is open right away.', 'form-captain' ),
 				type: 'datetime-local',
 				value: lim.opens_at || '',
 				onChange: function ( v ) {
@@ -1609,6 +1654,7 @@
 			el( SettingError, { errors: props.errors, path: 'limits.opens_at' } ),
 			el( C.TextControl, {
 				label: __( 'Accept submissions until', 'form-captain' ),
+				help: __( 'Date and time in the site time zone; must be after the start. Empty means no end.', 'form-captain' ),
 				type: 'datetime-local',
 				value: lim.closes_at || '',
 				onChange: function ( v ) {
@@ -1637,6 +1683,7 @@
 			el( 'h2', null, __( 'Pause message', 'form-captain' ) ),
 			el( C.TextareaControl, {
 				label: __( 'Shown while the form is paused', 'form-captain' ),
+				help: __( 'Shown instead of the form while it is paused.', 'form-captain' ),
 				rows: 3,
 				value: s.paused_message || '',
 				onChange: function ( v ) {
@@ -1646,6 +1693,7 @@
 			el( 'h2', null, __( 'Appearance', 'form-captain' ) ),
 			el( C.RadioControl, {
 				label: __( 'Styling', 'form-captain' ),
+				help: __( 'Copied from the global setting when the form is created.', 'form-captain' ),
 				selected: ( s.appearance || {} ).mode || 'inherit',
 				options: [
 					{ value: 'inherit', label: __( 'Use the theme styling', 'form-captain' ) },
@@ -1705,6 +1753,7 @@
 			{ className: 'fc-retention-control' },
 			el( C.SelectControl, {
 				label: __( 'Keep entries of this form', 'form-captain' ),
+				help: __( 'Overrides the global retention period for this form.', 'form-captain' ),
 				value: kind,
 				options: [
 					{ value: 'global', label: __( 'As in the global privacy settings', 'form-captain' ) },
@@ -2144,7 +2193,7 @@
 						s.busy[ 1 ]( false );
 						var errCount = Object.keys( res.form.errors || {} ).length + Object.keys( res.action_errors || {} ).length;
 						s.notice[ 1 ]( errCount
-							? { status: 'warning', text: __( 'Draft saved. Please fix the highlighted problems before publishing.', 'form-captain' ) }
+							? { status: 'warning', text: __( 'Draft saved. Please fix the highlighted problems before publishing.', 'form-captain' ) + ' ' + problemTabs( res.form.errors || {}, res.action_errors || {} ) }
 							: { status: 'success', text: __( 'Saved.', 'form-captain' ) } );
 						return res;
 					},
@@ -2243,7 +2292,11 @@
 		var otherList = Object.keys( otherErrors ).filter( function ( k ) {
 			return k.indexOf( 'notification' ) !== 0 && k.indexOf( 'confirmation' ) !== 0 && k.indexOf( 'email' ) !== 0;
 		} );
-		var settingsErrorCount = Object.keys( otherErrors ).length - otherList.length;
+		// Mark every tab that shows a problem, so it can be found without opening each tab (SET-FC-P5).
+		var tabErrors = { fields: 0, notifications: 0, confirmation: 0, settings: 0, actions: 0 };
+		Object.keys( otherErrors ).forEach( function ( k ) {
+			tabErrors[ settingTabOf( k ) ]++;
+		} );
 
 		var header = el(
 			'div',
@@ -2288,9 +2341,9 @@
 
 		var tabs = [
 			{ name: 'fields', title: __( 'Fields', 'form-captain' ) + ( Object.keys( mergedFieldErrors ).length ? ' (!)' : '' ) },
-			{ name: 'notifications', title: __( 'Notifications', 'form-captain' ) + ( settingsErrorCount ? ' (!)' : '' ) },
-			{ name: 'confirmation', title: __( 'Confirmation', 'form-captain' ) },
-			{ name: 'settings', title: __( 'Form settings', 'form-captain' ) },
+			{ name: 'notifications', title: __( 'Notifications', 'form-captain' ) + ( tabErrors.notifications ? ' (!)' : '' ) },
+			{ name: 'confirmation', title: __( 'Confirmation', 'form-captain' ) + ( tabErrors.confirmation ? ' (!)' : '' ) },
+			{ name: 'settings', title: __( 'Form settings', 'form-captain' ) + ( tabErrors.settings ? ' (!)' : '' ) },
 			{ name: 'actions', title: __( 'Actions', 'form-captain' ) + ( actions.length ? ' (' + actions.length + ')' : '' ) },
 		];
 

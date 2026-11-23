@@ -398,6 +398,11 @@
 	function setBusy( form, busy ) {
 		form._fcBusy = busy;
 		form.setAttribute( 'aria-busy', busy ? 'true' : 'false' );
+		// Sending can take a moment (proof of work, slow network): say so, not only on the button.
+		var live = wrapOf( form ).querySelector( '.fc-live' );
+		if ( live ) {
+			live.textContent = busy ? i18n.sending || '' : '';
+		}
 		Array.prototype.forEach.call( form.querySelectorAll( '[type="submit"]' ), function ( btn ) {
 			btn.disabled = busy;
 			if ( busy ) {

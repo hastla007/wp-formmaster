@@ -53,12 +53,15 @@ final class Menu {
 		if ( null === $menu_cap ) {
 			return;
 		}
+		// The submenu entry "Dashboard" shares the hook of the top-level page; the same callable keeps
+		// WordPress from calling it twice (the page was rendered twice, with duplicate ids).
+		$dashboard                 = $this->callback( self::SLUG );
 		$this->hooks[ self::SLUG ] = (string) add_menu_page(
 			__( 'Form Captain', 'form-captain' ),
 			__( 'Form Captain', 'form-captain' ),
 			$menu_cap,
 			self::SLUG,
-			$this->callback( self::SLUG ),
+			$dashboard,
 			'dashicons-feedback',
 			26
 		);
@@ -75,7 +78,7 @@ final class Menu {
 			if ( ! current_user_can( $cap ) ) {
 				continue;
 			}
-			$this->hooks[ $slug ] = (string) add_submenu_page( self::SLUG, $titles[ $slug ] . ' ‹ ' . __( 'Form Captain', 'form-captain' ), $titles[ $slug ], $cap, $slug, $this->callback( $slug ) );
+			$this->hooks[ $slug ] = (string) add_submenu_page( self::SLUG, $titles[ $slug ] . ' ‹ ' . __( 'Form Captain', 'form-captain' ), $titles[ $slug ], $cap, $slug, self::SLUG === $slug ? $dashboard : $this->callback( $slug ) );
 		}
 		do_action( 'form_captain_admin_menu_built_v1', self::SLUG );
 	}

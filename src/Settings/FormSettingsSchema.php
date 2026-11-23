@@ -288,7 +288,7 @@ final class FormSettingsSchema {
 				'default'  => false,
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'enabled', $ctx ),
 				'label'    => __( 'Double opt-in', 'form-captain' ),
-				'help'     => __( 'Visitors confirm their submission with a link sent by e-mail. Unconfirmed submissions are deleted automatically.', 'form-captain' ),
+				'help'     => __( 'Visitors confirm their submission with a link sent by e-mail. Unconfirmed submissions are deleted automatically. The periods and texts are suggestions – have them checked legally.', 'form-captain' ),
 			),
 			'double_opt_in.email_field'       => array(
 				'type'     => 'custom',

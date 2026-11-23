@@ -115,6 +115,33 @@ final class EntryNumbersTest extends FrontendTestCase {
 		$this->assertNull( EntryNumbers::next( $form ) );
 	}
 
+	/**
+	 * SET-FC-P2-4: yearly restart (the default) with a format without {year} gave the same
+	 * numbers again after 1 January. The counter keeps running instead, after the numbers
+	 * already given this year.
+	 */
+	public function test_yearly_restart_without_year_in_the_format_never_repeats_numbers(): void {
+		update_option( 'timezone_string', 'Europe/Berlin' );
+		$form = $this->create_published_form();
+		$at   = static fn( string $local ): int => ( new \DateTimeImmutable( $local, new \DateTimeZone( 'Europe/Berlin' ) ) )->getTimestamp();
+		try {
+			// Counter of an existing installation that already numbered with the yearly counter.
+			$this->numbering( array( 'entry_number_format' => 'A-{year}-{number}', 'entry_number_digits' => 4, 'entry_number_yearly_reset' => true ) );
+			$this->assertSame( 'A-2035-0001', EntryNumbers::next( $form, $at( '2035-12-31 23:58' ) ) );
+			$this->assertSame( 'A-2035-0002', EntryNumbers::next( $form, $at( '2035-12-31 23:59' ) ) );
+
+			$this->numbering( array( 'entry_number_format' => 'A-{number}' ) );
+			$given = array(
+				EntryNumbers::next( $form, $at( '2035-12-31 23:59' ) ),
+				EntryNumbers::next( $form, $at( '2036-01-01 00:00' ) ),
+				EntryNumbers::next( $form, $at( '2036-01-01 00:01' ) ),
+			);
+			$this->assertSame( array( 'A-0003', 'A-0004', 'A-0005' ), $given, 'no restart without {year}, continues after the highest counter' );
+		} finally {
+			update_option( 'timezone_string', '' );
+		}
+	}
+
 	public function test_filter_can_change_the_number(): void {
 		$this->numbering( array( 'entry_number_format' => 'A-{number}' ) );
 		$form = $this->create_published_form();

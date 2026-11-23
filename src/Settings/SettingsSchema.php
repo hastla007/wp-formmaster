@@ -242,7 +242,7 @@ final class SettingsSchema {
 			'privacy.policy_page_hint'          => array(
 				'type'  => 'bool',
 				'label' => __( 'Offer a link to the privacy policy page in consent texts', 'form-captain' ),
-				'help'  => __( 'Consent fields can link to the privacy policy page that is set in WordPress under Settings → Privacy.', 'form-captain' ),
+				'help'  => __( 'Preselects "Link the privacy policy page" for new consent fields in the form editor and in form templates. Existing fields keep their own choice. The link points to the page set in WordPress under Settings → Privacy.', 'form-captain' ),
 			),
 			'privacy.change_log_months'         => array(
 				'type'  => 'int',
@@ -343,11 +343,13 @@ final class SettingsSchema {
 				'help'  => __( 'Raise this value for events or kiosks where many people submit from the same network.', 'form-captain' ),
 			),
 			'spam.token_minutes'                => array(
-				'type'  => 'int',
-				'min'   => 5,
-				'max'   => (int) ( \FormCaptain\Support\Limits::SETTABLE['token_ttl'][2] / 60 ),
-				'label' => __( 'Time to fill in a form (minutes)', 'form-captain' ),
-				'help'  => __( 'How long a loaded form can be submitted. Raise it for long forms; visitors who exceed it have to reload the page.', 'form-captain' ),
+				'type'   => 'int',
+				'min'    => 5,
+				'max'    => (int) ( \FormCaptain\Support\Limits::SETTABLE['token_ttl'][2] / 60 ),
+				// A duration, not a secret: exported and shown in the change log (SET-FC-P4-07).
+				'secret' => false,
+				'label'  => __( 'Time to fill in a form (minutes)', 'form-captain' ),
+				'help'   => __( 'How long a loaded form can be submitted. Raise it for long forms; visitors who exceed it have to reload the page.', 'form-captain' ),
 			),
 			'export.delimiter'                  => array(
 				'type'    => 'enum',
@@ -386,14 +388,14 @@ final class SettingsSchema {
 	public static function pro_hints(): array {
 		// One row per setting of a Pro feature that is on sale today (S5): uploads, multi-step forms and
 		// drafts, advanced logic/routing, PDF, webhooks, buyer questionnaires. Features that are
-		// not sold yet get no row. Add a row as array( tab, id, title, text ). The id is the id of the
-		// add-on field that replaces the row (Form Captain Pro: uploads.types, multistep.draft_days …).
+		// not sold yet get no row. Add a row as array( tab, id, title, text ). The id must be the id of a
+		// field the add-on announces with the feature (Form Captain Pro: uploads.types, multistep.draft_days …);
+		// a row without such a field would stay visible next to the running feature.
 		$rows = array(
 			array( 'general', 'uploads.types', __( 'File types and size', 'form-captain' ), __( 'Default file types and size limit for upload fields.', 'form-captain' ) ),
 			array( 'general', 'uploads.max_files', __( 'Several files', 'form-captain' ), __( 'Allow several files per upload field.', 'form-captain' ) ),
 			array( 'general', 'multistep.draft_days', __( 'Saved drafts', 'form-captain' ), __( 'How long visitors can continue a saved multi-step form.', 'form-captain' ) ),
-			array( 'general', 'webhooks', __( 'Webhooks', 'form-captain' ), __( 'Send submissions to other systems with signed webhooks.', 'form-captain' ) ),
-			array( 'general', 'webhooks.timeout', __( 'Webhook delivery', 'form-captain' ), __( 'Retries and time limit for webhook deliveries.', 'form-captain' ) ),
+			array( 'general', 'webhooks.timeout', __( 'Webhooks', 'form-captain' ), __( 'Send submissions to other systems with signed webhooks.', 'form-captain' ) ),
 			array( 'general', 'woo.reminder_days', __( 'Questionnaire reminder', 'form-captain' ), __( 'Default reminder for buyer questionnaires.', 'form-captain' ) ),
 			array( 'general', 'woo.link_days', __( 'Questionnaire link', 'form-captain' ), __( 'How long the questionnaire link for buyers stays valid.', 'form-captain' ) ),
 			array( 'general', 'woo.reminder_subject', __( 'Questionnaire e-mails', 'form-captain' ), __( 'Texts of the questionnaire e-mails to buyers.', 'form-captain' ) ),
@@ -402,7 +404,6 @@ final class SettingsSchema {
 			array( 'email', 'recipient_rules', __( 'Recipients by rule', 'form-captain' ), __( 'Send notifications to different recipients depending on the answers.', 'form-captain' ) ),
 			array( 'email', 'pdf.attach_notification', __( 'PDF attachment', 'form-captain' ), __( 'Attach the submission as a PDF to the notification.', 'form-captain' ) ),
 			array( 'privacy', 'uploads.file_retention_days', __( 'Delete files earlier', 'form-captain' ), __( 'Delete uploaded files earlier than the submission itself.', 'form-captain' ) ),
-			array( 'spam', 'upload_virus_scan', __( 'Virus scan', 'form-captain' ), __( 'Check uploaded files with a virus scanner.', 'form-captain' ) ),
 		);
 		$out  = array();
 		foreach ( $rows as $r ) {
@@ -637,11 +638,10 @@ final class SettingsSchema {
 				}
 				$input[ $id ] = 'multiselect' === $type ? array() : '0';
 			}
-			list( $value, $error ) = self::check_extension_value( $field, $input[ $id ], $input );
-			if ( null === $error && is_callable( $field['validate'] ?? null ) ) {
-				$res   = call_user_func( $field['validate'], $value );
-				$error = is_string( $res ) && '' !== $res ? $res : null;
+			if ( 'confirm' === $type && self::confirm_stays_on( $field, $input[ $id ], $input ) ) {
+				continue; // Already confirmed and still ticked: no new confirmation word needed.
 			}
+			list( $value, $error ) = self::extension_check( $field, $input[ $id ], $input );
 			if ( null !== $error ) {
 				$errors[ 'ext.' . $id ] = $error;
 				continue;
@@ -652,10 +652,54 @@ final class SettingsSchema {
 				$changed[ $id ] = array( $old, $value );
 			}
 		}
+		ChangeLog::record_extension( $changed, self::extension_fields_for( $tab ) );
 		return array(
 			'changed' => $changed,
 			'errors'  => $errors,
 		);
+	}
+
+	/**
+	 * Full check of one add-on value: the add-on's `sanitize` or the core check, then `validate`.
+	 * Used by the settings screen, the settings import and WP-CLI.
+	 *
+	 * @param array<string,mixed> $field     normalized field from extension_fields()
+	 * @param array<string,mixed> $submitted other submitted values (confirmation word as `<id>_confirm`)
+	 * @return array{0:mixed,1:?string} [value, error message]
+	 */
+	public static function extension_check( array $field, mixed $raw, array $submitted = array() ): array {
+		list( $value, $error ) = self::check_extension_value( $field, $raw, $submitted );
+		if ( null === $error && is_callable( $field['validate'] ?? null ) ) {
+			$res   = call_user_func( $field['validate'], $value );
+			$error = is_string( $res ) && '' !== $res ? $res : null;
+		}
+		return array( $value, $error );
+	}
+
+	/**
+	 * Whether an add-on value goes into the settings export (SET-FC-P1): not for secrets (by name),
+	 * not for confirm switches (deleting data must be confirmed on the target site) and not when
+	 * the field says `exportable => false`.
+	 *
+	 * @param array<string,mixed> $field
+	 */
+	public static function is_extension_exportable( array $field ): bool {
+		return 'confirm' !== $field['type'] && ! self::is_secret( (string) $field['id'] ) && false !== ( $field['exportable'] ?? true ) && empty( $field['secret'] );
+	}
+
+	/**
+	 * True when a confirm switch is on and the form sends the ticked box again without the word
+	 * (like privacy.delete_data_on_uninstall: the word is only needed to switch it on).
+	 *
+	 * @param array<string,mixed> $field
+	 * @param array<string,mixed> $submitted
+	 */
+	private static function confirm_stays_on( array $field, mixed $raw, array $submitted ): bool {
+		if ( true !== call_user_func( $field['get'] ) || ! is_scalar( $raw ) || ! in_array( strtolower( trim( (string) $raw ) ), array( '1', 'on', 'yes', 'true' ), true ) ) {
+			return false;
+		}
+		$word = $submitted[ $field['id'] . '_confirm' ] ?? '';
+		return ! is_string( $word ) || '' === trim( $word );
 	}
 
 	/**
@@ -706,16 +750,23 @@ final class SettingsSchema {
 
 	/** Resets extension fields of one tab that declare a default. */
 	public static function reset_extension_fields( string $tab ): void {
-		foreach ( self::extension_fields_for( $tab ) as $field ) {
+		$fields  = self::extension_fields_for( $tab );
+		$changed = array();
+		foreach ( $fields as $id => $field ) {
 			if ( array_key_exists( 'default', $field ) ) {
+				$old = call_user_func( $field['get'] );
 				call_user_func( $field['set'], $field['default'] );
+				if ( $old !== $field['default'] ) {
+					$changed[ $id ] = array( $old, $field['default'] );
+				}
 			}
 		}
+		ChangeLog::record_extension( $changed, $fields );
 	}
 
 	/**
 	 * Captcha providers: always "none" and the built-in "pow" (Security\PowCaptcha, no data leaves the
-	 * site); extensions add opt-in external providers via form_captain_spam_checks_v1
+	 * site); extensions add opt-in external providers via form_captain_captcha_providers_v1
 	 * with `type = captcha`, `label`, `data` (what is sent), `purpose`, `privacy_url`.
 	 *
 	 * @return array<string,string>
@@ -734,7 +785,9 @@ final class SettingsSchema {
 	/** @return array<string,array<string,string>> */
 	public static function captcha_providers(): array {
 		$out = array();
-		foreach ( (array) apply_filters( 'form_captain_spam_checks_v1', array() ) as $key => $def ) {
+		// Own filter: form_captain_spam_checks_v1 is the check at submission (reason string), a list
+		// there would reach typed check callbacks with the wrong value (SET-FC-P6).
+		foreach ( (array) apply_filters( 'form_captain_captcha_providers_v1', array() ) as $key => $def ) {
 			if ( is_string( $key ) && preg_match( '/^[a-z0-9_]{2,40}$/', $key ) && ! in_array( $key, array( 'none', 'pow' ), true ) && is_array( $def ) && 'captcha' === ( $def['type'] ?? '' ) ) {
 				$out[ $key ] = array(
 					'label'       => (string) ( $def['label'] ?? $key ),
@@ -924,11 +977,16 @@ final class SettingsSchema {
 
 	/**
 	 * Secret values (keys, passwords, tokens) are masked in the change log and never exported.
-	 * A definition can mark itself with `secret => true`; names that look like secrets count too.
+	 * A definition can mark itself with `secret => true`; names that look like secrets count too,
+	 * unless the definition says `secret => false` (e.g. spam.token_minutes, a duration, SET-FC-P1-01,
+	 * SET-FC-P4-07). An add-on field (by its ID) counts when it says `secret => true`.
 	 */
 	public static function is_secret( string $path ): bool {
 		$def = self::definitions()[ $path ] ?? null;
-		if ( is_array( $def ) && ! empty( $def['secret'] ) ) {
+		if ( is_array( $def ) && array_key_exists( 'secret', $def ) ) {
+			return (bool) $def['secret'];
+		}
+		if ( ! is_array( $def ) && ! empty( self::extension_fields()[ $path ]['secret'] ) ) {
 			return true;
 		}
 		return (bool) preg_match( '/secret|token|password|passwd|api_?key|private_?key|credential/i', $path );

@@ -5,9 +5,12 @@ Nur das in diesem Dokument Aufgeführte ist öffentliche API. Klassen unter `For
 ## Version
 
 ```php
-FORM_CAPTAIN_CONTRACT_VERSION // '1.1.0' (seit 16.11.2026; 1.0.0 → 1.1.0 additiv, siehe „Erweiterungspunkte für Pro-Funktionen“)
+FORM_CAPTAIN_CONTRACT_VERSION // '1.2.0' (seit 23.11.2026; 1.0.0 → 1.1.0 → 1.2.0 jeweils additiv)
 form_captain_contract_version(): string
 ```
+
+- **1.1.0** (16.11.2026): „Erweiterungspunkte für Pro-Funktionen“, `form_captain_validate_v1`, `context_ref` in `form_captain_get_render_v1`, Versionsbindung `version_for`.
+- **1.2.0** (23.11.2026, Einstellungs-Baustein): `form_captain_settings_fields_v1`, `form_captain_mail_attachments_v1`, `form_captain_editor_extensions_v1`, `form_captain_captcha_providers_v1`, `form_captain_accepted_context_purposes_v1`, `form_captain_minimum_db_versions_v1`, `form_captain_entry_pending_v1` (SET-FC-P4-04) und alle Filter unter „Einstellungen und Geschäftsregeln“. Einige davon kamen nach dem 16.11. noch unter der Nummer 1.1.0 hinzu; ein Add-on, das einen dieser Punkte braucht, prüft auf `1.2.0` oder neuer (vorher wird der Filter nur nicht angewendet).
 
 SemVer: Minor = additive Erweiterungen (neue optionale Payload-Schlüssel, neue Funktionen); Major = inkompatibel, neue Namensfamilie `_v2`, `_v1` bleibt mindestens 12 Monate parallel bestehen. Deprecations werden mit `_deprecated_hook()` angekündigt und im Changelog geführt.
 
@@ -27,6 +30,7 @@ Adapter registrieren sich ausschließlich in oder nach `form_captain_loaded_v1`.
 | `form_captain_form_created_v1` | `array $form` (Form-DTO) |
 | `form_captain_form_updated_v1` | `array $form`, `string $change` (`saved`, `published`, `paused`, `unpublished`, `archived`) |
 | `form_captain_entry_created_v1` | `array $event` (Entry-Event, s. u.) |
+| `form_captain_entry_pending_v1` | `int $entry_id`, `int $form_id` – nach dem Commit einer öffentlichen Einsendung, die auf die Double-Opt-in-Bestätigung wartet (SET-FC-P4-04). Keine Werte; `entry_created_v1` folgt erst in der Bestätigungsanfrage. Für Erweiterungen, die Daten dieser Anfrage (z. B. hochgeladene Dateien) dem Eintrag zuordnen müssen |
 | `form_captain_entry_status_changed_v1` | `int $entry_id`, `string $old`, `string $new`, `int $form_id` |
 | `form_captain_entry_deleted_v1` | `int $entry_id`, `int $form_id`, `string $reason` (`manual`, `retention`, `erasure`, `anonymized`, `form_deleted`, `consent_withdrawn`, `import_reverted`) |
 | `form_captain_entries_imported_v1` | `string $import_id`, `int $form_id`, `int $count` – nach jedem Import-Schritt mit neu angelegten Entries (CSV-Eintragsimport, `docs/planung/import.md` 7); für importierte Entries gibt es kein `entry_created_v1` |
@@ -43,7 +47,7 @@ Adapter registrieren sich ausschließlich in oder nach `form_captain_loaded_v1`.
 
 ```php
 [
-  'contract'   => '1.0.0',
+  'contract'   => '1.2.0',            // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
   'entry_id'   => 123,
   'form_id'    => 7,
   'form_public_id' => 'a1b2c3d4e5f6g7h8',
@@ -64,7 +68,7 @@ Gefeuert **einmal** je Entry, nachdem `consent_withdrawn_gmt` gespeichert und of
 
 ```php
 [
-  'contract'       => '1.0.0',
+  'contract'       => '1.2.0',        // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
   'entry_id'       => 123,
   'form_id'        => 7,
   'form_public_id' => 'a1b2c3d4e5f6g7h8',
@@ -175,18 +179,48 @@ Connectoren sind nach Installation **deaktiviert**; nur aktivierte Connectoren d
 | Filter | Zweck |
 |---|---|
 | `form_captain_field_types_v1` | zusätzliche Feldtypen (Pro) |
-| `form_captain_condition_evaluators_v1` | zusätzliche Bedingungslogik (Pro) |
-| `form_captain_event_value_allowlist_v1` | Feld-Keys, die in Entry-Events landen dürfen |
-| `form_captain_delete_entry_files_v1` | Pro löscht Dateien zu Entry |
-| `form_captain_entry_detail_sections_v1` | zusätzliche Abschnitte in Entry-Detail |
-| `form_captain_csv_columns_v1` | zusätzliche CSV-Spalten (nur Metadaten) |
-| `form_captain_spam_checks_v1` | zusätzliche Spamprüfungen (z. B. Captcha-Provider, opt-in) |
+| `form_captain_condition_evaluators_v1` | zusätzliche Bedingungslogik (Pro). `( array $visible, array $fields, array $values )` → sichtbare Feld-IDs. Maßgeblich für die Serverprüfung ausgeblendeter Felder. |
+| `form_captain_event_value_allowlist_v1` | Feld-Keys, die in Entry-Events landen dürfen. `( string[] $field_keys, int $form_id )` → Feld-Keys, Standard leer. |
+| `form_captain_delete_entry_files_v1` | Pro löscht Dateien zu Entry. Wird wie eine Action aufgerufen: `( int $entry_id )`, Rückgabe ignoriert. |
+| `form_captain_entry_detail_sections_v1` | zusätzliche Abschnitte in Entry-Detail. `( array $sections, array $entry )` → Abschnitte. |
+| `form_captain_csv_columns_v1` | zusätzliche CSV-Spalten (nur Metadaten). Spalten: `( array $columns, array $form )` → `key => label`; Werte je Zeile: `form_captain_csv_row` `( array $cells, array $entry )` → `key => Wert` (Name ohne `_v1` aus Version 1.0, bleibt). |
+| `form_captain_spam_checks_v1` | zusätzliche Spamprüfungen (z. B. Prüfung eines Captcha-Anbieters, opt-in). `( ?string $reason, array $context, array $values )` → Grund (`^[a-z0-9_]{1,40}$`) oder `null`. `$context`: `form_id`, `public_id`, `trusted`, `raw` (Anfrage), `captcha` (für dieses Formular geltender Anbieter oder `none`), `spam_mode`. |
 | `form_captain_signed_context_purposes_v1` | registrierte Kontext-Zwecke |
 | `form_captain_accepted_context_purposes_v1` | (seit Contract 1.1.0) Kontext-Zwecke, die ein Formular annimmt: `( string[] $purposes, int $form_id )`. Für das Add-on, dem ein Zweck gehört und das das Formular zuordnet (z. B. Käuferfragebogen an einem Produkt); Signatur, TTL und Prüfungen bleiben unverändert. |
 | `form_captain_minimum_db_versions_v1` | Mindestversionen des Datenbankservers für die Warnung im Systemstatus und in Site Health: `( array{mysql:string,mariadb:string} $versions )`, Standard `9.7` / `12.3` (Entscheidung 21). Nur zum Absenken für einen vom Betreiber geprüften Server; ungültige Werte werden ignoriert. Ein älterer Server wird nie gesperrt. |
+| `form_captain_pro_active` | Pro meldet sich: `( bool $active )` → bool. Nur für sparsame Hinweise im Free (Dashboard, Integrationen); der Kern zeigt keine Lizenzdaten. Die Hinweiszeilen der Einstellungen richten sich nicht danach, sondern nach angemeldeten Feldern (`form_captain_settings_fields_v1`). |
+| `form_captain_entitlement_granted` | `( bool $granted, string $key )` → bool, Standard `false`. Gefragt für jeden Schlüssel in `requires.entitlement` einer Formularaktion (`form_captain_register_action_v1`); `false` → Aktion nicht verfügbar, Code `entitlement_missing`. Der Kern kennt keine Schlüssel und prüft keine Lizenz; antworten darf nur das Add-on, dem der Schlüssel gehört. *Offen (SET-FC-P6-02, wartet auf Inhaber): ob dieser Teil von Vertrag v1 mit S1 („keine Rechteprüfung im Kern“) vereinbar bleibt.* |
+| `form_captain_captcha_providers_v1` | (seit 1.2.0) Externe Captcha-Anbieter für die Auswahl `spam.captcha_provider`: `( array $providers )` → `key => { type: 'captcha', label, data, purpose, privacy_url }`; Schlüssel `^[a-z0-9_]{2,40}$`, nicht `none`/`pow`. Die Prüfung der Einsendung läuft über `form_captain_spam_checks_v1`, wenn `$context['captcha']` der eigene Schlüssel ist. |
+| `form_captain_render_context_v1` | `( string $context, array $form )` → signierter Kontextwert für die Ausgabe (siehe `suite-kontext.md`). |
+| `form_captain_entry_locales_v1` | `( string[] $locales )` → Sprachen, die eine Einsendung als Sprache der Seite mitgeben darf (SET-FC-21); Standard `en_US`, Sprache der Website und installierte Sprachen. |
+| `form_captain_client_ip` | `( string $ip )` → Adresse für Rate-Limits; gewinnt über `spam.client_ip_source`. Kein `_v1`, aus Version 1.0. |
 
 **Versionsbindung (seit Contract 1.1.0):** Eine Zweck-Definition für `form_captain_register_context_purpose_v1()` darf `version_for` enthalten: `callable( string $ref_type, string $ref_id, int $form_id ): int` liefert die Versionsnummer, an die der Kontext gebunden ist (0 = aktuelle Version). Nur zusammen mit `submit_check`. Liegt ein verifizierter Kontext vor, rendert und prüft Form Captain gegen diese veröffentlichte Version und speichert den Eintrag mit ihr; fehlt die Version, wird abgelehnt (`invalid_context`, keine andere Version). Die Version kommt nur vom Eigentümer des Zwecks, nie aus der Anfrage. Ältere Kerne ignorieren den Schlüssel.
-| `form_captain_pro_active` | Pro meldet sich (nur für sparsame Hinweise im Free) |
+
+## Einstellungen und Geschäftsregeln (seit 1.2.0)
+
+Grundregel S2: Die Einstellung liefert den Wert, der Filter gewinnt, der Kern begrenzt danach auf den erlaubten Bereich (Bereiche in `docs/spec/einstellungen.md`).
+
+| Filter | Argumente → Rückgabe |
+|---|---|
+| `form_captain_limits_v1` | `( array<string,int> $limits )` → Budgets (`docs/spec/budgets.md`) |
+| `form_captain_spam_limits_v1` | `( array{window_minutes:int,form_total:int,receipts_per_hour:int} $values )` → Werte |
+| `form_captain_pow_max_number_v1` | `( int $max_number )` → Schwierigkeit des Proof-of-Work (Standard 50 000) |
+| `form_captain_retention_seconds_v1` | `( ?int $seconds, string $mode, string $created_gmt )` → Sekunden oder `null` (= keine automatische Löschung); höchstens ein Tag Minimum |
+| `form_captain_retention_grace_days_v1` | `( int $days )` → Schonfrist vor der Löschung |
+| `form_captain_trash_days_v1` | `( int $days )` → Tage im Papierkorb vor dem endgültigen Löschen (Einstellung `privacy.trash_days`, danach auf 1–365 begrenzt, SET-FC-P1-07) |
+| `form_captain_expiry_notice_days_v1` | `( int $days )` → Vorwarnung in der Eintragsliste |
+| `form_captain_log_level_v1` | `( string $level )` → `error`/`warning`/`info`/`debug` |
+| `form_captain_log_days_v1` | `( int $days )` → Aufbewahrung des Protokolls |
+| `form_captain_change_log_months_v1` | `( int $months )` → Aufbewahrung des Änderungsprotokolls (1–120) |
+| `form_captain_mail_footer_v1` | `( string $footer, string $kind, array $form )` → Fußzeile; `$kind` = `admin`/`confirmation`/`double_opt_in`/`test` |
+| `form_captain_double_opt_in_v1` | `( array $settings, array $form )` → Double-Opt-in-Werte des Formulars |
+| `form_captain_form_limits_v1` | `( array{open:bool,reason:string,message:string} $state, array $form )` → Zustand (Zeitraum, Höchstzahl) |
+| `form_captain_entry_number_v1` | `( string $number, array $form, int $seq )` → Vorgangsnummer |
+| `form_captain_validation_patterns_v1` | `( array $patterns )` → zusätzliche Muster `key => { label, regex, message }` |
+| `form_captain_country_presets_v1` | `( array $profiles )` → Länderprofile (`DE`, `AT`, `CH`, `EU`, `OTHER`) |
+
+**Interne Hooks (keine API, können sich ändern):** `form_captain_job_handlers` (Job-Typen des Kerns), `form_captain_cleanup` (täglicher Aufräumlauf, auch `wp form-captain cleanup`), `form_captain_db_in_outer_transaction` (Tests). Test: `tests/integration/Contract/HookDocumentationTest.php` – jeder Hook im Code steht in diesem Dokument.
 
 ## Erweiterungspunkte für Pro-Funktionen (seit Contract 1.1.0)
 

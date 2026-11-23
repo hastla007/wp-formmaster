@@ -161,6 +161,31 @@ final class AdminRestTest extends TestCase {
 		$this->assertSame( 404, $this->call( 'GET', "/admin/forms/$id" )->get_status() );
 	}
 
+	public function test_save_reports_values_that_were_not_stored(): void {
+		$this->as_admin();
+		$form     = $this->call( 'POST', '/admin/forms', array( 'template' => 'contact' ) )->get_data()['form'];
+		$settings = $form['settings'];
+
+		$settings['limits'] = array(
+			'opens_at'  => '2027-05-01T10:00',
+			'closes_at' => '2027-04-01T10:00',
+		);
+		$put                = $this->call(
+			'PUT',
+			'/admin/forms/' . $form['id'],
+			array(
+				'title'    => $form['title'],
+				'revision' => $form['revision'],
+				'schema'   => $form['schema'],
+				'settings' => $settings,
+			)
+		);
+		$this->assertSame( 200, $put->get_status() );
+		$saved = $put->get_data()['form'];
+		$this->assertSame( '', $saved['settings']['limits']['closes_at'], 'the invalid end is not stored' );
+		$this->assertSame( 'closes_before_opens', ( (array) $saved['errors'] )['limits.closes_at'] ?? null, 'and the editor is told why' );
+	}
+
 	public function test_publishing_invalid_form_is_rejected_with_errors(): void {
 		$this->as_admin();
 		$id  = $this->plugin()->get( FormService::class )->create_blank();

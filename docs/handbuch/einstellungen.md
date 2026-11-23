@@ -48,3 +48,16 @@ Unter *Werkzeuge → Website-Zustand* prüft Form Captain Warteschlange, Mail-Fe
 ```
 
 Weitere Befehle: `wp form-captain jobs list --status=dead`, `wp form-captain jobs retry <id>`, `wp form-captain cleanup`.
+
+## E-Mail: Fußzeile, Antwortadresse, Logo
+
+Im Reiter E-Mail legst du eine Fußzeile fest (z. B. Firmenname, Anschrift, Registernummer). Sie steht unter jeder Mail von Form Captain, auch unter der Test-E-Mail. Welche Angaben in Geschäftsmails Pflicht sind, hängt vom Land ab – lass den Text rechtlich prüfen. Die feste Antwortadresse gilt für Mails an Besucher (Bestätigung, Double-Opt-in). Das Logo wählst du aus der Mediathek; es erscheint oben in HTML-Mails.
+
+## Spamschutz: eingebauter Proof of Work und Grenzen
+
+„Eingebauter Proof of Work“ schützt ohne externen Dienst, ohne Cookies und ohne Rätsel: Der Browser rechnet im Hintergrund eine kleine Aufgabe. Ohne JavaScript gelten die übrigen Prüfungen. Je Formular (Reiter Einstellungen im Editor) kannst du das Captcha abschalten oder „strenger“ wählen. Zeitfenster, Höchstzahl je Formular und Mails je Besucheradresse sind einstellbar. Einzelheiten: `docs/spam-proof-of-work.md`.
+
+## Double-Opt-in je Formular
+
+Im Editor unter Benachrichtigungen: Ist Double-Opt-in an, bekommt der Besucher eine Mail mit Bestätigungslink. Erst nach dem Klick auf „Einsendung bestätigen“ gilt die Einsendung als angenommen; dann gehen Benachrichtigungen und Aktionen los. Der Link ist einmal nutzbar und standardmäßig 48 Stunden gültig; unbestätigte Einsendungen werden nach 7 Tagen gelöscht. Der Zeitpunkt der Bestätigung (ohne IP-Adresse) steht im Datenschutz-Export. Die Mail geht in der Sprache der Seite, auf der das Formular stand. Mit „Test an mich“ prüfst du jede Mail des Formulars mit Beispielwerten an deine eigene Adresse.
+

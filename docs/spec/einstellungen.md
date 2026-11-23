@@ -14,7 +14,7 @@ Gespeichert als eine Option `form_captain_settings` (Array, autoload). Jede Opti
 | Allgemein | `general.country_profile` | intern | leer | zuletzt übernommenes Länderprofil (SET-FC-12) |
 | Allgemein | `general.entry_number_format` | string ≤ 30 | leer (aus) | Vorgangsnummer, Platzhalter `{year}` und `{number}` (Pflicht, genau einmal); Filter `form_captain_entry_number_v1` (SET-FC-29) |
 | Allgemein | `general.entry_number_digits` | int 1–10 | 4 | Stellen der laufenden Nummer (führende Nullen) |
-| Allgemein | `general.entry_number_yearly_reset` | bool | true | Neustart am 1. Januar (Zeitzone der Website) |
+| Allgemein | `general.entry_number_yearly_reset` | bool | true | Neustart am 1. Januar (Zeitzone der Website); nur wenn das Format `{year}` enthält, sonst läuft der Zähler weiter |
 | Darstellung | `appearance.mode` | enum `inherit`/`base` | `inherit` | `base` lädt Basis-CSS |
 | Darstellung | `appearance.accent_color` | hex | `#2271b1` | nur bei `base` |
 | Darstellung | `appearance.radius` | int 0–24 | 4 | Eckenradius in px, nur bei `base` (SET-FC-32) |

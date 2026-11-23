@@ -15,7 +15,7 @@ Gespeichert als eine Option `form_captain_settings` (Array, autoload). Jede Opti
 | E-Mail | `email.from_name` | string ≤ 190 | Site-Name | Default für neue Formulare |
 | E-Mail | `email.from_address` | email | `wordpress@{domain}` | Hinweis, wenn Domain ≠ Site-Domain |
 | E-Mail | `email.format` | enum `html`/`text` | `html` | |
-| Datenschutz | `privacy.retention` | Zeitraum `<Zahl><d\|m\|y>` oder `manual` | `12m` | SET-FC-01; 1 Tag – 30 Jahre; Kalenderrechnung (12m = 1y); Änderung braucht Bestätigung; Filter `form_captain_retention_seconds_v1` gewinnt |
+| Datenschutz | `privacy.retention` | Zeitraum `<Zahl><d\|m\|y>` oder `manual` | `manual` (S9; bestehende Installationen behalten ihren Wert, ohne gespeicherten Wert `12m`) | SET-FC-01; Website-Zustand mahnt, solange keine Frist gesetzt ist (Test `form_captain_retention`); 1 Tag – 30 Jahre; Kalenderrechnung (12m = 1y); Änderung braucht Bestätigung; Filter `form_captain_retention_seconds_v1` gewinnt |
 | Datenschutz | `privacy.trash_days` | int 1–90 | 30 | |
 | Datenschutz | `privacy.delete_data_on_uninstall` | bool | false | erfordert Bestätigungstext |
 | Datenschutz | `privacy.policy_page_hint` | bool | true | Link auf WP-Datenschutzseite in Consent |
@@ -44,9 +44,11 @@ Alle Tabs erfordern `form_captain_manage_settings`. Systemstatus ist schreibgesc
 
 **Migration** (`Settings\SettingsMigrations`, Schritt `retention_periods`, läuft einmal, Merker in Option `form_captain_settings_migrations`): `90d`, `12m`, `manual` bleiben unverändert gültig und bedeuten dasselbe wie vorher. Die Spec-Aliasse `days_90`/`months_12` werden zu `90d`/`12m`; unbekannte Werte werden zu dem, was sie vorher bewirkten (global `12m`, je Formular `global`). Ablaufdaten bestehender Einsendungen ändern sich dadurch nicht.
 
+**Vorgabe (S9, 23.11.2026):** Neue Installationen starten mit `manual` – kein überraschendes Löschen. Bestehende Installationen bleiben unverändert: ein gespeicherter Wert (z. B. `12m`) bleibt; fehlt er, setzt `Settings::ensure_defaults()` die frühere Vorgabe `Settings::LEGACY_RETENTION` (`12m`). Das Länderprofil schlägt 12 Monate für Kontaktanfragen vor (E6); jede Frist trägt den Hinweis „Rechtsprüfung“.
+
 ## Länderprofile (SET-FC-12)
 
-`Settings\CountryPresets`, Schlüssel `DE`, `AT`, `CH`, `EU`, `OTHER` (suiteweit gleich). Reiter Allgemein → „Länderprofil“: Profil wählen → Vorher/Nachher-Tabelle (nur lesend, GET) → Zeilen auswählen, Prüfung bestätigen → übernehmen (`admin-post.php?action=form_captain_apply_country_profile`, Nonce gleichen Namens). Nichts wird still überschrieben; jeder Wert bleibt danach änderbar. Werte mit rechtlichem Gewicht (`privacy.retention`, `privacy.trash_days`, `privacy.grace_days`, `privacy.log_days`) zeigen „Rechtlich geprüft am …“ oder „Ungeprüft“; alle mitgelieferten Werte sind ungeprüft.
+`Settings\CountryPresets`, Schlüssel `DE`, `AT`, `CH`, `EU`, `OTHER` (suiteweit gleich). Reiter Allgemein → „Länderprofil“: Profil wählen → Vorher/Nachher-Tabelle (nur lesend, GET) → Zeilen auswählen, Prüfung bestätigen → übernehmen (`admin-post.php?action=form_captain_apply_country_profile`, Nonce gleichen Namens). Nichts wird still überschrieben; jeder Wert bleibt danach änderbar. Werte mit rechtlichem Gewicht (`privacy.retention`, `privacy.trash_days`, `privacy.grace_days`, `privacy.log_days`) zeigen „Rechtlich geprüft am …“ oder „Ungeprüft“; alle mitgelieferten Werte sind ungeprüft. Prüfstand je Profil (S8, Feld `review`): DE, AT, CH `pending` (Rechtsprüfung vor Verkaufsstart, bis dahin „noch nicht geprüft“), EU und OTHER `unreviewed` (neutrale Werte, deutlich „nicht geprüft“ in Auswahl und Vorschau). Nach der Prüfung trägt der Inhaber `review = reviewed` und die Daten unter `reviewed` ein.
 
 | Profil | Aufbewahrung | Papierkorb | CSV-Trennzeichen | BOM | Hinweis |
 |---|---|---|---|---|---|

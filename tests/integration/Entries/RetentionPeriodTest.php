@@ -102,7 +102,7 @@ final class RetentionPeriodTest extends TestCase {
 
 		list( $values, $errors ) = SettingsSchema::sanitize_group( 'privacy', array( 'retention' => '31y', 'retention_confirm' => '1' ) );
 		$this->assertSame( RetentionPeriod::error_message(), $errors['privacy.retention'] );
-		$this->assertSame( '12m', $values['retention'], 'stored value unchanged' );
+		$this->assertSame( 'manual', $values['retention'], 'stored value unchanged' );
 
 		list( $values, ) = SettingsSchema::sanitize_group( 'privacy', array( 'retention_kind' => 'manual', 'retention_confirm' => '1' ) );
 		$this->assertSame( 'manual', $values['retention'] );
@@ -116,7 +116,7 @@ final class RetentionPeriodTest extends TestCase {
 		$this->assertSame( 'error', $res['type'] );
 		$this->assertArrayHasKey( 'privacy.retention', $res['errors'] );
 		$this->assertSame( array( 'privacy.retention' => '6m' ), $res['proposed'] );
-		$this->assertSame( '12m', Settings::get( 'privacy.retention' ) );
+		$this->assertSame( 'manual', Settings::get( 'privacy.retention' ) );
 
 		$res = $page->save_tab( 'privacy', array( 'retention_kind' => 'period', 'retention_amount' => '6', 'retention_unit' => 'm', 'trash_days' => '30', 'erasure_mode' => 'delete', 'retention_confirm' => '1' ) );
 		$this->assertSame( 'success', $res['type'] );
@@ -225,6 +225,34 @@ final class RetentionPeriodTest extends TestCase {
 		update_option( Settings::OPTION, $stored );
 		SettingsMigrations::run();
 		$this->assertSame( 'months_12', get_option( Settings::OPTION )['privacy']['retention'] );
+	}
+
+	public function test_new_install_is_manual_and_existing_install_keeps_twelve_months(): void {
+		$this->assertSame( 'manual', Settings::get( 'privacy.retention' ), 'S9: new installation' );
+
+		// Existing installation that never stored a retention value (earlier default 12m).
+		update_option( Settings::OPTION, array( 'spam' => array( 'rate_limit' => 7 ) ) );
+		Settings::ensure_defaults();
+		$this->assertSame( '12m', Settings::get( 'privacy.retention' ), 'update keeps the earlier behaviour' );
+		$this->assertSame( 7, Settings::get( 'spam.rate_limit' ) );
+
+		// Explicit values are never touched.
+		Settings::set_group( 'privacy', array( 'retention' => 'manual' ) );
+		Settings::ensure_defaults();
+		$this->assertSame( 'manual', Settings::get( 'privacy.retention' ) );
+	}
+
+	public function test_site_health_reminds_while_no_period_is_set(): void {
+		$health = $this->plugin()->get( \FormCaptain\Admin\SiteHealth::class );
+		$this->assertArrayHasKey( 'form_captain_retention', $health->tests( array() )['direct'] );
+		$result = $health->test_retention();
+		$this->assertSame( 'recommended', $result['status'] );
+		$this->assertSame( 'form_captain_retention', $result['test'] );
+		$this->assertStringContainsString( 'checked legally', $result['description'] );
+		Settings::set_group( 'privacy', array( 'retention' => '12m' ) );
+		$result = $health->test_retention();
+		$this->assertSame( 'good', $result['status'] );
+		$this->assertStringContainsString( '12 months', $result['description'] );
 	}
 
 	public function test_invalid_global_value_migrates_to_twelve_months(): void {

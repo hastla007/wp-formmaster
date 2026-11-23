@@ -191,6 +191,7 @@ SRC;
 	}
 
 	public function test_entry_import_is_validated_idempotent_and_silent(): void {
+		\FormCaptain\Settings\Settings::set_group( 'privacy', array( 'retention' => '12m' ) ); // S9: new installs default to manual; this test needs a period.
 		global $wpdb;
 		// The CSV fixture and the assertions both derive times from "now"; freeze it so a
 		// second boundary between them cannot make the comparison flaky.

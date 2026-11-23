@@ -13,6 +13,9 @@ final class Settings {
 
 	public const OPTION = 'form_captain_settings';
 
+	/** Retention default of installations before S9 (23.11.2026); kept on update. */
+	public const LEGACY_RETENTION = '12m';
+
 	/** @return array<string,array<string,mixed>> */
 	public static function defaults(): array {
 		$host = wp_parse_url( home_url(), PHP_URL_HOST );
@@ -36,7 +39,7 @@ final class Settings {
 				'format'       => 'html',
 			),
 			'privacy'    => array(
-				'retention'                 => '12m',
+				'retention'                 => RetentionPeriod::MANUAL,
 				'trash_days'                => 30,
 				'erasure_mode'              => 'delete',
 				'delete_data_on_uninstall'  => false,
@@ -111,14 +114,24 @@ final class Settings {
 		}
 	}
 
-	/** Adds new defaults without overwriting existing values (P5-21). */
+	/**
+	 * Adds new defaults without overwriting existing values (P5-21).
+	 *
+	 * S9: new installations start without automatic deletion (manual). Existing installations
+	 * that never stored a retention value keep the earlier default of 12 months, so an update
+	 * never changes behaviour.
+	 */
 	public static function ensure_defaults(): void {
 		$stored = get_option( self::OPTION, null );
 		if ( ! is_array( $stored ) ) {
 			add_option( self::OPTION, self::defaults(), '', true );
 			return;
 		}
-		update_option( self::OPTION, self::all(), true );
+		$all = self::all();
+		if ( ! isset( $stored['privacy']['retention'] ) ) {
+			$all['privacy']['retention'] = self::LEGACY_RETENTION;
+		}
+		update_option( self::OPTION, $all, true );
 	}
 
 	/**

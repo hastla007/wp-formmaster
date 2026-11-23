@@ -39,7 +39,7 @@ final class SettingsTest extends TestCase {
 				$this->assertSame( Capabilities::MANAGE_SETTINGS, $defs[ $group . '.' . $key ]['cap'] );
 			}
 		}
-		$this->assertSame( '12m', Settings::get( 'privacy.retention' ), 'Safe default: 12 months' );
+		$this->assertSame( 'manual', Settings::get( 'privacy.retention' ), 'S9: new installations never delete by surprise' );
 		$this->assertTrue( Settings::get( 'spam.honeypot' ) );
 		$this->assertSame( 'none', Settings::get( 'spam.captcha_provider' ) );
 		$this->assertFalse( Settings::get( 'privacy.delete_data_on_uninstall' ) );
@@ -99,7 +99,7 @@ final class SettingsTest extends TestCase {
 		$res = $this->page()->save_tab( 'privacy', array( 'retention' => '90d', 'trash_days' => '30', 'erasure_mode' => 'delete' ) );
 		$this->assertSame( 'error', $res['type'] );
 		$this->assertArrayHasKey( 'privacy.retention', $res['errors'] );
-		$this->assertSame( '12m', Settings::get( 'privacy.retention' ) );
+		$this->assertSame( 'manual', Settings::get( 'privacy.retention' ) );
 		$res = $this->page()->save_tab( 'privacy', array( 'retention' => '90d', 'trash_days' => '30', 'erasure_mode' => 'anonymize', 'retention_confirm' => '1' ) );
 		$this->assertSame( 'success', $res['type'], implode( ' ', $res['messages'] ) );
 		$this->assertSame( '90d', Settings::get( 'privacy.retention' ) );

@@ -52,7 +52,7 @@ final class SettingsMigrations {
 		$stored = get_option( Settings::OPTION, null );
 		if ( is_array( $stored ) && isset( $stored['privacy']['retention'] ) ) {
 			$old = (string) $stored['privacy']['retention'];
-			$new = RetentionPeriod::normalize( $old ) ?? '12m';
+			$new = RetentionPeriod::normalize( $old ) ?? Settings::LEGACY_RETENTION;
 			if ( $new !== $old ) {
 				$stored['privacy']['retention'] = $new;
 				update_option( Settings::OPTION, $stored, true );

@@ -6100,14 +6100,6 @@ msgstr "Obergrenze für lange Freitexte, etwa Bewerbungen. Die erlaubte Anfrageg
 msgid "Applied country profile"
 msgstr "Übernommenes Länderprofil"
 
-#: src/Settings/SettingsSchema.php:135
-msgid ""
-"Submissions are stored only in this WordPress database. Choose how long they "
-"are kept: a period between 1 day and 30 years (12 months recommended) or "
-"until you delete them. Statutory retention periods depend on your country "
-"and purpose – have them checked legally. You can change this later."
-msgstr "Einsendungen werden nur in dieser WordPress-Datenbank gespeichert. Wähle, wie lange sie aufbewahrt werden: einen Zeitraum zwischen 1 Tag und 30 Jahren (empfohlen: 12 Monate) oder bis du sie löschst. Gesetzliche Aufbewahrungsfristen hängen von Land und Zweck ab – lass sie rechtlich prüfen. Du kannst das später ändern."
-
 #: src/Settings/SettingsSchema.php:170
 msgid "Grace period after shortening the retention (days)"
 msgstr "Schonfrist nach Verkürzung der Aufbewahrung (Tage)"
@@ -6222,3 +6214,62 @@ msgid ""
 "Between 1 day and 30 years. Shortening the period never deletes existing "
 "entries sooner than the grace period set in the privacy settings."
 msgstr "Zwischen 1 Tag und 30 Jahren. Eine Verkürzung löscht vorhandene Einträge nie früher als nach der Schonfrist aus den Datenschutz-Einstellungen."
+
+#: src/Admin/SettingsPage.php:744
+msgid "not legally reviewed"
+msgstr "rechtlich nicht geprüft"
+
+#: src/Admin/SettingsPage.php:837
+msgid ""
+"Resetting switches automatic deletion off (keep until deleted manually) and "
+"disables data deletion on uninstall. Existing submissions are rescheduled "
+"accordingly."
+msgstr "Das Zurücksetzen schaltet das automatische Löschen aus (aufbewahren bis zum manuellen Löschen) und deaktiviert das Löschen der Daten bei der Deinstallation. Vorhandene Einsendungen werden entsprechend neu geplant."
+
+#: src/Admin/SiteHealth.php:126
+msgid "Form Captain deletes submissions after a retention period"
+msgstr "Form Captain löscht Einsendungen nach einer Aufbewahrungsfrist"
+
+#: src/Admin/SiteHealth.php:127
+msgid "Form Captain has no retention period set"
+msgstr "In Form Captain ist keine Aufbewahrungsfrist eingestellt"
+
+#. translators: %s: retention period
+#: src/Admin/SiteHealth.php:130
+#, php-format
+msgid ""
+"Submissions are deleted automatically %s after they were received. Have the "
+"period checked legally."
+msgstr "Einsendungen werden %s nach dem Eingang automatisch gelöscht. Lass die Frist rechtlich prüfen."
+
+#: src/Admin/SiteHealth.php:131
+msgid ""
+"Submissions are kept until someone deletes them. Personal data should only "
+"be kept as long as needed: set a retention period (a country profile "
+"suggests one) and have it checked legally."
+msgstr "Einsendungen bleiben gespeichert, bis jemand sie löscht. Personenbezogene Daten sollten nur so lange wie nötig aufbewahrt werden: Stell eine Aufbewahrungsfrist ein (ein Länderprofil schlägt eine vor) und lass sie rechtlich prüfen."
+
+#: src/Admin/SiteHealth.php:134
+msgid "Set a retention period"
+msgstr "Aufbewahrungsfrist einstellen"
+
+#: src/Settings/CountryPresets.php:87
+msgid "Legally reviewed"
+msgstr "Rechtlich geprüft"
+
+#: src/Settings/CountryPresets.php:88
+msgid "Not legally reviewed yet – review before the sales start is planned"
+msgstr "Noch nicht rechtlich geprüft – Prüfung vor dem Verkaufsstart ist vorgesehen"
+
+#: src/Settings/CountryPresets.php:89
+msgid "Not legally reviewed – neutral values"
+msgstr "Nicht rechtlich geprüft – neutrale Werte"
+
+#: src/Settings/SettingsSchema.php:135
+msgid ""
+"Submissions are stored only in this WordPress database. Choose how long they "
+"are kept: a period between 1 day and 30 years or until you delete them. "
+"Nothing is deleted automatically until you set a period; the country "
+"profiles suggest 12 months for contact enquiries. Statutory retention "
+"periods depend on your country and purpose – have them checked legally."
+msgstr "Einsendungen werden nur in dieser WordPress-Datenbank gespeichert. Wähle, wie lange sie aufbewahrt werden: einen Zeitraum zwischen 1 Tag und 30 Jahren oder bis du sie löschst. Solange du keinen Zeitraum einstellst, wird nichts automatisch gelöscht; die Länderprofile schlagen 12 Monate für Kontaktanfragen vor. Gesetzliche Aufbewahrungsfristen hängen von Land und Zweck ab – lass sie rechtlich prüfen."

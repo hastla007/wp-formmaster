@@ -213,6 +213,8 @@ final class OperationSettingsTest extends TestCase {
 		foreach ( $profiles as $key => $profile ) {
 			$this->assertSame( '12m', $profile['values']['privacy.retention'], $key );
 			$this->assertSame( array(), $profile['reviewed'], "$key: nothing is legally reviewed yet" );
+			$this->assertSame( in_array( $key, array( 'DE', 'AT', 'CH' ), true ) ? 'pending' : 'unreviewed', $profile['review'], "$key: S8 review status" );
+			$this->assertStringContainsString( 'Not legally reviewed', CountryPresets::review_label( $profile['review'] ) );
 			$expected = in_array( $key, array( 'DE', 'AT', 'CH' ), true ) ? ';' : ',';
 			$this->assertSame( $expected, $profile['values']['export.delimiter'], $key );
 			foreach ( CountryPresets::diff( $key ) as $row ) {
@@ -243,6 +245,8 @@ final class OperationSettingsTest extends TestCase {
 		$html = (string) ob_get_clean();
 		unset( $_GET['tab'], $_GET['fc_profile'] );
 		$this->assertStringContainsString( 'Not legally reviewed', $html );
+		$this->assertStringContainsString( 'review before the sales start is planned', $html );
+		$this->assertStringContainsString( 'International (other countries) – not legally reviewed', $html );
 		$this->assertStringContainsString( 'value="privacy.retention" checked', $html );
 		$this->assertSame( '90d', Settings::get( 'privacy.retention' ) );
 

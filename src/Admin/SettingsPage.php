@@ -741,7 +741,7 @@ final class SettingsPage {
 		echo '<form method="get" action="' . esc_url( admin_url( 'admin.php' ) ) . '#fc-country-profile"><input type="hidden" name="page" value="' . esc_attr( self::SLUG ) . '"><input type="hidden" name="tab" value="general">';
 		echo '<label for="fc-profile">' . esc_html__( 'Country', 'form-captain' ) . '</label> <select id="fc-profile" name="fc_profile">';
 		foreach ( $profiles as $key => $p ) {
-			echo '<option value="' . esc_attr( $key ) . '"' . selected( $selected ?: $current, $key, false ) . '>' . esc_html( $p['label'] ) . '</option>';
+			echo '<option value="' . esc_attr( $key ) . '"' . selected( $selected ?: $current, $key, false ) . '>' . esc_html( $p['label'] . ( 'reviewed' === $p['review'] ? '' : ' – ' . __( 'not legally reviewed', 'form-captain' ) ) ) . '</option>';
 		}
 		echo '</select> ';
 		submit_button( __( 'Show suggestion', 'form-captain' ), 'secondary', '', false );
@@ -750,6 +750,7 @@ final class SettingsPage {
 			return;
 		}
 		$rows = CountryPresets::diff( $selected );
+		echo '<p class="' . ( 'reviewed' === $profiles[ $selected ]['review'] ? 'description' : 'fc-warning' ) . '"><strong>' . esc_html( $profiles[ $selected ]['label'] ) . ':</strong> ' . esc_html( CountryPresets::review_label( $profiles[ $selected ]['review'] ) ) . '</p>';
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="fc-country-preview">';
 		echo '<input type="hidden" name="action" value="form_captain_apply_country_profile"><input type="hidden" name="profile" value="' . esc_attr( $selected ) . '">';
 		wp_nonce_field( 'form_captain_apply_country_profile' );
@@ -833,7 +834,7 @@ final class SettingsPage {
 		/* translators: %s: section name */
 		echo '<p>' . esc_html( sprintf( __( 'Only the section "%s" is reset to the defaults. Other sections and existing forms keep their values.', 'form-captain' ), $label ) ) . '</p>';
 		if ( 'privacy' === $tab ) {
-			echo '<p class="fc-warning">' . esc_html__( 'Resetting sets the retention to 12 months and disables data deletion on uninstall. Existing submissions are rescheduled accordingly.', 'form-captain' ) . '</p>';
+			echo '<p class="fc-warning">' . esc_html__( 'Resetting switches automatic deletion off (keep until deleted manually) and disables data deletion on uninstall. Existing submissions are rescheduled accordingly.', 'form-captain' ) . '</p>';
 		}
 		if ( 'access' === $tab ) {
 			echo '<p class="fc-warning">' . esc_html__( 'Only administrators keep access. All other roles lose their Form Captain permissions.', 'form-captain' ) . '</p>';

@@ -132,7 +132,7 @@ final class SettingsSchema {
 			'privacy.retention'                 => array(
 				'type'  => 'retention',
 				'label' => __( 'Keep submissions for', 'form-captain' ),
-				'help'  => __( 'Submissions are stored only in this WordPress database. Choose how long they are kept: a period between 1 day and 30 years (12 months recommended) or until you delete them. Statutory retention periods depend on your country and purpose – have them checked legally. You can change this later.', 'form-captain' ),
+				'help'  => __( 'Submissions are stored only in this WordPress database. Choose how long they are kept: a period between 1 day and 30 years or until you delete them. Nothing is deleted automatically until you set a period; the country profiles suggest 12 months for contact enquiries. Statutory retention periods depend on your country and purpose – have them checked legally.', 'form-captain' ),
 			),
 			'privacy.trash_days'                => array(
 				'type'  => 'int',

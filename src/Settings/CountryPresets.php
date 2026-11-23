@@ -6,8 +6,11 @@
  * A profile is only a suggestion. The settings screen shows every value before and after and
  * changes nothing until the operator selects the rows and confirms. Values with legal weight
  * (retention, deletion periods) carry a review date; without one they are shown as
- * "not legally reviewed". The default retention is 12 months in every profile (owner decision
- * E6). Filter `form_captain_country_presets_v1` can change or add profiles.
+ * "not legally reviewed". Every profile suggests 12 months retention for contact enquiries
+ * (owner decision E6); new installations start with manual deletion (S9).
+ * Review status per profile (S8): DE, AT and CH are reviewed legally before the sales start
+ * (`pending` until the owner sets the dates), EU and OTHER carry neutral values and stay
+ * `unreviewed`. Filter `form_captain_country_presets_v1` can change or add profiles.
  *
  * @package FormCaptain
  */
@@ -25,9 +28,10 @@ final class CountryPresets {
 	public const LEGAL_PATHS = array( 'privacy.retention', 'privacy.trash_days', 'privacy.grace_days', 'privacy.log_days' );
 
 	/**
-	 * Profiles: key => label, values (settings path => value), reviewed (path => Y-m-d), note.
+	 * Profiles: key => label, values (settings path => value), reviewed (path => Y-m-d), note,
+	 * review (`pending` = legal review planned, `unreviewed` = neutral values, `reviewed`).
 	 *
-	 * @return array<string,array{label:string,values:array<string,mixed>,reviewed:array<string,string>,note:string}>
+	 * @return array<string,array{label:string,values:array<string,mixed>,reviewed:array<string,string>,note:string,review:string}>
 	 */
 	public static function all(): array {
 		$common   = array(
@@ -38,30 +42,35 @@ final class CountryPresets {
 		$german   = __( 'German: the WordPress language "Deutsch (Sie)" addresses visitors formally, "Deutsch" informally. Choose it under Settings → General.', 'form-captain' );
 		$out      = array(
 			'DE'    => array(
+				'review'   => 'pending',
 				'label'    => __( 'Germany', 'form-captain' ),
 				'values'   => $common + array( 'export.delimiter' => ';' ),
 				'reviewed' => array(),
 				'note'     => $german,
 			),
 			'AT'    => array(
+				'review'   => 'pending',
 				'label'    => __( 'Austria', 'form-captain' ),
 				'values'   => $common + array( 'export.delimiter' => ';' ),
 				'reviewed' => array(),
 				'note'     => $german,
 			),
 			'CH'    => array(
+				'review'   => 'pending',
 				'label'    => __( 'Switzerland', 'form-captain' ),
 				'values'   => $common + array( 'export.delimiter' => ';' ),
 				'reviewed' => array(),
 				'note'     => __( 'Switzerland: the Federal Act on Data Protection (FADP) applies in addition to or instead of the GDPR. Swiss German texts usually use "ss" instead of "ß".', 'form-captain' ),
 			),
 			'EU'    => array(
+				'review'   => 'unreviewed',
 				'label'    => __( 'European Union (general)', 'form-captain' ),
 				'values'   => $common + array( 'export.delimiter' => ',' ),
 				'reviewed' => array(),
 				'note'     => __( 'Many spreadsheet programs in EU countries with a decimal comma expect a semicolon as CSV separator; you can change it after applying the profile.', 'form-captain' ),
 			),
 			'OTHER' => array(
+				'review'   => 'unreviewed',
 				'label'    => __( 'International (other countries)', 'form-captain' ),
 				'values'   => $common + array( 'export.delimiter' => ',' ),
 				'reviewed' => array(),
@@ -72,6 +81,16 @@ final class CountryPresets {
 		return is_array( $filtered ) ? self::clean( $filtered ) : $out;
 	}
 
+	/** Readable review status of a profile (S8). */
+	public static function review_label( string $review ): string {
+		return match ( $review ) {
+			'reviewed' => __( 'Legally reviewed', 'form-captain' ),
+			'pending' => __( 'Not legally reviewed yet – review before the sales start is planned', 'form-captain' ),
+			default => __( 'Not legally reviewed – neutral values', 'form-captain' ),
+		};
+	}
+
+	/** @return array{label:string,values:array<string,mixed>,reviewed:array<string,string>,note:string,review:string}|null */
 	public static function get( string $key ): ?array {
 		return self::all()[ $key ] ?? null;
 	}
@@ -149,7 +168,7 @@ final class CountryPresets {
 	 * Keeps well-formed profiles of the filter result.
 	 *
 	 * @param array<mixed> $profiles
-	 * @return array<string,array{label:string,values:array<string,mixed>,reviewed:array<string,string>,note:string}>
+	 * @return array<string,array{label:string,values:array<string,mixed>,reviewed:array<string,string>,note:string,review:string}>
 	 */
 	private static function clean( array $profiles ): array {
 		$out = array();
@@ -168,6 +187,7 @@ final class CountryPresets {
 				'values'   => array_filter( $p['values'], static fn( $v, $path ): bool => is_string( $path ) && ( is_scalar( $v ) ), ARRAY_FILTER_USE_BOTH ),
 				'reviewed' => $reviewed,
 				'note'     => is_string( $p['note'] ?? null ) ? $p['note'] : '',
+				'review'   => in_array( $p['review'] ?? '', array( 'pending', 'reviewed' ), true ) ? (string) $p['review'] : 'unreviewed',
 			);
 		}
 		return $out;

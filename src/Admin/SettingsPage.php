@@ -21,6 +21,7 @@ use FormCaptain\Settings\AccessControl;
 use FormCaptain\Settings\ChangeLog;
 use FormCaptain\Settings\Settings;
 use FormCaptain\Settings\SettingsSchema;
+use FormCaptain\Settings\SettingsTransfer;
 use FormCaptain\Support\Asset;
 use FormCaptain\Support\Clock;
 use FormCaptain\Support\Logger;
@@ -45,6 +46,8 @@ final class SettingsPage {
 		add_action( 'admin_post_form_captain_reset_settings', array( $this, 'handle_reset' ) );
 		add_action( 'admin_post_form_captain_test_mail', array( $this, 'handle_test_mail' ) );
 		add_action( 'admin_post_form_captain_rotate_secret', array( $this, 'handle_rotate_secret' ) );
+		add_action( 'admin_post_form_captain_export_settings', array( $this, 'handle_export' ) );
+		add_action( 'admin_post_form_captain_import_settings', array( $this, 'handle_import' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'form_captain_cleanup', array( self::class, 'expire_previous_secret' ) );
 		add_action( 'after_plugin_row_' . plugin_basename( FORM_CAPTAIN_FILE ), array( $this, 'plugin_row_notice' ) );
@@ -350,6 +353,57 @@ final class SettingsPage {
 		}
 	}
 
+	private static function import_key(): string {
+		return 'form_captain_settings_import_' . get_current_user_id();
+	}
+
+	/**
+	 * First import step: checks the file and keeps it for the preview (10 minutes, per user).
+	 *
+	 * @return array{type:string,messages:string[],errors:array<string,string>}
+	 */
+	public function import_preview( string $json ): array {
+		$preview = SettingsTransfer::preview( $json );
+		if ( ! $preview['ok'] ) {
+			delete_transient( self::import_key() );
+			return self::notice( 'error', array( $preview['error'] ) );
+		}
+		set_transient( self::import_key(), $json, 10 * MINUTE_IN_SECONDS );
+		return self::notice( 'success', array( __( 'Please check the preview below and confirm the import.', 'form-captain' ) ) );
+	}
+
+	/**
+	 * Second import step: applies the previewed file.
+	 *
+	 * @param array{retention_confirm?:bool,captcha_confirm?:bool} $confirm
+	 * @return array{type:string,messages:string[],errors:array<string,string>}
+	 */
+	public function import_apply( array $confirm ): array {
+		$json = get_transient( self::import_key() );
+		delete_transient( self::import_key() );
+		if ( ! is_string( $json ) || '' === $json ) {
+			return self::notice( 'error', array( __( 'The import preview has expired. Please upload the file again.', 'form-captain' ) ) );
+		}
+		$res      = SettingsTransfer::import( $json, $confirm );
+		$messages = array(
+			/* translators: %d: number of changed settings */
+			sprintf( _n( '%d setting was imported.', '%d settings were imported.', count( $res['changes'] ), 'form-captain' ), count( $res['changes'] ) ),
+		);
+		if ( $res['unknown'] ) {
+			/* translators: %s: list of setting keys */
+			$messages[] = sprintf( __( 'Unknown keys were ignored: %s', 'form-captain' ), implode( ', ', $res['unknown'] ) );
+		}
+		Logger::log( 'info', 'settings_imported', implode( ',', array_keys( $res['changes'] ) ) );
+		if ( $res['errors'] ) {
+			array_unshift( $messages, __( 'Some settings were not imported. Please check the highlighted fields.', 'form-captain' ) );
+		}
+		return array(
+			'type'     => $res['errors'] ? 'error' : 'success',
+			'messages' => $messages,
+			'errors'   => $res['errors'],
+		);
+	}
+
 	// ---------------------------------------------------------------------
 	// admin-post handlers
 	// ---------------------------------------------------------------------
@@ -383,6 +437,41 @@ final class SettingsPage {
 			$this->redirect( $tab, self::notice( 'error', array( __( 'Please confirm that you want to reset this section.', 'form-captain' ) ) ) );
 		}
 		$this->redirect( $tab, $this->reset_tab( $tab ) );
+	}
+
+	public function handle_export(): void {
+		$this->guard( 'form_captain_export_settings' );
+		Logger::log( 'info', 'settings_exported' );
+		nocache_headers();
+		header( 'Content-Type: application/json; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="' . sanitize_file_name( 'form-captain-settings-' . gmdate( 'Y-m-d' ) . '.json' ) . '"' );
+		header( 'X-Content-Type-Options: nosniff' );
+		echo SettingsTransfer::export_json(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON download.
+		exit;
+	}
+
+	public function handle_import(): void {
+		$this->guard( 'form_captain_import_settings' );
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- checked in guard().
+		if ( isset( $_POST['step'] ) && 'apply' === $_POST['step'] ) {
+			$this->redirect(
+				'status',
+				$this->import_apply(
+					array(
+						'retention_confirm' => ! empty( $_POST['retention_confirm'] ),
+						'captcha_confirm'   => ! empty( $_POST['captcha_confirm'] ),
+					)
+				)
+			);
+		}
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- only tmp_name/size/error are read and checked.
+		$file = $_FILES['settings_file'] ?? null;
+		if ( ! is_array( $file ) || UPLOAD_ERR_OK !== (int) ( $file['error'] ?? UPLOAD_ERR_NO_FILE ) || ! is_uploaded_file( (string) $file['tmp_name'] ) || (int) $file['size'] > SettingsTransfer::MAX_BYTES ) {
+			$this->redirect( 'status', self::notice( 'error', array( __( 'Please choose a settings file (.json, at most 64 KB).', 'form-captain' ) ) ) );
+		}
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
+		$json = (string) file_get_contents( (string) $file['tmp_name'], false, null, 0, SettingsTransfer::MAX_BYTES + 1 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$this->redirect( 'status', $this->import_preview( $json ) );
 	}
 
 	public function handle_test_mail(): void {
@@ -754,6 +843,70 @@ final class SettingsPage {
 		$this->render_reset( 'access' );
 	}
 
+	private function render_transfer(): void {
+		echo '<h2>' . esc_html__( 'Export and import settings', 'form-captain' ) . '</h2>';
+		echo '<p>' . esc_html__( 'Transfers the settings of this page to another website as a JSON file. Secrets, role permissions, forms and submissions are not included; data deletion on uninstall must always be confirmed on the target site.', 'form-captain' ) . '</p>';
+		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="fc-inline-form"><input type="hidden" name="action" value="form_captain_export_settings">';
+		wp_nonce_field( 'form_captain_export_settings' );
+		submit_button( __( 'Export settings', 'form-captain' ), 'secondary', 'submit', false );
+		echo '</form>';
+
+		$json = get_transient( self::import_key() );
+		if ( is_string( $json ) && '' !== $json ) {
+			$p = SettingsTransfer::preview( $json );
+			echo '<div class="fc-card fc-import-preview"><h3>' . esc_html__( 'Import preview', 'form-captain' ) . '</h3>';
+			if ( '' !== (string) ( $p['meta']['plugin_version'] ?? '' ) ) {
+				/* translators: 1: plugin version, 2: date */
+				echo '<p class="description">' . esc_html( sprintf( __( 'Exported with Form Captain %1$s on %2$s (UTC).', 'form-captain' ), (string) $p['meta']['plugin_version'], (string) ( $p['meta']['exported_gmt'] ?? '' ) ) ) . '</p>';
+			}
+			if ( $p['changes'] ) {
+				echo '<table class="widefat striped"><thead><tr><th scope="col">' . esc_html__( 'Setting', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'Current value', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'New value', 'form-captain' ) . '</th></tr></thead><tbody>';
+				$defs = SettingsSchema::definitions();
+				foreach ( $p['changes'] as $path => $pair ) {
+					echo '<tr><td>' . esc_html( (string) ( $defs[ $path ]['label'] ?? $path ) ) . ' <code>' . esc_html( $path ) . '</code></td><td>' . esc_html( self::show_value( $pair[0] ) ) . '</td><td>' . esc_html( self::show_value( $pair[1] ) ) . '</td></tr>';
+				}
+				echo '</tbody></table>';
+			} else {
+				echo '<p>' . esc_html__( 'The file contains no changes.', 'form-captain' ) . '</p>';
+			}
+			$needs_retention = false;
+			$needs_captcha   = false;
+			foreach ( $p['errors'] as $path => $msg ) {
+				$needs_retention = $needs_retention || 'privacy.retention' === $path;
+				$needs_captcha   = $needs_captcha || 'spam.captcha_provider' === $path;
+				echo '<p class="fc-field-error">' . esc_html( $path . ': ' . $msg ) . '</p>';
+			}
+			if ( $p['unknown'] ) {
+				/* translators: %s: list of setting keys */
+				echo '<p class="fc-warning">' . esc_html( sprintf( __( 'Unknown keys will be ignored: %s', 'form-captain' ), implode( ', ', $p['unknown'] ) ) ) . '</p>';
+			}
+			echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="form_captain_import_settings"><input type="hidden" name="step" value="apply">';
+			wp_nonce_field( 'form_captain_import_settings' );
+			if ( $needs_retention ) {
+				echo '<p><label><input type="checkbox" name="retention_confirm" value="1"> ' . esc_html__( 'I understand that changing the retention period schedules the deletion of existing submissions (never sooner than 14 days after this change).', 'form-captain' ) . '</label></p>';
+			}
+			if ( $needs_captcha ) {
+				echo '<p><label><input type="checkbox" name="captcha_confirm" value="1"> ' . esc_html__( 'I have read the data flow and updated the privacy policy.', 'form-captain' ) . '</label></p>';
+			}
+			submit_button( __( 'Import these settings', 'form-captain' ), 'primary', 'submit', false );
+			echo '</form></div>';
+		}
+
+		echo '<form method="post" enctype="multipart/form-data" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="form_captain_import_settings"><input type="hidden" name="step" value="preview">';
+		wp_nonce_field( 'form_captain_import_settings' );
+		echo '<p><label for="fc-settings-file">' . esc_html__( 'Settings file', 'form-captain' ) . '</label> <input type="file" id="fc-settings-file" name="settings_file" accept=".json,application/json" aria-describedby="fc-settings-file-help"></p>';
+		echo '<p class="description" id="fc-settings-file-help">' . esc_html__( 'You see all changes before anything is saved. Invalid values and unknown keys are reported and not imported.', 'form-captain' ) . '</p>';
+		submit_button( __( 'Show import preview', 'form-captain' ), 'secondary', 'submit', false );
+		echo '</form>';
+	}
+
+	private static function show_value( mixed $value ): string {
+		if ( is_bool( $value ) ) {
+			return $value ? __( 'On', 'form-captain' ) : __( 'Off', 'form-captain' );
+		}
+		return is_scalar( $value ) ? (string) $value : (string) wp_json_encode( $value );
+	}
+
 	private function render_change_log(): void {
 		echo '<h2>' . esc_html__( 'Settings change log', 'form-captain' ) . '</h2>';
 		/* translators: %d: number of months */
@@ -823,6 +976,7 @@ final class SettingsPage {
 		echo '<label for="fc-report" class="screen-reader-text">' . esc_html__( 'Diagnostics report', 'form-captain' ) . '</label><textarea id="fc-report" class="large-text code" rows="14" readonly>' . esc_textarea( $this->status->report_text( $d ) ) . '</textarea>';
 		echo '<p><button type="button" class="button" data-fc-copy="fc-report">' . esc_html__( 'Copy report', 'form-captain' ) . '</button></p>';
 
+		$this->render_transfer();
 		$this->render_change_log();
 
 		echo '<h2>' . esc_html__( 'Signing key', 'form-captain' ) . '</h2>';

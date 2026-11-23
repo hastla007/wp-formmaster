@@ -32,6 +32,10 @@ Eine Änderung muss bestätigt werden. Sie sehen vorher je Option die Anzahl bet
 
 Standardmäßig bleiben Formulare und Einträge beim Löschen des Plugins erhalten. Für vollständige Löschung: Häkchen setzen **und** `DELETE` bzw. `LÖSCHEN` eingeben, dann speichern. Die Pluginliste zeigt danach einen Warnhinweis. Häkchen entfernen hebt die Bestätigung auf.
 
+## Einstellungen exportieren und importieren
+
+*Systemstatus → Einstellungen exportieren* lädt eine JSON-Datei mit allen Einstellungen dieser Seite herunter – ohne Geheimnisse, Rollenrechte, Formulare und Einsendungen. Auf der Zielseite wählen Sie die Datei unter *Einstellungen importieren* aus und sehen zuerst eine Vorschau mit altem und neuem Wert. Ungültige Werte und unbekannte Schlüssel werden gemeldet und nicht übernommen. Eine andere Aufbewahrungsfrist müssen Sie wie auf der Einstellungsseite ausdrücklich bestätigen; „Daten bei Deinstallation löschen“ wird nie importiert.
+
 ## Änderungsprotokoll
 
 *Systemstatus → Änderungsprotokoll* zeigt die letzten 50 Änderungen an Einstellungen und Rollenrechten: wann, wer, über welchen Weg (Einstellungsseite, WP-CLI, Import, System), welcher Wert von alt auf neu. Geheime Werte werden nie angezeigt. Wie lange Einträge bleiben, stellen Sie unter *Datenschutz & Speicherung* ein (Standard 12 Monate).

@@ -52,7 +52,7 @@ final class SettingsSchema {
 	 *
 	 * Keys: type (bool|int|enum|string|email|hex|text|datetime), default, tab, label, help,
 	 * options (enum), min/max (int), max_length (string/text), internal (not user editable),
-	 * secret (masked in the change log, never exported).
+	 * secret (masked in the change log, never exported), exportable (false = not in the settings export).
 	 *
 	 * @return array<string,array<string,mixed>>
 	 */
@@ -130,9 +130,10 @@ final class SettingsSchema {
 				'help'    => __( 'Applies when you process an erasure request under Tools → Erase Personal Data.', 'form-captain' ),
 			),
 			'privacy.delete_data_on_uninstall'  => array(
-				'type'  => 'bool',
-				'label' => __( 'Delete all Form Captain data when the plugin is deleted', 'form-captain' ),
-				'help'  => __( 'By default, forms and submissions are kept when the plugin is deleted.', 'form-captain' ),
+				'type'       => 'bool',
+				'exportable' => false,
+				'label'      => __( 'Delete all Form Captain data when the plugin is deleted', 'form-captain' ),
+				'help'       => __( 'By default, forms and submissions are kept when the plugin is deleted.', 'form-captain' ),
 			),
 			'privacy.delete_data_confirmed_gmt' => array(
 				'type'     => 'datetime',

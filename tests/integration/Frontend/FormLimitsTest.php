@@ -106,6 +106,23 @@ final class FormLimitsTest extends FrontendTestCase {
 		$this->assertStringContainsString( 'This form opens on', FormLimits::state( $form, null, (int) strtotime( '2026-11-30 12:00 UTC' ) )['message'] );
 	}
 
+	/** SET-FC-P2-5: a time skipped by the clock change in spring is accepted and takes effect. */
+	public function test_time_in_the_spring_clock_change_gap_is_kept_and_closes_the_form(): void {
+		$errors = array();
+		$clean  = FormLimits::sanitize( array( 'closes_at' => '2026-03-29T02:30' ), $errors );
+		$this->assertSame( array(), $errors );
+		$this->assertSame( '2026-03-29T02:30', $clean['closes_at'] );
+		$this->assertSame( (int) strtotime( '2026-03-29 01:30 UTC' ), FormLimits::timestamp( '2026-03-29T02:30' ), 'moment after the change (03:30 CEST)' );
+
+		$form = $this->limited_form( array( 'closes_at' => '2026-03-29T02:30' ) );
+		$this->assertSame( 'closed', FormLimits::state( $form, null, (int) strtotime( '2026-03-29 02:00 UTC' ) )['reason'] );
+		$this->assertTrue( FormLimits::state( $form, null, (int) strtotime( '2026-03-29 00:59 UTC' ) )['open'] );
+
+		foreach ( array( '2026-02-30T10:00', '2026-03-29T24:00', '2026-03-29T02:60', '26-03-29T02:30' ) as $invalid ) {
+			$this->assertNull( FormLimits::timestamp( $invalid ), $invalid );
+		}
+	}
+
 	public function test_closed_form_is_not_rendered_and_refuses_submissions(): void {
 		$form = $this->limited_form(
 			array(

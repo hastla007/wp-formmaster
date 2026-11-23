@@ -210,6 +210,36 @@ final class DoubleOptInTest extends FrontendTestCase {
 		$this->assertSame( array( DoubleOptIn::JOB_TYPE ), $this->job_types( $id ) );
 	}
 
+	/** SET-FC-P2-2: a late delivery attempt does not mail a link that has already expired. */
+	public function test_no_mail_with_an_already_expired_link(): void {
+		$form = $this->doi_form( array( 'link_hours' => 1 ) );
+		$id   = (int) $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) )['entry_id'];
+
+		Clock::freeze( time() + 2 * HOUR_IN_SECONDS ); // Queue stopped for two hours.
+		$this->plugin()->get( JobRunner::class )->run();
+		$this->assertSame( array(), tests_retrieve_phpmailer_instance()->mock_sent, 'no mail with a dead link' );
+		$job = $this->plugin()->get( JobRepository::class )->for_entry( $id )[0];
+		$this->assertSame( 'link_expired', $job['last_error_code'] );
+	}
+
+	/**
+	 * SET-FC-P2-3: unconfirmed entries whose link has expired do not block the maximum of the
+	 * form; the expired-link page asks the visitor to submit again.
+	 */
+	public function test_expired_unconfirmed_entries_do_not_block_the_maximum(): void {
+		$form  = $this->doi_form( array( 'link_hours' => 1, 'delete_after_days' => 1 ), array( 'limits' => array( 'max_entries' => 1 ) ) );
+		$first = $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) );
+		$this->assertTrue( $first['success'] );
+		$this->assertFalse( \FormCaptain\Service\FormLimits::state( $form )['open'], 'a confirmable entry holds its place' );
+
+		$payload = $this->payload( $form, array( 'f_name01' => 'Erika', 'f_mail01' => 'erika@example.org' ) );
+		Clock::freeze( time() + HOUR_IN_SECONDS + 120 ); // Link expired, the new form token is still valid.
+		$this->assertTrue( \FormCaptain\Service\FormLimits::state( $form )['open'], 'expired link: the place is free again' );
+		$again = $this->service()->submit( $form, $payload );
+		$this->assertTrue( $again['success'] );
+		$this->assertFalse( \FormCaptain\Service\FormLimits::state( $form )['open'] );
+	}
+
 	public function test_admin_mails_are_refused_for_unconfirmed_entries(): void {
 		$form = $this->doi_form();
 		$res  = $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) );

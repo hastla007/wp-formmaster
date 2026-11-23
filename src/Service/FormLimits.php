@@ -103,7 +103,7 @@ final class FormLimits {
 			$reason = 'not_open_yet';
 		} elseif ( null !== $closes && $now >= $closes ) {
 			$reason = 'closed';
-		} elseif ( $max > 0 && (int) ( $form['id'] ?? 0 ) > 0 && ( $entries ?? new EntryRepository() )->count_accepted( (int) $form['id'] ) >= $max ) {
+		} elseif ( $max > 0 && (int) ( $form['id'] ?? 0 ) > 0 && ( $entries ?? new EntryRepository() )->count_accepted( (int) $form['id'], self::pending_since( $form, $now ) ) >= $max ) {
 			$reason = 'full';
 		}
 		$state    = array(
@@ -120,6 +120,17 @@ final class FormLimits {
 			);
 		}
 		return $state;
+	}
+
+	/**
+	 * Unconfirmed double opt-in entries older than the link validity can no longer be confirmed
+	 * and wait only for their deletion; they do not block the maximum (SET-FC-P2-3), so the
+	 * visitor can submit again as the expired-link page asks.
+	 *
+	 * @param array<string,mixed> $form
+	 */
+	private static function pending_since( array $form, int $now ): string {
+		return gmdate( 'Y-m-d H:i:s', $now - (int) DoubleOptIn::settings( $form )['link_hours'] * HOUR_IN_SECONDS );
 	}
 
 	/**

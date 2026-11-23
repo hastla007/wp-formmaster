@@ -60,7 +60,7 @@ Nummern beziehen sich auf die Detailed Plugin Guidelines.
 | 43 | `PluginCheck.Security.DirectDB.UnescapedDBParameter` | Tabellennamen aus `$wpdb->prefix` und festen Konstanten (`Database\Tables`), WHERE-Fragmente aus festen Spaltennamen mit Platzhaltern; Werte gehen immer über `$wpdb->prepare()`. Kein Benutzerwert fließt ungeprüft in SQL (Sicherheitsreview docs/SECURITY-REVIEW.md). |
 | 13 | `WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber` / `UnfinishedPrepare` | Fehlalarm: WHERE-Klauseln mit Platzhaltern werden dynamisch zusammengesetzt und die Parameter als Array übergeben (`EntryRepository`, `FormRepository`, `JobRepository`); der Sniff kann die Platzhalter im Variableninhalt nicht zählen. Abgedeckt durch Integrationstests der Filter. |
 | 10 | `WordPress.DB.DirectDatabaseQuery.DirectQuery` / `NoCaching` | Eigene Tabellen (Migrator, Logger) ohne WordPress-API; Caching ist bei Migrations- und Schreibabfragen nicht sinnvoll. |
-| 1 | `load_plugin_textdomain` | Das Plugin liefert de_DE/de_AT selbst aus, bevor Sprachpakete auf translate.wordpress.org existieren. Nach Freigabe der Übersetzungen dort kann der Aufruf entfallen. |
+| 1 | `load_plugin_textdomain` | Das Plugin liefert de_DE, de_DE_formal, de_CH und de_AT selbst aus, bevor Sprachpakete auf translate.wordpress.org existieren. Nach Freigabe der Übersetzungen dort kann der Aufruf entfallen. |
 | 1 | `set_time_limit()` | Nur beim CSV-Export großer Datenmengen, mit `function_exists`-Prüfung; der Export läuft zusätzlich in Stapeln. |
 
 ## 3. readme.txt

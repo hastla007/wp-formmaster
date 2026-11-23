@@ -18,6 +18,19 @@ Block und Shortcode nutzen denselben Renderer; die Ausgabe ist identisch.
 
 Jedes Feld hat ein sichtbares Label, Pflichtfelder sind mit `*` markiert (plus `aria-required`), Hilfetexte und Fehlermeldungen sind per `aria-describedby` verknüpft. Nach dem Absenden erscheint oben eine Fehlerübersicht mit Sprunglinks (wird fokussiert und angesagt) bzw. eine Erfolgsmeldung. Einwilligungsfelder sind nie vorausgewählt.
 
+## Sprache und Anrede
+
+Form Captain bringt Deutsch in vier Fassungen mit; welche gilt, richtet sich nach der Sprache der Website (*Einstellungen → Allgemein → Sprache der Website*):
+
+| WordPress-Sprache | Anrede | Besonderheit |
+|---|---|---|
+| Deutsch (`de_DE`) | „du“ | wie das Standard-Deutsch von WordPress |
+| Deutsch (Sie) (`de_DE_formal`) | „Sie“ | |
+| Deutsch (Schweiz) (`de_CH`) | „Sie“ | „ss“ statt „ß“ |
+| Deutsch (Österreich) (`de_AT`) | „du“ | wie `de_DE` |
+
+Die Anrede gilt für alles, was Form Captain selbst schreibt: Verwaltung, Fehlermeldungen im Formular, Status des Spamschutzes, Double-Opt-in-Mail und -Meldungen. Texte, die du im Formular selbst einträgst (Beschriftungen, Hilfetexte, Erfolgsmeldung, E-Mail-Texte), erscheinen unverändert – schreibe sie in derselben Anrede wie die Website.
+
 ## Ohne JavaScript
 
 Das Formular funktioniert auch ohne JavaScript: Es wird an `wp-admin/admin-post.php` gesendet, danach leitet WordPress zurück auf die Seite (Parameter `fc_r` – nur ein zufälliger Schlüssel, keine Daten). Bei Fehlern werden Meldungen und Eingaben (ohne sensible Felder und Einwilligung) für 10 Minuten wieder angezeigt.

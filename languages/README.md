@@ -3,9 +3,16 @@
 | Datei | Inhalt |
 |---|---|
 | `form-captain.pot` | Vorlage, aus dem Quelltext erzeugt (Quelltexte Englisch) |
-| `form-captain-de_DE.po` / `.mo` | Deutsch (Sie-Form) |
-| `form-captain-de_AT.po` / `.mo` | Deutsch (Österreich) – derzeit inhaltlich identisch mit de_DE, nur der Header `Language: de_AT` unterscheidet sich (österreichische Varianten wie „Jänner“ nur, wo solche Begriffe vorkommen) |
+| `form-captain-de_DE.po` / `.mo` | Deutsch, Anrede „du“ (wie das Standard-Deutsch von WordPress) |
+| `form-captain-de_DE_formal.po` / `.mo` | Deutsch (Sie), Anrede „Sie“ – WordPress-Sprache „Deutsch (Sie)“ |
+| `form-captain-de_CH.po` / `.mo` | Deutsch (Schweiz), Anrede „Sie“, „ss“ statt „ß“ – aus de_DE_formal abgeleitet |
+| `form-captain-de_AT.po` / `.mo` | Deutsch (Österreich), Anrede „du“ – derzeit inhaltlich identisch mit de_DE, nur der Header `Language: de_AT` unterscheidet sich (österreichische Varianten wie „Jänner“ nur, wo solche Begriffe vorkommen) |
 | `form-captain-<locale>-<md5>.json` | JavaScript-Übersetzungen (Jed-Format) für `wp_set_script_translations()` |
+
+Die Anrede gilt überall gleich: in der Verwaltung, in den Formularen, Fehlermeldungen und E-Mails an
+Besucher. Welche Fassung Besucher sehen, folgt der Sprache der Website bzw. der Seite (Einstellungen →
+Allgemein → Sprache der Website). Eigene Texte im Formular (Beschriftungen, Erfolgsmeldung, E-Mail-Texte)
+übersetzt Form Captain nicht; sie erscheinen so, wie sie im Formular stehen.
 
 PHP lädt die `.mo`-Dateien über `load_plugin_textdomain()`, JavaScript die JSON-Dateien über
 `wp_set_script_translations( $handle, 'form-captain', FORM_CAPTAIN_DIR . 'languages' )`
@@ -38,15 +45,32 @@ PHP lädt die `.mo`-Dateien über `load_plugin_textdomain()`, JavaScript die JSO
    Neue/geänderte Einträge übersetzen (Platzhalter `%s`, `%1$s`, `%d`, `{form_title}` und HTML-Tags exakt erhalten,
    Pluralformen `msgstr[0]`/`msgstr[1]` füllen, Markierung `fuzzy` entfernen). Terminologie: `docs/spec/datenschutz.md`
    (Texte DS-T-*), `docs/handbuch/*.md`; „submission“ = Einsendung, „entry“ = Eintrag, „Form Captain“ wird nicht übersetzt.
-   Danach `form-captain-de_AT.po` aus de_DE übernehmen (Header `Language: de_AT` beibehalten).
+   Danach dieselben Einträge in `form-captain-de_DE_formal.po` in der Sie-Form übersetzen („Bitte gib …“ →
+   „Bitte geben Sie …“, „dein“ → „Ihr“); Texte ohne Anrede bleiben gleich. Dann `form-captain-de_AT.po` aus de_DE
+   und `form-captain-de_CH.po` aus de_DE_formal übernehmen (Header `Language` beibehalten) und in de_CH jedes „ß“
+   durch „ss“ ersetzen:
 
-3. **Prüfen:**
+   ```sh
+   msgmerge --update --backup=none languages/form-captain-de_DE_formal.po languages/form-captain.pot
+   # nach dem Übersetzen: Kopf der Zieldatei behalten, Einträge übernehmen
+   { sed '/^$/q' languages/form-captain-de_AT.po; sed -e '1,/^$/d' languages/form-captain-de_DE.po; } > /tmp/at.po \
+     && msgcat -o languages/form-captain-de_AT.po /tmp/at.po
+   { sed '/^$/q' languages/form-captain-de_CH.po; sed -e '1,/^$/d' -e '/^msgstr/,/^$/s/ß/ss/g' languages/form-captain-de_DE_formal.po; } > /tmp/ch.po \
+     && msgcat -o languages/form-captain-de_CH.po /tmp/ch.po
+   ```
+
+3. **Prüfen** (für jede der vier PO-Dateien):
 
    ```sh
    msgfmt --check -o /dev/null languages/form-captain-de_DE.po
    msgattrib --untranslated languages/form-captain-de_DE.po   # muss leer sein
    msgattrib --only-fuzzy   languages/form-captain-de_DE.po   # muss leer sein
    ```
+
+   Der Test `tests/integration/Load/TranslationCatalogsTest.php` prüft alle vier Kataloge: jeder Text der POT
+   übersetzt, nicht `fuzzy`, Platzhalter und HTML-Tags gleich, `.mo` passend zur `.po`, JSON je Skript vorhanden,
+   kein „Sie/Ihr/Ihnen“ in de_DE/de_AT (Ausnahmen: „Sie“ als „es/sie“ am Satzanfang, Liste im Test), kein „du/dein“
+   und keine Du-Befehlsform in de_DE_formal/de_CH, jeder du-Text hat eine eigene Sie-Fassung, kein „ß“ in de_CH.
 
 4. **MO kompilieren:**
 

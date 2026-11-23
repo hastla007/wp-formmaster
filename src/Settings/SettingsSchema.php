@@ -204,12 +204,13 @@ final class SettingsSchema {
 	 * @return array<int,array{id:string,tab:string,title:string,text:string,link:string}>
 	 */
 	public static function pro_hints(): array {
+		// One row per setting of a Pro feature that is on sale today (S5): uploads, multi-step forms and
+		// drafts, advanced logic/routing, PDF, webhooks, buyer questionnaires. Features that are
+		// not sold yet get no row. Add a row as array( tab, id, title, text ).
 		$rows = array(
 			array( 'general', 'upload_defaults', __( 'File types and size', 'form-captain' ), __( 'Default file types and size limit for upload fields.', 'form-captain' ) ),
 			array( 'general', 'upload_multiple', __( 'Several files', 'form-captain' ), __( 'Allow several files per upload field.', 'form-captain' ) ),
 			array( 'general', 'draft_lifetime', __( 'Saved drafts', 'form-captain' ), __( 'How long visitors can continue a saved multi-step form.', 'form-captain' ) ),
-			array( 'general', 'form_translations', __( 'Languages', 'form-captain' ), __( 'Translate form texts with WPML or Polylang.', 'form-captain' ) ),
-			array( 'general', 'limit_per_person', __( 'Limits per person', 'form-captain' ), __( 'One submission per person and waiting list.', 'form-captain' ) ),
 			array( 'general', 'webhooks', __( 'Webhooks', 'form-captain' ), __( 'Send submissions to other systems with signed webhooks.', 'form-captain' ) ),
 			array( 'general', 'webhook_delivery', __( 'Webhook delivery', 'form-captain' ), __( 'Retries and time limit for webhook deliveries.', 'form-captain' ) ),
 			array( 'general', 'questionnaire_reminder', __( 'Questionnaire reminder', 'form-captain' ), __( 'Default reminder for buyer questionnaires.', 'form-captain' ) ),
@@ -219,7 +220,6 @@ final class SettingsSchema {
 			array( 'appearance', 'pdf_layout', __( 'PDF layout', 'form-captain' ), __( 'Logo, letterhead and paper size for PDF documents.', 'form-captain' ) ),
 			array( 'email', 'recipient_rules', __( 'Recipients by rule', 'form-captain' ), __( 'Send notifications to different recipients depending on the answers.', 'form-captain' ) ),
 			array( 'email', 'pdf_attachment', __( 'PDF attachment', 'form-captain' ), __( 'Attach the submission as a PDF to the notification.', 'form-captain' ) ),
-			array( 'email', 'email_designer', __( 'E-mail designer', 'form-captain' ), __( 'Design your own e-mail templates.', 'form-captain' ) ),
 			array( 'privacy', 'upload_retention', __( 'Delete files earlier', 'form-captain' ), __( 'Delete uploaded files earlier than the submission itself.', 'form-captain' ) ),
 			array( 'spam', 'upload_virus_scan', __( 'Virus scan', 'form-captain' ), __( 'Check uploaded files with a virus scanner.', 'form-captain' ) ),
 		);

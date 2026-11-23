@@ -5794,3 +5794,436 @@ msgstr "Der Datenbankserver ist älter als die Mindestanforderung von Form Capta
 #: src/Admin/SiteHealth.php
 msgid "MySQL 9.7 or newer, or MariaDB 12.3 or newer."
 msgstr "MySQL 9.7 oder neuer bzw. MariaDB 12.3 oder neuer."
+
+#: src/Admin/SettingsPage.php:372
+msgid "Please check the preview below and confirm the import."
+msgstr "Prüfe die Vorschau unten und bestätige den Import."
+
+#: src/Admin/SettingsPage.php:385
+msgid "The import preview has expired. Please upload the file again."
+msgstr "Die Importvorschau ist abgelaufen. Bitte lade die Datei erneut hoch."
+
+#. translators: %d: number of changed settings
+#: src/Admin/SettingsPage.php:390
+#, php-format
+msgid "%d setting was imported."
+msgid_plural "%d settings were imported."
+msgstr[0] "%d Einstellung wurde importiert."
+msgstr[1] "%d Einstellungen wurden importiert."
+
+#. translators: %s: list of setting keys
+#: src/Admin/SettingsPage.php:394
+#, php-format
+msgid "Unknown keys were ignored: %s"
+msgstr "Unbekannte Schlüssel wurden ignoriert: %s"
+
+#: src/Admin/SettingsPage.php:398
+msgid "Some settings were not imported. Please check the highlighted fields."
+msgstr "Einige Einstellungen wurden nicht importiert. Bitte prüfe die markierten Felder."
+
+#: src/Admin/SettingsPage.php:470
+msgid "Please choose a settings file (.json, at most 64 KB)."
+msgstr "Bitte wähle eine Einstellungsdatei (.json, höchstens 64 KB)."
+
+#: src/Admin/SettingsPage.php:615
+msgid "More settings with Form Captain Pro"
+msgstr "Weitere Einstellungen mit Form Captain Pro"
+
+#: src/Admin/SettingsPage.php:618
+msgid "Pro"
+msgstr "Pro"
+
+#: src/Admin/SettingsPage.php:625
+msgid "Learn more about Form Captain Pro"
+msgstr "Mehr über Form Captain Pro"
+
+#: src/Admin/SettingsPage.php:627
+msgid "You can hide these hints in the General section."
+msgstr "Diese Hinweise lassen sich im Bereich „Allgemein“ ausblenden."
+
+#: src/Admin/SettingsPage.php:847
+msgid "Export and import settings"
+msgstr "Einstellungen exportieren und importieren"
+
+#: src/Admin/SettingsPage.php:848
+msgid "Transfers the settings of this page to another website as a JSON file. Secrets, role permissions, forms and submissions are not included; data deletion on uninstall must always be confirmed on the target site."
+msgstr "Überträgt die Einstellungen dieser Seite als JSON-Datei auf eine andere Website. Geheimnisse, Rollenrechte, Formulare und Einsendungen sind nicht enthalten; die Datenlöschung bei Deinstallation muss auf der Zielseite immer neu bestätigt werden."
+
+#: src/Admin/SettingsPage.php:851
+msgid "Export settings"
+msgstr "Einstellungen exportieren"
+
+#: src/Admin/SettingsPage.php:857
+msgid "Import preview"
+msgstr "Importvorschau"
+
+#. translators: 1: plugin version, 2: date
+#: src/Admin/SettingsPage.php:860
+#, php-format
+msgid "Exported with Form Captain %1$s on %2$s (UTC)."
+msgstr "Exportiert mit Form Captain %1$s am %2$s (UTC)."
+
+#: src/Admin/SettingsPage.php:863
+#: src/Admin/SettingsPage.php:925
+msgid "Setting"
+msgstr "Einstellung"
+
+#: src/Admin/SettingsPage.php:863
+msgid "Current value"
+msgstr "Aktueller Wert"
+
+#: src/Admin/SettingsPage.php:863
+#: src/Admin/SettingsPage.php:925
+msgid "New value"
+msgstr "Neuer Wert"
+
+#: src/Admin/SettingsPage.php:870
+msgid "The file contains no changes."
+msgstr "Die Datei enthält keine Änderungen."
+
+#. translators: %s: list of setting keys
+#: src/Admin/SettingsPage.php:881
+#, php-format
+msgid "Unknown keys will be ignored: %s"
+msgstr "Unbekannte Schlüssel werden ignoriert: %s"
+
+#: src/Admin/SettingsPage.php:891
+msgid "Import these settings"
+msgstr "Diese Einstellungen importieren"
+
+#: src/Admin/SettingsPage.php:897
+msgid "Settings file"
+msgstr "Einstellungsdatei"
+
+#: src/Admin/SettingsPage.php:898
+msgid "You see all changes before anything is saved. Invalid values and unknown keys are reported and not imported."
+msgstr "Vor dem Speichern werden alle Änderungen angezeigt. Ungültige Werte und unbekannte Schlüssel werden gemeldet und nicht importiert."
+
+#: src/Admin/SettingsPage.php:899
+msgid "Show import preview"
+msgstr "Importvorschau anzeigen"
+
+#: src/Admin/SettingsPage.php:905
+msgid "On"
+msgstr "An"
+
+#: src/Admin/SettingsPage.php:905
+msgid "Off"
+msgstr "Aus"
+
+#: src/Admin/SettingsPage.php:911
+msgid "Settings change log"
+msgstr "Änderungsprotokoll der Einstellungen"
+
+#. translators: %d: number of months
+#: src/Admin/SettingsPage.php:913
+#, php-format
+msgid "Changes of settings and role permissions from the last %d month. Secret values are masked."
+msgid_plural "Changes of settings and role permissions from the last %d months. Secret values are masked."
+msgstr[0] "Änderungen an Einstellungen und Rollenrechten aus dem letzten %d Monat. Geheime Werte sind maskiert."
+msgstr[1] "Änderungen an Einstellungen und Rollenrechten aus den letzten %d Monaten. Geheime Werte sind maskiert."
+
+#: src/Admin/SettingsPage.php:916
+msgid "No changes recorded yet."
+msgstr "Noch keine Änderungen aufgezeichnet."
+
+#: src/Admin/SettingsPage.php:920
+msgid "Settings screen"
+msgstr "Einstellungsseite"
+
+#: src/Admin/SettingsPage.php:921
+msgid "WP-CLI"
+msgstr "WP-CLI"
+
+#: src/Admin/SettingsPage.php:925
+msgid "Time"
+msgstr "Zeitpunkt"
+
+#: src/Admin/SettingsPage.php:925
+msgid "Source"
+msgstr "Quelle"
+
+#: src/Admin/SettingsPage.php:925
+msgid "Old value"
+msgstr "Alter Wert"
+
+#: src/Settings/FormSettingsSchema.php:47
+msgid "Send a notification"
+msgstr "Benachrichtigung senden"
+
+#: src/Settings/FormSettingsSchema.php:48
+msgid "Sends an e-mail to the recipients below for every new submission."
+msgstr "Sendet bei jeder neuen Einsendung eine E-Mail an die Empfänger unten."
+
+#: src/Settings/FormSettingsSchema.php:56
+msgid "Up to 10 addresses. {admin_email} stands for the site administrator address."
+msgstr "Bis zu 10 Adressen. {admin_email} steht für die Adresse des Website-Administrators."
+
+#: src/Settings/FormSettingsSchema.php:63
+msgid "Reply-to field"
+msgstr "Feld für die Antwortadresse"
+
+#: src/Settings/FormSettingsSchema.php:64
+msgid "An e-mail field of this form whose value is used as reply-to address."
+msgstr "Ein E-Mail-Feld dieses Formulars, dessen Wert als Antwortadresse dient."
+
+#: src/Settings/FormSettingsSchema.php:72
+msgid "Placeholders such as {form_title} are replaced when the e-mail is sent."
+msgstr "Platzhalter wie {form_title} werden beim Versand ersetzt."
+
+#: src/Settings/FormSettingsSchema.php:78
+msgid "Fields in the notification"
+msgstr "Felder in der Benachrichtigung"
+
+#: src/Settings/FormSettingsSchema.php:79
+msgid "All fields not marked as sensitive, or a selection."
+msgstr "Alle nicht als sensibel markierten Felder oder eine Auswahl."
+
+#: src/Settings/FormSettingsSchema.php:86
+msgid "Send a confirmation e-mail"
+msgstr "Bestätigungs-E-Mail senden"
+
+#: src/Settings/FormSettingsSchema.php:87
+msgid "Needs an e-mail field marked as confirmation recipient."
+msgstr "Braucht ein E-Mail-Feld, das als Empfänger der Bestätigung markiert ist."
+
+#: src/Settings/FormSettingsSchema.php:93
+msgid "Confirmation subject"
+msgstr "Betreff der Bestätigung"
+
+#: src/Settings/FormSettingsSchema.php:94
+msgid "Required when the confirmation e-mail is on."
+msgstr "Pflicht, wenn die Bestätigungs-E-Mail eingeschaltet ist."
+
+#: src/Settings/FormSettingsSchema.php:100
+msgid "Confirmation text"
+msgstr "Text der Bestätigung"
+
+#: src/Settings/FormSettingsSchema.php:101
+msgid "Plain text, up to 5000 characters."
+msgstr "Reiner Text, höchstens 5000 Zeichen."
+
+#: src/Settings/FormSettingsSchema.php:106
+msgid "Fields in the confirmation"
+msgstr "Felder in der Bestätigung"
+
+#: src/Settings/FormSettingsSchema.php:107
+msgid "Submitted values that are repeated in the confirmation e-mail."
+msgstr "Eingesendete Werte, die in der Bestätigungs-E-Mail wiederholt werden."
+
+#: src/Settings/FormSettingsSchema.php:114
+msgid "Show a message"
+msgstr "Meldung anzeigen"
+
+#: src/Settings/FormSettingsSchema.php:115
+msgid "Redirect to a page"
+msgstr "Zu einer Seite weiterleiten"
+
+#: src/Settings/FormSettingsSchema.php:118
+msgid "After sending"
+msgstr "Nach dem Absenden"
+
+#: src/Settings/FormSettingsSchema.php:119
+msgid "Show a message below the form or redirect to a published page."
+msgstr "Eine Meldung unter dem Formular anzeigen oder auf eine veröffentlichte Seite weiterleiten."
+
+#: src/Settings/FormSettingsSchema.php:126
+msgid "Confirmation message"
+msgstr "Bestätigungsmeldung"
+
+#: src/Settings/FormSettingsSchema.php:127
+msgid "Shown after a successful submission. Empty uses the default text."
+msgstr "Erscheint nach erfolgreichem Absenden. Leer = Standardtext."
+
+#: src/Settings/FormSettingsSchema.php:133
+msgid "Redirect page"
+msgstr "Weiterleitungsseite"
+
+#: src/Settings/FormSettingsSchema.php:134
+msgid "A published page without password."
+msgstr "Eine veröffentlichte Seite ohne Passwort."
+
+#: src/Settings/FormSettingsSchema.php:142
+msgid "Message while paused"
+msgstr "Meldung während der Pause"
+
+#: src/Settings/FormSettingsSchema.php:143
+msgid "Shown instead of the form while it is paused."
+msgstr "Erscheint statt des Formulars, solange es pausiert ist."
+
+#: src/Settings/FormSettingsSchema.php:150
+msgid "Use theme styles"
+msgstr "Theme-Stil verwenden"
+
+#: src/Settings/FormSettingsSchema.php:156
+#: src/Settings/FormSettingsSchema.php:163
+msgid "Copied from the global setting when the form is created."
+msgstr "Wird beim Anlegen des Formulars aus der globalen Einstellung übernommen."
+
+#: src/Settings/FormSettingsSchema.php:170
+msgid "Copied from the global setting when the form is created. Empty uses the global sender."
+msgstr "Wird beim Anlegen des Formulars aus der globalen Einstellung übernommen. Leer = globaler Absender."
+
+#: src/Settings/FormSettingsSchema.php:176
+msgid "Use the global setting"
+msgstr "Globale Einstellung verwenden"
+
+#: src/Settings/FormSettingsSchema.php:183
+msgid "Overrides the global retention period for this form."
+msgstr "Ersetzt für dieses Formular die globale Aufbewahrungsfrist."
+
+#: src/Settings/FormSettingsSchema.php:192
+msgid "Steps that run after a submission, such as notifications or anonymization."
+msgstr "Schritte nach einer Einsendung, etwa Benachrichtigungen oder Anonymisierung."
+
+#: src/Settings/SettingsSchema.php:70
+msgid "Hints are rare and can be dismissed. Settings sections end with grey text rows naming settings that Form Captain Pro adds. Free features never depend on Pro."
+msgstr "Hinweise erscheinen selten und lassen sich ausblenden. Am Ende der Einstellungsbereiche nennen graue Textzeilen Einstellungen, die Form Captain Pro ergänzt. Kostenlose Funktionen hängen nie von Pro ab."
+
+#: src/Settings/SettingsSchema.php:104
+msgid "Format of notification and confirmation e-mails. Plain text works with every mail program."
+msgstr "Format der Benachrichtigungen und Bestätigungs-E-Mails. Reiner Text funktioniert mit jedem E-Mail-Programm."
+
+#: src/Settings/SettingsSchema.php:121
+msgid "Submissions in the trash or marked as spam are deleted permanently after this number of days."
+msgstr "Einsendungen im Papierkorb oder als Spam markiert werden nach dieser Anzahl Tage endgültig gelöscht."
+
+#: src/Settings/SettingsSchema.php:146
+msgid "Consent fields can link to the privacy policy page that is set in WordPress under Settings → Privacy."
+msgstr "Einwilligungsfelder können auf die Datenschutzseite verlinken, die in WordPress unter Einstellungen → Datenschutz festgelegt ist."
+
+#: src/Settings/SettingsSchema.php:152
+msgid "Keep the settings change log for (months)"
+msgstr "Änderungsprotokoll der Einstellungen aufbewahren (Monate)"
+
+#: src/Settings/SettingsSchema.php:153
+msgid "Changes of settings and permissions are listed with user, time, old and new value under System status. Secret values are never shown."
+msgstr "Änderungen an Einstellungen und Rechten stehen mit Benutzer, Zeitpunkt, altem und neuem Wert unter „Systemstatus“. Geheime Werte werden nie angezeigt."
+
+#: src/Settings/SettingsSchema.php:165
+msgid "Submissions sent faster than this are treated as spam. 0 turns the check off."
+msgstr "Schneller gesendete Einsendungen gelten als Spam. 0 schaltet die Prüfung aus."
+
+#: src/Settings/SettingsSchema.php:208
+msgid "File types and size"
+msgstr "Dateitypen und Größe"
+
+#: src/Settings/SettingsSchema.php:208
+msgid "Default file types and size limit for upload fields."
+msgstr "Vorgabe für Dateitypen und Höchstgröße in Upload-Feldern."
+
+#: src/Settings/SettingsSchema.php:209
+msgid "Several files"
+msgstr "Mehrere Dateien"
+
+#: src/Settings/SettingsSchema.php:209
+msgid "Allow several files per upload field."
+msgstr "Mehrere Dateien je Upload-Feld erlauben."
+
+#: src/Settings/SettingsSchema.php:210
+msgid "Saved drafts"
+msgstr "Gespeicherte Entwürfe"
+
+#: src/Settings/SettingsSchema.php:210
+msgid "How long visitors can continue a saved multi-step form."
+msgstr "Wie lange Besucher ein gespeichertes mehrstufiges Formular fortsetzen können."
+
+#: src/Settings/SettingsSchema.php:213
+msgid "Webhooks"
+msgstr "Webhooks"
+
+#: src/Settings/SettingsSchema.php:213
+msgid "Send submissions to other systems with signed webhooks."
+msgstr "Einsendungen mit signierten Webhooks an andere Systeme senden."
+
+#: src/Settings/SettingsSchema.php:214
+msgid "Webhook delivery"
+msgstr "Webhook-Zustellung"
+
+#: src/Settings/SettingsSchema.php:214
+msgid "Retries and time limit for webhook deliveries."
+msgstr "Wiederholungen und Zeitlimit für Webhook-Zustellungen."
+
+#: src/Settings/SettingsSchema.php:215
+msgid "Questionnaire reminder"
+msgstr "Fragebogen-Erinnerung"
+
+#: src/Settings/SettingsSchema.php:215
+msgid "Default reminder for buyer questionnaires."
+msgstr "Vorgabe für die Erinnerung an Käufer-Fragebögen."
+
+#: src/Settings/SettingsSchema.php:216
+msgid "Questionnaire link"
+msgstr "Fragebogen-Link"
+
+#: src/Settings/SettingsSchema.php:216
+msgid "How long the questionnaire link for buyers stays valid."
+msgstr "Wie lange der Fragebogen-Link für Käufer gültig bleibt."
+
+#: src/Settings/SettingsSchema.php:217
+msgid "Questionnaire e-mails"
+msgstr "Fragebogen-E-Mails"
+
+#: src/Settings/SettingsSchema.php:217
+msgid "Texts of the questionnaire e-mails to buyers."
+msgstr "Texte der Fragebogen-E-Mails an Käufer."
+
+#: src/Settings/SettingsSchema.php:218
+msgid "Progress display"
+msgstr "Fortschrittsanzeige"
+
+#: src/Settings/SettingsSchema.php:218
+msgid "Progress display and step labels for multi-step forms."
+msgstr "Fortschrittsanzeige und Schritt-Texte für mehrstufige Formulare."
+
+#: src/Settings/SettingsSchema.php:219
+msgid "PDF layout"
+msgstr "PDF-Gestaltung"
+
+#: src/Settings/SettingsSchema.php:219
+msgid "Logo, letterhead and paper size for PDF documents."
+msgstr "Logo, Briefkopf und Papierformat für PDF-Dokumente."
+
+#: src/Settings/SettingsSchema.php:220
+msgid "Recipients by rule"
+msgstr "Empfänger nach Regel"
+
+#: src/Settings/SettingsSchema.php:220
+msgid "Send notifications to different recipients depending on the answers."
+msgstr "Benachrichtigungen je nach Antwort an verschiedene Empfänger senden."
+
+#: src/Settings/SettingsSchema.php:221
+msgid "PDF attachment"
+msgstr "PDF-Anhang"
+
+#: src/Settings/SettingsSchema.php:221
+msgid "Attach the submission as a PDF to the notification."
+msgstr "Die Einsendung als PDF an die Benachrichtigung anhängen."
+
+#: src/Settings/SettingsSchema.php:223
+msgid "Delete files earlier"
+msgstr "Dateien früher löschen"
+
+#: src/Settings/SettingsSchema.php:223
+msgid "Delete uploaded files earlier than the submission itself."
+msgstr "Hochgeladene Dateien früher löschen als die Einsendung."
+
+#: src/Settings/SettingsSchema.php:224
+msgid "Virus scan"
+msgstr "Virenprüfung"
+
+#: src/Settings/SettingsSchema.php:224
+msgid "Check uploaded files with a virus scanner."
+msgstr "Hochgeladene Dateien mit einem Virenscanner prüfen."
+
+#: src/Settings/SettingsTransfer.php:81
+msgid "The file is too large for a settings export."
+msgstr "Die Datei ist für einen Einstellungsexport zu groß."
+
+#: src/Settings/SettingsTransfer.php:86
+msgid "This is not a Form Captain settings file."
+msgstr "Das ist keine Einstellungsdatei von Form Captain."
+
+#: src/Settings/SettingsTransfer.php:90
+msgid "The settings file was created by a newer version of Form Captain. Please update the plugin first."
+msgstr "Die Einstellungsdatei stammt aus einer neueren Version von Form Captain. Bitte aktualisiere zuerst das Plugin."

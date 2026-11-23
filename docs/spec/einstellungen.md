@@ -37,14 +37,14 @@ Neue Formularwerte: einen Eintrag in `definitions()` im passenden Abschnitt erg�
 
 ## Pro-Hinweiszeilen und Felder von Erweiterungen (S1, SET-FC-06)
 
-- `SettingsSchema::pro_hints()`: feste Liste `{id, tab, title, text, link}`, nur Text. Ausgabe am Ende des Reiters (nach Formular und „Zurücksetzen“) als graue Zeile mit „Pro“-Kennzeichen, solange `general.show_pro_hints` an ist und keine Erweiterung ein Feld mit derselben `id` angemeldet hat. Kein Eingabeelement, kein Standardwert, keine Prüfung, keine Rechteschlüssel-Namen. `link` ist leer, solange es keine Produktseite gibt (`SettingsSchema::PRO_INFO_URL`, offene Entscheidung E-6 in `WORDPRESS-ORG.md`).
+- `SettingsSchema::pro_hints()`: Zeilen nur für Pro-Funktionen, die heute verkauft werden (S5: Uploads, mehrstufige Formulare/Entwürfe, erweiterte Logik/Routing, PDF, Webhooks, WooCommerce-Fragebögen); noch nicht verkaufte Funktionen (Formularinhalte je Sprache, E-Mail-Gestalter, eine Einsendung je Person/Warteliste) bekommen keine Zeile. Feste Liste `{id, tab, title, text, link}`, nur Text. Ausgabe am Ende des Reiters (nach Formular und „Zurücksetzen“) als graue Zeile mit „Pro“-Kennzeichen, solange `general.show_pro_hints` an ist und keine Erweiterung ein Feld mit derselben `id` angemeldet hat. Kein Eingabeelement, kein Standardwert, keine Prüfung, keine Rechteschlüssel-Namen. `link` ist leer, solange es keine Produktseite gibt (`SettingsSchema::PRO_INFO_URL`, offene Entscheidung E-6 in `WORDPRESS-ORG.md`).
 - Filter `form_captain_settings_fields_v1` (Liste von Feldern): `id` (`a-z0-9_-`), `tab` (einer der gespeicherten Reiter `general`, `appearance`, `email`, `privacy`, `spam`), `type` (`bool|int|enum|string|text|email|hex`), `label`, `help`, je nach Typ `options`/`min`/`max`/`max_length`, Rückrufe `get()` und `set( $wert )`, optional `validate( $wert ): ?string` (Fehlermeldung) und `default` (für „Bereich zurücksetzen“). Das Feld erscheint nach den Kernfeldern des Reiters als `settings[ext][<id>]`; der Kern prüft den Typ wie bei eigenen Werten, ruft `validate` und speichert über `set`. Speicherort und Werte gehören dem Add-on; Kern-Export, -Import und -CLI enthalten sie nicht. Fehler erscheinen unter `ext.<id>`.
 
 | id | Reiter |
 |---|---|
-| `upload_defaults`, `upload_multiple`, `draft_lifetime`, `form_translations`, `limit_per_person`, `webhooks`, `webhook_delivery`, `questionnaire_reminder`, `questionnaire_link`, `questionnaire_mails` | Allgemein |
+| `upload_defaults`, `upload_multiple`, `draft_lifetime`, `webhooks`, `webhook_delivery`, `questionnaire_reminder`, `questionnaire_link`, `questionnaire_mails` | Allgemein |
 | `step_progress`, `pdf_layout` | Darstellung |
-| `recipient_rules`, `pdf_attachment`, `email_designer` | E-Mail |
+| `recipient_rules`, `pdf_attachment` | E-Mail |
 | `upload_retention` | Datenschutz |
 | `upload_virus_scan` | Spamschutz |
 

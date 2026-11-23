@@ -37,13 +37,13 @@ Zu jedem Fehlercode steht der nächste Schritt in der Liste (z. B. „Connector 
 
 **Erneut aktivieren** setzt die pausierten Jobs automatisch fort; sie laufen mit dem nächsten Hintergrundlauf, der Versuchszähler bleibt, wie er war.
 
-**Plugin entfernt:** Pausierte Jobs bleiben pausiert und werden als „Pausiert (Connector fehlt)“ angezeigt; oben auf der Seite erscheint ein Hinweis. Installieren und aktivieren Sie das Plugin wieder, um sie fortzusetzen, oder brechen Sie sie in der Jobliste mit **Abbrechen** ab. Wird ein Eintrag gelöscht oder anonymisiert, werden auch seine pausierten Jobs abgebrochen.
+**Plugin entfernt:** Pausierte Jobs bleiben pausiert und werden als „Pausiert (Connector fehlt)“ angezeigt; oben auf der Seite erscheint ein Hinweis. Installiere und aktiviere das Plugin wieder, um sie fortzusetzen, oder brich sie in der Jobliste mit **Abbrechen** ab. Wird ein Eintrag gelöscht oder anonymisiert, werden auch seine pausierten Jobs abgebrochen.
 
 Systemstatus und Website-Zustand zählen pausierte Jobs getrennt; sie gelten nicht als Rückstau. Das Eintragsdetail zeigt unter „Versandstatus“ ebenfalls „Pausiert (Connector deaktiviert)“.
 
 ## Löschung und Datenschutz
 
-Wird ein Eintrag gelöscht oder anonymisiert, werden offene Übergaben abgebrochen. Daten im Zielsystem löscht Form Captain nicht selbst; ob der Connector sie bereinigt, steht in dessen Dokumentation. Nennen Sie aktive Integrationen in Ihrer Datenschutzerklärung.
+Wird ein Eintrag gelöscht oder anonymisiert, werden offene Übergaben abgebrochen. Daten im Zielsystem löscht Form Captain nicht selbst; ob der Connector sie bereinigt, steht in dessen Dokumentation. Nenne aktive Integrationen in deiner Datenschutzerklärung.
 
 ## Pro
 

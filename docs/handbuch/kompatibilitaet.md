@@ -48,7 +48,7 @@ Formular-HTML enthält ein signiertes Token mit Ausstellzeit. Für gecachte Seit
 
 - [ ] REST-API für nicht angemeldete Besucher nicht blockiert, mindestens die Routen `form-captain/v1/forms/*/token` und `…/submissions` erlaubt.
 - [ ] WAF blockiert normale Einsendungen nicht (Text mit Sonderzeichen, URLs, Umlaute); bei Blockade Regel-Ausnahme für die Submission-Route.
-- [ ] Hinter Proxy/CDN: richtige Client-IP für Rate-Limits. Form Captain nutzt `REMOTE_ADDR`; liefert der Proxy die echte IP nur per Header, wählen Sie unter *Einstellungen → Spamschutz → Besucheradresse* `CF-Connecting-IP`, `X-Forwarded-For` (erste Adresse) oder `X-Real-IP` – nur für Header, die der eigene Proxy zuverlässig überschreibt. Alternativ setzt der Server (z. B. `mod_remoteip`) die Adresse oder ein Snippet über den Filter `form_captain_client_ip` (der Filter gewinnt).
+- [ ] Hinter Proxy/CDN: richtige Client-IP für Rate-Limits. Form Captain nutzt `REMOTE_ADDR`; liefert der Proxy die echte IP nur per Header, wähle unter *Einstellungen → Spamschutz → Besucheradresse* `CF-Connecting-IP`, `X-Forwarded-For` (erste Adresse) oder `X-Real-IP` – nur für Header, die der eigene Proxy zuverlässig überschreibt. Alternativ setzt der Server (z. B. `mod_remoteip`) die Adresse oder ein Snippet über den Filter `form_captain_client_ip` (der Filter gewinnt).
 - [ ] `admin-post.php` ist erreichbar (No-JS-Fallback, Export, Entry-Aktionen).
 - [ ] Login-/Admin-Härtung beeinträchtigt die Admin-Seiten (Editor, Entries, Export-Download) nicht.
 

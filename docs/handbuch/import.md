@@ -14,13 +14,13 @@ Unterstützt wird das **Shortcode-Formularformat Typ A**: eine Formularvorlage a
 
 ## Ablauf
 
-1. **Quelltext einfügen:** Kopieren Sie die Formularvorlage aus der bisherigen Installation in das Textfeld (höchstens 256 KB) und vergeben Sie optional einen Titel.
+1. **Quelltext einfügen:** Kopiere die Formularvorlage aus der bisherigen Installation in das Textfeld (höchstens 256 KB) und vergib optional einen Titel.
 2. **Analysieren und Vorschau:** Der Quelltext wird nur gelesen und zerlegt – nie ausgeführt. Es wird noch nichts gespeichert.
 3. **Bericht prüfen:** Die Vorschau zeigt eine Ampel (*vollständig*, *mit Anpassungen*, *mit Verlusten*, *nicht importierbar*) und eine Tabelle je Element: Original-Tag, Zieltyp, Feldschlüssel, Beschriftung und Ergebnis (*übernommen*, *angepasst*, *verworfen*). Darunter stehen die Hinweise.
 4. **Als Entwurf importieren:** Mit der Bestätigung wird das Formular mit dem Titelzusatz „(Import)“ als **Entwurf** angelegt. Es wird nie automatisch veröffentlicht. Die Vorschau verfällt nach 30 Minuten.
-5. **Nacharbeiten:** Empfänger der Benachrichtigung prüfen (Standard: Administrator-Adresse), Einwilligungstext prüfen, Formular testen, dann veröffentlichen und auf Ihren Seiten den alten Shortcode durch den Shortcode bzw. Block von Form Captain ersetzen.
+5. **Nacharbeiten:** Empfänger der Benachrichtigung prüfen (Standard: Administrator-Adresse), Einwilligungstext prüfen, Formular testen, dann veröffentlichen und auf deinen Seiten den alten Shortcode durch den Shortcode bzw. Block von Form Captain ersetzen.
 
-Das Original bleibt unverändert: Form Captain ändert, deaktiviert oder löscht keine Daten der Quelle und ersetzt keine Shortcodes auf Ihren Seiten.
+Das Original bleibt unverändert: Form Captain ändert, deaktiviert oder löscht keine Daten der Quelle und ersetzt keine Shortcodes auf deinen Seiten.
 
 ## Was wird wie übernommen?
 
@@ -58,40 +58,40 @@ Bisherige Einsendungen lassen sich aus einer CSV-Datei in ein **veröffentlichte
 
 ### Datenschutz vorab
 
-- Für die Rechtsgrundlage der Altdaten (z. B. die damalige Einwilligung) sind Sie als Betreiber verantwortlich. Importieren Sie nur Daten, die Sie weiter speichern und verarbeiten dürfen.
+- Für die Rechtsgrundlage der Altdaten (z. B. die damalige Einwilligung) bist du als Betreiber verantwortlich. Importiere nur Daten, die du weiter speichern und verarbeiten darfst.
 - Die **Aufbewahrungsfrist** des Formulars (90 Tage, 12 Monate oder manuell) wird ab der **ursprünglichen Einsendezeit** berechnet. Zeilen, deren Frist bereits abgelaufen ist, werden nicht importiert; die übrigen werden automatisch gelöscht, sobald ihre Frist endet.
 - Die Datei wird nur vorübergehend in einem geschützten Verzeichnis gespeichert und nach dem Import, beim Abbrechen, spätestens aber nach **einer Stunde** gelöscht. Ihr Speicherort erscheint nie in einer Adresse.
 
 ### Schritt 1: Datei hochladen
 
 - CSV in **UTF-8** (mit oder ohne BOM), erste Zeile mit Spaltenüberschriften, eine Zeile je Einsendung; Trennzeichen **Komma oder Semikolon** wird automatisch erkannt. Werte mit Trennzeichen, Anführungszeichen oder Zeilenumbrüchen in Anführungszeichen (Excel-/RFC-4180-Stil).
-- Höchstens **5 MB** und **10 000 Zeilen**. Größere Bestände teilen Sie auf mehrere Dateien auf.
+- Höchstens **5 MB** und **10 000 Zeilen**. Größere Bestände teilst du auf mehrere Dateien auf.
 - Mehrfachwerte (Checkboxen, Mehrfachauswahl) durch `|` trennen, z. B. `Web|App`. Optionen dürfen als Beschriftung oder Wert angegeben werden.
-- Dateien in anderer Kodierung (z. B. Windows-1252) werden abgelehnt – speichern Sie die Datei in Excel als „CSV UTF-8“.
+- Dateien in anderer Kodierung (z. B. Windows-1252) werden abgelehnt – speichere die Datei in Excel als „CSV UTF-8“.
 
 ### Schritt 2: Spalten zuordnen
 
-Für jede Spalte wählen Sie das Zielfeld (mit Hinweis auf das erwartete Format) oder **„Ignorieren“**. Spalten mit gleichem Namen wie Feldbeschriftung oder -schlüssel sind vorbelegt. Eine Vorschau zeigt die ersten 5 Zeilen mit gekürzten Werten.
+Für jede Spalte wählst du das Zielfeld (mit Hinweis auf das erwartete Format) oder **„Ignorieren“**. Spalten mit gleichem Namen wie Feldbeschriftung oder -schlüssel sind vorbelegt. Eine Vorschau zeigt die ersten 5 Zeilen mit gekürzten Werten.
 
-**Einsendezeit:** Wählen Sie die Spalte mit dem Zeitpunkt der Einsendung und das Datumsformat – meist genügt „Automatisch erkennen“:
+**Einsendezeit:** Wähle die Spalte mit dem Zeitpunkt der Einsendung und das Datumsformat – meist genügt „Automatisch erkennen“:
 
 | Format | Beispiele |
 |---|---|
 | ISO 8601 | `2026-03-01T10:15:00+01:00`, `2026-03-01 10:15:00` |
 | JJJJ-MM-TT | `2026-03-01`, `2026-03-01 10:15` |
 | TT.MM.JJJJ | `01.03.2026`, `1.3.2026 10:15`, `01.03.2026 10:15:30` |
-| TT/MM/JJJJ bzw. MM/TT/JJJJ | `13/01/2026`, `01/13/2026 10:15` – bei mehrdeutigen Werten gilt Tag/Monat; wählen Sie das Format sonst selbst |
+| TT/MM/JJJJ bzw. MM/TT/JJJJ | `13/01/2026`, `01/13/2026 10:15` – bei mehrdeutigen Werten gilt Tag/Monat; wähle das Format sonst selbst |
 | Unix-Zeitstempel | `1767225600` |
 
 Zeiten ohne Zeitzonenangabe gelten in der **Zeitzone der Website** (*Einstellungen → Allgemein*) und werden in UTC gespeichert; reine Datumsangaben als 00:00 Uhr.
 
 ### Schritt 3: Prüfen (Trockenlauf)
 
-Alle Zeilen werden geprüft, ohne etwas zu speichern. Sie sehen, wie viele Zeilen **gültig**, **ungültig**, **Duplikate** (bereits importiert) und **abgelaufen** sind. Ungültige Zeilen werden mit Zeilennummer (Kopfzeile = 1), Fehlercode und Feldschlüssel aufgeführt – **ohne** Werte. Pflichtfelder dürfen fehlen; ungültige Werte (z. B. `invalid_email`, `invalid_option`, `invalid_time`) führen zum Überspringen der Zeile. Bei Bedarf passen Sie die Zuordnung an und prüfen erneut.
+Alle Zeilen werden geprüft, ohne etwas zu speichern. Du siehst, wie viele Zeilen **gültig**, **ungültig**, **Duplikate** (bereits importiert) und **abgelaufen** sind. Ungültige Zeilen werden mit Zeilennummer (Kopfzeile = 1), Fehlercode und Feldschlüssel aufgeführt – **ohne** Werte. Pflichtfelder dürfen fehlen; ungültige Werte (z. B. `invalid_email`, `invalid_option`, `invalid_time`) führen zum Überspringen der Zeile. Bei Bedarf passt du die Zuordnung an und prüfst erneut.
 
 ### Schritt 4: Importieren
 
-Der Import läuft in Schritten zu je 500 Zeilen und setzt sich automatisch fort; ein Fortschrittsbalken zeigt den Stand. Wird er unterbrochen (Browser geschlossen, Zeitüberschreitung), klicken Sie auf **„Fortsetzen“** – oder laden Sie die Datei nach Ablauf der Stunde einfach erneut hoch: bereits importierte Zeilen werden erkannt und übersprungen. Am Ende zeigt der **Importbericht** die Zahlen und einen Link zu den Einträgen.
+Der Import läuft in Schritten zu je 500 Zeilen und setzt sich automatisch fort; ein Fortschrittsbalken zeigt den Stand. Wird er unterbrochen (Browser geschlossen, Zeitüberschreitung), klicke auf **„Fortsetzen“** – oder lade die Datei nach Ablauf der Stunde einfach erneut hoch: bereits importierte Zeilen werden erkannt und übersprungen. Am Ende zeigt der **Importbericht** die Zahlen und einen Link zu den Einträgen.
 
 Importierte Einträge erhalten den Status *gelesen* und die Einsendezeit aus der Datei. Es werden **keine** E-Mails, keine Connector-Aktionen und keine „Eintrag erstellt“-Ereignisse ausgelöst. Werte werden **so gespeichert, wie sie in der Datei stehen** – auch Formeln (`=…`) oder HTML; in der Verwaltung werden sie stets maskiert angezeigt und beim CSV-Export gegen Formel-Injektion geschützt.
 

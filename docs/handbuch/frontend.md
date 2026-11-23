@@ -53,9 +53,9 @@ Standardmäßig aktiv und ohne Drittanbieter: unsichtbares Honeypot-Feld, Mindes
 
 ## SEO und Yoast SEO
 
-Form Captain verändert **keine** SEO-Daten: Seitentitel, Meta-Beschreibung, Canonical, Robots-Regeln, Open Graph, Sitemaps und strukturierte Daten pflegen Sie wie gewohnt in WordPress bzw. Yoast SEO. Formulare erzeugen keine eigenen URLs, keine Sitemap-Einträge und kein eigenes JSON-LD – sie sind eingebetteter Seiteninhalt.
+Form Captain verändert **keine** SEO-Daten: Seitentitel, Meta-Beschreibung, Canonical, Robots-Regeln, Open Graph, Sitemaps und strukturierte Daten pflegst du wie gewohnt in WordPress bzw. Yoast SEO. Formulare erzeugen keine eigenen URLs, keine Sitemap-Einträge und kein eigenes JSON-LD – sie sind eingebetteter Seiteninhalt.
 
-Ein Formular ersetzt keinen hilfreichen Seiteninhalt: Erklären Sie auf der Seite, worum es geht und was nach dem Absenden passiert. Ist Yoast SEO aktiv, berücksichtigt die Inhaltsanalyse beim Shortcode nur die sichtbaren Feldbeschriftungen und Hilfetexte – nie eingegebene Werte. Ohne Yoast funktioniert alles unverändert.
+Ein Formular ersetzt keinen hilfreichen Seiteninhalt: Erkläre auf der Seite, worum es geht und was nach dem Absenden passiert. Ist Yoast SEO aktiv, berücksichtigt die Inhaltsanalyse beim Shortcode nur die sichtbaren Feldbeschriftungen und Hilfetexte – nie eingegebene Werte. Ohne Yoast funktioniert alles unverändert.
 
 ## Für Entwickler
 

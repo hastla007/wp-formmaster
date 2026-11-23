@@ -1,6 +1,6 @@
 # Einträge, Export, E-Mail und Aufbewahrung
 
-Dieses Kapitel beschreibt, wie Sie mit Einsendungen arbeiten, wie E-Mails zugestellt werden und wie lange Form Captain Daten aufbewahrt.
+Dieses Kapitel beschreibt, wie du mit Einsendungen arbeitest, wie E-Mails zugestellt werden und wie lange Form Captain Daten aufbewahrt.
 
 ## Einträge verwalten
 
@@ -25,13 +25,13 @@ IP-Adressen und Browserkennungen werden nicht gespeichert und deshalb auch nicht
 
 ### Einwilligung widerrufen
 
-Widerruft eine Person ihre Einwilligung (z. B. per E-Mail), erfassen Sie das in der Detailansicht im Kasten **Einwilligung widerrufen** (Recht *Einträge bearbeiten*):
+Widerruft eine Person ihre Einwilligung (z. B. per E-Mail), erfasst du das in der Detailansicht im Kasten **Einwilligung widerrufen** (Recht *Einträge bearbeiten*):
 
-1. Wählen Sie, was mit dem Eintrag geschehen soll:
+1. Wähle, was mit dem Eintrag geschehen soll:
    - **Eintrag behalten** – die Antworten bleiben, der Eintrag wird nur gekennzeichnet.
    - **Personenbezogene Daten anonymisieren** – wie bei einer Löschanfrage im Modus „Anonymisieren“: persönliche Werte werden durch `[deleted]` ersetzt, Notizen gelöscht, Auswahlwerte und Einwilligungsnachweis bleiben.
    - **Eintrag endgültig löschen** – nur mit dem Recht *Einträge löschen*.
-2. Bestätigen Sie mit dem Häkchen, dass die Person widerrufen hat, und klicken Sie **Einwilligung widerrufen**.
+2. Bestätige mit dem Häkchen, dass die Person widerrufen hat, und klicke **Einwilligung widerrufen**.
 
 Was dann passiert:
 
@@ -51,14 +51,14 @@ Was dann passiert:
 | Spam | automatisch erkannt oder manuell markiert; keine Mails/Integrationen; wird nach der Papierkorbfrist gelöscht |
 | Papierkorb | wird nach der Papierkorbfrist (Standard 30 Tage) endgültig gelöscht; bis dahin wiederherstellbar |
 
-Wird ein Spam-Eintrag auf „Kein Spam“ gesetzt, wird die Benachrichtigung nicht automatisch nachgeholt. Nutzen Sie dafür in der Detailansicht „Admin-Benachrichtigung erneut senden“.
+Wird ein Spam-Eintrag auf „Kein Spam“ gesetzt, wird die Benachrichtigung nicht automatisch nachgeholt. Nutze dafür in der Detailansicht „Admin-Benachrichtigung erneut senden“.
 
 ## CSV-Export
 
 **Einträge → CSV exportieren** (Recht *Einträge exportieren*).
 
 1. Formular wählen (Pflicht – die Spalten hängen vom Formular ab).
-2. Spalten wählen: Metadaten, alle Felder der aktuellen Version und Felder älterer Versionen (Zusatz „(entfernt)“). **Sensible Felder sind abgewählt** und werden nur exportiert, wenn Sie sie ausdrücklich anhaken.
+2. Spalten wählen: Metadaten, alle Felder der aktuellen Version und Felder älterer Versionen (Zusatz „(entfernt)“). **Sensible Felder sind abgewählt** und werden nur exportiert, wenn du sie ausdrücklich anhakst.
 3. Optional Status und Zeitraum wählen. Ohne Auswahl werden alle aktiven Einträge exportiert, also ohne Spam und Papierkorb.
 4. Format: UTF-8 mit BOM (empfohlen für Excel), Trennzeichen Komma oder Semikolon.
 
@@ -69,16 +69,16 @@ Hinweise:
 - Die Datei wird direkt gestreamt und nicht auf dem Server gespeichert. Maximal 100 000 Zeilen je Export, sonst bitte den Zeitraum eingrenzen; höchstens 10 Exporte je Stunde und Nutzer.
 - Gelöschte Einträge sind nie enthalten; anonymisierte erscheinen mit Status „Anonymisiert“ und Platzhaltern.
 - Die Spalte **Reference number** (Vorgangsnummer) ist standardmäßig ausgewählt; Einträge ohne Nummer bleiben leer.
-- Die Spalte **Consent withdrawn** (Einwilligung widerrufen) ist standardmäßig ausgewählt und enthält bei widerrufener Einwilligung Datum und Uhrzeit, sonst bleibt sie leer. Sie können sie abwählen.
+- Die Spalte **Consent withdrawn** (Einwilligung widerrufen) ist standardmäßig ausgewählt und enthält bei widerrufener Einwilligung Datum und Uhrzeit, sonst bleibt sie leer. Du kannst sie abwählen.
 - Jeder Export wird im technischen Protokoll vermerkt (Nutzer-ID, Formular, Zeilenzahl – keine Inhalte).
 
-Behandeln Sie exportierte Dateien wie die Einträge selbst: nur so lange aufbewahren wie nötig.
+Behandle exportierte Dateien wie die Einträge selbst: nur so lange aufbewahren wie nötig.
 
 ## E-Mail-Zustellung
 
 Form Captain versendet Mails nicht während der Einsendung, sondern über eine **Warteschlange**: Die Einsendung wird zuerst sicher gespeichert, danach werden die Mails im Hintergrund (WP-Cron, jede Minute) versendet. Fällt der Versand aus, geht keine Einsendung verloren.
 
-- **Admin-Benachrichtigung:** Empfänger, Betreff und Feldauswahl stellen Sie je Formular ein. `{admin_email}` steht für die Administrator-Adresse der Website. Platzhalter im Betreff: `{form_title}`, `{site_title}`, `{field:schluessel}` (sensible Felder bleiben leer). Standardmäßig enthält die Mail alle nicht sensiblen Felder; Hinweistexte (HTML-Felder) und Einwilligungstexte nie (die Einwilligung erscheint als Ja/Nein). Die Mail enthält einen Link zur Detailansicht im Admin.
+- **Admin-Benachrichtigung:** Empfänger, Betreff und Feldauswahl stellst du je Formular ein. `{admin_email}` steht für die Administrator-Adresse der Website. Platzhalter im Betreff: `{form_title}`, `{site_title}`, `{field:schluessel}` (sensible Felder bleiben leer). Standardmäßig enthält die Mail alle nicht sensiblen Felder; Hinweistexte (HTML-Felder) und Einwilligungstexte nie (die Einwilligung erscheint als Ja/Nein). Die Mail enthält einen Link zur Detailansicht im Admin.
 - **Antwortadresse (Reply-To):** das gewählte E-Mail-Feld – nur, wenn der Wert eine gültige Adresse ohne Zeilenumbrüche ist.
 - **Absender (From):** aus den Formular-Einstellungen, sonst aus *Einstellungen → E-Mail*. Niemals aus Formularwerten.
 - **Bestätigung an die einsendende Person** (optional): geht nur an das als Empfänger markierte, gültige E-Mail-Feld, enthält standardmäßig keine Feldwerte, kein Admin-Link, höchstens 3 Bestätigungen je Empfängeradresse und Stunde. Für Spam wird keine Bestätigung gesendet.
@@ -95,15 +95,15 @@ WordPress versendet standardmäßig über die PHP-Funktion `mail()` des Servers.
 3. SPF, DKIM und DMARC der Domain prüfen lassen.
 4. Mit *Einstellungen → E-Mail → Testmail* prüfen und danach eine Testeinsendung machen; der Versandstatus erscheint im Eintrag.
 
-Ist WP-Cron deaktiviert (`DISABLE_WP_CRON`), richten Sie einen System-Cron ein, z. B. `wp form-captain jobs run` jede Minute oder einen Aufruf von `wp-cron.php`.
+Ist WP-Cron deaktiviert (`DISABLE_WP_CRON`), richte einen System-Cron ein, z. B. `wp form-captain jobs run` jede Minute oder einen Aufruf von `wp-cron.php`.
 
 ## Aufbewahrung und Löschung
 
-Unter *Einstellungen → Datenschutz* wählen Sie, wie lange Einsendungen gespeichert bleiben: **90 Tage**, **12 Monate** (Standard) oder **bis zur manuellen Löschung**. Einzelne Formulare können eine eigene Frist haben.
+Unter *Einstellungen → Datenschutz* wählst du, wie lange Einsendungen gespeichert bleiben: **90 Tage**, **12 Monate** (Standard) oder **bis zur manuellen Löschung**. Einzelne Formulare können eine eigene Frist haben.
 
 - Die Frist zählt ab Eingang (UTC). „12 Monate“ sind Kalendermonate (29.02. → 01.03. des Folgejahres).
 - Wird eine Frist **verkürzt**, wird kein Eintrag früher als **14 Tage** nach der Änderung gelöscht. Bei Wechsel auf „manuell“ entfällt die automatische Löschung.
-- In den 14 Tagen vor einer automatischen Löschung zeigt die Eintragsliste einen Hinweis mit Anzahl und Datum und den Reiter „Läuft bald ab“; die Detailansicht nennt das Löschdatum. Exportieren Sie Einträge rechtzeitig, falls Sie sie noch brauchen.
+- In den 14 Tagen vor einer automatischen Löschung zeigt die Eintragsliste einen Hinweis mit Anzahl und Datum und den Reiter „Läuft bald ab“; die Detailansicht nennt das Löschdatum. Exportiere Einträge rechtzeitig, falls du sie noch brauchst.
 - Papierkorb und Spam werden nach der Papierkorbfrist (Standard 30 Tage) endgültig gelöscht.
 - Die tägliche Bereinigung arbeitet in kleinen Portionen (200 Einträge, höchstens 20 Sekunden je Lauf) und setzt bei Bedarf automatisch fort. Ein Eintrag, der sich einmal nicht löschen lässt, wird beim nächsten Lauf erneut versucht. Die Bereinigung entfernt außerdem alte Protokolle (30 Tage), erledigte Aufträge (30 Tage) und endgültig fehlgeschlagene Aufträge (90 Tage).
 
@@ -118,7 +118,7 @@ Unter *Einstellungen → Datenschutz* wählen Sie, wie lange Einsendungen gespei
 | Warteschlange | nur IDs und Fehlercodes, keine Antworten | beim Löschen abgebrochen; erledigte nach 30, fehlgeschlagene nach 90 Tagen gelöscht |
 | Technisches Protokoll | Codes, IDs, Zeit – keine Inhalte, keine Adressen | nach 30 Tagen |
 | Versandte E-Mails | freigegebene Feldwerte | **außerhalb** von Form Captain (Postfach, SMTP-Dienst) – dort separat löschen |
-| CSV-Dateien | exportierte Spalten | **außerhalb** von Form Captain – liegen nur auf Ihrem Rechner |
+| CSV-Dateien | exportierte Spalten | **außerhalb** von Form Captain – liegen nur auf deinem Rechner |
 | Integrationen | gemappte Felder | im Zielsystem, je nach Integration |
 | Backups | vollständige Datenbankkopie | **außerhalb** von Form Captain – bis das Backup abläuft |
 
@@ -126,4 +126,4 @@ Unter *Einstellungen → Datenschutz* wählen Sie, wie lange Einsendungen gespei
 
 Form Captain hat keinen Einfluss auf Backups. Gelöschte Einsendungen bleiben in vorhandenen Backups, bis diese ablaufen. Wird ein Backup eingespielt, löscht die nächste Bereinigung abgelaufene Einträge und alten Papierkorb automatisch erneut, denn die Löschung richtet sich allein nach den gespeicherten Zeitpunkten. Der Systemstatus warnt, wenn nach einem Lauf noch Einträge vorhanden sind, deren Frist schon länger abgelaufen ist (Hinweis auf ein eingespieltes Backup).
 
-Datenschutz-Löschanfragen (Werkzeuge → Personenbezogene Daten löschen), die nach dem Backup-Datum abgeschlossen wurden, müssen Sie nach einem Restore **erneut ausführen** – Form Captain führt bewusst keine Liste gelöschter Personen. Stimmen Sie die Aufbewahrungsdauer Ihrer Backups auf die gewählte Frist ab.
+Datenschutz-Löschanfragen (Werkzeuge → Personenbezogene Daten löschen), die nach dem Backup-Datum abgeschlossen wurden, musst du nach einem Restore **erneut ausführen** – Form Captain führt bewusst keine Liste gelöschter Personen. Stimme die Aufbewahrungsdauer deiner Backups auf die gewählte Frist ab.

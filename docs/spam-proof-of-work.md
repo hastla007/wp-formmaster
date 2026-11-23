@@ -68,7 +68,7 @@ Der Einmal-Speicher wird erst bei Schritt 7 berührt, also nur für korrekt sign
 
 ## Einbindung in Form Captain
 
-- Auswahl: Einstellung `spam.captcha_provider` = `pow` (Vorgabe bleibt `none`; keine Drittland-Bestätigung nötig). Externe Anbieter weiterhin über `form_captain_spam_checks_v1`.
+- Auswahl: Einstellung `spam.captcha_provider` = `pow` (Vorgabe bleibt `none`; keine Drittland-Bestätigung nötig). Externe Anbieter melden sich über `form_captain_captcha_providers_v1` an (Auswahl in der Einstellung) und prüfen die Einsendung über `form_captain_spam_checks_v1`, wenn `$context['captcha']` ihr Schlüssel ist (siehe `docs/spec/api-v1.md`).
 - Je Formular `spam.mode`: `global` (Einstellung gilt), `strict` (Captcha immer, `pow` falls global keiner gewählt, kein Fallback ohne JS), `off` (kein Captcha für dieses Formular; übrige Prüfungen bleiben).
 - Spam-Gründe der Einsendung: `pow_missing`, `pow_invalid`, `pow_replayed`. Wie bei allen Spam-Gründen sieht der Besucher eine normale Erfolgsmeldung, die Einsendung landet im Spam.
 - Die REST-Route des Formular-Skripts erwartet eine Lösung; die No-JS-Route (`admin-post.php`) nur bei `strict`.

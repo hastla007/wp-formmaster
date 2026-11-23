@@ -386,14 +386,14 @@ final class SettingsSchema {
 	public static function pro_hints(): array {
 		// One row per setting of a Pro feature that is on sale today (S5): uploads, multi-step forms and
 		// drafts, advanced logic/routing, PDF, webhooks, buyer questionnaires. Features that are
-		// not sold yet get no row. Add a row as array( tab, id, title, text ). The id is the id of the
-		// add-on field that replaces the row (Form Captain Pro: uploads.types, multistep.draft_days …).
+		// not sold yet get no row. Add a row as array( tab, id, title, text ). The id must be the id of a
+		// field the add-on announces with the feature (Form Captain Pro: uploads.types, multistep.draft_days …);
+		// a row without such a field would stay visible next to the running feature.
 		$rows = array(
 			array( 'general', 'uploads.types', __( 'File types and size', 'form-captain' ), __( 'Default file types and size limit for upload fields.', 'form-captain' ) ),
 			array( 'general', 'uploads.max_files', __( 'Several files', 'form-captain' ), __( 'Allow several files per upload field.', 'form-captain' ) ),
 			array( 'general', 'multistep.draft_days', __( 'Saved drafts', 'form-captain' ), __( 'How long visitors can continue a saved multi-step form.', 'form-captain' ) ),
-			array( 'general', 'webhooks', __( 'Webhooks', 'form-captain' ), __( 'Send submissions to other systems with signed webhooks.', 'form-captain' ) ),
-			array( 'general', 'webhooks.timeout', __( 'Webhook delivery', 'form-captain' ), __( 'Retries and time limit for webhook deliveries.', 'form-captain' ) ),
+			array( 'general', 'webhooks.timeout', __( 'Webhooks', 'form-captain' ), __( 'Send submissions to other systems with signed webhooks.', 'form-captain' ) ),
 			array( 'general', 'woo.reminder_days', __( 'Questionnaire reminder', 'form-captain' ), __( 'Default reminder for buyer questionnaires.', 'form-captain' ) ),
 			array( 'general', 'woo.link_days', __( 'Questionnaire link', 'form-captain' ), __( 'How long the questionnaire link for buyers stays valid.', 'form-captain' ) ),
 			array( 'general', 'woo.reminder_subject', __( 'Questionnaire e-mails', 'form-captain' ), __( 'Texts of the questionnaire e-mails to buyers.', 'form-captain' ) ),
@@ -402,7 +402,6 @@ final class SettingsSchema {
 			array( 'email', 'recipient_rules', __( 'Recipients by rule', 'form-captain' ), __( 'Send notifications to different recipients depending on the answers.', 'form-captain' ) ),
 			array( 'email', 'pdf.attach_notification', __( 'PDF attachment', 'form-captain' ), __( 'Attach the submission as a PDF to the notification.', 'form-captain' ) ),
 			array( 'privacy', 'uploads.file_retention_days', __( 'Delete files earlier', 'form-captain' ), __( 'Delete uploaded files earlier than the submission itself.', 'form-captain' ) ),
-			array( 'spam', 'upload_virus_scan', __( 'Virus scan', 'form-captain' ), __( 'Check uploaded files with a virus scanner.', 'form-captain' ) ),
 		);
 		$out  = array();
 		foreach ( $rows as $r ) {
@@ -715,7 +714,7 @@ final class SettingsSchema {
 
 	/**
 	 * Captcha providers: always "none" and the built-in "pow" (Security\PowCaptcha, no data leaves the
-	 * site); extensions add opt-in external providers via form_captain_spam_checks_v1
+	 * site); extensions add opt-in external providers via form_captain_captcha_providers_v1
 	 * with `type = captcha`, `label`, `data` (what is sent), `purpose`, `privacy_url`.
 	 *
 	 * @return array<string,string>
@@ -734,7 +733,9 @@ final class SettingsSchema {
 	/** @return array<string,array<string,string>> */
 	public static function captcha_providers(): array {
 		$out = array();
-		foreach ( (array) apply_filters( 'form_captain_spam_checks_v1', array() ) as $key => $def ) {
+		// Own filter: form_captain_spam_checks_v1 is the check at submission (reason string), a list
+		// there would reach typed check callbacks with the wrong value (SET-FC-P6).
+		foreach ( (array) apply_filters( 'form_captain_captcha_providers_v1', array() ) as $key => $def ) {
 			if ( is_string( $key ) && preg_match( '/^[a-z0-9_]{2,40}$/', $key ) && ! in_array( $key, array( 'none', 'pow' ), true ) && is_array( $def ) && 'captcha' === ( $def['type'] ?? '' ) ) {
 				$out[ $key ] = array(
 					'label'       => (string) ( $def['label'] ?? $key ),

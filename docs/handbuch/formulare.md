@@ -39,6 +39,11 @@ Jeder Schritt lässt sich überspringen; „Checkliste ausblenden“ beendet die
 - **Einwilligung:** nie vorangekreuzt. Ändern Sie den Text, erhöht sich die Revision automatisch; bestehende Einträge behalten den Nachweis ihrer Version.
 - **Sensible Felder** landen standardmäßig weder in E-Mails noch in Connector-Aktionen.
 - **Versteckte Werte** können von Besuchern verändert werden – nie für Vertrauensentscheidungen nutzen.
+- **Muster für einzeiligen Text:** Buchstaben, Buchstaben und Ziffern, Postleitzahl Deutschland (5 Ziffern), Österreich und Schweiz (4 Ziffern), „beliebiges Land“ (2–10 Buchstaben, Ziffern, Leer- oder Bindestriche) oder ein **eigenes Muster** (regulärer Ausdruck, z. B. `[A-Z]{2}-[0-9]{4}`). Eigene Muster mit verschachtelten Wiederholungen, Rückverweisen oder Lookarounds werden abgelehnt, weil sie die Website ausbremsen können.
+- **Telefon:** „beliebige Telefonnummer“ (Standard) oder „international mit + und Ländervorwahl“ (z. B. `+49 30 1234567`).
+- **Mindestalter am Datumsfeld:** Nur Geburtsdaten von Personen, die am Tag der Einsendung mindestens so alt sind, werden angenommen. Es gibt bewusst keine Vorgabe – welches Alter nötig ist, klären Sie rechtlich für Ihr Land und Ihren Zweck.
+- **Eigene Fehlermeldung:** ersetzt die Standardmeldung des Feldes (leer = Standard).
+- **Autofill:** sagt dem Browser, welche gespeicherten Angaben passen (Name, E-Mail, Telefon, Straße, PLZ, Ort, Land …). „Automatisch“ nutzt bei E-Mail und Telefon die passende Art.
 
 ### Bedingungen
 
@@ -56,7 +61,11 @@ Nach dem Absenden eine Meldung anzeigen oder auf eine **veröffentlichte** Seite
 
 ### Formulareinstellungen
 
-Pausenmeldung, Darstellung (Theme-Styling oder Form-Captain-Basisstil) und Aufbewahrung (global, 90 Tage, 12 Monate, manuell).
+Texte, Zeitraum und Grenze, Pausenmeldung, Darstellung (Theme-Styling oder Form-Captain-Basisstil) und Aufbewahrung (global, 90 Tage, 12 Monate, manuell).
+
+- **Texte:** Beschriftung der Absende-Schaltfläche (höchstens 60 Zeichen), Hinweis auf Pflichtfelder (ein `*` im Text wird als Pflichtfeld-Markierung angezeigt) und Überschrift der Fehlerübersicht. Leer = Standardtext in der Sprache der Website.
+- **Zeitraum und Grenze:** „Einsendungen annehmen ab/bis“ (Zeitzone der Website), Höchstzahl Einsendungen (Spam und Papierkorb zählen nicht) und der Text, den Besucher stattdessen sehen. Ohne eigenen Text erscheint ein Standardtext (vor Beginn mit Datum).
+- Die Vorgangsnummer (*Einstellungen → Allgemein*) steht in Betreff und Text der E-Mails und in der Erfolgsmeldung über `{entry_number}` zur Verfügung.
 
 ### Aktionen
 

@@ -652,6 +652,7 @@ final class SettingsSchema {
 				$changed[ $id ] = array( $old, $value );
 			}
 		}
+		ChangeLog::record_extension( $changed, self::extension_fields_for( $tab ) );
 		return array(
 			'changed' => $changed,
 			'errors'  => $errors,
@@ -706,11 +707,18 @@ final class SettingsSchema {
 
 	/** Resets extension fields of one tab that declare a default. */
 	public static function reset_extension_fields( string $tab ): void {
-		foreach ( self::extension_fields_for( $tab ) as $field ) {
+		$fields  = self::extension_fields_for( $tab );
+		$changed = array();
+		foreach ( $fields as $id => $field ) {
 			if ( array_key_exists( 'default', $field ) ) {
+				$old = call_user_func( $field['get'] );
 				call_user_func( $field['set'], $field['default'] );
+				if ( $old !== $field['default'] ) {
+					$changed[ $id ] = array( $old, $field['default'] );
+				}
 			}
 		}
+		ChangeLog::record_extension( $changed, $fields );
 	}
 
 	/**

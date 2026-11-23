@@ -343,11 +343,13 @@ final class SettingsSchema {
 				'help'  => __( 'Raise this value for events or kiosks where many people submit from the same network.', 'form-captain' ),
 			),
 			'spam.token_minutes'                => array(
-				'type'  => 'int',
-				'min'   => 5,
-				'max'   => (int) ( \FormCaptain\Support\Limits::SETTABLE['token_ttl'][2] / 60 ),
-				'label' => __( 'Time to fill in a form (minutes)', 'form-captain' ),
-				'help'  => __( 'How long a loaded form can be submitted. Raise it for long forms; visitors who exceed it have to reload the page.', 'form-captain' ),
+				'type'   => 'int',
+				'min'    => 5,
+				'max'    => (int) ( \FormCaptain\Support\Limits::SETTABLE['token_ttl'][2] / 60 ),
+				// A duration, not a secret: exported and shown in the change log (SET-FC-P4-07).
+				'secret' => false,
+				'label'  => __( 'Time to fill in a form (minutes)', 'form-captain' ),
+				'help'   => __( 'How long a loaded form can be submitted. Raise it for long forms; visitors who exceed it have to reload the page.', 'form-captain' ),
 			),
 			'export.delimiter'                  => array(
 				'type'    => 'enum',
@@ -932,12 +934,13 @@ final class SettingsSchema {
 
 	/**
 	 * Secret values (keys, passwords, tokens) are masked in the change log and never exported.
-	 * A definition can mark itself with `secret => true`; names that look like secrets count too.
+	 * A definition can mark itself with `secret => true`; names that look like secrets count too,
+	 * unless the definition says `secret => false` (e.g. spam.token_minutes, a duration).
 	 */
 	public static function is_secret( string $path ): bool {
 		$def = self::definitions()[ $path ] ?? null;
-		if ( is_array( $def ) && ! empty( $def['secret'] ) ) {
-			return true;
+		if ( is_array( $def ) && array_key_exists( 'secret', $def ) ) {
+			return (bool) $def['secret'];
 		}
 		return (bool) preg_match( '/secret|token|password|passwd|api_?key|private_?key|credential/i', $path );
 	}

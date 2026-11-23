@@ -38,8 +38,14 @@ final class SettingsTransferTest extends TestCase {
 		$this->assertNotContains( 'privacy.delete_data_on_uninstall', $data['keys'] );
 		$this->assertArrayNotHasKey( 'delete_data_confirmed_gmt', $data['settings']['privacy'] );
 		foreach ( $data['keys'] as $key ) {
-			$this->assertDoesNotMatchRegularExpression( '/secret|token|password|api_?key/i', $key );
+			$this->assertFalse( \FormCaptain\Settings\SettingsSchema::is_secret( $key ), $key );
+			$this->assertDoesNotMatchRegularExpression( '/secret|password|api_?key/i', $key );
 		}
+		// SET-FC-P4-07: a duration whose name contains "token" is no secret; it is transferred and logged.
+		$this->assertContains( 'spam.token_minutes', $data['keys'] );
+		$this->assertTrue( \FormCaptain\Settings\SettingsSchema::is_secret( 'spam.captcha_secret_key' ), 'name heuristic still applies' );
+		ChangeLog::with_source( 'cli', static fn() => Settings::set_group( 'spam', array( 'token_minutes' => 240 ) ) );
+		$this->assertSame( '240', ChangeLog::latest()[0]['new'] );
 		$json = SettingsTransfer::export_json();
 		$this->assertStringNotContainsString( (string) get_option( 'form_captain_secret' ), $json );
 	}

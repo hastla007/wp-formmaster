@@ -9,7 +9,8 @@
  * Filter `form_captain_spam_limits_v1` ( array{window_minutes:int,form_total:int,receipts_per_hour:int} )
  * wins over the settings; results are kept within the setting bounds. The older budget
  * `rate_window_seconds` of form_captain_limits_v1 still lowers the window when a site filters it.
- * The per-visitor limit across forms is `spam.global_per_ip` (see SET-FC-34).
+ * The per-visitor limit across forms is `spam.global_per_ip` (SET-FC-34); RateLimiter reads it as
+ * Limits::get( 'rate_global_per_ip' ), where the filter `form_captain_limits_v1` wins.
  *
  * @package FormCaptain
  */

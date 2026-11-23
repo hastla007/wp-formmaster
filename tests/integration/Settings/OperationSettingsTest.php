@@ -180,6 +180,23 @@ final class OperationSettingsTest extends TestCase {
 		$this->assertArrayHasKey( 'spam.global_per_ip', $errors );
 	}
 
+	public function test_rate_limiter_uses_global_per_ip_setting_and_filter(): void {
+		Settings::set_group( 'spam', array( 'global_per_ip' => 2, 'rate_limit' => 100 ) );
+		$limiter = new RateLimiter();
+		$ip      = '192.0.2.77';
+		$this->assertTrue( $limiter->check_submission( 9101, $ip )['allowed'] );
+		$this->assertTrue( $limiter->check_submission( 9102, $ip )['allowed'] );
+		$third = $limiter->check_submission( 9103, $ip );
+		$this->assertFalse( $third['allowed'], 'third submission across forms exceeds spam.global_per_ip = 2' );
+		$this->assertGreaterThan( 0, $third['retry_after'] );
+		$this->assertTrue( $limiter->check_submission( 9104, '192.0.2.78' )['allowed'], 'other visitors are not affected' );
+
+		// Filter form_captain_limits_v1 wins over the setting.
+		add_filter( 'form_captain_limits_v1', static fn( array $l ): array => array_merge( $l, array( 'rate_global_per_ip' => 10 ) ) );
+		Limits::reset();
+		$this->assertTrue( $limiter->check_submission( 9105, $ip )['allowed'] );
+	}
+
 	// SET-FC-31 ------------------------------------------------------------
 
 	public function test_export_defaults_preselect_the_export_form(): void {

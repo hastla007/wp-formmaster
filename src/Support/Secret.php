@@ -22,6 +22,20 @@ final class Secret {
 		return hash_hmac( 'sha256', $purpose, $secret . wp_salt( 'auth' ) );
 	}
 
+	/**
+	 * Key of the previous secret while its rotation window runs (SettingsPage::rotate_secret(), 26 h),
+	 * else null. Lets submission tokens and proof-of-work challenges handed out before a rotation
+	 * stay valid as the settings screen promises (SET-FC-P4-06).
+	 */
+	public static function previous_key( string $purpose ): ?string {
+		$previous = get_option( 'form_captain_secret_previous' );
+		$until    = (int) get_option( 'form_captain_secret_previous_until', 0 );
+		if ( ! is_string( $previous ) || strlen( $previous ) < 64 || $until <= Clock::timestamp() ) {
+			return null;
+		}
+		return hash_hmac( 'sha256', $purpose, $previous . wp_salt( 'auth' ) );
+	}
+
 	public static function sign( string $purpose, string $data ): string {
 		return hash_hmac( 'sha256', $data, self::key( $purpose ) );
 	}

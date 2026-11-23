@@ -159,6 +159,37 @@ final class ProofOfWorkTest extends FrontendTestCase {
 		$this->assertNull( $entry['spam_reason'] );
 	}
 
+	/**
+	 * SET-FC-P4-06: renewing the signing key keeps the previous key valid for 26 hours (settings
+	 * screen). Open forms – token and proof-of-work challenge – must keep working in that window;
+	 * "discard immediately" invalidates them.
+	 */
+	public function test_open_forms_survive_a_key_renewal_with_grace_period(): void {
+		$this->set_spam_setting( 'captcha_provider', 'pow' );
+		add_filter( 'form_captain_pow_max_number_v1', static fn(): int => 1000 );
+		$form    = $this->create_published_form();
+		$service = $this->plugin()->get( SubmissionService::class );
+		$entries = $this->plugin()->get( EntryRepository::class );
+		$page    = $this->plugin()->get( \FormCaptain\Admin\SettingsPage::class );
+		$open    = function () use ( $form ): array {
+			$token     = $this->token( $form );
+			$challenge = PowCaptcha::challenge_for( $form );
+			return array( '_fc_pow' => ProofOfWork::encode( $challenge, (int) ProofOfWork::solve( $challenge ) ) ) + $this->payload( $form, $this->valid_fields(), $token );
+		};
+
+		$before = $open();
+		$page->rotate_secret();
+		$res = $service->submit( $form, $before, array( 'js' => true ) );
+		$this->assertTrue( $res['success'], 'token of the previous key accepted' );
+		$this->assertSame( 'new', $entries->find( (int) $res['entry_id'] )['status'], 'challenge of the previous key accepted' );
+
+		$before = $open();
+		$page->rotate_secret( true );
+		$res = $service->submit( $form, $before, array( 'js' => true ) );
+		$this->assertFalse( $res['success'] );
+		$this->assertSame( 'invalid_token', $res['code'], 'discarded key: open forms are invalid' );
+	}
+
 	public function test_token_route_contains_the_challenge_only_when_used(): void {
 		global $wp_rest_server;
 		$wp_rest_server = new \WP_REST_Server(); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals

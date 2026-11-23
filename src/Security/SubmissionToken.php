@@ -55,7 +55,11 @@ final class SubmissionToken {
 		}
 		$expected = $this->signature( $m[1] );
 		if ( ! hash_equals( $expected, $m[2] ) ) {
-			return array( 'ok' => false, 'code' => 'signature' );
+			// Tokens issued before a key renewal stay valid during the rotation window (SET-FC-P4-06).
+			$previous = Secret::previous_key( self::LABEL );
+			if ( null === $previous || ! hash_equals( Secret::base64url_encode( hash_hmac( 'sha256', $m[1], $previous, true ) ), $m[2] ) ) {
+				return array( 'ok' => false, 'code' => 'signature' );
+			}
 		}
 		$decoded = Secret::base64url_decode( $m[1] );
 		$parts   = is_string( $decoded ) ? explode( '|', $decoded ) : array();

@@ -34,7 +34,10 @@ final class PowCaptcha {
 	public const REASON_INVALID  = 'pow_invalid';
 	public const REASON_REPLAYED = 'pow_replayed';
 
-	public static function engine(): ProofOfWork {
+	private const KEY_PURPOSE = 'form-captain/pow/v1';
+
+	/** @param string|null $key HMAC key; default the current one (previous key: rotation window). */
+	public static function engine( ?string $key = null ): ProofOfWork {
 		/**
 		 * Difficulty (technical value): highest number the browser may have to try. Default 50 000.
 		 *
@@ -46,7 +49,7 @@ final class PowCaptcha {
 		// submission land in spam silently (SET-FC-P4-01), so it lives at least as long as the token.
 		$ttl = max( ProofOfWork::DEFAULT_TTL, Limits::get( 'token_ttl' ) );
 		return new ProofOfWork(
-			Secret::key( 'form-captain/pow/v1' ),
+			$key ?? Secret::key( self::KEY_PURPOSE ),
 			static function ( string $challenge, int $expires ): bool {
 				global $wpdb;
 				$table = Tables::name( Tables::RATE_LIMITS );
@@ -105,6 +108,11 @@ final class PowCaptcha {
 			return null;
 		}
 		$result = self::engine()->verify( $raw['_fc_pow'] ?? null, (string) ( $form['public_id'] ?? '' ) );
+		$prev   = ProofOfWork::BAD_SIGNATURE === $result ? Secret::previous_key( self::KEY_PURPOSE ) : null;
+		if ( null !== $prev ) {
+			// Challenge handed out before a key renewal (SET-FC-P4-06).
+			$result = self::engine( $prev )->verify( $raw['_fc_pow'] ?? null, (string) ( $form['public_id'] ?? '' ) );
+		}
 		if ( ProofOfWork::OK === $result ) {
 			return null;
 		}

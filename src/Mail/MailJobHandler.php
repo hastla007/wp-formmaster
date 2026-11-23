@@ -168,6 +168,8 @@ final class MailJobHandler {
 			return JobResult::fail( 'receipt_rate_limited', 'Too many confirmations to this recipient' );
 		}
 
+		$mail['attachments'] = self::attachments( $kind, $entry, $form, $values );
+
 		$error = '';
 		$sent  = $this->send( $mail, $error );
 		if ( ! $sent ) {
@@ -177,6 +179,50 @@ final class MailJobHandler {
 			$this->count_receipt( (string) $mail['to'][0] );
 		}
 		return JobResult::success( array( 'recipients' => count( $mail['to'] ) ) );
+	}
+
+	/** Most files an extension may attach to one mail. */
+	public const MAX_ATTACHMENTS = 10;
+
+	/**
+	 * Files for a mail from the filter `form_captain_mail_attachments_v1` (e.g. a PDF of the
+	 * submission from an add-on). Context: kind (`admin`, `confirmation`, `double_opt_in`), entry,
+	 * form and values. Only readable files inside wp-content or the temp directory are kept.
+	 *
+	 * @param array<string,mixed>                     $entry
+	 * @param array<string,mixed>                     $form
+	 * @param array<string,string|array<int,string>> $values
+	 * @return string[] absolute file paths
+	 */
+	public static function attachments( string $kind, array $entry, array $form, array $values ): array {
+		$files = apply_filters(
+			'form_captain_mail_attachments_v1',
+			array(),
+			array(
+				'kind'   => $kind,
+				'entry'  => $entry,
+				'form'   => $form,
+				'values' => $values,
+			)
+		);
+		$roots = array_filter( array( realpath( WP_CONTENT_DIR ), realpath( get_temp_dir() ) ) );
+		$out   = array();
+		foreach ( is_array( $files ) ? $files : array() as $file ) {
+			$path = is_string( $file ) ? realpath( $file ) : false;
+			if ( false === $path || ! is_file( $path ) || ! is_readable( $path ) || in_array( $path, $out, true ) ) {
+				continue;
+			}
+			foreach ( $roots as $root ) {
+				if ( str_starts_with( $path, rtrim( (string) $root, '/\\' ) . DIRECTORY_SEPARATOR ) ) {
+					$out[] = $path;
+					break;
+				}
+			}
+			if ( count( $out ) >= self::MAX_ATTACHMENTS ) {
+				break;
+			}
+		}
+		return $out;
 	}
 
 	/**
@@ -211,7 +257,7 @@ final class MailJobHandler {
 		add_action( 'phpmailer_init', $alt, 999 );
 		add_action( 'wp_mail_failed', $failed );
 		try {
-			$ok = wp_mail( $mail['to'], (string) $mail['subject'], $is_html ? (string) $mail['html'] : (string) $mail['text'], $headers );
+			$ok = wp_mail( $mail['to'], (string) $mail['subject'], $is_html ? (string) $mail['html'] : (string) $mail['text'], $headers, (array) ( $mail['attachments'] ?? array() ) );
 		} finally {
 			remove_filter( 'wp_mail_from', $from_email, 999 );
 			remove_filter( 'wp_mail_from_name', $from_name, 999 );

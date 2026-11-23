@@ -208,6 +208,8 @@ Für Uploads, Mehrschritt-Formulare und erweiterte Bedingungen/Routing (P7-07, P
 | `form_captain_notification_recipients_v1` | Filter | `string\|array $to`, `array $form`, `int $entry_id`, `array $values` → Empfängerliste | Routing. Das Ergebnis durchläuft dieselbe Prüfung wie konfigurierte Adressen (Header-Injection, `is_email`). |
 | `form_captain_confirmation_v1` | Filter | `array $confirmation` (Form wie `settings.confirmation`), `array $form`, `int $entry_id`, `array $values` (geprüfte Werte, Feld-ID → Wert; bei Doppelversand die gespeicherten) → Bestätigung | Bedingte Bestätigung. Eine Seite muss veröffentlicht und intern sein, sonst bleibt es bei der Meldung. |
 | `form_captain_display_value_v1` | Filter | `string $display`, `array $field`, `string\|array $value` → Klartext | Nur Erweiterungs-Feldtypen. Gilt für Admin-Detail, CSV und Mail. HTML wird entfernt, die Aufrufer escapen. |
+| `form_captain_mail_attachments_v1` | Filter | `string[] $files`, `array $context` (`kind` = `admin`/`confirmation`/`double_opt_in`, `entry`, `form`, `values`) → Dateipfade | Anhänge je Mail (z. B. PDF der Einsendung aus einem Add-on). Bei jedem Zustellversuch neu ermittelt; nur lesbare Dateien unter `wp-content` oder dem Temp-Verzeichnis, höchstens 10, doppelte entfernt. |
+| `form_captain_settings_fields_v1` | Filter | Liste von Feldern oder Zuordnung Reiter → Felder | Echte Einstellungsfelder von Add-ons; zwei Formen (Rückrufe `get`/`set` oder `storage`/`sanitize`), siehe `docs/spec/einstellungen.md` (Pro-Hinweiszeilen und Felder von Erweiterungen). |
 
 **Einstellungen im Formular-Editor:** Filter `form_captain_editor_extensions_v1` (`array $panels` → Panels).
 

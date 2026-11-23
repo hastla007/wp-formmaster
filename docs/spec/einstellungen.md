@@ -63,15 +63,29 @@ Neue Formularwerte: einen Eintrag in `definitions()` im passenden Abschnitt erg�
 ## Pro-Hinweiszeilen und Felder von Erweiterungen (S1, SET-FC-06)
 
 - `SettingsSchema::pro_hints()`: Zeilen nur für Pro-Funktionen, die heute verkauft werden (S5: Uploads, mehrstufige Formulare/Entwürfe, erweiterte Logik/Routing, PDF, Webhooks, WooCommerce-Fragebögen); noch nicht verkaufte Funktionen (Formularinhalte je Sprache, E-Mail-Gestalter, eine Einsendung je Person/Warteliste) bekommen keine Zeile. Feste Liste `{id, tab, title, text, link}`, nur Text. Ausgabe am Ende des Reiters (nach Formular und „Zurücksetzen“) als graue Zeile mit „Pro“-Kennzeichen, solange `general.show_pro_hints` an ist und keine Erweiterung ein Feld mit derselben `id` angemeldet hat. Kein Eingabeelement, kein Standardwert, keine Prüfung, keine Rechteschlüssel-Namen. `link` ist leer, solange es keine Produktseite gibt (`SettingsSchema::PRO_INFO_URL`, offene Entscheidung E-6 in `WORDPRESS-ORG.md`).
-- Filter `form_captain_settings_fields_v1` (Liste von Feldern): `id` (`a-z0-9_-`), `tab` (einer der gespeicherten Reiter `general`, `appearance`, `email`, `privacy`, `spam`), `type` (`bool|int|enum|string|text|email|hex`), `label`, `help`, je nach Typ `options`/`min`/`max`/`max_length`, Rückrufe `get()` und `set( $wert )`, optional `validate( $wert ): ?string` (Fehlermeldung) und `default` (für „Bereich zurücksetzen“). Das Feld erscheint nach den Kernfeldern des Reiters als `settings[ext][<id>]`; der Kern prüft den Typ wie bei eigenen Werten, ruft `validate` und speichert über `set`. Speicherort und Werte gehören dem Add-on; Kern-Export, -Import und -CLI enthalten sie nicht. Fehler erscheinen unter `ext.<id>`.
+- Filter `form_captain_settings_fields_v1`: Liste von Feldern **oder** Zuordnung Reiter → Liste von Feldern (der Schlüssel ergänzt ein fehlendes `tab`). `id`: `a-z0-9_.-`. `tab`: ein Kernreiter (`general`, `appearance`, `email`, `privacy`, `spam`, `export`) oder ein eigener Reiter (`[a-z][a-z0-9_-]`, nicht `access`/`status`) – solche Reiter erscheinen vor „Zugriff & Rollen“, aber nur, solange dort Felder angemeldet sind; Bezeichnung aus `tab_label` des ersten Felds, sonst „Uploads“ bzw. „Integrations“ oder der Schlüssel mit großem Anfangsbuchstaben (für `woocommerce` muss das Add-on `tab_label` „WooCommerce“ setzen – der Kern nennt keine Shop-Software, Wächtertest `WooCommerceIsolationTest`). Zwei Feldformen:
+  1. **Rückrufe** (Form der Gruppe A): `type` (`bool|int|enum|string|text|email|hex`), `label`, `help`, je nach Typ `options`/`min`/`max`/`max_length`, `get()` und `set( $wert )`, optional `validate( $wert ): ?string` (Fehlermeldung) und `default` (für „Bereich zurücksetzen“). Der Kern prüft den Typ wie bei eigenen Werten, ruft `validate` und speichert über `set`.
+  2. **Speicherort** (Form von Form Captain Pro): `owner`, `label`, `help`, `type` (`checkbox|number|text|textarea|select|multiselect|media|confirm` oder ein Kerntyp; `text` = einzeilig), `default`, `value` (aktueller Wert; fehlt er, liest der Kern den Speicherort), optional `sanitize( $roh, $gesendet ): mixed|WP_Error` und `storage` = {`option`, `key`}: Der Kern schreibt den sauberen Wert in diese Option unter diesem Schlüssel (nie in `form_captain_settings`; ein solches Feld wird verworfen). Ohne `sanitize` prüft der Kern selbst (`min`/`max`, `max_length`, `options`). `confirm` = Schalter mit Bestätigungswort (`DELETE`/`LÖSCHEN`): das Wort als Wert oder Haken plus Wort unter `<id>_confirm`; `multiselect` = Liste erlaubter Optionen.
 
-| id | Reiter |
-|---|---|
-| `upload_defaults`, `upload_multiple`, `draft_lifetime`, `webhooks`, `webhook_delivery`, `questionnaire_reminder`, `questionnaire_link`, `questionnaire_mails` | Allgemein |
-| `step_progress`, `pdf_layout` | Darstellung |
-| `recipient_rules`, `pdf_attachment` | E-Mail |
-| `upload_retention` | Datenschutz |
-| `upload_virus_scan` | Spamschutz |
+  Die Felder erscheinen nach den Kernfeldern des Reiters als `settings[ext][<id>]`; Fehler unter `ext.<id>`. Nicht angehakte Kästchen und leere Mehrfachauswahl werden als „aus“ bzw. leere Liste gespeichert. Speicherort und Werte gehören dem Add-on; Kern-Export, -Import, -CLI und Änderungsprotokoll enthalten sie nicht.
+- Eine Hinweiszeile verschwindet, sobald ein Feld mit derselben `id` angemeldet ist (gleich in welchem Reiter). IDs sind an Form Captain Pro angeglichen:
+
+| id | Hinweis | Reiter der Hinweiszeile |
+|---|---|---|
+| `uploads.types` | Dateitypen und Größe | Allgemein |
+| `uploads.max_files` | mehrere Dateien | Allgemein |
+| `multistep.draft_days` | gespeicherte Entwürfe | Allgemein |
+| `webhooks` | Webhooks allgemein | Allgemein |
+| `webhooks.timeout` | Webhook-Zustellung/Wiederholung | Allgemein |
+| `woo.reminder_days` | Fragebogen-Erinnerung | Allgemein |
+| `woo.link_days` | Gültigkeit des Fragebogen-Links | Allgemein |
+| `woo.reminder_subject` | Fragebogen-Mails | Allgemein |
+| `multistep.progress` | Fortschrittsanzeige | Darstellung |
+| `pdf.logo_id` | PDF-Gestaltung | Darstellung |
+| `recipient_rules` | Empfänger nach Regel | E-Mail |
+| `pdf.attach_notification` | PDF-Anhang | E-Mail |
+| `uploads.file_retention_days` | Dateien früher löschen | Datenschutz |
+| `upload_virus_scan` | Virenprüfung | Spamschutz |
 
 ## Änderungsprotokoll (SET-FC-15)
 

@@ -94,6 +94,9 @@ final class SettingsPage {
 		if ( 'access' === $tab ) {
 			return $this->save_access( (array) ( $input['roles'] ?? array() ) );
 		}
+		if ( SettingsSchema::is_extension_tab( $tab ) ) {
+			return $this->save_extension_tab( $tab, is_array( $input['ext'] ?? null ) ? $input['ext'] : array() );
+		}
 		if ( ! in_array( $tab, SettingsSchema::GROUPS, true ) ) {
 			return self::notice( 'error', array( __( 'This section cannot be saved.', 'form-captain' ) ) );
 		}
@@ -218,6 +221,10 @@ final class SettingsPage {
 			ChangeLog::record_roles( AccessControl::reset() );
 			return self::notice( 'success', array( __( 'Permissions were reset: only administrators have access.', 'form-captain' ), self::access_summary() ) );
 		}
+		if ( SettingsSchema::is_extension_tab( $tab ) ) {
+			SettingsSchema::reset_extension_fields( $tab );
+			return self::notice( 'success', array( __( 'The section was reset to the defaults. Other sections were not changed.', 'form-captain' ) ) );
+		}
 		if ( ! in_array( $tab, SettingsSchema::GROUPS, true ) ) {
 			return self::notice( 'error', array( __( 'This section cannot be reset.', 'form-captain' ) ) );
 		}
@@ -231,6 +238,22 @@ final class SettingsPage {
 		SettingsSchema::reset_extension_fields( $tab );
 		Logger::log( 'info', 'settings_reset', $tab );
 		return self::notice( 'success', $messages );
+	}
+
+	/**
+	 * Saves a tab that only holds add-on fields (e.g. uploads or integrations).
+	 *
+	 * @param array<string,mixed> $input
+	 * @return array{type:string,messages:string[],errors:array<string,string>}
+	 */
+	private function save_extension_tab( string $tab, array $input ): array {
+		$ext = SettingsSchema::save_extension_fields( $tab, $input );
+		if ( $ext['errors'] ) {
+			$notice           = self::notice( 'error', array( __( 'Some settings were not saved. Please check the highlighted fields.', 'form-captain' ) ) );
+			$notice['errors'] = $ext['errors'];
+			return $notice;
+		}
+		return self::notice( 'success', array( $ext['changed'] ? __( 'Settings saved.', 'form-captain' ) : __( 'No changes.', 'form-captain' ) ) );
 	}
 
 	/**
@@ -481,7 +504,7 @@ final class SettingsPage {
 
 	private static function posted_tab(): string {
 		$tab = isset( $_POST['tab'] ) ? sanitize_key( wp_unslash( $_POST['tab'] ) ) : 'general'; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		return in_array( $tab, SettingsSchema::TABS, true ) ? $tab : 'general';
+		return SettingsSchema::is_tab( $tab ) ? $tab : 'general';
 	}
 
 	public function handle_save(): void {
@@ -592,7 +615,7 @@ final class SettingsPage {
 
 	private static function current_tab(): string {
 		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : 'general'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		return in_array( $tab, SettingsSchema::TABS, true ) ? $tab : 'general';
+		return SettingsSchema::is_tab( $tab ) ? $tab : 'general';
 	}
 
 	private static function local_date( string $gmt ): string {
@@ -651,7 +674,7 @@ final class SettingsPage {
 	 * @param array<string,mixed>  $proposed unconfirmed values to show again (path => value)
 	 */
 	private function render_group( string $tab, array $errors, array $proposed = array() ): void {
-		$values = Settings::all()[ $tab ];
+		$values = Settings::all()[ $tab ] ?? array(); // Tabs of add-ons have no core values.
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="fc-settings-form" novalidate>';
 		echo '<input type="hidden" name="action" value="form_captain_save_settings"><input type="hidden" name="tab" value="' . esc_attr( $tab ) . '">';
 		wp_nonce_field( 'form_captain_settings_' . $tab );
@@ -710,12 +733,12 @@ final class SettingsPage {
 	 * @param array<string,mixed> $def
 	 */
 	private function render_field( string $tab, string $key, array $def, mixed $value, string $error, string $name_base = 'settings' ): void {
-		$id   = 'fc-' . $tab . '-' . str_replace( '_', '-', $key );
+		$id   = 'fc-' . $tab . '-' . str_replace( array( '_', '.' ), '-', $key );
 		$name = $name_base . '[' . $key . ']';
 		$help = (string) ( $def['help'] ?? '' );
 		$desc = trim( ( $error ? $id . '-error ' : '' ) . ( '' !== $help ? $id . '-help' : '' ) );
 		$aria = ( $error ? ' aria-invalid="true"' : '' ) . ( '' !== $desc ? ' aria-describedby="' . esc_attr( $desc ) . '"' : '' );
-		echo '<tr id="fc-' . esc_attr( $tab . '-' . $key ) . '"><th scope="row"><label for="' . esc_attr( $id ) . '">' . esc_html( (string) $def['label'] ) . '</label></th><td>';
+		echo '<tr id="fc-' . esc_attr( $tab . '-' . str_replace( '.', '-', $key ) ) . '"><th scope="row"><label for="' . esc_attr( $id ) . '">' . esc_html( (string) $def['label'] ) . '</label></th><td>';
 		switch ( $def['type'] ) {
 			case 'bool':
 				echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="0"><label><input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="1"' . checked( (bool) $value, true, false ) . $aria . '> ' . esc_html__( 'Enabled', 'form-captain' ) . '</label>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $aria built from escaped parts.
@@ -749,6 +772,18 @@ final class SettingsPage {
 					echo '<option value="' . esc_attr( $unit ) . '"' . selected( $parts['unit'] ?? 'm', $unit, false ) . '>' . esc_html( $label ) . '</option>';
 				}
 				echo '</select><br><label class="fc-radio"><input type="radio" name="settings[retention_kind]" value="manual"' . checked( null === $parts, true, false ) . '> ' . esc_html__( 'Keep until deleted manually', 'form-captain' ) . '</label></fieldset>';
+				break;
+			case 'multiselect':
+				echo '<fieldset id="' . esc_attr( $id ) . '"' . $aria . '><legend class="screen-reader-text">' . esc_html( (string) $def['label'] ) . '</legend><input type="hidden" name="' . esc_attr( $name ) . '" value="">'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				foreach ( (array) $def['options'] as $opt => $label ) {
+					echo '<label class="fc-radio"><input type="checkbox" name="' . esc_attr( $name ) . '[]" value="' . esc_attr( (string) $opt ) . '"' . checked( in_array( (string) $opt, array_map( 'strval', (array) $value ), true ), true, false ) . '> ' . esc_html( (string) $label ) . '</label><br>';
+				}
+				echo '</fieldset>';
+				break;
+			case 'confirm':
+				// Switch that needs a confirmation word (sent as <id>_confirm), like data deletion on uninstall.
+				echo '<input type="hidden" name="' . esc_attr( $name ) . '" value="0"><label><input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="1"' . checked( (bool) $value, true, false ) . $aria . '> ' . esc_html__( 'Enabled', 'form-captain' ) . '</label>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo '<p><label for="' . esc_attr( $id ) . '-confirm">' . esc_html__( 'To switch this on, type DELETE:', 'form-captain' ) . '</label> <input type="text" class="regular-text" id="' . esc_attr( $id ) . '-confirm" name="' . esc_attr( $name_base . '[' . $key . '_confirm]' ) . '" value="" autocomplete="off"></p>';
 				break;
 			case 'hex':
 				echo '<input type="color" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"' . $aria . '> <code>' . esc_html( (string) $value ) . '</code>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

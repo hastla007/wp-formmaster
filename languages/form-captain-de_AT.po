@@ -5794,3 +5794,369 @@ msgstr "Der Datenbankserver ist älter als die Mindestanforderung von Form Capta
 #: src/Admin/SiteHealth.php
 msgid "MySQL 9.7 or newer, or MariaDB 12.3 or newer."
 msgstr "MySQL 9.7 oder neuer bzw. MariaDB 12.3 oder neuer."
+
+#: src/Admin/EditorPage.php:115
+msgid "Off (no autofill)"
+msgstr "Aus (kein automatisches Ausfüllen)"
+
+#: src/Admin/EditorPage.php:116
+msgid "Full name"
+msgstr "Vollständiger Name"
+
+#: src/Admin/EditorPage.php:117
+msgid "First name"
+msgstr "Vorname"
+
+#: src/Admin/EditorPage.php:119
+msgid "Salutation / title"
+msgstr "Anrede / Titel"
+
+#: src/Admin/EditorPage.php:120
+msgid "Company / organisation"
+msgstr "Firma / Organisation"
+
+#: src/Admin/EditorPage.php:123
+msgid "Street address (complete)"
+msgstr "Adresse (vollständig)"
+
+#: src/Admin/EditorPage.php:127
+msgid "City"
+msgstr "Ort"
+
+#: src/Admin/EditorPage.php:128
+msgid "State / region"
+msgstr "Bundesland / Region"
+
+#: src/Admin/EditorPage.php:131
+msgid "Website"
+msgstr "Website"
+
+#: src/Admin/EditorPage.php:252
+msgid "The pattern is not a valid regular expression (maximum 200 characters)."
+msgstr "Das Muster ist kein gültiger regulärer Ausdruck (höchstens 200 Zeichen)."
+
+#: src/Admin/EditorPage.php:253
+msgid "The pattern uses nested repetitions, back-references or look-arounds. These can slow down the website and are not allowed."
+msgstr "Das Muster enthält verschachtelte Wiederholungen, Rückverweise oder Lookarounds. Diese können die Website ausbremsen und sind nicht erlaubt."
+
+#: src/Admin/EditorPage.php:255
+msgid "The text is too long and was shortened."
+msgstr "Der Text ist zu lang und wurde gekürzt."
+
+#: src/Admin/EditorPage.php:257
+msgid "The end must be after the start."
+msgstr "Das Ende muss nach dem Beginn liegen."
+
+#: src/Domain/SubmissionValidator.php:468
+msgid "Please enter the phone number in international format, starting with + and the country code (for example +49 30 1234567)."
+msgstr "Bitte gib die Telefonnummer im internationalen Format ein, beginnend mit + und der Ländervorwahl (zum Beispiel +49 30 1234567)."
+
+#. translators: %d: minimum age in years
+#: src/Domain/SubmissionValidator.php:472
+#, php-format
+msgid "You must be at least %d year old."
+msgid_plural "You must be at least %d years old."
+msgstr[0] "Du musst mindestens %d Jahr alt sein."
+msgstr[1] "Du musst mindestens %d Jahre alt sein."
+
+#: src/Domain/ValidationPatterns.php:59
+msgid "Postal code (any country)"
+msgstr "Postleitzahl (beliebiges Land)"
+
+#: src/Domain/ValidationPatterns.php:94 assets/src/editor.js:848
+msgid "Own pattern (regular expression)"
+msgstr "Eigenes Muster (regulärer Ausdruck)"
+
+#: src/Service/EntryNumbers.php:47
+msgid "The format must contain {number} exactly once."
+msgstr "Das Format muss {number} genau einmal enthalten."
+
+#: src/Service/EntryNumbers.php:51
+msgid "Use only letters, digits, - _ / . # and the placeholders {year} and {number}."
+msgstr "Verwende nur Buchstaben, Ziffern, - _ / . # und die Platzhalter {year} und {number}."
+
+#: src/Service/FormLimits.php:140
+msgid "This form has reached the maximum number of submissions and is closed."
+msgstr "Dieses Formular hat die Höchstzahl an Einsendungen erreicht und ist geschlossen."
+
+#: src/Settings/SettingsSchema.php:73
+msgid "Reference number format"
+msgstr "Format der Vorgangsnummer"
+
+#: src/Settings/SettingsSchema.php:74
+msgid "Gives every new submission a reference number, for example REQ-{year}-{number}. {number} is the running number, {year} the current year. Use {entry_number} in emails and the success message. Empty = no reference numbers."
+msgstr "Gibt jeder neuen Einsendung eine Vorgangsnummer, zum Beispiel REQ-{year}-{number}. {number} ist die laufende Nummer, {year} das aktuelle Jahr. In E-Mails und der Erfolgsmeldung verwendest du {entry_number}. Leer = keine Vorgangsnummern."
+
+#: src/Settings/SettingsSchema.php:80
+msgid "Digits of the running number"
+msgstr "Stellen der laufenden Nummer"
+
+#: src/Settings/SettingsSchema.php:81
+msgid "The number is filled with leading zeros, e.g. 4 digits give 0042."
+msgstr "Die Nummer wird mit führenden Nullen aufgefüllt, z. B. ergeben 4 Stellen 0042."
+
+#: src/Settings/SettingsSchema.php:85
+msgid "Restart the running number every year"
+msgstr "Laufende Nummer jedes Jahr neu beginnen"
+
+#: src/Settings/SettingsSchema.php:86
+msgid "On 1 January (time zone of the website) the running number starts again at 1. Use {year} in the format so numbers stay unique."
+msgstr "Am 1. Januar (Zeitzone der Website) beginnt die laufende Nummer wieder bei 1. Nimm {year} ins Format auf, damit die Nummern eindeutig bleiben."
+
+#: src/Settings/SettingsSchema.php:106
+msgid "Corner radius (pixels)"
+msgstr "Eckenradius (Pixel)"
+
+#: src/Settings/SettingsSchema.php:107
+msgid "Rounding of input fields and buttons with base styles only. 0 = square corners."
+msgstr "Rundung von Eingabefeldern und Schaltflächen, nur beim Basisstil. 0 = eckig."
+
+#: src/Settings/SettingsSchema.php:113
+msgid "Space between fields (pixels)"
+msgstr "Abstand zwischen Feldern (Pixel)"
+
+#: src/Settings/SettingsSchema.php:120
+msgid "Small (14 px)"
+msgstr "Klein (14 px)"
+
+#: src/Settings/SettingsSchema.php:122
+msgid "Large (18 px)"
+msgstr "Groß (18 px)"
+
+#: src/Settings/SettingsSchema.php:123
+msgid "Very large (20 px)"
+msgstr "Sehr groß (20 px)"
+
+#: src/Settings/SettingsSchema.php:125
+msgid "Font size"
+msgstr "Schriftgröße"
+
+#: src/Settings/SettingsSchema.php:132
+msgid "Custom CSS"
+msgstr "Eigenes CSS"
+
+#: src/Settings/SettingsSchema.php:133
+msgid "Loaded after the Form Captain styles on pages with a form, for both styling options. Only users who may post unfiltered HTML can change it. @import and HTML are not allowed."
+msgstr "Wird auf Seiten mit Formular nach den Form-Captain-Stilen geladen, für beide Darstellungsarten. Nur Nutzer, die ungefiltertes HTML veröffentlichen dürfen, können es ändern. @import und HTML sind nicht erlaubt."
+
+#: src/Settings/SettingsSchema.php:400
+msgid "The CSS must not contain HTML (<) or @import rules."
+msgstr "Das CSS darf kein HTML (<) und keine @import-Regeln enthalten."
+
+#: assets/src/editor.js:849
+msgid "Without delimiters; the whole value must match. Example: [A-Z]{2}-[0-9]{4}. Nested repetitions, back-references and look-arounds are rejected because they can slow down the website."
+msgstr "Ohne Begrenzer; der ganze Wert muss passen. Beispiel: [A-Z]{2}-[0-9]{4}. Verschachtelte Wiederholungen, Rückverweise und Lookarounds werden abgelehnt, weil sie die Website ausbremsen können."
+
+#: assets/src/editor.js:866
+msgid "International with + and country code"
+msgstr "International mit + und Ländervorwahl"
+
+#: assets/src/editor.js:923
+msgid "Minimum age (years)"
+msgstr "Mindestalter (Jahre)"
+
+#: assets/src/editor.js:924
+msgid "Only dates of persons who are at least this old are accepted. Empty = no age check. Have the required age checked legally for your country and purpose."
+msgstr "Angenommen werden nur Daten von Personen, die mindestens so alt sind. Leer = keine Altersprüfung. Lass das nötige Alter für dein Land und deinen Zweck rechtlich prüfen."
+
+#: assets/src/editor.js:947
+msgid "Shown instead of the standard message when the value is missing or invalid. Empty = standard message."
+msgstr "Erscheint statt der Standardmeldung, wenn der Wert fehlt oder ungültig ist. Leer = Standardmeldung."
+
+#: assets/src/editor.js:959
+msgid "Autofill (browser)"
+msgstr "Automatisch ausfüllen (Browser)"
+
+#: assets/src/editor.js:960
+msgid "Tells the browser which saved data fits this field, e.g. name or postal code."
+msgstr "Sagt dem Browser, welche gespeicherten Angaben zu diesem Feld passen, z. B. Name oder Postleitzahl."
+
+#: assets/src/editor.js:962
+msgid "Automatic"
+msgstr "Automatisch"
+
+#: assets/src/editor.js:1413
+msgid "Texts"
+msgstr "Texte"
+
+#: assets/src/editor.js:1416
+msgid "Up to 60 characters. Empty = “Send”."
+msgstr "Bis zu 60 Zeichen. Leer = „Senden“."
+
+#: assets/src/editor.js:1426
+msgid "Shown above the fields when the form has required fields. An asterisk (*) is shown as the required marker. Empty = standard text."
+msgstr "Erscheint über den Feldern, wenn das Formular Pflichtfelder hat. Ein Sternchen (*) wird als Pflichtfeld-Markierung angezeigt. Leer = Standardtext."
+
+#: assets/src/editor.js:1434
+msgid "Heading of the error summary"
+msgstr "Überschrift der Fehlerübersicht"
+
+#: assets/src/editor.js:1435
+msgid "Shown above the list of fields to correct. Empty = standard text."
+msgstr "Erscheint über der Liste der zu korrigierenden Felder. Leer = Standardtext."
+
+#: assets/src/editor.js:1443
+msgid "Times use the time zone of the website. Outside the period or after the maximum number of entries, visitors see the closed text instead of the form. Spam and entries in the trash do not count."
+msgstr "Zeiten gelten in der Zeitzone der Website. Außerhalb des Zeitraums oder nach Erreichen der Höchstzahl sehen Besucher statt des Formulars den Text für geschlossene Formulare. Spam und Einträge im Papierkorb zählen nicht."
+
+#: assets/src/editor.js:1464
+msgid "Empty or 0 = no limit."
+msgstr "Leer oder 0 = keine Grenze."
+
+#: assets/src/editor.js:1473
+msgid "Empty = standard text."
+msgstr "Leer = Standardtext."
+
+#: src/Admin/EditorPage.php:118
+msgid "Last name"
+msgstr "Nachname"
+
+#: src/Admin/EditorPage.php:122
+msgid "Phone number"
+msgstr "Telefonnummer"
+
+#: src/Admin/EditorPage.php:124
+msgid "Street and house number"
+msgstr "Straße und Hausnummer"
+
+#: src/Admin/EditorPage.php:125
+msgid "Address addition"
+msgstr "Adresszusatz"
+
+#: src/Admin/EditorPage.php:126
+msgid "Postal code"
+msgstr "Postleitzahl"
+
+#: src/Admin/EditorPage.php:129
+msgid "Country"
+msgstr "Land"
+
+#: src/Admin/EditorPage.php:130
+msgid "Date of birth"
+msgstr "Geburtsdatum"
+
+#: src/Admin/EditorPage.php:250
+msgid "Choose one of the offered autofill types."
+msgstr "Wähle eine der angebotenen Autofill-Arten."
+
+#: src/Admin/EditorPage.php:251
+msgid "Please enter the pattern."
+msgstr "Bitte gib das Muster ein."
+
+#: src/Admin/EditorPage.php:254
+msgid "Enter a whole number of years between 1 and 120."
+msgstr "Gib eine ganze Zahl von Jahren zwischen 1 und 120 ein."
+
+#: src/Admin/EditorPage.php:256
+msgid "Please enter a valid date and time."
+msgstr "Bitte gib ein gültiges Datum mit Uhrzeit ein."
+
+#: src/Admin/EditorPage.php:258
+msgid "Enter a whole number between 0 and 1,000,000."
+msgstr "Gib eine ganze Zahl zwischen 0 und 1.000.000 ein."
+
+#: src/Admin/EntriesPage.php:469
+msgid "Reference number"
+msgstr "Vorgangsnummer"
+
+#: src/Domain/ValidationPatterns.php:36
+msgid "Please use letters only."
+msgstr "Bitte verwende nur Buchstaben."
+
+#: src/Domain/ValidationPatterns.php:41
+msgid "Please use letters and digits only."
+msgstr "Bitte verwende nur Buchstaben und Ziffern."
+
+#: src/Domain/ValidationPatterns.php:46
+msgid "Please enter a postal code with 5 digits."
+msgstr "Bitte gib eine Postleitzahl mit 5 Ziffern ein."
+
+#: src/Domain/ValidationPatterns.php:49
+msgid "Austrian postal code"
+msgstr "Postleitzahl Österreich"
+
+#: src/Domain/ValidationPatterns.php:51 src/Domain/ValidationPatterns.php:56
+msgid "Please enter a postal code with 4 digits."
+msgstr "Bitte gib eine Postleitzahl mit 4 Ziffern ein."
+
+#: src/Domain/ValidationPatterns.php:54
+msgid "Swiss postal code"
+msgstr "Postleitzahl Schweiz"
+
+#: src/Domain/ValidationPatterns.php:61
+msgid "Please enter a postal code (2 to 10 letters, digits, spaces or hyphens)."
+msgstr "Bitte gib eine Postleitzahl ein (2 bis 10 Buchstaben, Ziffern, Leerzeichen oder Bindestriche)."
+
+#: src/Frontend/Renderer.php:79
+msgid "This form is outside its submission period or has reached its maximum number of entries. Visitors see the message below instead of the form."
+msgstr "Dieses Formular ist außerhalb seines Zeitraums oder hat die Höchstzahl an Einsendungen erreicht. Besucher sehen statt des Formulars die folgende Meldung."
+
+#. translators: %s: date and time when the form opens
+#: src/Service/FormLimits.php:137
+#, php-format
+msgid "This form opens on %s."
+msgstr "Dieses Formular öffnet am %s."
+
+#: src/Service/FormLimits.php:142
+msgid "This form is closed and no longer accepts submissions."
+msgstr "Dieses Formular ist geschlossen und nimmt keine Einsendungen mehr an."
+
+#: src/Settings/SettingsSchema.php:114
+msgid "Vertical space between the fields with base styles only."
+msgstr "Senkrechter Abstand zwischen den Feldern, nur beim Basisstil."
+
+#: src/Settings/SettingsSchema.php:119
+msgid "Like the theme"
+msgstr "Wie im Theme"
+
+#: src/Settings/SettingsSchema.php:121
+msgid "Normal (16 px)"
+msgstr "Normal (16 px)"
+
+#: src/Settings/SettingsSchema.php:126
+msgid "Font size of forms with base styles only."
+msgstr "Schriftgröße der Formulare, nur beim Basisstil."
+
+#: src/Settings/SettingsSchema.php:301
+msgid "You are not allowed to change this setting."
+msgstr "Du darfst diese Einstellung nicht ändern."
+
+#: assets/src/editor.js:862
+msgid "Phone number format"
+msgstr "Format der Telefonnummer"
+
+#: assets/src/editor.js:865
+msgid "Any phone number"
+msgstr "Beliebige Telefonnummer"
+
+#: assets/src/editor.js:946
+msgid "Own error message"
+msgstr "Eigene Fehlermeldung"
+
+#: assets/src/editor.js:1415
+msgid "Submit button text"
+msgstr "Text der Absende-Schaltfläche"
+
+#: assets/src/editor.js:1425
+msgid "Note on required fields"
+msgstr "Hinweis auf Pflichtfelder"
+
+#: assets/src/editor.js:1442
+msgid "Submission period and limit"
+msgstr "Zeitraum und Höchstzahl"
+
+#: assets/src/editor.js:1445
+msgid "Accept submissions from"
+msgstr "Einsendungen annehmen ab"
+
+#: assets/src/editor.js:1454
+msgid "Accept submissions until"
+msgstr "Einsendungen annehmen bis"
+
+#: assets/src/editor.js:1463
+msgid "Maximum number of entries"
+msgstr "Höchstzahl Einsendungen"
+
+#: assets/src/editor.js:1472
+msgid "Text when the form is closed"
+msgstr "Text bei geschlossenem Formular"

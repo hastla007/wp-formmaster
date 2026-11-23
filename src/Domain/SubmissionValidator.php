@@ -467,8 +467,9 @@ final class SubmissionValidator {
 			case 'invalid_tel_international':
 				return __( 'Please enter the phone number in international format, starting with + and the country code (for example +49 30 1234567).', 'form-captain' );
 			case 'too_young':
+				$age = (int) ( $rules['min_age'] ?? 0 );
 				/* translators: %d: minimum age in years */
-				return sprintf( _n( 'You must be at least %d year old.', 'You must be at least %d years old.', (int) ( $rules['min_age'] ?? 0 ), 'form-captain' ), (int) ( $rules['min_age'] ?? 0 ) );
+				return sprintf( _n( 'You must be at least %d year old.', 'You must be at least %d years old.', $age, 'form-captain' ), $age );
 			case 'unknown_field':
 				return __( 'The submission contained data that does not belong to this form. Please reload the page.', 'form-captain' );
 			case 'duplicate_value':

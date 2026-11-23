@@ -392,20 +392,26 @@ final class EntryRepository {
 		return 1 === (int) $wpdb->query( $wpdb->prepare( "UPDATE {$this->entries()} SET confirmation_token = %s WHERE id = %d AND confirmation_status = 'pending'", $hash, $id ) );
 	}
 
-	/** Constant-time check of a double opt-in link token hash against a pending entry. */
-	public function confirmation_token_matches( int $id, string $hash ): bool {
+	/**
+	 * Constant-time check of a double opt-in link token hash against a pending entry, or against a
+	 * pending or confirmed entry with $pending_only = false (the hash of the last link is kept after
+	 * the confirmation so that only its holder learns "already confirmed", SET-FC-P4-05).
+	 */
+	public function confirmation_token_matches( int $id, string $hash, bool $pending_only = true ): bool {
 		global $wpdb;
-		$stored = $wpdb->get_var( $wpdb->prepare( "SELECT confirmation_token FROM {$this->entries()} WHERE id = %d AND confirmation_status = 'pending'", $id ) );
+		$status = $pending_only ? "confirmation_status = 'pending'" : "confirmation_status IN ('pending','confirmed')";
+		$stored = $wpdb->get_var( $wpdb->prepare( "SELECT confirmation_token FROM {$this->entries()} WHERE id = %d AND {$status}", $id ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- fixed condition.
 		return is_string( $stored ) && 64 === strlen( $stored ) && hash_equals( $stored, $hash );
 	}
 
 	/**
-	 * Marks a pending entry as confirmed exactly once; the link token is removed (single use).
+	 * Marks a pending entry as confirmed exactly once (single use: the status changes, a second click
+	 * finds no pending entry). The hash of the link stays for the "already confirmed" answer.
 	 * Returns false when the entry was not pending (already confirmed, or concurrent click).
 	 */
 	public function mark_confirmed( int $id, string $when ): bool {
 		global $wpdb;
-		return 1 === (int) $wpdb->query( $wpdb->prepare( "UPDATE {$this->entries()} SET confirmation_status = 'confirmed', confirmed_gmt = %s, confirmation_token = NULL, unconfirmed_until_gmt = NULL, updated_gmt = %s WHERE id = %d AND confirmation_status = 'pending'", $when, $when, $id ) );
+		return 1 === (int) $wpdb->query( $wpdb->prepare( "UPDATE {$this->entries()} SET confirmation_status = 'confirmed', confirmed_gmt = %s, unconfirmed_until_gmt = NULL, updated_gmt = %s WHERE id = %d AND confirmation_status = 'pending'", $when, $when, $id ) );
 	}
 
 	/** @return int[] trash/spam older than cutoff */

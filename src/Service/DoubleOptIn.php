@@ -10,7 +10,8 @@
  *    A repeated delivery attempt creates a new token (older links of failed attempts expire).
  * 3. GET on the link shows a page with a button; only the POST confirms, so link scanners of
  *    mail providers cannot confirm by opening the link.
- * 4. Confirming is single use: status "confirmed", confirmed_gmt (no IP), token removed. Then
+ * 4. Confirming is single use: status "confirmed", confirmed_gmt (no IP); only the holder of the
+ *    last link learns "already confirmed" afterwards (its hash is kept). Then
  *    the outbox is planned (notifications, actions) and the event is fired, as for a normal entry.
  * 5. Unconfirmed entries are deleted by the retention cleanup after `delete_after_days`.
  *
@@ -168,10 +169,15 @@ final class DoubleOptIn {
 		if ( ! $entry || ! $form ) {
 			return $fail( 'invalid' );
 		}
+		// The token is checked first: without it nobody learns whether an entry ID exists or was
+		// confirmed (SET-FC-P4-05).
+		if ( ! $this->entries->confirmation_token_matches( (int) $entry['id'], self::hash( $m[2] ), false ) ) {
+			return $fail( 'invalid' );
+		}
 		if ( self::STATUS_CONFIRMED === ( $entry['confirmation_status'] ?? '' ) ) {
 			return $fail( 'already_confirmed', $entry, $form );
 		}
-		if ( self::STATUS_PENDING !== ( $entry['confirmation_status'] ?? '' ) || ! $this->entries->confirmation_token_matches( (int) $entry['id'], self::hash( $m[2] ) ) ) {
+		if ( self::STATUS_PENDING !== ( $entry['confirmation_status'] ?? '' ) ) {
 			return $fail( 'invalid' );
 		}
 		if ( in_array( $entry['status'], array( 'spam', 'trash' ), true ) || ! empty( $entry['anonymized_gmt'] ) || ! empty( $entry['consent_withdrawn_gmt'] ) ) {

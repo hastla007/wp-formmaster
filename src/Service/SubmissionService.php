@@ -276,6 +276,20 @@ final class SubmissionService {
 		}
 		if ( null !== $doi ) {
 			// Notifications, actions and the public event follow the confirmation (DoubleOptIn::confirm()).
+			try {
+				/**
+				 * A public entry was stored and waits for the double opt-in confirmation (SET-FC-P4-04).
+				 * Extensions that keep data of this request (e.g. uploaded files) link it to the entry
+				 * here; form_captain_entry_created_v1 only fires in the later confirmation request.
+				 * No values are passed: the entry is not confirmed yet.
+				 *
+				 * @param int $entry_id
+				 * @param int $form_id
+				 */
+				do_action( 'form_captain_entry_pending_v1', $entry_id, $form_id );
+			} catch ( \Throwable $e ) {
+				Logger::log( 'error', 'event_listener_failed', get_class( $e ), array( 'form_id' => $form_id, 'entry_id' => $entry_id ) );
+			}
 			Scheduler::nudge();
 			return $this->success( $form, $entry_id, $request_id, self::CODE_CREATED, $values, true );
 		}

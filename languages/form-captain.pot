@@ -6767,3 +6767,11 @@ msgstr ""
 #: assets/src/editor.js:2319
 msgid "Reload latest version (discards your changes)"
 msgstr ""
+
+#: src/Privacy/PrivacyIntegration.php
+msgid "Scheduled deletion"
+msgstr ""
+
+#: src/Privacy/PrivacyIntegration.php
+msgid "No automatic deletion; the submission is deleted manually by the website operator."
+msgstr ""

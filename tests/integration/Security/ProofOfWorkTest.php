@@ -16,10 +16,13 @@ use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Security\PowCaptcha;
 use FormCaptain\Security\RateLimiter;
 use FormCaptain\Security\SpamLimits;
+use FormCaptain\Security\SubmissionToken;
 use FormCaptain\Service\SubmissionService;
 use FormCaptain\Settings\Settings;
 use FormCaptain\Settings\SettingsSchema;
 use FormCaptain\Spam\ProofOfWork\ProofOfWork;
+use FormCaptain\Support\Clock;
+use FormCaptain\Support\Limits;
 use FormCaptain\Tests\Integration\Frontend\FrontendTestCase;
 
 require_once dirname( __DIR__ ) . '/Frontend/FrontendTestCase.php';
@@ -174,6 +177,63 @@ final class ProofOfWorkTest extends FrontendTestCase {
 		$res = $service->submit( $off, $this->payload( $off, $this->valid_fields() ), array( 'js' => true ) );
 		$this->assertSame( 'new', $entries->find( (int) $res['entry_id'] )['status'] );
 		$this->assertNull( PowCaptcha::challenge_for( $off ) );
+	}
+
+	/**
+	 * SET-FC-P4-01: frontend.js fetches token and challenge together and keeps the token for up to
+	 * 115 minutes. A solution solved at the first focus must still count when the visitor submits
+	 * 100 minutes later, otherwise the entry lands in spam while the visitor sees a success message.
+	 */
+	public function test_solution_stays_valid_as_long_as_the_token(): void {
+		$this->set_spam_setting( 'captcha_provider', 'pow' );
+		add_filter( 'form_captain_pow_max_number_v1', static fn(): int => 1000 );
+		$form    = $this->create_published_form();
+		$issued  = time() - 100 * MINUTE_IN_SECONDS;
+		$entries = $this->plugin()->get( EntryRepository::class );
+
+		Clock::freeze( $issued );
+		$token     = $this->plugin()->get( SubmissionToken::class )->issue( (string) $form['public_id'] )['token'];
+		$challenge = PowCaptcha::challenge_for( $form );
+		Clock::freeze( null );
+		$this->assertGreaterThanOrEqual( $issued + Limits::get( 'token_ttl' ), $challenge['expires'], 'challenge lives as long as the token' );
+
+		$payload = ProofOfWork::encode( $challenge, (int) ProofOfWork::solve( $challenge ) );
+		$res     = $this->plugin()->get( SubmissionService::class )->submit( $form, array( '_fc_pow' => $payload ) + $this->payload( $form, $this->valid_fields(), $token ), array( 'js' => true ) );
+		$this->assertTrue( $res['success'] );
+		$entry = $entries->find( (int) $res['entry_id'] );
+		$this->assertSame( 'new', $entry['status'] );
+		$this->assertNull( $entry['spam_reason'] );
+	}
+
+	/**
+	 * SET-FC-P4-06: renewing the signing key keeps the previous key valid for 26 hours (settings
+	 * screen). Open forms – token and proof-of-work challenge – must keep working in that window;
+	 * "discard immediately" invalidates them.
+	 */
+	public function test_open_forms_survive_a_key_renewal_with_grace_period(): void {
+		$this->set_spam_setting( 'captcha_provider', 'pow' );
+		add_filter( 'form_captain_pow_max_number_v1', static fn(): int => 1000 );
+		$form    = $this->create_published_form();
+		$service = $this->plugin()->get( SubmissionService::class );
+		$entries = $this->plugin()->get( EntryRepository::class );
+		$page    = $this->plugin()->get( \FormCaptain\Admin\SettingsPage::class );
+		$open    = function () use ( $form ): array {
+			$token     = $this->token( $form );
+			$challenge = PowCaptcha::challenge_for( $form );
+			return array( '_fc_pow' => ProofOfWork::encode( $challenge, (int) ProofOfWork::solve( $challenge ) ) ) + $this->payload( $form, $this->valid_fields(), $token );
+		};
+
+		$before = $open();
+		$page->rotate_secret();
+		$res = $service->submit( $form, $before, array( 'js' => true ) );
+		$this->assertTrue( $res['success'], 'token of the previous key accepted' );
+		$this->assertSame( 'new', $entries->find( (int) $res['entry_id'] )['status'], 'challenge of the previous key accepted' );
+
+		$before = $open();
+		$page->rotate_secret( true );
+		$res = $service->submit( $form, $before, array( 'js' => true ) );
+		$this->assertFalse( $res['success'] );
+		$this->assertSame( 'invalid_token', $res['code'], 'discarded key: open forms are invalid' );
 	}
 
 	public function test_token_route_contains_the_challenge_only_when_used(): void {

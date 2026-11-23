@@ -12,8 +12,15 @@ Gespeichert als eine Option `form_captain_settings` (Array, autoload). Jede Opti
 | Allgemein | `general.text_max` | int 100–5000 | 1000 | SET-FC-34; Obergrenze einzeiliger Felder |
 | Allgemein | `general.textarea_max` | int 500–50 000 | 10 000 | SET-FC-34; Obergrenze mehrzeiliger Felder; Anfragegröße wächst mit |
 | Allgemein | `general.country_profile` | intern | leer | zuletzt übernommenes Länderprofil (SET-FC-12) |
+| Allgemein | `general.entry_number_format` | string ≤ 30 | leer (aus) | Vorgangsnummer, Platzhalter `{year}` und `{number}` (Pflicht, genau einmal); Filter `form_captain_entry_number_v1` (SET-FC-29) |
+| Allgemein | `general.entry_number_digits` | int 1–10 | 4 | Stellen der laufenden Nummer (führende Nullen) |
+| Allgemein | `general.entry_number_yearly_reset` | bool | true | Neustart am 1. Januar (Zeitzone der Website) |
 | Darstellung | `appearance.mode` | enum `inherit`/`base` | `inherit` | `base` lädt Basis-CSS |
 | Darstellung | `appearance.accent_color` | hex | `#2271b1` | nur bei `base` |
+| Darstellung | `appearance.radius` | int 0–24 | 4 | Eckenradius in px, nur bei `base` (SET-FC-32) |
+| Darstellung | `appearance.spacing` | int 0–48 | 16 | Abstand zwischen Feldern in px, nur bei `base` |
+| Darstellung | `appearance.font_size` | enum `theme`/`14`/`16`/`18`/`20` | `theme` | nur bei `base` |
+| Darstellung | `appearance.custom_css` | css ≤ 10 000 | leer | für beide Darstellungsarten; ändern nur mit `unfiltered_html`; `<` und `@import` werden abgelehnt |
 | E-Mail | `email.from_name` | string ≤ 190 | Site-Name | Default für neue Formulare |
 | E-Mail | `email.from_address` | email | `wordpress@{domain}` | Hinweis, wenn Domain ≠ Site-Domain |
 | E-Mail | `email.format` | enum `html`/`text` | `html` | |

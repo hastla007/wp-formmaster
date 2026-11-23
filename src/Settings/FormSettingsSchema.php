@@ -14,6 +14,7 @@
  *  - label, help: translated texts for editor and help
  *  - options (enum), min/max (int), max_length (string/text), field_type (field_ref),
  *    max_items (recipients), empty_default (string/text: an empty value falls back to the default),
+ *    too_long_error (string: error code when the value was shortened to max_length),
  *    error (error code used when the value is rejected), sanitize (callable for type custom:
  *    fn( mixed $raw, array $ctx ): array{0:mixed,1:?string}).
  * Cross checks between values of one section live in checks(). Invalid values fall back to the
@@ -30,6 +31,8 @@ declare(strict_types=1);
 namespace FormCaptain\Settings;
 
 use FormCaptain\Domain\Fields\FieldTypes;
+use FormCaptain\Service\FormLimits;
+use FormCaptain\Service\FormService;
 
 final class FormSettingsSchema {
 
@@ -195,6 +198,62 @@ final class FormSettingsSchema {
 				'label'    => __( 'Actions', 'form-captain' ),
 				'help'     => __( 'Steps that run after a submission, such as notifications or anonymization.', 'form-captain' ),
 			),
+
+			// Texts per form (SET-FC-02, SET-FC-11); empty = translated default at render time.
+			'submit_label'                => array(
+				'type'           => 'string',
+				'max_length'     => FormService::SUBMIT_LABEL_MAX,
+				'too_long_error' => 'text_too_long',
+				'default'        => '',
+				'label'          => __( 'Submit button text', 'form-captain' ),
+				'help'           => __( 'Text of the send button, up to 60 characters. Empty uses "Send".', 'form-captain' ),
+			),
+			'texts.required_hint'         => array(
+				'type'           => 'string',
+				'max_length'     => 190,
+				'too_long_error' => 'text_too_long',
+				'default'        => '',
+				'label'          => __( 'Required fields hint', 'form-captain' ),
+				'help'           => __( 'Shown above the form when it has required fields. Empty uses the default text.', 'form-captain' ),
+			),
+			'texts.error_summary'         => array(
+				'type'           => 'string',
+				'max_length'     => 190,
+				'too_long_error' => 'text_too_long',
+				'default'        => '',
+				'label'          => __( 'Error summary', 'form-captain' ),
+				'help'           => __( 'Heading of the error list after a failed submission. Empty uses the default text.', 'form-captain' ),
+			),
+
+			// Submission period and maximum number of entries (SET-FC-18); checks in FormLimits::sanitize().
+			'limits.opens_at'             => array(
+				'type'     => 'custom',
+				'default'  => '',
+				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::limit_value( 'opens_at', $ctx ),
+				'label'    => __( 'Accept submissions from', 'form-captain' ),
+				'help'     => __( 'Date and time in the site time zone. Empty means the form is open right away.', 'form-captain' ),
+			),
+			'limits.closes_at'            => array(
+				'type'     => 'custom',
+				'default'  => '',
+				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::limit_value( 'closes_at', $ctx ),
+				'label'    => __( 'Accept submissions until', 'form-captain' ),
+				'help'     => __( 'Date and time in the site time zone; must be after the start. Empty means no end.', 'form-captain' ),
+			),
+			'limits.max_entries'          => array(
+				'type'     => 'custom',
+				'default'  => 0,
+				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::limit_value( 'max_entries', $ctx ),
+				'label'    => __( 'Maximum number of entries', 'form-captain' ),
+				'help'     => __( '0 means no limit. Spam and entries in the trash do not count.', 'form-captain' ),
+			),
+			'limits.closed_message'       => array(
+				'type'     => 'custom',
+				'default'  => '',
+				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::limit_value( 'closed_message', $ctx ),
+				'label'    => __( 'Message when closed', 'form-captain' ),
+				'help'     => __( 'Shown instead of the form outside the period or when the maximum is reached. Empty uses the default text.', 'form-captain' ),
+			),
 		);
 		foreach ( $defs as $path => $def ) {
 			$parts                    = explode( '.', $path, 2 );
@@ -275,8 +334,13 @@ final class FormSettingsSchema {
 				}
 				return array( $def['invalid'] ?? $default, ( $present && isset( $def['error'] ) ) ? (string) $def['error'] : null );
 			case 'string':
-				$value = is_scalar( $raw ) ? mb_substr( trim( sanitize_text_field( (string) $raw ) ), 0, (int) ( $def['max_length'] ?? 190 ) ) : '';
-				return array( ( '' === $value && ! empty( $def['empty_default'] ) ) ? $default : $value, null );
+				$value = is_scalar( $raw ) ? trim( sanitize_text_field( (string) $raw ) ) : '';
+				$error = null;
+				if ( mb_strlen( $value ) > (int) ( $def['max_length'] ?? 190 ) ) {
+					$value = mb_substr( $value, 0, (int) ( $def['max_length'] ?? 190 ) );
+					$error = isset( $def['too_long_error'] ) ? (string) $def['too_long_error'] : null;
+				}
+				return array( ( '' === $value && ! empty( $def['empty_default'] ) ) ? $default : $value, $error );
 			case 'text':
 				$value = mb_substr( sanitize_textarea_field( is_scalar( $raw ) ? (string) $raw : '' ), 0, (int) ( $def['max_length'] ?? 5000 ) );
 				return array( ( '' === trim( $value ) && ! empty( $def['empty_default'] ) ) ? $default : $value, null );
@@ -405,6 +469,18 @@ final class FormSettingsSchema {
 			);
 		}
 		return $out;
+	}
+
+	/**
+	 * One value of settings.limits, checked together with the other limit values (FormLimits::sanitize()).
+	 *
+	 * @param array<string,mixed> $ctx
+	 * @return array{0:mixed,1:?string}
+	 */
+	private static function limit_value( string $key, array $ctx ): array {
+		$errors = array();
+		$limits = FormLimits::sanitize( $ctx['section'] ?? array(), $errors );
+		return array( $limits[ $key ], $errors[ 'limits.' . $key ] ?? null );
 	}
 
 	/**

@@ -117,6 +117,13 @@ final class SubmissionService {
 			return $this->duplicate( $form, $existing, $request_id );
 		}
 
+		// 3b. Submission period and maximum number of entries (SET-FC-18), after the idempotency check
+		// so a retry of an accepted submission still gets its original answer.
+		$limits = FormLimits::state( $form, $this->entries );
+		if ( ! $limits['open'] ) {
+			return $fail( Errors::FORM_NOT_ACCEPTING, array( 'message' => $limits['message'] ) );
+		}
+
 		// 4. Rate limits (P3-09).
 		$rate = $trusted
 			? $this->limiter->check_api( $form_id, (string) ( $meta['plugin'] ?? $meta['source'] ?? 'contract' ) )
@@ -171,12 +178,13 @@ final class SubmissionService {
 			)
 		);
 		if ( $checked['errors'] ) {
+			$summary = trim( (string) ( $form['settings']['texts']['error_summary'] ?? '' ) );
 			return $fail(
 				Errors::VALIDATION_FAILED,
 				array(
 					'errors'      => $checked['errors'],
 					'error_codes' => $checked['codes'],
-				)
+				) + ( '' !== $summary ? array( 'message' => $summary ) : array() )
 			);
 		}
 		$values = $checked['values'];
@@ -218,6 +226,10 @@ final class SubmissionService {
 		$entry_id = 0;
 		$tx       = $this->begin();
 		try {
+			if ( null === $spam_reason ) {
+				// Reference number (SET-FC-29); drawn inside the transaction so a rollback returns it.
+				$entry['entry_number'] = EntryNumbers::next( $form );
+			}
 			$entry_id = $this->entries->insert( $entry );
 			if ( $entry_id <= 0 ) {
 				$this->abort( $tx, 0, null );
@@ -339,7 +351,11 @@ final class SubmissionService {
 			'request_id' => $request_id,
 			'errors'     => array(),
 		);
-		return array_merge( $out, self::confirmation( $form, $entry_id, $values ) );
+		$out = array_merge( $out, self::confirmation( $form, $entry_id, $values ) );
+		if ( str_contains( (string) $out['message'], '{entry_number}' ) ) {
+			$out['message'] = str_replace( '{entry_number}', EntryNumbers::display( $this->entries->find( $entry_id ) ?? array( 'id' => $entry_id ) ), (string) $out['message'] );
+		}
+		return $out;
 	}
 
 	/**

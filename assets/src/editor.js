@@ -835,14 +835,38 @@
 					key: 'pattern',
 					label: __( 'Allowed characters', 'form-captain' ),
 					value: rules.pattern || '',
-					options: [
-						{ value: '', label: __( 'Any', 'form-captain' ) },
-						{ value: 'alpha', label: __( 'Letters only', 'form-captain' ) },
-						{ value: 'alnum', label: __( 'Letters and digits', 'form-captain' ) },
-						{ value: 'zip_de', label: __( 'German postal code', 'form-captain' ) },
-					],
+					options: [ { value: '', label: __( 'Any', 'form-captain' ) } ].concat( boot.patterns || [] ),
 					onChange: function ( v ) {
 						setRule( 'pattern', v );
+					},
+				} )
+			);
+			if ( rules.pattern === 'custom' ) {
+				limits.push(
+					el( C.TextControl, {
+						key: 'custom_pattern',
+						label: __( 'Own pattern (regular expression)', 'form-captain' ),
+						help: __( 'Without delimiters; the whole value must match. Example: [A-Z]{2}-[0-9]{4}. Nested repetitions, back-references and look-arounds are rejected because they can slow down the website.', 'form-captain' ),
+						value: rules.custom_pattern || '',
+						onChange: function ( v ) {
+							setRule( 'custom_pattern', v );
+						},
+					} )
+				);
+			}
+		}
+		if ( f.type === 'tel' ) {
+			limits.push(
+				el( C.SelectControl, {
+					key: 'telformat',
+					label: __( 'Phone number format', 'form-captain' ),
+					value: rules.format || '',
+					options: [
+						{ value: '', label: __( 'Any phone number', 'form-captain' ) },
+						{ value: 'international', label: __( 'International with + and country code', 'form-captain' ) },
+					],
+					onChange: function ( v ) {
+						setRule( 'format', v );
 					},
 				} )
 			);
@@ -893,6 +917,17 @@
 					} )
 				);
 			} );
+			limits.push(
+				el( NumberInput, {
+					key: 'minage',
+					label: __( 'Minimum age (years)', 'form-captain' ),
+					help: __( 'Only dates of persons who are at least this old are accepted. Empty = no age check. Have the required age checked legally for your country and purpose.', 'form-captain' ),
+					value: rules.min_age,
+					onChange: function ( v ) {
+						setRule( 'min_age', v === undefined ? v : parseInt( v, 10 ) || v );
+					},
+				} )
+			);
 		}
 		if ( f.type === 'checkbox' ) {
 			limits.push(
@@ -902,6 +937,34 @@
 				el( NumberInput, { key: 'maxc', label: __( 'Maximum choices', 'form-captain' ), value: rules.max_choices, onChange: function ( v ) {
 					setRule( 'max_choices', v );
 				} } )
+			);
+		}
+		if ( hasValue( f.type ) && f.type !== 'hidden' ) {
+			limits.push(
+				el( C.TextControl, {
+					key: 'vmsg',
+					label: __( 'Own error message', 'form-captain' ),
+					help: __( 'Shown instead of the standard message when the value is missing or invalid. Empty = standard message.', 'form-captain' ),
+					value: rules.message || '',
+					onChange: function ( v ) {
+						setRule( 'message', v );
+					},
+				} )
+			);
+		}
+		if ( ( boot.autocompleteTypes || [] ).indexOf( f.type ) !== -1 ) {
+			limits.push(
+				el( C.SelectControl, {
+					key: 'autocomplete',
+					label: __( 'Autofill (browser)', 'form-captain' ),
+					help: __( 'Tells the browser which saved data fits this field, e.g. name or postal code.', 'form-captain' ),
+					value: f.autocomplete || '',
+					options: [ { value: '', label: __( 'Automatic', 'form-captain' ) } ].concat( boot.autocomplete || [] ),
+					onChange: function ( v ) {
+						set( { autocomplete: v || undefined } );
+					},
+				} ),
+				el( FieldError, { key: 'autocomplete-e', code: err.autocomplete } )
 			);
 		}
 		var ruleErr = Object.keys( err ).filter( function ( k ) {
@@ -1143,7 +1206,7 @@
 		};
 		var selected = Array.isArray( n.fields ) ? n.fields : null;
 		var cmFields = Array.isArray( cm.fields ) ? cm.fields : [];
-		var placeholders = '{form_title}, {admin_email}, ' + valueFields.slice( 0, 4 ).map( function ( f ) {
+		var placeholders = '{form_title}, {admin_email}, {entry_number}, ' + valueFields.slice( 0, 4 ).map( function ( f ) {
 			return '{field:' + f.key + '}';
 		} ).join( ', ' );
 
@@ -1336,9 +1399,84 @@
 
 	function FormSettingsTab( props ) {
 		var s = props.settings;
+		var texts = s.texts || {};
+		var lim = s.limits || {};
+		var setTexts = function ( patch ) {
+			props.onChange( Object.assign( {}, s, { texts: Object.assign( {}, texts, patch ) } ) );
+		};
+		var setLimits = function ( patch ) {
+			props.onChange( Object.assign( {}, s, { limits: Object.assign( {}, lim, patch ) } ) );
+		};
 		return el(
 			'div',
 			{ className: 'fc-settings-tab' },
+			el( 'h2', null, __( 'Texts', 'form-captain' ) ),
+			el( C.TextControl, {
+				label: __( 'Submit button text', 'form-captain' ),
+				help: __( 'Up to 60 characters. Empty = “Send”.', 'form-captain' ),
+				maxLength: 60,
+				value: s.submit_label || '',
+				onChange: function ( v ) {
+					props.onChange( Object.assign( {}, s, { submit_label: v } ) );
+				},
+			} ),
+			el( SettingError, { errors: props.errors, path: 'submit_label' } ),
+			el( C.TextControl, {
+				label: __( 'Note on required fields', 'form-captain' ),
+				help: __( 'Shown above the fields when the form has required fields. An asterisk (*) is shown as the required marker. Empty = standard text.', 'form-captain' ),
+				value: texts.required_hint || '',
+				onChange: function ( v ) {
+					setTexts( { required_hint: v } );
+				},
+			} ),
+			el( SettingError, { errors: props.errors, path: 'texts.required_hint' } ),
+			el( C.TextControl, {
+				label: __( 'Heading of the error summary', 'form-captain' ),
+				help: __( 'Shown above the list of fields to correct. Empty = standard text.', 'form-captain' ),
+				value: texts.error_summary || '',
+				onChange: function ( v ) {
+					setTexts( { error_summary: v } );
+				},
+			} ),
+			el( SettingError, { errors: props.errors, path: 'texts.error_summary' } ),
+			el( 'h2', null, __( 'Submission period and limit', 'form-captain' ) ),
+			el( 'p', { className: 'description' }, __( 'Times use the time zone of the website. Outside the period or after the maximum number of entries, visitors see the closed text instead of the form. Spam and entries in the trash do not count.', 'form-captain' ) ),
+			el( C.TextControl, {
+				label: __( 'Accept submissions from', 'form-captain' ),
+				type: 'datetime-local',
+				value: lim.opens_at || '',
+				onChange: function ( v ) {
+					setLimits( { opens_at: v } );
+				},
+			} ),
+			el( SettingError, { errors: props.errors, path: 'limits.opens_at' } ),
+			el( C.TextControl, {
+				label: __( 'Accept submissions until', 'form-captain' ),
+				type: 'datetime-local',
+				value: lim.closes_at || '',
+				onChange: function ( v ) {
+					setLimits( { closes_at: v } );
+				},
+			} ),
+			el( SettingError, { errors: props.errors, path: 'limits.closes_at' } ),
+			el( NumberInput, {
+				label: __( 'Maximum number of entries', 'form-captain' ),
+				help: __( 'Empty or 0 = no limit.', 'form-captain' ),
+				value: lim.max_entries || undefined,
+				onChange: function ( v ) {
+					setLimits( { max_entries: v === undefined ? 0 : v } );
+				},
+			} ),
+			el( SettingError, { errors: props.errors, path: 'limits.max_entries' } ),
+			el( C.TextareaControl, {
+				label: __( 'Text when the form is closed', 'form-captain' ),
+				help: __( 'Empty = standard text.', 'form-captain' ),
+				rows: 2,
+				value: lim.closed_message || '',
+				onChange: function ( v ) {
+					setLimits( { closed_message: v } );
+				},
+			} ),
 			el( 'h2', null, __( 'Pause message', 'form-captain' ) ),
 			el( C.TextareaControl, {
 				label: __( 'Shown while the form is paused', 'form-captain' ),

@@ -22,16 +22,23 @@ final class Settings {
 		$host = is_string( $host ) ? preg_replace( '/^www\./', '', $host ) : 'example.com';
 		return array(
 			'general'    => array(
-				'setup_completed' => false,
-				'show_pro_hints'  => true,
-				'log_level'       => 'info',
-				'text_max'        => 1000,
-				'textarea_max'    => 10000,
-				'country_profile' => '',
+				'setup_completed'           => false,
+				'show_pro_hints'            => true,
+				'log_level'                 => 'info',
+				'text_max'                  => 1000,
+				'textarea_max'              => 10000,
+				'country_profile'           => '',
+				'entry_number_format'       => '',
+				'entry_number_digits'       => 4,
+				'entry_number_yearly_reset' => true,
 			),
 			'appearance' => array(
 				'mode'         => 'inherit',
 				'accent_color' => '#2271b1',
+				'radius'       => 4,
+				'spacing'      => 16,
+				'font_size'    => 'theme',
+				'custom_css'   => '',
 			),
 			'email'      => array(
 				'from_name'    => wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES ),

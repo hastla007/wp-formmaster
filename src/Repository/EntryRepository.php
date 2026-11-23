@@ -91,7 +91,10 @@ final class EntryRepository {
 			'trashed_gmt'     => 'spam' === ( $data['status'] ?? '' ) ? $now : null,
 			'expires_gmt'     => $data['expires_gmt'] ?? null,
 		);
-		$ok  = $wpdb->insert( $this->entries(), $row );
+		if ( isset( $data['entry_number'] ) && '' !== (string) $data['entry_number'] ) {
+			$row['entry_number'] = mb_substr( (string) $data['entry_number'], 0, 40 );
+		}
+		$ok = $wpdb->insert( $this->entries(), $row );
 		return $ok ? (int) $wpdb->insert_id : 0;
 	}
 
@@ -482,6 +485,12 @@ final class EntryRepository {
 			'count'          => (int) ( $row['c'] ?? 0 ),
 			'oldest_created' => ! empty( $row['oldest'] ) ? (string) $row['oldest'] : null,
 		);
+	}
+
+	/** Entries of a form that count towards its maximum (SET-FC-18): every status except spam and trash. */
+	public function count_accepted( int $form_id ): int {
+		global $wpdb;
+		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$this->entries()} WHERE form_id = %d AND status NOT IN ('trash','spam')", $form_id ) );
 	}
 
 	/** @return array<string,int> status => count */

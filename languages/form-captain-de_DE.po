@@ -246,6 +246,14 @@ msgstr "Eine veröffentlichte Seite ohne Passwort."
 msgid "Accent colour"
 msgstr "Akzentfarbe"
 
+#: assets/src/editor.js:1445
+msgid "Accept submissions from"
+msgstr "Einsendungen annehmen ab"
+
+#: assets/src/editor.js:1454
+msgid "Accept submissions until"
+msgstr "Einsendungen annehmen bis"
+
 #: src/Import/ShortcodeFormatParser.php:732
 msgid "Acceptance converted to a required consent field (never preselected, revision 1)."
 msgstr "Zustimmung in ein erforderliches Einwilligungsfeld umgewandelt (nie vorausgewählt, Revision 1)."
@@ -353,6 +361,10 @@ msgstr "Zusätzliche Admin-Benachrichtigung"
 #, php-format
 msgid "Additional field shown: %s"
 msgstr "Zusätzliches Feld angezeigt: %s"
+
+#: src/Admin/EditorPage.php:125
+msgid "Address addition"
+msgstr "Adresszusatz"
 
 #: src/Admin/EntriesPage.php:567 assets/src/editor.js:1153
 msgid "Admin notification"
@@ -493,6 +505,10 @@ msgstr "Beliebig"
 msgid "Any consent state"
 msgstr "Beliebiger Einwilligungsstatus"
 
+#: assets/src/editor.js:865
+msgid "Any phone number"
+msgstr "Beliebige Telefonnummer"
+
 #: src/Settings/SettingsSchema.php:38 assets/src/editor.js:1351
 msgid "Appearance"
 msgstr "Darstellung"
@@ -548,6 +564,18 @@ msgstr "Versuche"
 #: src/Settings/CountryPresets.php:47
 msgid "Austria"
 msgstr "Österreich"
+
+#: src/Domain/ValidationPatterns.php:49
+msgid "Austrian postal code"
+msgstr "Postleitzahl Österreich"
+
+#: assets/src/editor.js:959
+msgid "Autofill (browser)"
+msgstr "Automatisch ausfüllen (Browser)"
+
+#: assets/src/editor.js:962
+msgid "Automatic"
+msgstr "Automatisch"
 
 #. translators: %s: number of submissions
 #: src/Admin/SettingsPage.php:164
@@ -715,6 +743,10 @@ msgstr "Wählen Sie eine veröffentlichte Seite."
 msgid "Choose a template to start with. You can change every field afterwards."
 msgstr "Wählen Sie eine Vorlage als Ausgangspunkt. Sie können danach jedes Feld ändern."
 
+#: src/Admin/EditorPage.php:250
+msgid "Choose one of the offered autofill types."
+msgstr "Wähle eine der angebotenen Autofill-Arten."
+
 #: src/Admin/DashboardPage.php:303
 msgid "Choose privacy and retention"
 msgstr "Datenschutz und Aufbewahrung wählen"
@@ -722,6 +754,10 @@ msgstr "Datenschutz und Aufbewahrung wählen"
 #: src/Admin/SettingsPage.php:676
 msgid "Choose which roles may use Form Captain. Entries can contain personal data – grant reading and exporting only to people who need it."
 msgstr "Legen Sie fest, welche Rollen Form Captain verwenden dürfen. Einträge können personenbezogene Daten enthalten – erlauben Sie Lesen und Exportieren nur Personen, die dies benötigen."
+
+#: src/Admin/EditorPage.php:127
+msgid "City"
+msgstr "Ort"
 
 #: src/Admin/FormsPage.php:284
 msgid "Cleaned values:"
@@ -768,6 +804,10 @@ msgstr "Komma (,)"
 #: src/Service/Templates.php:119
 msgid "Company"
 msgstr "Unternehmen"
+
+#: src/Admin/EditorPage.php:120
+msgid "Company / organisation"
+msgstr "Firma / Organisation"
 
 #: src/Import/ImportAdmin.php:114
 msgid "Complete"
@@ -987,6 +1027,10 @@ msgstr "Bericht kopieren"
 msgid "Copy this report into a support request. It contains status data, error codes and correlation IDs only."
 msgstr "Kopieren Sie diesen Bericht in eine Support-Anfrage. Er enthält nur Statusdaten, Fehlercodes und Korrelations-IDs."
 
+#: src/Settings/SettingsSchema.php:106
+msgid "Corner radius (pixels)"
+msgstr "Eckenradius (Pixel)"
+
 #: src/Admin/SettingsPage.php:739
 msgid "Correlation ID"
 msgstr "Korrelations-ID"
@@ -1041,6 +1085,10 @@ msgstr "Aktuelle Einstellung"
 msgid "Current value"
 msgstr "Aktueller Wert"
 
+#: src/Settings/SettingsSchema.php:132
+msgid "Custom CSS"
+msgstr "Eigenes CSS"
+
 #: src/Import/EntryImportAdmin.php:312
 msgid "DD.MM.YYYY [HH:MM[:SS]]"
 msgstr "TT.MM.JJJJ [HH:MM[:SS]]"
@@ -1068,6 +1116,10 @@ msgstr "Datum"
 #: src/Import/EntryImportAdmin.php:417
 msgid "Date format"
 msgstr "Datumsformat"
+
+#: src/Admin/EditorPage.php:130
+msgid "Date of birth"
+msgstr "Geburtsdatum"
 
 #: src/Integrations/CoreActions.php:117
 msgid "Days after submission"
@@ -1258,6 +1310,10 @@ msgstr "Erkannt: %s. Adapter können später unter Integrationen aktiviert werde
 msgid "Diagnostics report"
 msgstr "Diagnosebericht"
 
+#: src/Settings/SettingsSchema.php:80
+msgid "Digits of the running number"
+msgstr "Stellen der laufenden Nummer"
+
 #: src/Settings/SettingsSchema.php:220
 msgid "Direct connection (recommended)"
 msgstr "Direkte Verbindung (empfohlen)"
@@ -1383,9 +1439,17 @@ msgctxt "block description"
 msgid "Embeds a published Form Captain form."
 msgstr "Bettet ein veröffentlichtes Form-Captain-Formular ein."
 
+#: assets/src/editor.js:1473
+msgid "Empty = standard text."
+msgstr "Leer = Standardtext."
+
 #: src/Import/ShortcodeFormatParser.php:598
 msgid "Empty first entry: the field has no preselection."
 msgstr "Leerer erster Eintrag: Das Feld hat keine Vorauswahl."
+
+#: assets/src/editor.js:1464
+msgid "Empty or 0 = no limit."
+msgstr "Leer oder 0 = keine Grenze."
 
 #: src/Integrations/ConnectorRegistry.php:430
 msgid "Enable the action in the form editor if it should run."
@@ -1394,6 +1458,14 @@ msgstr "Aktivieren Sie die Aktion im Formular-Editor, wenn sie ausgeführt werde
 #: src/Admin/SettingsPage.php:503 assets/src/editor.js:1438
 msgid "Enabled"
 msgstr "Aktiviert"
+
+#: src/Admin/EditorPage.php:258
+msgid "Enter a whole number between 0 and 1,000,000."
+msgstr "Gib eine ganze Zahl zwischen 0 und 1.000.000 ein."
+
+#: src/Admin/EditorPage.php:254
+msgid "Enter a whole number of years between 1 and 120."
+msgstr "Gib eine ganze Zahl von Jahren zwischen 1 und 120 ein."
 
 #: src/Admin/EditorPage.php:198
 msgid "Enter at least one recipient or disable the notification."
@@ -1620,6 +1692,18 @@ msgstr "Nach Einwilligung filtern"
 #: src/Admin/EntriesPage.php:352
 msgid "Filter by form"
 msgstr "Nach Formular filtern"
+
+#: src/Admin/EditorPage.php:117
+msgid "First name"
+msgstr "Vorname"
+
+#: src/Settings/SettingsSchema.php:125
+msgid "Font size"
+msgstr "Schriftgröße"
+
+#: src/Settings/SettingsSchema.php:126
+msgid "Font size of forms with base styles only."
+msgstr "Schriftgröße der Formulare, nur beim Basisstil."
 
 #: assets/src/editor.js:1401
 msgid "For a fixed period"
@@ -1853,6 +1937,10 @@ msgstr "Freitext-Option („other“) wird nicht unterstützt."
 msgid "From"
 msgstr "Von"
 
+#: src/Admin/EditorPage.php:116
+msgid "Full name"
+msgstr "Vollständiger Name"
+
 #: src/Settings/SettingsSchema.php:37
 msgid "General"
 msgstr "Allgemein"
@@ -1878,6 +1966,10 @@ msgstr "Erste Schritte"
 #, php-format
 msgid "Given on %1$s, revision %2$s"
 msgstr "Erteilt am %1$s, Revision %2$s"
+
+#: src/Settings/SettingsSchema.php:74
+msgid "Gives every new submission a reference number, for example REQ-{year}-{number}. {number} is the running number, {year} the current year. Use {entry_number} in emails and the success message. Empty = no reference numbers."
+msgstr "Gibt jeder neuen Einsendung eine Vorgangsnummer, zum Beispiel REQ-{year}-{number}. {number} ist die laufende Nummer, {year} das aktuelle Jahr. In E-Mails und der Erfolgsmeldung verwendest du {entry_number}. Leer = keine Vorgangsnummern."
 
 #: src/Admin/EditorPage.php:265
 msgid "Go to forms"
@@ -1908,6 +2000,10 @@ msgstr "Übergabe ausstehend: „%s“ wird erst ausgeführt, wenn ein Administr
 #: src/Domain/Fields/FieldTypes.php:30
 msgid "Heading / HTML note"
 msgstr "Überschrift / HTML-Hinweis"
+
+#: assets/src/editor.js:1434
+msgid "Heading of the error summary"
+msgstr "Überschrift der Fehlerübersicht"
 
 #: assets/src/editor.js:757
 msgid "Help text"
@@ -2166,6 +2262,10 @@ msgstr "Interne Notizen"
 msgid "International (other countries)"
 msgstr "International (andere Länder)"
 
+#: assets/src/editor.js:866
+msgid "International with + and country code"
+msgstr "International mit + und Ländervorwahl"
+
 #: src/Import/EntryImportAdmin.php:455
 msgid "Invalid (skipped)"
 msgstr "Ungültig (übersprungen)"
@@ -2332,6 +2432,10 @@ msgstr "Bezeichnung von Option %d"
 msgid "Label shortened to 190 characters."
 msgstr "Bezeichnung auf 190 Zeichen gekürzt."
 
+#: src/Settings/SettingsSchema.php:122
+msgid "Large (18 px)"
+msgstr "Groß (18 px)"
+
 #. translators: %s: profile name
 #: src/Admin/SettingsPage.php:739
 #, php-format
@@ -2349,6 +2453,10 @@ msgstr "Letzter Fehler"
 #: src/Admin/Tables/FormsListTable.php:46
 msgid "Last modified"
 msgstr "Zuletzt geändert"
+
+#: src/Admin/EditorPage.php:118
+msgid "Last name"
+msgstr "Nachname"
 
 #: src/Admin/IntegrationsPage.php:360
 msgid "Last run / next step"
@@ -2410,6 +2518,10 @@ msgstr "Lizenzstatus: %s"
 msgid "License Captain"
 msgstr "License Captain"
 
+#: src/Settings/SettingsSchema.php:119
+msgid "Like the theme"
+msgstr "Wie im Theme"
+
 #: assets/src/editor.js:911
 msgid "Limits"
 msgstr "Grenzwerte"
@@ -2417,6 +2529,10 @@ msgstr "Grenzwerte"
 #: assets/src/editor.js:745
 msgid "Link the privacy policy page"
 msgstr "Datenschutzerklärung verlinken"
+
+#: src/Settings/SettingsSchema.php:133
+msgid "Loaded after the Form Captain styles on pages with a form, for both styling options. Only users who may post unfiltered HTML can change it. @import and HTML are not allowed."
+msgstr "Wird auf Seiten mit Formular nach den Form-Captain-Stilen geladen, für beide Darstellungsarten. Nur Nutzer, die ungefiltertes HTML veröffentlichen dürfen, können es ändern. @import und HTML sind nicht erlaubt."
 
 #: src/Admin/EditorPage.php:235
 msgid "Loading editor…"
@@ -2528,6 +2644,10 @@ msgstr "Höchstlänge mehrzeiliger Felder (Zeichen)"
 msgid "Maximum length of single-line fields (characters)"
 msgstr "Höchstlänge einzeiliger Felder (Zeichen)"
 
+#: assets/src/editor.js:1463
+msgid "Maximum number of entries"
+msgstr "Höchstzahl Einsendungen"
+
 #: src/Service/Templates.php:111 assets/src/editor.js:1247
 msgid "Message"
 msgstr "Nachricht"
@@ -2547,6 +2667,10 @@ msgstr "Methode nicht erlaubt."
 #: assets/src/editor.js:876
 msgid "Minimum"
 msgstr "Minimum"
+
+#: assets/src/editor.js:923
+msgid "Minimum age (years)"
+msgstr "Mindestalter (Jahre)"
 
 #: assets/src/editor.js:899
 msgid "Minimum choices"
@@ -2792,6 +2916,10 @@ msgstr "Keines (empfohlen)"
 msgid "Normal"
 msgstr "Normal"
 
+#: src/Settings/SettingsSchema.php:121
+msgid "Normal (16 px)"
+msgstr "Normal (16 px)"
+
 #: src/Service/FormService.php:425
 msgid "Not all entries could be deleted. Please try again."
 msgstr "Nicht alle Einträge konnten gelöscht werden. Bitte versuchen Sie es erneut."
@@ -2827,6 +2955,10 @@ msgstr "Kein Spam"
 #: src/Admin/EntriesPage.php:237
 msgid "Note added."
 msgstr "Notiz hinzugefügt."
+
+#: assets/src/editor.js:1425
+msgid "Note on required fields"
+msgstr "Hinweis auf Pflichtfelder"
 
 #: assets/src/editor.js:196
 msgid "Note text"
@@ -2878,6 +3010,10 @@ msgstr "Zeilenanzahl auf 2–20 begrenzt."
 msgid "Off"
 msgstr "Aus"
 
+#: src/Admin/EditorPage.php:115
+msgid "Off (no autofill)"
+msgstr "Aus (kein automatisches Ausfüllen)"
+
 #: src/Settings/SettingsSchema.php:138
 msgid "Offer a link to the privacy policy page in consent texts"
 msgstr "In Einwilligungstexten einen Link zur Datenschutzerklärung anbieten"
@@ -2889,6 +3025,10 @@ msgstr "Alter Wert"
 #: src/Admin/SettingsPage.php:905
 msgid "On"
 msgstr "An"
+
+#: src/Settings/SettingsSchema.php:86
+msgid "On 1 January (time zone of the website) the running number starts again at 1. Use {year} in the format so numbers stay unique."
+msgstr "Am 1. Januar (Zeitzone der Website) beginnt die laufende Nummer wieder bei 1. Nimm {year} ins Format auf, damit die Nummern eindeutig bleiben."
 
 #: assets/src/editor.js:1163
 msgid "One address per line. {admin_email} stands for %s."
@@ -2913,6 +3053,10 @@ msgstr "Nur Administratoren behalten den Zugriff. Alle anderen Rollen verlieren 
 #: src/Settings/SettingsSchema.php:226
 msgid "Only choose a header if your website is really behind this service (CDN, proxy or load balancer). Otherwise visitors can fake the header and bypass rate limiting. The address is only used for the pseudonymous rate-limit hash and is never stored."
 msgstr "Wähle eine Kopfzeile nur, wenn deine Website wirklich hinter diesem Dienst steht (CDN, Proxy oder Lastverteiler). Sonst können Besucher die Kopfzeile fälschen und die Sendebegrenzung umgehen. Die Adresse wird nur für den pseudonymen Hash der Sendebegrenzung verwendet und nie gespeichert."
+
+#: assets/src/editor.js:924
+msgid "Only dates of persons who are at least this old are accepted. Empty = no age check. Have the required age checked legally for your country and purpose."
+msgstr "Angenommen werden nur Daten von Personen, die mindestens so alt sind. Leer = keine Altersprüfung. Lass das nötige Alter für dein Land und deinen Zweck rechtlich prüfen."
 
 #: src/Admin/EntriesPage.php:264
 msgid "Only failed deliveries can be retried."
@@ -3052,6 +3196,14 @@ msgstr "Ersetzt für dieses Formular die globale Aufbewahrungsfrist."
 msgid "Overview"
 msgstr "Übersicht"
 
+#: assets/src/editor.js:946
+msgid "Own error message"
+msgstr "Eigene Fehlermeldung"
+
+#: src/Domain/ValidationPatterns.php:94 assets/src/editor.js:848
+msgid "Own pattern (regular expression)"
+msgstr "Eigenes Muster (regulärer Ausdruck)"
+
 #: src/Settings/SettingsSchema.php:221
 msgid "PDF attachment"
 msgstr "PDF-Anhang"
@@ -3129,6 +3281,14 @@ msgstr "Die personenbezogenen Daten dieser Einsendung wurden anonymisiert."
 #: src/Domain/Fields/FieldTypes.php:24 src/Service/Templates.php:120
 msgid "Phone"
 msgstr "Telefon"
+
+#: src/Admin/EditorPage.php:122
+msgid "Phone number"
+msgstr "Telefonnummer"
+
+#: assets/src/editor.js:862
+msgid "Phone number format"
+msgstr "Format der Telefonnummer"
 
 #: src/Admin/DashboardPage.php:279
 msgid "Place the form on a page"
@@ -3260,6 +3420,18 @@ msgstr "Bitte geben Sie eine Zahl ein."
 msgid "Please enter a period between 1 day and 30 years, or choose manual deletion."
 msgstr "Bitte gib einen Zeitraum zwischen 1 Tag und 30 Jahren ein oder wähle das manuelle Löschen."
 
+#: src/Domain/ValidationPatterns.php:61
+msgid "Please enter a postal code (2 to 10 letters, digits, spaces or hyphens)."
+msgstr "Bitte gib eine Postleitzahl ein (2 bis 10 Buchstaben, Ziffern, Leerzeichen oder Bindestriche)."
+
+#: src/Domain/ValidationPatterns.php:51 src/Domain/ValidationPatterns.php:56
+msgid "Please enter a postal code with 4 digits."
+msgstr "Bitte gib eine Postleitzahl mit 4 Ziffern ein."
+
+#: src/Domain/ValidationPatterns.php:46
+msgid "Please enter a postal code with 5 digits."
+msgstr "Bitte gib eine Postleitzahl mit 5 Ziffern ein."
+
 #: src/Admin/EditorPage.php:202
 msgid "Please enter a subject."
 msgstr "Bitte geben Sie einen Betreff ein."
@@ -3267,6 +3439,10 @@ msgstr "Bitte geben Sie einen Betreff ein."
 #: src/Domain/SubmissionValidator.php:392
 msgid "Please enter a valid date (YYYY-MM-DD)."
 msgstr "Bitte geben Sie ein gültiges Datum ein (JJJJ-MM-TT)."
+
+#: src/Admin/EditorPage.php:256
+msgid "Please enter a valid date and time."
+msgstr "Bitte gib ein gültiges Datum mit Uhrzeit ein."
 
 #: src/Settings/SettingsSchema.php:318
 msgid "Please enter a valid e-mail address."
@@ -3304,6 +3480,14 @@ msgstr "Bitte geben Sie höchstens %d Zeichen ein."
 msgid "Please enter the consent text."
 msgstr "Bitte geben Sie den Einwilligungstext ein."
 
+#: src/Admin/EditorPage.php:251
+msgid "Please enter the pattern."
+msgstr "Bitte gib das Muster ein."
+
+#: src/Domain/SubmissionValidator.php:468
+msgid "Please enter the phone number in international format, starting with + and the country code (for example +49 30 1234567)."
+msgstr "Bitte gib die Telefonnummer im internationalen Format ein, beginnend mit + und der Ländervorwahl (zum Beispiel +49 30 1234567)."
+
 #: src/Admin/AdminRest.php:135
 msgid "Please log in."
 msgstr "Bitte melden Sie sich an."
@@ -3335,6 +3519,14 @@ msgstr "Bitte laden Sie eine .json-Datei hoch."
 msgid "Please use at most %d characters."
 msgstr "Bitte verwenden Sie höchstens %d Zeichen."
 
+#: src/Domain/ValidationPatterns.php:41
+msgid "Please use letters and digits only."
+msgstr "Bitte verwende nur Buchstaben und Ziffern."
+
+#: src/Domain/ValidationPatterns.php:36
+msgid "Please use letters only."
+msgstr "Bitte verwende nur Buchstaben."
+
 #: src/Admin/IntegrationsPage.php:166
 msgid "Plugin missing"
 msgstr "Plugin fehlt"
@@ -3342,6 +3534,14 @@ msgstr "Plugin fehlt"
 #: src/Admin/IntegrationsPage.php:285
 msgid "Plugin version"
 msgstr "Plugin-Version"
+
+#: src/Admin/EditorPage.php:126
+msgid "Postal code"
+msgstr "Postleitzahl"
+
+#: src/Domain/ValidationPatterns.php:59
+msgid "Postal code (any country)"
+msgstr "Postleitzahl (beliebiges Land)"
 
 #: src/Settings/SettingsSchema.php:249
 msgid "Preselected in the CSV export. You can still choose another separator for each export."
@@ -3565,6 +3765,14 @@ msgstr "Weiterleitungsseite"
 msgid "Redirect to a page"
 msgstr "Zu einer Seite weiterleiten"
 
+#: src/Admin/EntriesPage.php:469
+msgid "Reference number"
+msgstr "Vorgangsnummer"
+
+#: src/Settings/SettingsSchema.php:73
+msgid "Reference number format"
+msgstr "Format der Vorgangsnummer"
+
 #: src/Import/ShortcodeFormatParser.php:558
 msgid "Relative date limits other than \"today\" are not supported."
 msgstr "Relative Datumsgrenzen außer „today“ werden nicht unterstützt."
@@ -3669,6 +3877,10 @@ msgstr "Das Zurücksetzen stellt die Aufbewahrung auf 12 Monate und deaktiviert 
 msgid "Resetting switches automatic deletion off (keep until deleted manually) and disables data deletion on uninstall. Existing submissions are rescheduled accordingly."
 msgstr "Das Zurücksetzen schaltet das automatische Löschen aus (aufbewahren bis zum manuellen Löschen) und deaktiviert das Löschen der Daten bei der Deinstallation. Vorhandene Einsendungen werden entsprechend neu geplant."
 
+#: src/Settings/SettingsSchema.php:85
+msgid "Restart the running number every year"
+msgstr "Laufende Nummer jedes Jahr neu beginnen"
+
 #: src/Admin/EntriesPage.php:669 src/Admin/Tables/EntriesListTable.php:162
 msgid "Restore"
 msgstr "Wiederherstellen"
@@ -3741,6 +3953,10 @@ msgstr "Revision und Schema sind erforderlich."
 msgid "Role"
 msgstr "Rolle"
 
+#: src/Settings/SettingsSchema.php:107
+msgid "Rounding of input fields and buttons with base styles only. 0 = square corners."
+msgstr "Rundung von Eingabefeldern und Schaltflächen, nur beim Basisstil. 0 = eckig."
+
 #: src/Import/EntryImportAdmin.php:468
 msgid "Row"
 msgstr "Zeile"
@@ -3772,6 +3988,10 @@ msgstr "Läuft"
 #: assets/src/block-editor.js:91
 msgid "SEO: page title, meta description, headings and indexing rules are managed in WordPress or your SEO plugin (e.g. Yoast SEO). The form is embedded page content and does not replace helpful page content."
 msgstr "SEO: Seitentitel, Meta-Beschreibung, Überschriften und Indexierungsregeln werden in WordPress oder Ihrem SEO-Plugin (z. B. Yoast SEO) verwaltet. Das Formular ist eingebetteter Seiteninhalt und ersetzt keine hilfreichen Seiteninhalte."
+
+#: src/Admin/EditorPage.php:119
+msgid "Salutation / title"
+msgstr "Anrede / Titel"
 
 #. translators: %s: list of field keys
 #: src/Admin/IntegrationsPage.php:73
@@ -4082,6 +4302,14 @@ msgstr "Dieses Feld anzeigen, wenn"
 msgid "Show wording"
 msgstr "Wortlaut anzeigen"
 
+#: assets/src/editor.js:1426
+msgid "Shown above the fields when the form has required fields. An asterisk (*) is shown as the required marker. Empty = standard text."
+msgstr "Erscheint über den Feldern, wenn das Formular Pflichtfelder hat. Ein Sternchen (*) wird als Pflichtfeld-Markierung angezeigt. Leer = Standardtext."
+
+#: assets/src/editor.js:1435
+msgid "Shown above the list of fields to correct. Empty = standard text."
+msgstr "Erscheint über der Liste der zu korrigierenden Felder. Leer = Standardtext."
+
 #: src/Settings/FormSettingsSchema.php:127
 msgid "Shown after a successful submission. Empty uses the default text."
 msgstr "Erscheint nach erfolgreichem Absenden. Leer = Standardtext."
@@ -4089,6 +4317,10 @@ msgstr "Erscheint nach erfolgreichem Absenden. Leer = Standardtext."
 #: src/Settings/FormSettingsSchema.php:143
 msgid "Shown instead of the form while it is paused."
 msgstr "Erscheint statt des Formulars, solange es pausiert ist."
+
+#: assets/src/editor.js:947
+msgid "Shown instead of the standard message when the value is missing or invalid. Empty = standard message."
+msgstr "Erscheint statt der Standardmeldung, wenn der Wert fehlt oder ungültig ist. Leer = Standardmeldung."
 
 #: assets/src/editor.js:1344
 msgid "Shown while the form is paused"
@@ -4109,6 +4341,10 @@ msgstr "Einzeiliger Text"
 #: src/Import/ShortcodeFormatParser.php:442
 msgid "Slider converted to a number field."
 msgstr "Schieberegler in ein Zahlenfeld umgewandelt."
+
+#: src/Settings/SettingsSchema.php:120
+msgid "Small (14 px)"
+msgstr "Klein (14 px)"
 
 #: src/Admin/SystemStatus.php:266
 msgid "Some Form Captain tables do not use InnoDB. Transactions are not available; integrity is checked here instead."
@@ -4154,6 +4390,10 @@ msgstr "Quellseite"
 msgid "Source post"
 msgstr "Quellbeitrag"
 
+#: src/Settings/SettingsSchema.php:113
+msgid "Space between fields (pixels)"
+msgstr "Abstand zwischen Feldern (Pixel)"
+
 #: src/Admin/Tables/EntriesListTable.php:125 src/Export/CsvExporter.php:332
 #: src/Privacy/PrivacyIntegration.php:267
 msgid "Spam"
@@ -4174,6 +4414,10 @@ msgstr "Spamgrund"
 #: src/Admin/EditorPage.php:249
 msgid "Start from scratch."
 msgstr "Ohne Vorlage beginnen."
+
+#: src/Admin/EditorPage.php:128
+msgid "State / region"
+msgstr "Bundesland / Region"
 
 #: src/Admin/EntriesPage.php:470 src/Admin/EntriesPage.php:539
 #: src/Admin/EntriesPage.php:784 src/Admin/IntegrationsPage.php:360
@@ -4229,6 +4473,14 @@ msgstr "Schritte nach einer Einsendung, etwa Benachrichtigungen oder Anonymisier
 msgid "Stored option values were normalized (letters, digits, \"-\" and \"_\")."
 msgstr "Gespeicherte Optionswerte wurden normalisiert (Buchstaben, Ziffern, „-“ und „_“)."
 
+#: src/Admin/EditorPage.php:123
+msgid "Street address (complete)"
+msgstr "Adresse (vollständig)"
+
+#: src/Admin/EditorPage.php:124
+msgid "Street and house number"
+msgstr "Straße und Hausnummer"
+
 #: assets/src/editor.js:1353
 msgid "Styling"
 msgstr "Gestaltung"
@@ -4280,6 +4532,10 @@ msgstr "Einsendung nicht gefunden"
 #: src/Service/EntryService.php:153
 msgid "Submission not found."
 msgstr "Einsendung nicht gefunden."
+
+#: assets/src/editor.js:1442
+msgid "Submission period and limit"
+msgstr "Zeitraum und Höchstzahl"
 
 #: src/Admin/EntriesPage.php:235
 msgid "Submission restored."
@@ -4361,6 +4617,10 @@ msgstr "Einsendungen, die innerhalb dieser Tage gelöscht werden, sind in der Li
 msgid "Submissions you sent through forms on this website."
 msgstr "Einsendungen, die Sie über Formulare dieser Website gesendet haben."
 
+#: assets/src/editor.js:1415
+msgid "Submit button text"
+msgstr "Text der Absende-Schaltfläche"
+
 #: src/Admin/EntriesPage.php:468 src/Admin/Tables/EntriesListTable.php:72
 msgid "Submitted"
 msgstr "Eingang"
@@ -4401,6 +4661,10 @@ msgstr "Support-Anfrage"
 #: src/Service/Templates.php:151
 msgid "Support: {field:subject}"
 msgstr "Support: {field:subject}"
+
+#: src/Domain/ValidationPatterns.php:54
+msgid "Swiss postal code"
+msgstr "Postleitzahl Schweiz"
 
 #: src/Settings/CountryPresets.php:53
 msgid "Switzerland"
@@ -4444,6 +4708,10 @@ msgstr "Zieltyp"
 msgid "Technical log entries (no submitted values) are deleted automatically after this period."
 msgstr "Technische Protokolleinträge (ohne eingesendete Werte) werden nach diesem Zeitraum automatisch gelöscht."
 
+#: assets/src/editor.js:960
+msgid "Tells the browser which saved data fits this field, e.g. name or postal code."
+msgstr "Sagt dem Browser, welche gespeicherten Angaben zu diesem Feld passen, z. B. Name oder Postleitzahl."
+
 #: src/Admin/IntegrationsPage.php:315
 msgid "Test"
 msgstr "Test"
@@ -4461,6 +4729,14 @@ msgstr "Test-E-Mail an die E-Mail-Adresse Ihres Benutzerkontos gesendet. Falls s
 #, php-format
 msgid "Test run finished with status \"%1$s\" (code: %2$s). No entry or job was created."
 msgstr "Testlauf mit Status „%1$s“ beendet (Code: %2$s). Es wurde kein Eintrag und kein Auftrag erstellt."
+
+#: assets/src/editor.js:1472
+msgid "Text when the form is closed"
+msgstr "Text bei geschlossenem Formular"
+
+#: assets/src/editor.js:1413
+msgid "Texts"
+msgstr "Texte"
 
 #: src/Settings/SettingsSchema.php:217
 msgid "Texts of the questionnaire e-mails to buyers."
@@ -4492,6 +4768,10 @@ msgstr "Vielen Dank! Ihre Einsendung ist eingegangen."
 #: src/Service/Templates.php:152
 msgid "Thank you! Your support request has been received."
 msgstr "Vielen Dank! Ihre Support-Anfrage ist eingegangen."
+
+#: src/Settings/SettingsSchema.php:400
+msgid "The CSS must not contain HTML (<) or @import rules."
+msgstr "Das CSS darf kein HTML (<) und keine @import-Regeln enthalten."
 
 #: src/Admin/EntriesPage.php:268 src/Admin/FormsPage.php:339
 #: src/Import/EntryImportAdmin.php:246
@@ -4581,6 +4861,10 @@ msgstr "Die Datenbank wurde von einer neueren Form-Captain-Version angelegt (Sch
 #: src/Import/EntryImportService.php:317
 msgid "The date format of the submission time column was not recognised. Please choose it."
 msgstr "Das Datumsformat der Spalte mit dem Eingangszeitpunkt wurde nicht erkannt. Bitte wählen Sie es aus."
+
+#: src/Admin/EditorPage.php:257
+msgid "The end must be after the start."
+msgstr "Das Ende muss nach dem Beginn liegen."
 
 #: src/Import/EntryImportAdmin.php:560
 msgid "The entries are deleted in batches. The process continues automatically."
@@ -4706,6 +4990,10 @@ msgstr "Der Formular-Quelltext ist leer."
 msgid "The form source is too large (maximum 256 KB)."
 msgstr "Der Formular-Quelltext ist zu groß (maximal 256 KB)."
 
+#: src/Service/EntryNumbers.php:47
+msgid "The format must contain {number} exactly once."
+msgstr "Das Format muss {number} genau einmal enthalten."
+
 #: src/Import/ShortcodeFormatParser.php:480
 msgid "The id: option is not taken over."
 msgstr "Die Option id: wird nicht übernommen."
@@ -4758,11 +5046,23 @@ msgstr "Die neue Aufbewahrungsdauer betrifft %1$s Einsendungen; früheste Lösch
 msgid "The new retention period affects %s submissions; nothing is deleted automatically."
 msgstr "Die neue Aufbewahrungsdauer betrifft %s Einsendungen; nichts wird automatisch gelöscht."
 
+#: src/Settings/SettingsSchema.php:81
+msgid "The number is filled with leading zeros, e.g. 4 digits give 0042."
+msgstr "Die Nummer wird mit führenden Nullen aufgefüllt, z. B. ergeben 4 Stellen 0042."
+
 #. translators: 1: minutes the oldest job waits, 2: number of dead jobs
 #: src/Admin/SiteHealth.php:58
 #, php-format
 msgid "The oldest due job waits %1$d minutes; %2$d jobs failed permanently. Check WP-Cron or run \"wp form-captain jobs run\"."
 msgstr "Der älteste fällige Auftrag wartet seit %1$d Minuten; %2$d Aufträge sind endgültig fehlgeschlagen. Prüfen Sie WP-Cron oder führen Sie „wp form-captain jobs run“ aus."
+
+#: src/Admin/EditorPage.php:252
+msgid "The pattern is not a valid regular expression (maximum 200 characters)."
+msgstr "Das Muster ist kein gültiger regulärer Ausdruck (höchstens 200 Zeichen)."
+
+#: src/Admin/EditorPage.php:253
+msgid "The pattern uses nested repetitions, back-references or look-arounds. These can slow down the website and are not allowed."
+msgstr "Das Muster enthält verschachtelte Wiederholungen, Rückverweise oder Lookarounds. Diese können die Website ausbremsen und sind nicht erlaubt."
 
 #: src/Integrations/ConnectorRegistry.php:426
 msgid "The plugin that provided this action is inactive. Reactivate it or remove the action from the form."
@@ -4839,6 +5139,10 @@ msgstr "Das Zielsystem hat nicht rechtzeitig geantwortet. Der Auftrag wird autom
 #: src/Admin/SettingsPage.php:297
 msgid "The test e-mail could not be sent. WordPress reported an error; an SMTP plugin usually solves delivery problems."
 msgstr "Die Test-E-Mail konnte nicht gesendet werden. WordPress hat einen Fehler gemeldet; ein SMTP-Plugin löst Zustellprobleme in der Regel."
+
+#: src/Admin/EditorPage.php:255
+msgid "The text is too long and was shortened."
+msgstr "Der Text ist zu lang und wurde gekürzt."
 
 #: src/Import/EntryImportService.php:108
 msgid "The upload directory is not available."
@@ -4960,9 +5264,17 @@ msgstr "Dieses Formular ist abgelaufen. Bitte prüfen Sie Ihre Eingaben und send
 msgid "This form has expired. Please reload the page and submit again – your input is kept."
 msgstr "Dieses Formular ist abgelaufen. Bitte laden Sie die Seite neu und senden Sie es erneut ab – Ihre Eingaben bleiben erhalten."
 
+#: src/Service/FormLimits.php:140
+msgid "This form has reached the maximum number of submissions and is closed."
+msgstr "Dieses Formular hat die Höchstzahl an Einsendungen erreicht und ist geschlossen."
+
 #: src/Frontend/Renderer.php:68
 msgid "This form is archived and not shown to visitors."
 msgstr "Dieses Formular ist archiviert und wird Besuchern nicht angezeigt."
+
+#: src/Service/FormLimits.php:142
+msgid "This form is closed and no longer accepts submissions."
+msgstr "Dieses Formular ist geschlossen und nimmt keine Einsendungen mehr an."
 
 #: src/Frontend/Renderer.php:58 src/Service/FormService.php:134
 #: src/Support/Errors.php:62
@@ -4981,9 +5293,19 @@ msgstr "Dieses Formular ist nicht verfügbar."
 msgid "This form is not published yet and not shown to visitors."
 msgstr "Dieses Formular ist noch nicht veröffentlicht und wird Besuchern nicht angezeigt."
 
+#: src/Frontend/Renderer.php:79
+msgid "This form is outside its submission period or has reached its maximum number of entries. Visitors see the message below instead of the form."
+msgstr "Dieses Formular ist außerhalb seines Zeitraums oder hat die Höchstzahl an Einsendungen erreicht. Besucher sehen statt des Formulars die folgende Meldung."
+
 #: src/Frontend/Renderer.php:60
 msgid "This form is paused. Visitors see the message below instead of the form."
 msgstr "Dieses Formular ist pausiert. Besucher sehen statt des Formulars die folgende Meldung."
+
+#. translators: %s: date and time when the form opens
+#: src/Service/FormLimits.php:137
+#, php-format
+msgid "This form opens on %s."
+msgstr "Dieses Formular öffnet am %s."
 
 #: src/Repository/FormRepository.php:117 src/Service/FormService.php:162
 #: src/Service/FormService.php:215
@@ -5093,6 +5415,10 @@ msgstr "Zeit zum Ausfüllen eines Formulars (Minuten)"
 #: src/Integrations/ConnectorRegistry.php:461
 msgid "Timeout"
 msgstr "Zeitüberschreitung"
+
+#: assets/src/editor.js:1443
+msgid "Times use the time zone of the website. Outside the period or after the maximum number of entries, visitors see the closed text instead of the form. Spam and entries in the trash do not count."
+msgstr "Zeiten gelten in der Zeitzone der Website. Außerhalb des Zeitraums oder nach Erreichen der Höchstzahl sehen Besucher statt des Formulars den Text für geschlossene Formulare. Spam und Einträge im Papierkorb zählen nicht."
 
 #. translators: %s: time zone name
 #: src/Import/EntryImportAdmin.php:434
@@ -5253,6 +5579,10 @@ msgstr "Bis 1.000"
 msgid "Up to 10 addresses. {admin_email} stands for the site administrator address."
 msgstr "Bis zu 10 Adressen. {admin_email} steht für die Adresse des Website-Administrators."
 
+#: assets/src/editor.js:1416
+msgid "Up to 60 characters. Empty = “Send”."
+msgstr "Bis zu 60 Zeichen. Leer = „Senden“."
+
 #: src/Integrations/ConnectorRegistry.php:414
 msgid "Update the connector or Form Captain so that both support the same contract major version."
 msgstr "Aktualisieren Sie den Connector oder Form Captain, sodass beide dieselbe Contract-Hauptversion unterstützen."
@@ -5288,6 +5618,10 @@ msgstr "Verwenden Sie eine Adresse der Domain Ihrer Website, damit Nachrichten n
 #: assets/src/editor.js:867
 msgid "Use for privacy requests (export/erase personal data)"
 msgstr "Für Datenschutzanfragen verwenden (personenbezogene Daten exportieren/löschen)"
+
+#: src/Service/EntryNumbers.php:51
+msgid "Use only letters, digits, - _ / . # and the placeholders {year} and {number}."
+msgstr "Verwende nur Buchstaben, Ziffern, - _ / . # und die Platzhalter {year} und {number}."
 
 #: src/Settings/FormSettingsSchema.php:176
 msgid "Use the global setting"
@@ -5337,6 +5671,14 @@ msgstr "Wert"
 #: assets/src/editor.js:271
 msgid "Value of option %d"
 msgstr "Wert von Option %d"
+
+#: src/Settings/SettingsSchema.php:114
+msgid "Vertical space between the fields with base styles only."
+msgstr "Senkrechter Abstand zwischen den Feldern, nur beim Basisstil."
+
+#: src/Settings/SettingsSchema.php:123
+msgid "Very large (20 px)"
+msgstr "Sehr groß (20 px)"
 
 #: src/Admin/DashboardPage.php:298 src/Import/EntryImportAdmin.php:545
 msgid "View entries"
@@ -5390,6 +5732,10 @@ msgstr "Webhook-Zustellung"
 msgid "Webhooks"
 msgstr "Webhooks"
 
+#: src/Admin/EditorPage.php:131
+msgid "Website"
+msgstr "Website"
+
 #: src/Admin/EntriesPage.php:705
 msgid "What should happen with the submission?"
 msgstr "Was soll mit der Einsendung geschehen?"
@@ -5429,6 +5775,10 @@ msgstr "Einwilligung widerrufen"
 #: src/Admin/EntriesPage.php:788
 msgid "Without a selection, all active submissions are exported (no spam, no trash)."
 msgstr "Ohne Auswahl werden alle aktiven Einsendungen exportiert (kein Spam, kein Papierkorb)."
+
+#: assets/src/editor.js:849
+msgid "Without delimiters; the whole value must match. Example: [A-Z]{2}-[0-9]{4}. Nested repetitions, back-references and look-arounds are rejected because they can slow down the website."
+msgstr "Ohne Begrenzer; der ganze Wert muss passen. Beispiel: [A-Z]{2}-[0-9]{4}. Verschachtelte Wiederholungen, Rückverweise und Lookarounds werden abgelehnt, weil sie die Website ausbremsen können."
 
 #: src/Admin/DashboardPage.php:94
 msgid "WooCommerce"
@@ -5473,6 +5823,10 @@ msgstr "Sie sind nicht berechtigt, Notizen hinzuzufügen."
 #: src/Admin/SettingsPage.php:340
 msgid "You are not allowed to change Form Captain settings."
 msgstr "Sie sind nicht berechtigt, die Einstellungen von Form Captain zu ändern."
+
+#: src/Settings/SettingsSchema.php:301
+msgid "You are not allowed to change this setting."
+msgstr "Du darfst diese Einstellung nicht ändern."
 
 #: src/Service/EntryService.php:59
 msgid "You are not allowed to change this submission."
@@ -5562,6 +5916,14 @@ msgstr "Diese Hinweise lassen sich im Bereich „Allgemein“ ausblenden."
 #: src/Admin/Tables/FormsListTable.php:131
 msgid "You have not created a form yet. Start with a template – it takes less than a minute."
 msgstr "Sie haben noch kein Formular erstellt. Beginnen Sie mit einer Vorlage – das dauert weniger als eine Minute."
+
+#. translators: %d: minimum age in years
+#: src/Domain/SubmissionValidator.php:472
+#, php-format
+msgid "You must be at least %d year old."
+msgid_plural "You must be at least %d years old."
+msgstr[0] "Du musst mindestens %d Jahr alt sein."
+msgstr[1] "Du musst mindestens %d Jahre alt sein."
 
 #: src/Admin/SettingsPage.php:898
 msgid "You see all changes before anything is saved. Invalid values and unknown keys are reported and not imported."

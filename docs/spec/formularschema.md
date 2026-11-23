@@ -44,20 +44,30 @@ Maschinenlesbare Fassung: [`schema/form-schema-v1.json`](../../schema/form-schem
 
 | Typ | Wert | `validation` | Weitere Eigenschaften |
 |---|---|---|---|
-| `text` | String | `min_length`, `max_length` (≤ 1000, Standard 190), `pattern` (nur vordefiniert: `alpha`, `alnum`, `zip_de`) | |
+| `text` | String | `min_length`, `max_length` (≤ 1000, Standard 190), `pattern` (`alpha`, `alnum`, `zip_de`, `zip_at`, `zip_ch`, `zip_generic`, `custom` + `custom_pattern`; weitere über Filter `form_captain_validation_patterns_v1`) | |
 | `textarea` | String | `min_length`, `max_length` (≤ 10000, Standard 5000) | `rows` (2–20) |
 | `email` | String (normalisiert: trim, lowercase) | `max_length` ≤ 254 | `confirmation_recipient` (bool): Ziel für Nutzerbestätigung; `privacy_lookup` (bool, Default true): Feld wird vom Privacy Exporter/Eraser zur Zuordnung genutzt |
-| `tel` | String `^[0-9 +()\-/]{3,40}$` | | |
+| `tel` | String `^[0-9 +()\-/]{3,40}$` | `format`: `international` (beginnt mit `+` und Ländervorwahl, 7–15 Ziffern) | |
 | `number` | Dezimalzahl als String | `min`, `max`, `step` | |
 | `select` | ein Optionswert | | `options` (1–200), `multiple` (bool) |
 | `radio` | ein Optionswert | | `options` (1–50) |
 | `checkbox` | Array von Optionswerten | `min_choices`, `max_choices` | `options` (1–50) |
-| `date` | `YYYY-MM-DD` | `min`, `max` (Datum oder `today`) | |
+| `date` | `YYYY-MM-DD` | `min`, `max` (Datum oder `today`), `min_age` (1–120 Jahre am Tag der Einsendung; ohne Vorgabe, Rechtsprüfung je Land) | |
 | `html` | – (kein Wert) | | `content`: bereinigtes HTML, Allowlist siehe unten |
 | `hidden` | String ≤ 500 | | `default` ist der Wert; **nie** vertrauenswürdig |
 | `consent` | `"1"` oder leer | | `consent_text` (Pflicht, Klartext mit optionalem Link-Markup), `privacy_link` (bool), `consent_revision` (int ≥ 1, wird bei jeder Textänderung vom Editor erhöht; Import setzt 1). Nie vorangekreuzt: `default` ist verboten. |
 
 `options`: Array von `{ "value": "^[A-Za-z0-9_\-]{1,64}$", "label": "1–190 Zeichen" }`, Werte eindeutig.
+
+Für alle Felder mit Wert (außer `hidden`): `validation.message` (≤ 190 Zeichen) ersetzt die Standard-Fehlermeldung (SET-FC-11).
+Für `text`, `textarea`, `email`, `tel`, `number`, `select`, `date`: `autocomplete` aus der festen Liste
+`off`, `name`, `given-name`, `family-name`, `honorific-prefix`, `organization`, `email`, `tel`, `street-address`,
+`address-line1`, `address-line2`, `postal-code`, `address-level2`, `address-level1`, `country-name`, `bday`, `url` (SET-FC-33).
+
+Eigenes Muster (`pattern: custom`): Regulärer Ausdruck ohne Begrenzer, ≤ 200 Zeichen, der ganze Wert muss passen.
+Abgelehnt werden (Fehlercode `pattern_unsafe`): wiederholte Gruppen mit innerer Wiederholung oder Alternative
+(`(a+)+`, `(a|aa)*`), Rückverweise, Lookarounds, Rekursion und Inline-Flags; nicht übersetzbare Ausdrücke
+ergeben `pattern_invalid`.
 
 ### HTML-Allowlist (`html`, `consent_text`)
 
@@ -96,8 +106,17 @@ Max. 100 Felder, 200 Optionen je Feld, Schema-JSON ≤ 256 KB.
   "paused_message": "Dieses Formular nimmt derzeit keine Einsendungen an.",
   "appearance": { "mode": "inherit" },
   "retention": { "mode": "global" },
-  "actions": []
+  "actions": [],
+  "submit_label": "Anfrage senden",
+  "texts": { "required_hint": "", "error_summary": "" },
+  "limits": { "opens_at": "2026-12-01T09:00", "closes_at": "", "max_entries": 0, "closed_message": "" }
 }
 ```
+
+`submit_label` ≤ 60 Zeichen (SET-FC-02), `texts.*` ≤ 190 Zeichen (SET-FC-11); leer = übersetzter Standardtext,
+längere Texte werden gekürzt und als `text_too_long` gemeldet. `limits` (SET-FC-18): `opens_at`/`closes_at` als
+`YYYY-MM-DDTHH:MM` in der Zeitzone der Website, `max_entries` 0–1 000 000 (0 = keine Grenze; Spam und Papierkorb
+zählen nicht), `closed_message` ≤ 500 Zeichen. Außerhalb des Zeitraums oder bei erreichter Höchstzahl zeigen
+Renderer, Token-Endpunkt und Einsendung `form_not_accepting` mit dem Text; Filter `form_captain_form_limits_v1`.
 
 `confirmation.type` = `message` | `page` (nur interne veröffentlichte Seite per ID, siehe P3-15). `actions`: aktivierte Connector-Aktionen mit Feld-Mapping (siehe `api-v1.md`).

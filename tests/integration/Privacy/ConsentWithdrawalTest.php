@@ -328,6 +328,16 @@ final class ConsentWithdrawalTest extends TestCase {
 		return array( $cols, $keys );
 	}
 
+	/**
+	 * Shape with columns sorted by name: dbDelta() appends re-added columns at the end, so the
+	 * column order of the live test table depends on its history (earlier runs, other branches).
+	 */
+	private static function shape_unordered( string $table ): array {
+		$shape = self::shape( $table );
+		usort( $shape[0], static fn( array $a, array $b ): int => strcmp( $a[0], $b[0] ) );
+		return $shape;
+	}
+
 	public function test_fresh_install_and_upgrade_from_v1_produce_the_same_schema(): void {
 		global $wpdb;
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -340,12 +350,13 @@ final class ConsentWithdrawalTest extends TestCase {
 
 			// v1 table without the column, then migration step 2.
 			$wpdb->prefix = $real . 'fcup_';
-			$v1           = str_replace( array( "  consent_withdrawn_gmt datetime DEFAULT NULL,\n", ",\n  KEY consent_withdrawn (consent_withdrawn_gmt)" ), '', Schema::definitions()[ Tables::ENTRIES ] );
+			$v1           = str_replace( array( "  consent_withdrawn_gmt datetime DEFAULT NULL,\n", ",\n  KEY consent_withdrawn (consent_withdrawn_gmt)", "  entry_number varchar(40) DEFAULT NULL,\n", ",\n  KEY entry_number (entry_number)" ), '', Schema::definitions()[ Tables::ENTRIES ] );
 			$this->assertStringNotContainsString( 'consent_withdrawn', $v1 );
 			$wpdb->query( $v1 );
 			$this->assertNotContains( 'consent_withdrawn_gmt', array_column( self::shape( Tables::name( Tables::ENTRIES ) )[0], 0 ) );
 			( new Migrator() )->migrate_v2();
 			( new Migrator() )->migrate_v2(); // idempotent
+			( new Migrator() )->migrate_v3(); // v3 (entry_number) on top, idempotent as well
 			$upgraded = self::shape( Tables::name( Tables::ENTRIES ) );
 		} finally {
 			foreach ( array( 'fcfresh_', 'fcup_' ) as $p ) {
@@ -361,7 +372,7 @@ final class ConsentWithdrawalTest extends TestCase {
 	public function test_migrator_upgrades_v1_installation_and_verifies_column(): void {
 		global $wpdb;
 		$table    = Tables::name( Tables::ENTRIES );
-		$before   = self::shape( $table );
+		$before   = self::shape_unordered( $table );
 		$migrator = new Migrator();
 		try {
 			$wpdb->query( "ALTER TABLE {$table} DROP INDEX consent_withdrawn, DROP COLUMN consent_withdrawn_gmt" );
@@ -377,8 +388,8 @@ final class ConsentWithdrawalTest extends TestCase {
 			}
 
 			$this->assertTrue( $migrator->migrate() );
-			$this->assertSame( 2, $migrator->installed_version() );
-			$this->assertSame( $before, self::shape( $table ) );
+			$this->assertSame( Migrator::TARGET_VERSION, $migrator->installed_version() );
+			$this->assertSame( $before, self::shape_unordered( $table ) );
 			$this->assertTrue( $migrator->migrate(), 'repeatable' );
 		} finally {
 			if ( ! in_array( 'consent_withdrawn_gmt', array_column( self::shape( $table )[0], 0 ), true ) ) {
@@ -393,10 +404,10 @@ final class ConsentWithdrawalTest extends TestCase {
 	}
 
 	public function test_downgrade_protection_stays(): void {
-		update_option( Migrator::OPTION_VERSION, 3 );
+		update_option( Migrator::OPTION_VERSION, Migrator::TARGET_VERSION + 1 );
 		$this->assertFalse( ( new Migrator() )->migrate() );
 		$this->assertSame( 'schema_newer_than_plugin', get_option( Migrator::OPTION_STATE )['error'] );
-		$this->assertSame( 3, ( new Migrator() )->installed_version() );
+		$this->assertSame( Migrator::TARGET_VERSION + 1, ( new Migrator() )->installed_version() );
 		update_option( Migrator::OPTION_VERSION, Migrator::TARGET_VERSION );
 		delete_option( Migrator::OPTION_STATE );
 	}

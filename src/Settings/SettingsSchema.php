@@ -100,6 +100,26 @@ final class SettingsSchema {
 				'internal' => true,
 				'label'    => __( 'Applied country profile', 'form-captain' ),
 			),
+			'general.entry_number_format'       => array(
+				'type'        => 'string',
+				'max_length'  => 30,
+				'allow_empty' => true,
+				'validate'    => array( \FormCaptain\Service\EntryNumbers::class, 'validate_format' ),
+				'label'       => __( 'Reference number format', 'form-captain' ),
+				'help'        => __( 'Gives every new submission a reference number, for example REQ-{year}-{number}. {number} is the running number, {year} the current year. Use {entry_number} in emails and the success message. Empty = no reference numbers.', 'form-captain' ),
+			),
+			'general.entry_number_digits'       => array(
+				'type'  => 'int',
+				'min'   => 1,
+				'max'   => 10,
+				'label' => __( 'Digits of the running number', 'form-captain' ),
+				'help'  => __( 'The number is filled with leading zeros, e.g. 4 digits give 0042.', 'form-captain' ),
+			),
+			'general.entry_number_yearly_reset' => array(
+				'type'  => 'bool',
+				'label' => __( 'Restart the running number every year', 'form-captain' ),
+				'help'  => __( 'On 1 January (time zone of the website) the running number starts again at 1. Use {year} in the format so numbers stay unique.', 'form-captain' ),
+			),
 			'appearance.mode'                   => array(
 				'type'    => 'enum',
 				'options' => array(
@@ -113,6 +133,39 @@ final class SettingsSchema {
 				'type'  => 'hex',
 				'label' => __( 'Accent colour', 'form-captain' ),
 				'help'  => __( 'Used for buttons and focus outlines with base styles only.', 'form-captain' ),
+			),
+			'appearance.radius'                 => array(
+				'type'  => 'int',
+				'min'   => 0,
+				'max'   => 24,
+				'label' => __( 'Corner radius (pixels)', 'form-captain' ),
+				'help'  => __( 'Rounding of input fields and buttons with base styles only. 0 = square corners.', 'form-captain' ),
+			),
+			'appearance.spacing'                => array(
+				'type'  => 'int',
+				'min'   => 0,
+				'max'   => 48,
+				'label' => __( 'Space between fields (pixels)', 'form-captain' ),
+				'help'  => __( 'Vertical space between the fields with base styles only.', 'form-captain' ),
+			),
+			'appearance.font_size'              => array(
+				'type'    => 'enum',
+				'options' => array(
+					'theme' => __( 'Like the theme', 'form-captain' ),
+					'14'    => __( 'Small (14 px)', 'form-captain' ),
+					'16'    => __( 'Normal (16 px)', 'form-captain' ),
+					'18'    => __( 'Large (18 px)', 'form-captain' ),
+					'20'    => __( 'Very large (20 px)', 'form-captain' ),
+				),
+				'label'   => __( 'Font size', 'form-captain' ),
+				'help'    => __( 'Font size of forms with base styles only.', 'form-captain' ),
+			),
+			'appearance.custom_css'             => array(
+				'type'       => 'css',
+				'max_length' => 10000,
+				'edit_cap'   => 'unfiltered_html',
+				'label'      => __( 'Custom CSS', 'form-captain' ),
+				'help'       => __( 'Loaded after the Form Captain styles on pages with a form, for both styling options. Only users who may post unfiltered HTML can change it. @import and HTML are not allowed.', 'form-captain' ),
 			),
 			'email.from_name'                   => array(
 				'type'       => 'string',
@@ -491,6 +544,13 @@ final class SettingsSchema {
 				continue;
 			}
 			$path = $group . '.' . $key;
+			if ( ! empty( $def['edit_cap'] ) && ! current_user_can( (string) $def['edit_cap'] ) ) {
+				// Only users with this extra capability may change the value (e.g. custom CSS: unfiltered_html).
+				if ( array_key_exists( $key, $input ) && (string) $input[ $key ] !== (string) ( $current[ $key ] ?? '' ) ) {
+					$errors[ $path ] = __( 'You are not allowed to change this setting.', 'form-captain' );
+				}
+				continue;
+			}
 			if ( 'bool' === $def['type'] ) {
 				$values[ $key ] = ! empty( $input[ $key ] );
 				continue;
@@ -574,8 +634,22 @@ final class SettingsSchema {
 					/* translators: %d: maximum number of characters */
 					return array( null, sprintf( __( 'Please use at most %d characters.', 'form-captain' ), (int) ( $def['max_length'] ?? 190 ) ) );
 				}
-				if ( '' === $value ) {
+				if ( '' === $value && empty( $def['allow_empty'] ) ) {
 					return array( null, __( 'This field cannot be empty.', 'form-captain' ) );
+				}
+				$invalid = isset( $def['validate'] ) && is_callable( $def['validate'] ) ? call_user_func( $def['validate'], $value ) : null;
+				if ( is_string( $invalid ) && '' !== $invalid ) {
+					return array( null, $invalid );
+				}
+				return array( $value, null );
+			case 'css':
+				$value = trim( str_replace( array( "\r\n", "\r" ), "\n", $raw ) );
+				if ( mb_strlen( $value ) > (int) ( $def['max_length'] ?? 10000 ) ) {
+					/* translators: %d: maximum number of characters */
+					return array( null, sprintf( __( 'Please use at most %d characters.', 'form-captain' ), (int) ( $def['max_length'] ?? 10000 ) ) );
+				}
+				if ( str_contains( $value, '<' ) || preg_match( '/@import/i', $value ) || preg_match( '/[\x00-\x08\x0B\x0C\x0E-\x1F]/', $value ) ) {
+					return array( null, __( 'The CSS must not contain HTML (<) or @import rules.', 'form-captain' ) );
 				}
 				return array( $value, null );
 			case 'text':

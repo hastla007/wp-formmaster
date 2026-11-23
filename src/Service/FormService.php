@@ -25,6 +25,9 @@ final class FormService {
 
 	public const IMPORT_MAX_BYTES = 262144;
 
+	/** Maximum length of the submit button text (SET-FC-02). */
+	public const SUBMIT_LABEL_MAX = 60;
+
 	/** Allowed status transitions (docs/spec/zustaende.md). */
 	public const TRANSITIONS = array(
 		'draft'     => array( 'published', 'archived' ),

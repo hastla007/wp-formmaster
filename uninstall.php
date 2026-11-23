@@ -70,5 +70,7 @@ foreach ( array( 'fc\\_', 'form\\_captain\\_' ) as $form_captain_prefix ) {
 }
 // Per-form records with an ID suffix (import reports).
 $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 'form\\_captain\\_import\\_%' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+// Reference number counters (one per year).
+$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", 'form\\_captain\\_entry\\_seq\\_%' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 delete_metadata( 'user', 0, 'form_captain_pro_hints_dismissed', '', true );
 \FormCaptain\Install\Capabilities::uninstall();

@@ -4,8 +4,8 @@
 
 | Bereich | Was Sie hier einstellen |
 |---|---|
-| **Allgemein** | Ersteinrichtung erledigt, gelegentliche Pro-Hinweise (auch die grauen Pro-Zeilen am Ende der Bereiche), Protokollstufe (Fehler … Debug), Höchstlänge ein- und mehrzeiliger Felder, Länderprofil als Vorschlag. Formularbezogenes (Empfänger, Betreff, Bestätigung, Weiterleitung, Aktionen) stellen Sie im Formular ein. Formular-Import/-Export finden Sie in der Formularliste, CSV-Export bei den Einträgen. |
-| **Darstellung** | Theme-Stil (Standard) oder Form-Captain-Basisstil mit Akzentfarbe. Es werden keine externen Schriften/Dateien geladen. |
+| **Allgemein** | Ersteinrichtung erledigt, gelegentliche Pro-Hinweise (auch die grauen Pro-Zeilen am Ende der Bereiche), Protokollstufe (Fehler … Debug), Höchstlänge ein- und mehrzeiliger Felder, Länderprofil als Vorschlag, **Vorgangsnummer** (Format wie `REQ-{year}-{number}`, Stellenzahl, jährlicher Neustart; leer = keine Nummer). Formularbezogenes (Empfänger, Betreff, Bestätigung, Weiterleitung, Aktionen) stellen Sie im Formular ein. Formular-Import/-Export finden Sie in der Formularliste, CSV-Export bei den Einträgen. |
+| **Darstellung** | Theme-Stil (Standard) oder Form-Captain-Basisstil mit Akzentfarbe, Eckenradius, Abstand zwischen den Feldern und Schriftgröße. Es werden keine externen Schriften/Dateien geladen. **Eigenes CSS** gilt für beide Stile und kann nur von Nutzern mit dem WordPress-Recht „ungefiltertes HTML“ geändert werden (`@import` und HTML sind nicht erlaubt). |
 | **E-Mail** | Standard-Absender für **neue** Formulare und Format. Hinweis, wenn die Absenderdomain nicht zur Website passt. Testmail an Ihre eigene Adresse (max. 3 je 10 min). SMTP-Zugangsdaten verwaltet Form Captain nicht – nutzen Sie dafür ein SMTP-Plugin. |
 | **Datenschutz & Speicherung** | Aufbewahrung als Zeitraum (1 Tag bis 30 Jahre) oder manuell (Vorgabe bei Neuinstallation; der Website-Zustand erinnert, bis eine Frist gesetzt ist), Schonfrist nach Verkürzung, Vorwarnung „läuft bald ab“, Aufbewahrung des Protokolls, Papierkorbfrist, Verhalten bei Löschanfragen (löschen oder anonymisieren), Datenlöschung bei Deinstallation, Textvorschlag für die Datenschutzerklärung, Backup-Hinweis. |
 | **Spamschutz** | Honeypot, Mindest-Ausfüllzeit, Rate-Limit je Formular und über alle Formulare, Zeit zum Ausfüllen, Blockliste, Quelle der Besucheradresse hinter Proxy/CDN (nur wählen, wenn die Website wirklich hinter dem Dienst steht). Externe Captchas gibt es nur über Erweiterungen; vor Aktivierung sehen Sie Anbieter, übermittelte Daten und Zweck und müssen bestätigen. |
@@ -20,6 +20,10 @@ Am Ende einiger Bereiche stehen graue Zeilen mit „Pro“-Kennzeichen. Sie nenn
 ## Globale Standards und Formularwerte
 
 Absender und Darstellung werden beim Anlegen eines Formulars **kopiert**. Spätere Änderungen gelten nur für neue Formulare; die Seite zeigt, wie viele bestehende Formulare eigene Werte behalten.
+
+## Vorgangsnummer
+
+Mit einem Format wie `REQ-{year}-{number}` bekommt jede neue Einsendung eine fortlaufende Nummer (z. B. `REQ-2026-0042`). `{number}` ist Pflicht, `{year}` optional; erlaubt sind außerdem Buchstaben, Ziffern und `- _ / . #`. Mit „jährlich neu beginnen“ startet die Nummer am 1. Januar (Zeitzone der Website) wieder bei 1 – nehmen Sie dann `{year}` ins Format auf. Spam bekommt keine Nummer. Die Nummer steht in der Eintragsansicht und über `{entry_number}` in E-Mails und der Erfolgsmeldung. Ohne Format bleibt die Funktion aus; `{entry_number}` zeigt dann die Eintrags-ID.
 
 ## Aufbewahrung ändern
 

@@ -30,7 +30,7 @@ final class FormSettingsSchemaTest extends TestCase {
 		Settings::set_group( 'email', array( 'from_name' => 'Shop', 'from_address' => 'shop@example.org' ) );
 		$defaults = $this->plugin()->get( FormService::class )->default_settings();
 		$this->assertSame( FormSettingsSchema::defaults(), $defaults );
-		$this->assertSame( array( 'notification', 'confirmation_mail', 'confirmation', 'paused_message', 'appearance', 'email', 'retention', 'actions' ), array_keys( $defaults ) );
+		$this->assertSame( array( 'notification', 'confirmation_mail', 'confirmation', 'paused_message', 'appearance', 'email', 'retention', 'actions', 'submit_label', 'texts', 'limits' ), array_keys( $defaults ) );
 		$this->assertSame( 'base', $defaults['appearance']['mode'] );
 		$this->assertSame( 'shop@example.org', $defaults['email']['from_address'] );
 		$this->assertSame( array( '{admin_email}' ), $defaults['notification']['to'] );

@@ -94,9 +94,46 @@ final class Assets {
 		wp_enqueue_style( self::HANDLE );
 		wp_enqueue_script( self::HANDLE );
 		if ( 'base' === $mode && empty( self::$modes['base'] ) ) {
-			$accent = sanitize_hex_color( (string) Settings::get( 'appearance.accent_color' ) ) ?: '#2271b1';
-			wp_add_inline_style( self::HANDLE, '.fc-mode-base{--fc-accent:' . $accent . ';}' );
+			wp_add_inline_style( self::HANDLE, self::base_css() );
+		}
+		if ( empty( self::$modes['custom'] ) ) {
+			self::$modes['custom'] = true;
+			$custom                = self::custom_css();
+			if ( '' !== $custom ) {
+				wp_add_inline_style( self::HANDLE, $custom );
+			}
 		}
 		self::$modes[ $mode ] = true;
+	}
+
+	/**
+	 * Variables of the base styles (SET-FC-32): accent colour and, when changed from the default,
+	 * corner radius, space between fields and font size.
+	 */
+	public static function base_css(): string {
+		$accent = sanitize_hex_color( (string) Settings::get( 'appearance.accent_color' ) ) ?: '#2271b1';
+		$css    = '--fc-accent:' . $accent . ';';
+		$radius = max( 0, min( 24, (int) Settings::get( 'appearance.radius' ) ) );
+		if ( 4 !== $radius ) {
+			$css .= '--fc-radius:' . $radius . 'px;';
+		}
+		$spacing = max( 0, min( 48, (int) Settings::get( 'appearance.spacing' ) ) );
+		if ( 16 !== $spacing ) {
+			$css .= '--fc-gap:' . $spacing . 'px;';
+		}
+		$size = (string) Settings::get( 'appearance.font_size' );
+		if ( in_array( $size, array( '14', '16', '18', '20' ), true ) ) {
+			$css .= 'font-size:' . $size . 'px;';
+		}
+		return '.fc-mode-base{' . $css . '}';
+	}
+
+	/**
+	 * Custom CSS of the operator (SET-FC-32). Stored only by users with unfiltered_html and checked
+	 * on saving; "<" is removed again here so the value can never end the style element.
+	 */
+	public static function custom_css(): string {
+		$css = (string) Settings::get( 'appearance.custom_css' );
+		return trim( str_replace( '<', '', $css ) );
 	}
 }

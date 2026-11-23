@@ -47,8 +47,9 @@ final class SettingsSchema {
 	/**
 	 * Definitions keyed by "group.key".
 	 *
-	 * Keys: type (bool|int|enum|string|email|hex|text|datetime), default, tab, label, help,
-	 * options (enum), min/max (int), max_length (string/text), internal (not user editable).
+	 * Keys: type (bool|int|enum|string|email|hex|text|datetime|attachment), default, tab, label, help,
+	 * options (enum), min/max (int), max_length (string/text), internal (not user editable),
+	 * optional (email: empty allowed), keep_lines (text: keep line order and duplicates).
 	 *
 	 * @return array<string,array<string,mixed>>
 	 */
@@ -97,6 +98,24 @@ final class SettingsSchema {
 					'text' => __( 'Plain text', 'form-captain' ),
 				),
 				'label'   => __( 'Email format', 'form-captain' ),
+			),
+			'email.reply_to'                    => array(
+				'type'     => 'email',
+				'optional' => true,
+				'label'    => __( 'Reply-to address for e-mails to visitors', 'form-captain' ),
+				'help'     => __( 'Replies to confirmation and double opt-in e-mails go to this address. Leave empty to use the sender address.', 'form-captain' ),
+			),
+			'email.footer_text'                 => array(
+				'type'       => 'text',
+				'max_length' => 2000,
+				'keep_lines' => true,
+				'label'      => __( 'E-mail footer', 'form-captain' ),
+				'help'       => __( 'Shown at the end of every e-mail Form Captain sends, for example company name, address, register number and contact. Which details are mandatory in business e-mails depends on your country – have this text checked legally.', 'form-captain' ),
+			),
+			'email.logo_id'                     => array(
+				'type'  => 'attachment',
+				'label' => __( 'Logo in e-mails', 'form-captain' ),
+				'help'  => __( 'An image from the media library, shown at the top of HTML e-mails. Leave empty for no logo.', 'form-captain' ),
 			),
 			'privacy.retention'                 => array(
 				'type'    => 'enum',
@@ -314,6 +333,9 @@ final class SettingsSchema {
 				$raw = strtolower( trim( $raw ) );
 				return preg_match( '/^#[0-9a-f]{6}$/', $raw ) ? array( $raw, null ) : array( null, __( 'Please enter a colour in the format #RRGGBB.', 'form-captain' ) );
 			case 'email':
+				if ( ! empty( $def['optional'] ) && '' === trim( $raw ) ) {
+					return array( '', null );
+				}
 				$email = sanitize_email( trim( $raw ) );
 				return ( '' !== $email && is_email( $email ) ) ? array( strtolower( $email ), null ) : array( null, __( 'Please enter a valid e-mail address.', 'form-captain' ) );
 			case 'string':
@@ -332,8 +354,22 @@ final class SettingsSchema {
 					/* translators: %d: maximum number of characters */
 					return array( null, sprintf( __( 'Please use at most %d characters.', 'form-captain' ), (int) ( $def['max_length'] ?? 10000 ) ) );
 				}
+				if ( ! empty( $def['keep_lines'] ) ) {
+					// Free text such as an e-mail footer: keep order, duplicates and single blank lines.
+					$value = (string) preg_replace( "/\n{3,}/", "\n\n", str_replace( array( "\r\n", "\r" ), "\n", $value ) );
+					return array( trim( implode( "\n", array_map( 'rtrim', explode( "\n", $value ) ) ) ), null );
+				}
 				$lines = array_filter( array_map( 'trim', preg_split( '/\R/', $value ) ?: array() ), static fn( $l ) => '' !== $l );
 				return array( implode( "\n", array_unique( $lines ) ), null );
+			case 'attachment':
+				$raw = trim( $raw );
+				if ( '' === $raw || '0' === $raw ) {
+					return array( 0, null );
+				}
+				if ( ! preg_match( '/^\d+$/', $raw ) || ! wp_attachment_is_image( (int) $raw ) ) {
+					return array( null, __( 'Please choose an image from the media library.', 'form-captain' ) );
+				}
+				return array( (int) $raw, null );
 			default:
 				return array( null, __( 'Invalid value.', 'form-captain' ) );
 		}

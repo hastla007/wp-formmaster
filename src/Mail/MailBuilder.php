@@ -114,9 +114,9 @@ final class MailBuilder {
 			'reply_to'   => $reply_to,
 			'from_email' => $from['email'],
 			'from_name'  => $from['name'],
-			'format'     => $this->format( $settings ),
-			'html'       => $this->html( $title, $intro, $rows, $link, __( 'View submission in WordPress', 'form-captain' ) ),
-			'text'       => $this->text( $intro, $rows, $link, __( 'View submission in WordPress', 'form-captain' ) ),
+			'format'     => $this->format( $settings, $form ),
+			'html'       => self::wrap_html( $this->html( $title, $intro, $rows, $link, __( 'View submission in WordPress', 'form-captain' ) ), self::frame( 'admin', $form ) ),
+			'text'       => self::wrap_text( $this->text( $intro, $rows, $link, __( 'View submission in WordPress', 'form-captain' ) ), self::frame( 'admin', $form ) ),
 			'rejected'   => array_values( array_unique( $rejected ) ),
 		);
 	}
@@ -172,12 +172,12 @@ final class MailBuilder {
 		return array(
 			'to'         => array( $to ),
 			'subject'    => $subject,
-			'reply_to'   => null,
+			'reply_to'   => self::visitor_reply_to(),
 			'from_email' => $from['email'],
 			'from_name'  => $from['name'],
-			'format'     => $this->format( $settings ),
-			'html'       => $this->html( $title, $body, $rows, null, '' ),
-			'text'       => $this->text( $body, $rows, null, '' ),
+			'format'     => $this->format( $settings, $form ),
+			'html'       => self::wrap_html( $this->html( $title, $body, $rows, null, '' ), self::frame( 'confirmation', $form ) ),
+			'text'       => self::wrap_text( $this->text( $body, $rows, null, '' ), self::frame( 'confirmation', $form ) ),
 			'rejected'   => array_values( array_unique( $rejected ) ),
 		);
 	}
@@ -236,10 +236,86 @@ final class MailBuilder {
 		);
 	}
 
-	/** @param array<string,mixed> $settings */
-	private function format( array $settings ): string {
-		$format = (string) ( $settings['format'] ?? Settings::get( 'email.format' ) ?? 'html' );
-		return 'text' === $format ? 'text' : 'html';
+	/**
+	 * Format of one mail: the section's own value, then the form's `email.format`, then the
+	 * global setting ("global" or an empty value means: ask the next level; SET-FC-17).
+	 *
+	 * @param array<string,mixed> $settings section settings (notification, confirmation_mail, double_opt_in)
+	 * @param array<string,mixed> $form
+	 */
+	private function format( array $settings, array $form = array() ): string {
+		foreach ( array( $settings['format'] ?? null, $form['settings']['email']['format'] ?? null, Settings::get( 'email.format' ) ) as $candidate ) {
+			if ( in_array( $candidate, array( 'html', 'text' ), true ) ) {
+				return $candidate;
+			}
+		}
+		return 'html';
+	}
+
+	/** Fixed reply-to address for mails to visitors (SET-FC-03), null when not set. */
+	public static function visitor_reply_to(): ?string {
+		$address = trim( (string) Settings::get( 'email.reply_to' ) );
+		return '' !== $address && ! self::header_unsafe( $address ) && is_email( $address ) ? sanitize_email( $address ) : null;
+	}
+
+	/**
+	 * Logo and footer shared by every mail (SET-FC-03).
+	 *
+	 * Filter `form_captain_mail_footer_v1` ( string $footer, string $kind, array $form ): the filter
+	 * wins over the setting; kinds are admin, confirmation, double_opt_in and test.
+	 *
+	 * @param array<string,mixed> $form
+	 * @return array{footer:string,logo:array{url:string,width:int,height:int,alt:string}|null}
+	 */
+	public static function frame( string $kind, array $form = array() ): array {
+		$footer = apply_filters( 'form_captain_mail_footer_v1', (string) Settings::get( 'email.footer_text' ), $kind, $form );
+		$footer = is_string( $footer ) ? trim( wp_strip_all_tags( $footer ) ) : '';
+		$logo   = null;
+		$id     = (int) Settings::get( 'email.logo_id' );
+		if ( $id > 0 && wp_attachment_is_image( $id ) ) {
+			$src = wp_get_attachment_image_src( $id, 'medium' );
+			if ( is_array( $src ) && ! empty( $src[0] ) ) {
+				$logo = array(
+					'url'    => (string) $src[0],
+					'width'  => (int) ( $src[1] ?? 0 ),
+					'height' => (int) ( $src[2] ?? 0 ),
+					'alt'    => wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES ),
+				);
+			}
+		}
+		return array(
+			'footer' => mb_substr( $footer, 0, 2000 ),
+			'logo'   => $logo,
+		);
+	}
+
+	/**
+	 * Adds logo (top) and footer (bottom) to an HTML document built by html().
+	 *
+	 * @param array{footer:string,logo:array{url:string,width:int,height:int,alt:string}|null} $frame
+	 */
+	public static function wrap_html( string $html, array $frame ): string {
+		if ( null !== $frame['logo'] ) {
+			$width = $frame['logo']['width'] > 0 ? min( 240, $frame['logo']['width'] ) : 240;
+			$img   = '<p><img src="' . esc_url( $frame['logo']['url'] ) . '" alt="' . esc_attr( $frame['logo']['alt'] ) . '" width="' . (int) $width . '" style="max-width:240px;height:auto;border:0;"></p>';
+			$pos   = strpos( $html, '>', (int) strpos( $html, '<body' ) );
+			$html  = false !== $pos ? substr_replace( $html, $img, $pos + 1, 0 ) : $img . $html;
+		}
+		if ( '' !== $frame['footer'] ) {
+			$foot = '<hr style="border:0;border-top:1px solid #dcdcde;margin:24px 0 12px;"><p style="font-size:12px;color:#50575e;">' . nl2br( esc_html( $frame['footer'] ) ) . '</p>';
+			$pos  = strrpos( $html, '</body>' );
+			$html = false !== $pos ? substr_replace( $html, $foot, $pos, 0 ) : $html . $foot;
+		}
+		return $html;
+	}
+
+	/**
+	 * Adds the footer to a plain-text mail, separated by the usual signature delimiter.
+	 *
+	 * @param array{footer:string,logo:array<string,mixed>|null} $frame
+	 */
+	public static function wrap_text( string $text, array $frame ): string {
+		return '' === $frame['footer'] ? $text : rtrim( $text ) . "\n\n-- \n" . $frame['footer'] . "\n";
 	}
 
 	/**

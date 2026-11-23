@@ -30,6 +30,9 @@ final class Settings {
 				'from_name'    => wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES ),
 				'from_address' => 'wordpress@' . $host,
 				'format'       => 'html',
+				'reply_to'     => '',
+				'footer_text'  => '',
+				'logo_id'      => 0,
 			),
 			'privacy'    => array(
 				'retention'                 => '12m',

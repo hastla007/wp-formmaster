@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace FormCaptain\Admin;
 
 use FormCaptain\Install\Capabilities;
+use FormCaptain\Mail\MailBuilder;
+use FormCaptain\Mail\MailJobHandler;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
@@ -56,6 +58,10 @@ final class SettingsPage {
 			return;
 		}
 		wp_enqueue_style( 'form-captain-admin-settings', Asset::url( 'admin-settings.css' ), array(), Asset::version( 'admin-settings.css' ) );
+		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( self::SLUG === $page && 'email' === $tab && current_user_can( 'upload_files' ) ) {
+			wp_enqueue_media(); // Logo picker (SET-FC-03); the number field works without it.
+		}
 		wp_enqueue_script( 'form-captain-admin-settings', Asset::url( 'admin-settings.js' ), array( 'wp-i18n' ), Asset::version( 'admin-settings.js' ), true );
 		wp_set_script_translations( 'form-captain-admin-settings', 'form-captain', FORM_CAPTAIN_DIR . 'languages' );
 	}
@@ -275,25 +281,27 @@ final class SettingsPage {
 		}
 		set_transient( $key, $hits + 1, 10 * MINUTE_IN_SECONDS );
 		$error = '';
-		$catch = static function ( \WP_Error $e ) use ( &$error ): void {
-			$error = (string) $e->get_error_code();
-		};
-		add_action( 'wp_mail_failed', $catch );
-		$from_name = (string) Settings::get( 'email.from_name' );
-		$from      = (string) Settings::get( 'email.from_address' );
-		$headers   = array( 'From: ' . str_replace( array( "\r", "\n", '"' ), '', $from_name ) . ' <' . $from . '>' );
-		$ok        = wp_mail(
-			$to,
-			__( 'Form Captain test e-mail', 'form-captain' ),
-			__( 'This is a test e-mail from Form Captain. If you received it, your website can send e-mails. Form notifications use the same way of delivery.', 'form-captain' ),
-			$headers
+		$intro = __( 'This is a test e-mail from Form Captain. If you received it, your website can send e-mails. Form notifications use the same way of delivery.', 'form-captain' );
+		$frame = MailBuilder::frame( 'test' );
+		$title = __( 'Form Captain test e-mail', 'form-captain' );
+		$ok    = Plugin::instance()->get( MailJobHandler::class )->send(
+			array(
+				'to'         => array( $to ),
+				'subject'    => $title,
+				'reply_to'   => MailBuilder::visitor_reply_to(),
+				'from_email' => (string) Settings::get( 'email.from_address' ),
+				'from_name'  => MailBuilder::strip_header( (string) Settings::get( 'email.from_name' ) ),
+				'format'     => 'text' === Settings::get( 'email.format' ) ? 'text' : 'html',
+				'html'       => MailBuilder::wrap_html( '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:14px;color:#1d2327;"><h2 style="font-size:18px;">' . esc_html( $title ) . '</h2><p>' . esc_html( $intro ) . '</p></body></html>', $frame ),
+				'text'       => MailBuilder::wrap_text( $intro . "\n", $frame ),
+			),
+			$error
 		);
-		remove_action( 'wp_mail_failed', $catch );
 		if ( $ok ) {
 			Logger::log( 'info', 'mail_test_sent' );
 			return self::notice( 'success', array( __( 'Test e-mail sent to your user e-mail address. If it does not arrive within a few minutes, check the spam folder and consider an SMTP plugin.', 'form-captain' ) ) );
 		}
-		Logger::log( 'warning', 'mail_test_failed', $error );
+		Logger::log( 'warning', 'mail_test_failed', Logger::redact( $error ) );
 		return self::notice( 'error', array( __( 'The test e-mail could not be sent. WordPress reported an error; an SMTP plugin usually solves delivery problems.', 'form-captain' ) . ( '' !== $error ? ' (' . $error . ')' : '' ) ) );
 	}
 
@@ -525,6 +533,16 @@ final class SettingsPage {
 				break;
 			case 'text':
 				echo '<textarea class="large-text code" rows="6" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" maxlength="' . esc_attr( (string) $def['max_length'] ) . '"' . $aria . '>' . esc_textarea( (string) $value ) . '</textarea>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				break;
+			case 'attachment':
+				$image = (int) $value > 0 ? wp_get_attachment_image_url( (int) $value, 'medium' ) : false;
+				echo '<div class="fc-media-field" data-fc-media="' . esc_attr( $id ) . '">';
+				echo '<img class="fc-media-preview" alt="" src="' . esc_url( $image ? $image : '' ) . '"' . ( $image ? '' : ' hidden' ) . '>';
+				echo '<input type="number" min="0" class="small-text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) (int) $value ) . '"' . $aria . '> '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo '<button type="button" class="button fc-media-choose" hidden>' . esc_html__( 'Choose image', 'form-captain' ) . '</button> ';
+				echo '<button type="button" class="button-link fc-media-remove" hidden>' . esc_html__( 'Remove image', 'form-captain' ) . '</button>';
+				echo '<p class="description">' . esc_html__( 'Media library ID of the image (0 = no logo).', 'form-captain' ) . '</p>';
+				echo '</div>';
 				break;
 			default:
 				echo '<input type="' . ( 'email' === $def['type'] ? 'email' : 'text' ) . '" class="regular-text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" value="' . esc_attr( (string) $value ) . '"' . ( isset( $def['max_length'] ) ? ' maxlength="' . esc_attr( (string) $def['max_length'] ) . '"' : '' ) . $aria . '>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

@@ -314,7 +314,7 @@ final class EntryImportService {
 		if ( 'auto' === $time_format ) {
 			$time_format = (string) GenericCsv::detect_time_format( $this->samples( $csv, $time_index ) );
 			if ( '' === $time_format ) {
-				return Errors::error( 'time_format_unknown', __( 'The date format of the submission time column was not recognised. Please choose it.', 'form-captain' ), array( 'status' => 400 ) );
+				return Errors::error( 'time_format_unknown', __( 'The date format of the submission time column was not recognized. Please choose it.', 'form-captain' ), array( 'status' => 400 ) );
 			}
 		}
 		$report = $this->import->process_entries(
@@ -356,7 +356,7 @@ final class EntryImportService {
 		}
 		$state = $this->state( $token );
 		if ( ! $state || ! in_array( $state['step'], array( 'check', 'import' ), true ) ) {
-			return Errors::error( 'import_expired', __( 'The upload has expired. Please upload the file again – rows imported before are recognised and skipped.', 'form-captain' ), array( 'status' => 410 ) );
+			return Errors::error( 'import_expired', __( 'The upload has expired. Please upload the file again – rows imported before are recognized and skipped.', 'form-captain' ), array( 'status' => 410 ) );
 		}
 		$csv = $this->read_file( $state );
 		if ( is_wp_error( $csv ) ) {

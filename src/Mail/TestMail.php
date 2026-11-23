@@ -34,16 +34,16 @@ final class TestMail {
 	 */
 	public function send( array $form, string $kind, ?array $settings, \WP_User $user ): array|\WP_Error {
 		if ( ! in_array( $kind, self::KINDS, true ) ) {
-			return new \WP_Error( 'invalid_kind', __( 'Unknown e-mail type.', 'form-captain' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'invalid_kind', __( 'Unknown email type.', 'form-captain' ), array( 'status' => 400 ) );
 		}
 		$to = (string) $user->user_email;
 		if ( ! is_email( $to ) ) {
-			return new \WP_Error( 'no_user_email', __( 'Your user account has no valid e-mail address.', 'form-captain' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'no_user_email', __( 'Your user account has no valid email address.', 'form-captain' ), array( 'status' => 400 ) );
 		}
 		$key  = 'form_captain_formtest_' . (int) $user->ID;
 		$hits = (int) get_transient( $key );
 		if ( $hits >= self::PER_WINDOW ) {
-			return new \WP_Error( 'rate_limited', __( 'Too many test e-mails. Please wait ten minutes.', 'form-captain' ), array( 'status' => 429 ) );
+			return new \WP_Error( 'rate_limited', __( 'Too many test emails. Please wait ten minutes.', 'form-captain' ), array( 'status' => 429 ) );
 		}
 		$schema = (array) ( $form['schema'] ?? array() );
 		if ( null !== $settings ) {
@@ -72,17 +72,17 @@ final class TestMail {
 		if ( is_wp_error( $mail ) ) {
 			$message = 'invalid_recipient' === $mail->get_error_code()
 				? __( 'Mark an email field as recipient of the confirmation email.', 'form-captain' )
-				: __( 'The test e-mail could not be built. Please check the settings.', 'form-captain' );
+				: __( 'The test email could not be built. Please check the settings.', 'form-captain' );
 			return new \WP_Error( $mail->get_error_code(), $message, array( 'status' => 400 ) );
 		}
 		set_transient( $key, $hits + 1, self::WINDOW_SEC );
 		$mail['to'] = array( $to );
-		/* translators: %s: subject of the e-mail */
+		/* translators: %s: subject of the email */
 		$mail['subject'] = sprintf( __( '[Test] %s', 'form-captain' ), (string) $mail['subject'] );
 		$error           = '';
 		if ( ! $this->handler->send( $mail, $error ) ) {
 			Logger::log( 'warning', 'mail_form_test_failed', Logger::redact( $error ), array( 'form_id' => (int) $form['id'] ) );
-			return new \WP_Error( 'mail_failed', __( 'The test e-mail could not be sent. WordPress reported an error; an SMTP plugin usually solves delivery problems.', 'form-captain' ), array( 'status' => 502 ) );
+			return new \WP_Error( 'mail_failed', __( 'The test email could not be sent. WordPress reported an error; an SMTP plugin usually solves delivery problems.', 'form-captain' ), array( 'status' => 502 ) );
 		}
 		Logger::log( 'info', 'mail_form_test_sent', $kind, array( 'form_id' => (int) $form['id'] ) );
 		return array( 'to' => $to );

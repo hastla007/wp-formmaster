@@ -180,6 +180,127 @@ final class ProofOfWorkTest extends FrontendTestCase {
 	}
 
 	/**
+	 * SET-FC-P4-08 (decision 22): without JavaScript a submission to a form in mode "global" with the
+	 * provider `pow` stays possible, but it is marked on the entry and counts against a much stricter
+	 * sending limit (a fifth of spam.rate_limit, at least 1, filterable). It is never dropped silently.
+	 */
+	public function test_no_js_submissions_without_solution_are_marked_and_limited_strictly(): void {
+		$this->set_spam_setting( 'captcha_provider', 'pow' );
+		$this->set_spam_setting( 'rate_limit', 5 );
+		add_filter( 'form_captain_pow_max_number_v1', static fn(): int => 1000 );
+		$form    = $this->create_published_form();
+		$entries = $this->plugin()->get( EntryRepository::class );
+		$nojs    = fn( string $name, array $extra = array() ): array => $this->plugin()->get( AdminPostController::class )->process( $extra + $this->payload( $form, array( 'f_name01' => $name, 'f_mail01' => strtolower( $name ) . '@example.org' ) ), array() )['result'];
+
+		$this->assertSame( 1, RateLimiter::without_pow_limit(), 'a fifth of 5' );
+		$first = $nojs( 'A' );
+		$this->assertTrue( $first['success'] );
+		$entry = $entries->find( (int) $first['entry_id'] );
+		$this->assertSame( 'new', $entry['status'], 'no spam, the visitor is not blocked' );
+		$this->assertSame( PowCaptcha::NOTE_WITHOUT_POW, $entry['spam_reason'] );
+		$this->assertStringContainsString( 'spam check without proof of work', \FormCaptain\Export\CsvExporter::status_label( $entry ) );
+		$this->as_admin();
+		$_GET = array( 'page' => \FormCaptain\Admin\EntriesPage::SLUG, 'view' => (string) $first['entry_id'] );
+		ob_start();
+		$this->plugin()->get( \FormCaptain\Admin\EntriesPage::class )->render();
+		$html = (string) ob_get_clean();
+		$_GET = array();
+		$this->assertStringContainsString( 'fc-without-pow', $html, 'detail view explains the mark' );
+		$this->assertStringContainsString( 'Spam check without proof of work (sent without JavaScript)', $html );
+		wp_set_current_user( 0 );
+
+		// The second one from the same visitor within the window is refused visibly (429), not stored as spam.
+		$second = $nojs( 'B' );
+		$this->assertFalse( $second['success'] );
+		$this->assertSame( \FormCaptain\Support\Errors::RATE_LIMITED, $second['code'] );
+		$this->assertGreaterThan( 0, $second['retry_after'] );
+
+		// A submission with a solution (JavaScript) is neither marked nor counted against the stricter bucket.
+		$challenge = PowCaptcha::challenge_for( $form );
+		$solved    = $this->plugin()->get( SubmissionService::class )->submit( $form, array( '_fc_pow' => ProofOfWork::encode( $challenge, (int) ProofOfWork::solve( $challenge ) ) ) + $this->payload( $form, array( 'f_name01' => 'C', 'f_mail01' => 'c@example.org' ) ), array( 'js' => true ) );
+		$this->assertTrue( $solved['success'] );
+		$this->assertNull( $entries->find( (int) $solved['entry_id'] )['spam_reason'] );
+
+		// The limit is filterable; values below 1 count as 1.
+		add_filter( 'form_captain_pow_nojs_rate_limit_v1', static fn(): int => 0 );
+		$this->assertSame( 1, RateLimiter::without_pow_limit() );
+		remove_all_filters( 'form_captain_pow_nojs_rate_limit_v1' );
+		add_filter( 'form_captain_pow_nojs_rate_limit_v1', static fn( int $limit, int $per_visitor ): int => $per_visitor, 10, 2 );
+		$this->assertTrue( $nojs( 'D' )['success'], 'raised to 5 by the filter' );
+		remove_all_filters( 'form_captain_pow_nojs_rate_limit_v1' );
+
+		// Mode "strict" is unchanged: no solution means spam, no stricter bucket involved.
+		$strict = $this->create_published_form( null, array( 'spam' => array( 'mode' => 'strict' ) ) );
+		$res    = $this->plugin()->get( AdminPostController::class )->process( $this->payload( $strict, $this->valid_fields() ), array() )['result'];
+		$this->assertSame( PowCaptcha::REASON_MISSING, $entries->find( (int) $res['entry_id'] )['spam_reason'] );
+		$this->assertSame( 'spam', $entries->find( (int) $res['entry_id'] )['status'] );
+
+		// Another provider than `pow`: nothing to mark.
+		$this->set_spam_setting( 'captcha_provider', 'none' );
+		$other = $this->create_published_form();
+		$res   = $this->plugin()->get( AdminPostController::class )->process( $this->payload( $other, $this->valid_fields() ), array() )['result'];
+		$this->assertNull( $entries->find( (int) $res['entry_id'] )['spam_reason'] );
+	}
+
+	/**
+	 * SET-FC-P4-09: honeypot, minimum time and proof of work run before the field validation; a
+	 * submission that is spam by them never reaches the validator of an extension field (which would
+	 * store an uploaded file). The proof-of-work pre-check does not use up a valid solution.
+	 */
+	public function test_spam_without_values_is_detected_before_extensions_store_files(): void {
+		$types = static fn( array $t ): array => $t + array( 'demo_file' => array( 'label' => 'Demo file', 'has_value' => true ) );
+		add_filter( 'form_captain_field_types_v1', $types );
+		\FormCaptain\Domain\Fields\FieldTypes::reset();
+		$calls     = 0;
+		$validator = static function ( $result, array $field ) use ( &$calls ) {
+			++$calls;
+			return array( 'value' => 'ref:stored' );
+		};
+		add_filter( 'form_captain_validate_field_v1', $validator, 10, 2 );
+		try {
+			$this->set_spam_setting( 'captcha_provider', 'pow' );
+			add_filter( 'form_captain_pow_max_number_v1', static fn(): int => 1000 );
+			$fields  = array(
+				array( 'id' => 'f_name01', 'type' => 'text', 'key' => 'name', 'label' => 'Name', 'required' => true ),
+				array( 'id' => 'f_file01', 'type' => 'demo_file', 'key' => 'file', 'label' => 'File', 'required' => true ),
+			);
+			$form    = $this->create_published_form( $fields );
+			$service = $this->plugin()->get( SubmissionService::class );
+			$entries = $this->plugin()->get( EntryRepository::class );
+			$solved  = function () use ( $form ): array {
+				$challenge = PowCaptcha::challenge_for( $form );
+				return array( '_fc_pow' => ProofOfWork::encode( $challenge, (int) ProofOfWork::solve( $challenge ) ) );
+			};
+
+			// Honeypot filled: spam, the extension is not asked, a required extension field does not fail.
+			$raw = $solved() + $this->payload( $form, array( 'f_name01' => 'Bot' ) );
+			$raw[ \FormCaptain\Security\SpamGuard::honeypot_name( (string) $form['public_id'] ) ] = 'http://spam.example';
+			$res = $service->submit( $form, $raw, array( 'js' => true ) );
+			$this->assertTrue( $res['success'], 'the bot sees the usual answer' );
+			$this->assertSame( 'honeypot', $entries->find( (int) $res['entry_id'] )['spam_reason'] );
+			$this->assertSame( 0, $calls );
+
+			// Too fast and missing proof of work: also before the validation.
+			$res = $service->submit( $form, $solved() + $this->payload( $form, array( 'f_name01' => 'Fast' ), $this->token( $form, 0 ) ), array( 'js' => true ) );
+			$this->assertSame( 'too_fast', $entries->find( (int) $res['entry_id'] )['spam_reason'] );
+			$res = $service->submit( $form, $this->payload( $form, array( 'f_name01' => 'NoPow' ) ), array( 'js' => true ) );
+			$this->assertSame( PowCaptcha::REASON_MISSING, $entries->find( (int) $res['entry_id'] )['spam_reason'] );
+			$this->assertSame( 0, $calls, 'no file of a spam submission is handed to the extension' );
+
+			// A valid solution passes the pre-check without being used up, then counts once.
+			$raw = $solved() + $this->payload( $form, array( 'f_name01' => 'Ada' ) );
+			$res = $service->submit( $form, $raw, array( 'js' => true ) );
+			$this->assertSame( 'new', $entries->find( (int) $res['entry_id'] )['status'] );
+			$this->assertSame( 1, $calls );
+			$this->assertSame( 'ref:stored', $entries->values_for( (int) $res['entry_id'] )['f_file01'] );
+		} finally {
+			remove_filter( 'form_captain_field_types_v1', $types );
+			remove_filter( 'form_captain_validate_field_v1', $validator, 10 );
+			\FormCaptain\Domain\Fields\FieldTypes::reset();
+		}
+	}
+
+	/**
 	 * SET-FC-P4-01: frontend.js fetches token and challenge together and keeps the token for up to
 	 * 115 minutes. A solution solved at the first focus must still count when the visitor submits
 	 * 100 minutes later, otherwise the entry lands in spam while the visitor sees a success message.

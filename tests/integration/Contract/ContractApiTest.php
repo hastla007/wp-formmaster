@@ -44,7 +44,7 @@ final class ContractApiTest extends TestCase {
 	}
 
 	public function test_contract_version(): void {
-		$this->assertSame( '1.2.0', form_captain_contract_version() );
+		$this->assertSame( '1.3.0', form_captain_contract_version() );
 		$this->assertSame( FORM_CAPTAIN_CONTRACT_VERSION, form_captain_contract_version() );
 	}
 

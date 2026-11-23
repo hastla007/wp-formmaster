@@ -31,8 +31,10 @@ declare(strict_types=1);
 namespace FormCaptain\Settings;
 
 use FormCaptain\Domain\Fields\FieldTypes;
+use FormCaptain\Service\DoubleOptIn;
 use FormCaptain\Service\FormLimits;
 use FormCaptain\Service\FormService;
+use FormCaptain\Service\RetentionService;
 
 final class FormSettingsSchema {
 
@@ -48,7 +50,7 @@ final class FormSettingsSchema {
 				'type'    => 'bool',
 				'default' => true,
 				'label'   => __( 'Send a notification', 'form-captain' ),
-				'help'    => __( 'Sends an e-mail to the recipients below for every new submission.', 'form-captain' ),
+				'help'    => __( 'Sends an email to the recipients below for every new submission.', 'form-captain' ),
 			),
 			'notification.to'                 => array(
 				'type'      => 'recipients',
@@ -64,7 +66,7 @@ final class FormSettingsSchema {
 				'default'    => '',
 				'error'      => 'invalid_reply_to_field',
 				'label'      => __( 'Reply-to field', 'form-captain' ),
-				'help'       => __( 'An e-mail field of this form whose value is used as reply-to address.', 'form-captain' ),
+				'help'       => __( 'An email field of this form whose value is used as reply-to address.', 'form-captain' ),
 			),
 			'notification.subject'            => array(
 				'type'       => 'string',
@@ -72,7 +74,7 @@ final class FormSettingsSchema {
 				/* translators: {form_title} is a placeholder and must not be translated. */
 				'default'    => static fn(): string => __( 'New submission: {form_title}', 'form-captain' ),
 				'label'      => __( 'Subject', 'form-captain' ),
-				'help'       => __( 'Placeholders such as {form_title} are replaced when the e-mail is sent.', 'form-captain' ),
+				'help'       => __( 'Placeholders such as {form_title} are replaced when the email is sent.', 'form-captain' ),
 			),
 			'notification.fields'             => array(
 				'type'    => 'field_selection',
@@ -86,15 +88,15 @@ final class FormSettingsSchema {
 			'confirmation_mail.enabled'       => array(
 				'type'    => 'bool',
 				'default' => false,
-				'label'   => __( 'Send a confirmation e-mail', 'form-captain' ),
-				'help'    => __( 'Needs an e-mail field marked as confirmation recipient.', 'form-captain' ),
+				'label'   => __( 'Send a confirmation email', 'form-captain' ),
+				'help'    => __( 'Needs an email field marked as confirmation recipient.', 'form-captain' ),
 			),
 			'confirmation_mail.subject'       => array(
 				'type'       => 'string',
 				'max_length' => 190,
 				'default'    => '',
 				'label'      => __( 'Confirmation subject', 'form-captain' ),
-				'help'       => __( 'Required when the confirmation e-mail is on.', 'form-captain' ),
+				'help'       => __( 'Required when the confirmation email is on.', 'form-captain' ),
 			),
 			// SET-FC-19: plain text or simple HTML from the allowlist of html fields.
 			'confirmation_mail.body'          => array(
@@ -108,7 +110,7 @@ final class FormSettingsSchema {
 				'type'    => 'field_list',
 				'default' => array(),
 				'label'   => __( 'Fields in the confirmation', 'form-captain' ),
-				'help'    => __( 'Submitted values that are repeated in the confirmation e-mail.', 'form-captain' ),
+				'help'    => __( 'Submitted values that are repeated in the confirmation email.', 'form-captain' ),
 			),
 
 			// What the visitor sees after sending.
@@ -183,7 +185,7 @@ final class FormSettingsSchema {
 				),
 				'default' => 'global',
 				'label'   => __( 'Email format', 'form-captain' ),
-				'help'    => __( 'Format of the e-mails of this form. "Use the global setting" follows Settings → E-mail.', 'form-captain' ),
+				'help'    => __( 'Format of the emails of this form. "Use the global setting" follows Settings → Email.', 'form-captain' ),
 			),
 
 			// SET-FC-01: `global` or a retention period (manual, 1d…30y, see RetentionPeriod).
@@ -288,14 +290,14 @@ final class FormSettingsSchema {
 				'default'  => false,
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'enabled', $ctx ),
 				'label'    => __( 'Double opt-in', 'form-captain' ),
-				'help'     => __( 'Visitors confirm their submission with a link sent by e-mail. Unconfirmed submissions are deleted automatically. The periods and texts are suggestions – have them checked legally.', 'form-captain' ),
+				'help'     => __( 'Visitors confirm their submission with a link sent by email. Unconfirmed submissions are deleted automatically. The periods and texts are suggestions – have them checked legally.', 'form-captain' ),
 			),
 			'double_opt_in.email_field'       => array(
 				'type'     => 'custom',
 				'default'  => '',
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'email_field', $ctx ),
-				'label'    => __( 'E-mail field for the confirmation link', 'form-captain' ),
-				'help'     => __( 'A required e-mail field of this form that receives the confirmation link.', 'form-captain' ),
+				'label'    => __( 'Email field for the confirmation link', 'form-captain' ),
+				'help'     => __( 'A required email field of this form that receives the confirmation link.', 'form-captain' ),
 			),
 			'double_opt_in.subject'           => array(
 				'type'     => 'custom',
@@ -515,6 +517,19 @@ final class FormSettingsSchema {
 				}
 				if ( '' === $out['confirmation_mail']['subject'] ) {
 					$errors['confirmation_mail.subject'] = 'subject_required';
+				}
+			},
+			// SET-FC-P2-6 (decision 22): the confirmation link never stays valid longer than the
+			// submissions of this form are kept; data protection wins.
+			'double_opt_in'     => static function ( array &$out, array &$errors ): void {
+				if ( empty( $out['double_opt_in']['enabled'] ) || isset( $errors['double_opt_in.link_hours'] ) ) {
+					return;
+				}
+				$max = DoubleOptIn::max_link_hours( RetentionService::mode_for_form( array( 'settings' => $out ) ) );
+				if ( null !== $max && (int) $out['double_opt_in']['link_hours'] > $max ) {
+					$errors['double_opt_in.link_hours']    = 'doi_link_longer_than_retention';
+					$out['double_opt_in']['link_hours']    = $max;
+					$out['double_opt_in']['delete_after_days'] = max( (int) ceil( $max / 24 ), min( 90, (int) $out['double_opt_in']['delete_after_days'] ) );
 				}
 			},
 			'confirmation'      => static function ( array &$out, array &$errors ): void {

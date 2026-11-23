@@ -419,7 +419,7 @@ final class ConnectorRegistry {
 			),
 			'entitlement_missing'   => array(
 				'label' => __( 'Pro feature not available', 'form-captain' ),
-				'next'  => __( 'This action needs Form Captain Pro with a valid licence. Renew or activate the licence, or disable the action.', 'form-captain' ),
+				'next'  => __( 'This action needs Form Captain Pro with a valid license. Renew or activate the license, or disable the action.', 'form-captain' ),
 			),
 			'action_not_found'      => array(
 				'label' => __( 'Workflow or action missing', 'form-captain' ),

@@ -228,7 +228,7 @@ final class EntryImportAdmin {
 		// phpcs:enable
 		$ok = array(
 			'imported'  => __( 'Import finished.', 'form-captain' ),
-			'cancelled' => __( 'Import cancelled. The uploaded file was deleted.', 'form-captain' ),
+			'cancelled' => __( 'Import canceled. The uploaded file was deleted.', 'form-captain' ),
 			'reverted'  => __( 'Import reverted. The imported entries were deleted permanently.', 'form-captain' ),
 		);
 		if ( isset( $ok[ $notice ] ) ) {
@@ -241,7 +241,7 @@ final class EntryImportAdmin {
 		delete_transient( self::message_key() );
 		$fixed = array(
 			'forbidden'      => __( 'You are not allowed to do this.', 'form-captain' ),
-			'import_expired' => __( 'The upload has expired. Please upload the file again – rows imported before are recognised and skipped.', 'form-captain' ),
+			'import_expired' => __( 'The upload has expired. Please upload the file again – rows imported before are recognized and skipped.', 'form-captain' ),
 		);
 		$text  = $fixed[ $error ] ?? ( is_string( $message ) && '' !== $message ? $message : __( 'The action could not be completed.', 'form-captain' ) );
 		echo '<div class="notice notice-error"><p>' . esc_html( $text ) . '</p></div>';
@@ -334,7 +334,7 @@ final class EntryImportAdmin {
 	 */
 	private static function type_hint( array $field ): string {
 		return match ( (string) $field['type'] ) {
-			'email' => __( 'e-mail address', 'form-captain' ),
+			'email' => __( 'email address', 'form-captain' ),
 			'number' => __( 'number', 'form-captain' ),
 			'date' => __( 'date YYYY-MM-DD', 'form-captain' ),
 			'select', 'radio' => __( 'option label or value', 'form-captain' ),

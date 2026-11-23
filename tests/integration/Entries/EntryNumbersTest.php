@@ -100,6 +100,48 @@ final class EntryNumbersTest extends FrontendTestCase {
 		$this->assertSame( "REQ-$year-0003", $repo->find( (int) $this->submit( $form, 'Carla' )['entry_id'] )['entry_number'] );
 	}
 
+	/** SET-FC-41: the reference number is a column of the CSV export and of the entries list, and searchable. */
+	public function test_number_in_csv_export_and_entries_list(): void {
+		$this->numbering( array( 'entry_number_format' => '-R{number}', 'entry_number_digits' => 3 ) );
+		$form   = $this->create_published_form();
+		$first  = (int) $this->submit( $form, 'Anna' )['entry_id'];
+		$second = (int) $this->submit( $form, 'Bert' )['entry_id'];
+
+		$exporter = $this->plugin()->get( \FormCaptain\Export\CsvExporter::class );
+		$columns  = $exporter->columns( $form );
+		$this->assertSame( 'Reference number', $columns['meta:entry_number']['label'] );
+		$this->assertContains( 'meta:entry_number', \FormCaptain\Export\CsvExporter::default_columns( $columns ), 'selected by default' );
+		$stream = fopen( 'php://memory', 'w+b' );
+		$exporter->export( array( 'form_id' => (int) $form['id'], 'columns' => array( 'meta:id', 'meta:entry_number' ) ), $stream );
+		rewind( $stream );
+		$csv = (string) stream_get_contents( $stream );
+		fclose( $stream );
+		$this->assertStringContainsString( 'Reference number', $csv );
+		$this->assertStringContainsString( "'-R001", $csv, 'formula guard for the configurable format' );
+		$this->assertStringContainsString( "'-R002", $csv );
+
+		$this->as_admin();
+		$render = function ( array $get ): string {
+			$_GET = $get + array( 'page' => \FormCaptain\Admin\EntriesPage::SLUG );
+			ob_start();
+			try {
+				$this->plugin()->get( \FormCaptain\Admin\EntriesPage::class )->render();
+			} finally {
+				$out  = (string) ob_get_clean();
+				$_GET = array();
+			}
+			return $out;
+		};
+		$html = $render( array() );
+		$this->assertStringContainsString( 'column-number', $html );
+		$this->assertStringContainsString( '-R001', $html );
+		$this->assertStringContainsString( '-R002', $html );
+
+		$html = $render( array( 's' => '-R002' ) );
+		$this->assertStringContainsString( 'view=' . $second, $html, 'search finds the exact reference number' );
+		$this->assertStringNotContainsString( 'view=' . $first . '"', $html );
+	}
+
 	public function test_yearly_restart_and_continuous_counter(): void {
 		$this->numbering( array( 'entry_number_format' => '{year}/{number}', 'entry_number_digits' => 3, 'entry_number_yearly_reset' => true ) );
 		$form = $this->create_published_form();

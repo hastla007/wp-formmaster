@@ -69,6 +69,7 @@ final class EntriesListTable extends \WP_List_Table {
 		return array(
 			'cb'        => '<input type="checkbox" />',
 			'entry'     => __( 'Submission', 'form-captain' ),
+			'number'    => __( 'Reference number', 'form-captain' ),
 			'form'      => __( 'Form', 'form-captain' ),
 			'submitted' => __( 'Submitted', 'form-captain' ),
 			'status'    => __( 'Status', 'form-captain' ),
@@ -237,6 +238,16 @@ final class EntriesListTable extends \WP_List_Table {
 		return $out;
 	}
 
+	/**
+	 * Reference number (SET-FC-41); "–" for entries without one (spam, numbering off, older entries).
+	 *
+	 * @param array<string,mixed> $item
+	 */
+	protected function column_number( $item ): string {
+		$number = (string) ( $item['entry_number'] ?? '' );
+		return '' !== $number ? esc_html( $number ) : '<span aria-hidden="true">–</span><span class="screen-reader-text">' . esc_html__( 'No reference number', 'form-captain' ) . '</span>';
+	}
+
 	/** @param array<string,mixed> $item */
 	protected function column_form( $item ): string {
 		$form = $this->form( (int) $item['form_id'] );
@@ -300,6 +311,7 @@ final class EntriesListTable extends \WP_List_Table {
 			'honeypot' => __( 'Honeypot field filled', 'form-captain' ),
 			'too_fast' => __( 'Submitted too fast', 'form-captain' ),
 			'blocklist' => __( 'Blocklist match', 'form-captain' ),
+			\FormCaptain\Security\PowCaptcha::NOTE_WITHOUT_POW => __( 'Spam check without proof of work (sent without JavaScript)', 'form-captain' ),
 			default => $reason,
 		};
 	}

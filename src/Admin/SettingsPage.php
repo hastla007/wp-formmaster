@@ -378,13 +378,13 @@ final class SettingsPage {
 		$key  = 'form_captain_testmail_' . get_current_user_id();
 		$hits = (int) get_transient( $key );
 		if ( $hits >= 3 ) {
-			return self::notice( 'error', array( __( 'Too many test e-mails. Please wait ten minutes.', 'form-captain' ) ) );
+			return self::notice( 'error', array( __( 'Too many test emails. Please wait ten minutes.', 'form-captain' ) ) );
 		}
 		set_transient( $key, $hits + 1, 10 * MINUTE_IN_SECONDS );
 		$error = '';
-		$intro = __( 'This is a test e-mail from Form Captain. If you received it, your website can send e-mails. Form notifications use the same way of delivery.', 'form-captain' );
+		$intro = __( 'This is a test email from Form Captain. If you received it, your website can send emails. Form notifications use the same way of delivery.', 'form-captain' );
 		$frame = MailBuilder::frame( 'test' );
-		$title = __( 'Form Captain test e-mail', 'form-captain' );
+		$title = __( 'Form Captain test email', 'form-captain' );
 		$ok    = Plugin::instance()->get( MailJobHandler::class )->send(
 			array(
 				'to'         => array( $to ),
@@ -400,10 +400,10 @@ final class SettingsPage {
 		);
 		if ( $ok ) {
 			Logger::log( 'info', 'mail_test_sent' );
-			return self::notice( 'success', array( __( 'Test e-mail sent to your user e-mail address. If it does not arrive within a few minutes, check the spam folder and consider an SMTP plugin.', 'form-captain' ) ) );
+			return self::notice( 'success', array( __( 'Test email sent to your user email address. If it does not arrive within a few minutes, check the spam folder and consider an SMTP plugin.', 'form-captain' ) ) );
 		}
 		Logger::log( 'warning', 'mail_test_failed', Logger::redact( $error ) );
-		return self::notice( 'error', array( __( 'The test e-mail could not be sent. WordPress reported an error; an SMTP plugin usually solves delivery problems.', 'form-captain' ) . ( '' !== $error ? ' (' . $error . ')' : '' ) ) );
+		return self::notice( 'error', array( __( 'The test email could not be sent. WordPress reported an error; an SMTP plugin usually solves delivery problems.', 'form-captain' ) . ( '' !== $error ? ' (' . $error . ')' : '' ) ) );
 	}
 
 	/**
@@ -905,7 +905,7 @@ final class SettingsPage {
 		$text = match ( $tab ) {
 			'general' => __( 'Form-specific options such as recipients, reply-to, subject, confirmation message, redirect and actions are set in each form, not here. Form import/export is in the form list, CSV export in Entries.', 'form-captain' ),
 			'appearance' => __( 'Your theme styles forms by default. Base styles only use local CSS – no external fonts or files are loaded.', 'form-captain' ),
-			'email' => __( 'Form Captain sends e-mails with WordPress (wp_mail). It does not manage SMTP servers or mail passwords; use an SMTP plugin of your choice for reliable delivery.', 'form-captain' ),
+			'email' => __( 'Form Captain sends emails with WordPress (wp_mail). It does not manage SMTP servers or mail passwords; use an SMTP plugin of your choice for reliable delivery.', 'form-captain' ),
 			'privacy' => __( 'Submissions are stored only in this WordPress database. Form Captain does not control backups. Deleted submissions remain in existing backups until those backups expire. After restoring a backup, expired submissions are deleted again automatically; repeat completed erasure requests.', 'form-captain' ),
 			'spam' => __( 'Honeypot, minimum fill-in time and rate limiting work without cookies and without sending data to third parties.', 'form-captain' ),
 			'export' => __( 'Defaults for the CSV export of submissions. Every export can still use other values.', 'form-captain' ),
@@ -1044,12 +1044,12 @@ final class SettingsPage {
 	}
 
 	private function render_test_mail(): void {
-		echo '<h2>' . esc_html__( 'Test e-mail', 'form-captain' ) . '</h2>';
+		echo '<h2>' . esc_html__( 'Test email', 'form-captain' ) . '</h2>';
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 		echo '<input type="hidden" name="action" value="form_captain_test_mail">';
 		wp_nonce_field( 'form_captain_test_mail' );
-		echo '<p>' . esc_html__( 'Sends a short test message to your own user e-mail address with the default sender.', 'form-captain' ) . '</p>';
-		submit_button( __( 'Send test e-mail', 'form-captain' ), 'secondary', 'submit', false, array( 'id' => 'fc-submit-test-mail' ) );
+		echo '<p>' . esc_html__( 'Sends a short test message to your own user email address with the default sender.', 'form-captain' ) . '</p>';
+		submit_button( __( 'Send test email', 'form-captain' ), 'secondary', 'submit', false, array( 'id' => 'fc-submit-test-mail' ) );
 		echo '</form>';
 	}
 
@@ -1206,7 +1206,7 @@ final class SettingsPage {
 	private function render_status(): void {
 		$d        = $this->status->collect();
 		$problems = $this->status->problems( $d );
-		echo '<p class="fc-tab-intro">' . esc_html__( 'Read-only overview for troubleshooting. It never shows submitted values, e-mail addresses, IP addresses or secrets.', 'form-captain' ) . '</p>';
+		echo '<p class="fc-tab-intro">' . esc_html__( 'Read-only overview for troubleshooting. It never shows submitted values, email addresses, IP addresses or secrets.', 'form-captain' ) . '</p>';
 		if ( $problems ) {
 			echo '<div class="notice notice-warning inline"><ul>';
 			foreach ( $problems as $msg ) {
@@ -1220,7 +1220,7 @@ final class SettingsPage {
 			'environment'  => __( 'Environment', 'form-captain' ),
 			'schema'       => __( 'Database', 'form-captain' ),
 			'queue'        => __( 'Queue and cron', 'form-captain' ),
-			'mail'         => __( 'E-mail', 'form-captain' ),
+			'mail'         => __( 'Email', 'form-captain' ),
 			'integrations' => __( 'Integrations and Captain Suite', 'form-captain' ),
 		);
 		foreach ( $sections as $key => $title ) {

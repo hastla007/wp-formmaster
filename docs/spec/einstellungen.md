@@ -68,7 +68,7 @@ Neue Formularwerte: einen Eintrag in `definitions()` im passenden Abschnitt erg�
   2. **Speicherort** (Form von Form Captain Pro): `owner`, `label`, `help`, `type` (`checkbox|number|text|textarea|select|multiselect|media|confirm` oder ein Kerntyp; `text` = einzeilig), `default`, `value` (aktueller Wert; fehlt er, liest der Kern den Speicherort), optional `sanitize( $roh, $gesendet ): mixed|WP_Error` und `storage` = {`option`, `key`}: Der Kern schreibt den sauberen Wert in diese Option unter diesem Schlüssel (nie in `form_captain_settings`; ein solches Feld wird verworfen). Ohne `sanitize` prüft der Kern selbst (`min`/`max`, `max_length`, `options`). `confirm` = Schalter mit Bestätigungswort (`DELETE`/`LÖSCHEN`): das Wort als Wert oder Haken plus Wort unter `<id>_confirm`; `multiselect` = Liste erlaubter Optionen.
 
   Die Felder erscheinen nach den Kernfeldern des Reiters als `settings[ext][<id>]`; Fehler unter `ext.<id>`. Nicht angehakte Kästchen und leere Mehrfachauswahl werden als „aus“ bzw. leere Liste gespeichert. Speicherort und Werte gehören dem Add-on. Jede Änderung und jedes Zurücksetzen (Einstellungsseite, Import, WP-CLI) steht im Änderungsprotokoll (Schlüssel = Feld-`id`, SET-FC-P1-02, SET-FC-P4-03); ein Feld mit `secret => true` (oder einer ID wie `…token`, `…secret`, `…api_key`) erscheint dort nur maskiert. Export/Import (`extensions`) und WP-CLI (`settings list|get|set|reset` unter der Feld-`id`) führen die Werte mit derselben Prüfung des Add-ons; nicht exportiert werden Geheimnisse, `confirm`-Schalter und Felder mit `exportable => false`. Ein eingeschalteter `confirm`-Schalter bleibt beim erneuten Speichern des Reiters ohne neues Bestätigungswort an; nur das Einschalten verlangt das Wort.
-- Eine Hinweiszeile verschwindet, sobald ein Feld mit derselben `id` angemeldet ist (gleich in welchem Reiter). IDs sind an Form Captain Pro angeglichen:
+- Eine Hinweiszeile verschwindet, sobald ein Feld mit derselben `id` angemeldet ist (gleich in welchem Reiter) oder ein Add-on die `id` über den Filter `form_captain_settings_covered_hints_v1` (`string[] $hint_ids`, seit Vertrag 1.3.0, SET-FC-P6-01) als abgedeckt meldet – für Funktionen ohne globales Feld, z. B. `recipient_rules` (Routing je Formular in Form Captain Pro). IDs sind an Form Captain Pro angeglichen:
 
 | id | Hinweis | Reiter der Hinweiszeile |
 |---|---|---|
@@ -137,7 +137,7 @@ Filter `form_captain_country_presets_v1` (Array Schlüssel → `label`, `values`
 | `double_opt_in.enabled` | bool | false | Einsendung gilt erst nach Bestätigung |
 | `double_opt_in.email_field` | Feld-ID (Pflicht-E-Mail-Feld) | leer | |
 | `double_opt_in.subject` / `.body` / `.pending_message` | Text ≤ 190 / 5000 / 1000 | leer = Standardtext | Platzhalter `{confirm_link}`, `{link_hours}` |
-| `double_opt_in.link_hours` | int 1–720 | 48 | |
+| `double_opt_in.link_hours` | int 1–720 | 48 | höchstens die wirksame Aufbewahrung des Formulars (eigene oder `privacy.retention`), sonst Fehler `doi_link_longer_than_retention` und Kürzung; eine kürzere globale Aufbewahrung wird abgelehnt, solange ein Formular mit Double-Opt-in ihr folgt und länger gilt. Zur Laufzeit endet der Link spätestens mit `expires_gmt` des Eintrags, `{link_hours}` nennt die gekürzte Zahl (SET-FC-P2-6, Entscheidung 22) |
 | `double_opt_in.delete_after_days` | int 1–90, ≥ Link-Gültigkeit | 7 | unbestätigte Einsendungen werden gelöscht |
 
 Filter `form_captain_double_opt_in_v1` gewinnt über die Formularwerte.

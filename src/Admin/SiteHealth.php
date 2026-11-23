@@ -75,14 +75,14 @@ final class SiteHealth {
 		$d      = $this->status->collect();
 		$failed = array_sum( $d['mail']['failed_24h'] );
 		$desc   = 0 === $failed
-			? __( 'No Form Captain e-mail failed in the last 24 hours.', 'form-captain' )
+			? __( 'No Form Captain email failed in the last 24 hours.', 'form-captain' )
 			: sprintf(
 				/* translators: 1: number of failed mails, 2: error codes */
-				__( '%1$d e-mail jobs failed in the last 24 hours (codes: %2$s). Send a test e-mail from the Form Captain settings and check your mail setup.', 'form-captain' ),
+				__( '%1$d email jobs failed in the last 24 hours (codes: %2$s). Send a test email from the Form Captain settings and check your mail setup.', 'form-captain' ),
 				$failed,
 				implode( ', ', array_keys( $d['mail']['failed_24h'] ) )
 			);
-		return $this->result( 'mail', 0 === $failed, __( 'Form Captain e-mails are delivered', 'form-captain' ), __( 'Form Captain e-mails failed recently', 'form-captain' ), $desc, 'critical' );
+		return $this->result( 'mail', 0 === $failed, __( 'Form Captain emails are delivered', 'form-captain' ), __( 'Form Captain emails failed recently', 'form-captain' ), $desc, 'critical' );
 	}
 
 	/** @return array<string,mixed> */

@@ -54,3 +54,4 @@
 .fc-json textarea { font-family: Menlo, Consolas, monospace; font-size: 12px; }
 .fc-test-mail { margin: 8px 0 16px; }
 .fc-notice-success { color: #00a32a; margin: 4px 0 12px; font-size: 12px; }
+.fc-editor-notice:focus { outline: 2px solid var(--wp-admin-theme-color, #2271b1); outline-offset: 2px; }

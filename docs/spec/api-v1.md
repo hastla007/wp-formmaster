@@ -5,12 +5,13 @@ Nur das in diesem Dokument Aufgeführte ist öffentliche API. Klassen unter `For
 ## Version
 
 ```php
-FORM_CAPTAIN_CONTRACT_VERSION // '1.2.0' (seit 23.11.2026; 1.0.0 → 1.1.0 → 1.2.0 jeweils additiv)
+FORM_CAPTAIN_CONTRACT_VERSION // '1.3.0' (seit 23.11.2026; 1.0.0 → 1.1.0 → 1.2.0 → 1.3.0 jeweils additiv)
 form_captain_contract_version(): string
 ```
 
 - **1.1.0** (16.11.2026): „Erweiterungspunkte für Pro-Funktionen“, `form_captain_validate_v1`, `context_ref` in `form_captain_get_render_v1`, Versionsbindung `version_for`.
 - **1.2.0** (23.11.2026, Einstellungs-Baustein): `form_captain_settings_fields_v1`, `form_captain_mail_attachments_v1`, `form_captain_editor_extensions_v1`, `form_captain_captcha_providers_v1`, `form_captain_accepted_context_purposes_v1`, `form_captain_minimum_db_versions_v1`, `form_captain_entry_pending_v1` (SET-FC-P4-04) und alle Filter unter „Einstellungen und Geschäftsregeln“. Einige davon kamen nach dem 16.11. noch unter der Nummer 1.1.0 hinzu; ein Add-on, das einen dieser Punkte braucht, prüft auf `1.2.0` oder neuer (vorher wird der Filter nur nicht angewendet).
+- **1.3.0** (23.11.2026, Abschluss der Prüfphase): `form_captain_settings_covered_hints_v1` (Add-on meldet Hinweiszeilen ohne eigenes Einstellungsfeld ab, SET-FC-P6-01), mehrere Dateien je Upload-Feld (Kontext `files` in `form_captain_validate_field_v1`, `multiple_files` in `form_captain_render_field_v1`, SET-FC-39) und `form_captain_pow_nojs_rate_limit_v1` (SET-FC-P4-08). Ein Add-on prüft auf `1.3.0` oder neuer; ältere Kerne geben nur eine Datei (`file`) und kennen den Filter nicht.
 
 SemVer: Minor = additive Erweiterungen (neue optionale Payload-Schlüssel, neue Funktionen); Major = inkompatibel, neue Namensfamilie `_v2`, `_v1` bleibt mindestens 12 Monate parallel bestehen. Deprecations werden mit `_deprecated_hook()` angekündigt und im Changelog geführt.
 
@@ -47,7 +48,7 @@ Adapter registrieren sich ausschließlich in oder nach `form_captain_loaded_v1`.
 
 ```php
 [
-  'contract'   => '1.2.0',            // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
+  'contract'   => '1.3.0',            // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
   'entry_id'   => 123,
   'form_id'    => 7,
   'form_public_id' => 'a1b2c3d4e5f6g7h8',
@@ -68,7 +69,7 @@ Gefeuert **einmal** je Entry, nachdem `consent_withdrawn_gmt` gespeichert und of
 
 ```php
 [
-  'contract'       => '1.2.0',        // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
+  'contract'       => '1.3.0',        // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
   'entry_id'       => 123,
   'form_id'        => 7,
   'form_public_id' => 'a1b2c3d4e5f6g7h8',
@@ -206,6 +207,7 @@ Grundregel S2: Die Einstellung liefert den Wert, der Filter gewinnt, der Kern be
 | `form_captain_limits_v1` | `( array<string,int> $limits )` → Budgets (`docs/spec/budgets.md`) |
 | `form_captain_spam_limits_v1` | `( array{window_minutes:int,form_total:int,receipts_per_hour:int} $values )` → Werte |
 | `form_captain_pow_max_number_v1` | `( int $max_number )` → Schwierigkeit des Proof-of-Work (Standard 50 000) |
+| `form_captain_pow_nojs_rate_limit_v1` | (seit 1.3.0) `( int $limit, int $per_visitor_limit )` → Einsendungen je Formular, Besucher und Zeitfenster ohne JavaScript und ohne Proof-of-Work-Lösung (Modus „global“, Anbieter `pow`); Standard max(1, `spam.rate_limit` / 5), Werte unter 1 zählen als 1 (SET-FC-P4-08) |
 | `form_captain_retention_seconds_v1` | `( ?int $seconds, string $mode, string $created_gmt )` → Sekunden oder `null` (= keine automatische Löschung); höchstens ein Tag Minimum |
 | `form_captain_retention_grace_days_v1` | `( int $days )` → Schonfrist vor der Löschung |
 | `form_captain_trash_days_v1` | `( int $days )` → Tage im Papierkorb vor dem endgültigen Löschen (Einstellung `privacy.trash_days`, danach auf 1–365 begrenzt, SET-FC-P1-07) |
@@ -228,8 +230,8 @@ Für Uploads, Mehrschritt-Formulare und erweiterte Bedingungen/Routing (P7-07, P
 
 | Hook | Art | Argumente → Rückgabe | Regeln des Kerns |
 |---|---|---|---|
-| `form_captain_render_field_v1` | Filter | `null`, `array $field`, `array $ctx` (`id`, `name`, `value`, `required`, `invalid`, `aria-describedby`) → HTML des Bedienelements | Nur für Feldtypen aus `form_captain_field_types_v1`. Wrapper, Label, Hilfe- und Fehlerelement samt IDs liefert der Kern. Ohne Rückgabe entfällt das Feld. Die Erweiterung escaped ihr HTML selbst. |
-| `form_captain_validate_field_v1` | Filter | `null`, `array $field`, `string\|array\|null $value`, `array $ctx` (`file`: hochgeladene Datei im `$_FILES`-Format oder `null`, `form`) → `array{value:string\|string[]\|null}` oder `array{code:string}` | Nur für Erweiterungs-Feldtypen. Ohne Validator: Pflichtfeld → `required`, sonst kein Wert. Werte höchstens 5000 Zeichen. Fehlercodes `^[a-z][a-z0-9_]{1,40}$`. |
+| `form_captain_render_field_v1` | Filter | `null`, `array $field`, `array $ctx` (`id`, `name`, `value`, `required`, `invalid`, `aria-describedby`; seit 1.3.0 `multiple_files` = `true`: der Kern nimmt mehrere Dateien unter `<name>[]` an) → HTML des Bedienelements | Nur für Feldtypen aus `form_captain_field_types_v1`. Wrapper, Label, Hilfe- und Fehlerelement samt IDs liefert der Kern. Ohne Rückgabe entfällt das Feld. Die Erweiterung escaped ihr HTML selbst. |
+| `form_captain_validate_field_v1` | Filter | `null`, `array $field`, `string\|array\|null $value`, `array $ctx` (`file`: erste hochgeladene Datei im `$_FILES`-Format oder `null`; seit 1.3.0 `files`: Liste aller Dateien des Felds in Sendereihenfolge, leer ohne Datei; `form`) → `array{value:string\|string[]\|null}` oder `array{code:string}` | Nur für Erweiterungs-Feldtypen. Ohne Validator: Pflichtfeld → `required`, sonst kein Wert. Werte höchstens 5000 Zeichen. Fehlercodes `^[a-z][a-z0-9_]{1,40}$`. Ist eine öffentliche Einsendung schon vor der Feldprüfung Spam (Honeypot, Mindestzeit, Proof of Work), ruft der Kern den Filter nicht auf und speichert das Feld leer – die Erweiterung legt so keine Datei für Spam ab (SET-FC-P4-09). |
 | `form_captain_field_error_message_v1` | Filter | `''`, `string $code`, `array $field` → Text | Für eigene Fehlercodes. HTML wird entfernt. |
 | `form_captain_normalize_field_v1` | Filter | `null`, `array $raw_field`, `array $ids` (Feld-ID → Typ, bis einschließlich dieses Felds) → `array{settings?:array, errors?:array<string,string>}` | Gespeichert unter `field.x` (höchstens 8 KB JSON). Fehler erscheinen als `fields.N.x.<key>`. Der Kern wertet `x` nie aus. |
 | `form_captain_normalize_form_settings_v1` | Filter | `null`, `array $x`, `array $schema` → wie oben | Gespeichert unter `settings.x` (höchstens 16 KB). Ohne Erweiterung bleibt ein gespeichertes `x` unverändert erhalten; Lizenzende löscht nichts. |
@@ -244,6 +246,7 @@ Für Uploads, Mehrschritt-Formulare und erweiterte Bedingungen/Routing (P7-07, P
 | `form_captain_display_value_v1` | Filter | `string $display`, `array $field`, `string\|array $value` → Klartext | Nur Erweiterungs-Feldtypen. Gilt für Admin-Detail, CSV und Mail. HTML wird entfernt, die Aufrufer escapen. |
 | `form_captain_mail_attachments_v1` | Filter | `string[] $files`, `array $context` (`kind` = `admin`/`confirmation`/`double_opt_in`, `entry`, `form`, `values`) → Dateipfade | Anhänge je Mail (z. B. PDF der Einsendung aus einem Add-on). Bei jedem Zustellversuch neu ermittelt; nur lesbare Dateien unter `wp-content` oder dem Temp-Verzeichnis, höchstens 10, doppelte entfernt. |
 | `form_captain_settings_fields_v1` | Filter | Liste von Feldern oder Zuordnung Reiter → Felder | Echte Einstellungsfelder von Add-ons; zwei Formen (Rückrufe `get`/`set` oder `storage`/`sanitize`), siehe `docs/spec/einstellungen.md` (Pro-Hinweiszeilen und Felder von Erweiterungen). |
+| `form_captain_settings_covered_hints_v1` | Filter | `string[] $hint_ids` (Standard leer) → IDs von Hinweiszeilen | (seit 1.3.0, SET-FC-P6-01) Ein aktives Add-on meldet Hinweiszeilen der Einstellungsseite ab, deren Funktion es anbietet, ohne ein globales Feld mit derselben `id` anzumelden (z. B. `recipient_rules`, Routing je Formular). Nur IDs aus `SettingsSchema::pro_hints()` zählen, alles andere wird ignoriert; ein Nicht-Array zählt als leer. |
 
 **Einstellungen im Formular-Editor:** Filter `form_captain_editor_extensions_v1` (`array $panels` → Panels).
 
@@ -254,4 +257,4 @@ Für Uploads, Mehrschritt-Formulare und erweiterte Bedingungen/Routing (P7-07, P
 - **`json`:** für Strukturen ohne eigenes Bedienelement.
 - **Bereinigung:** Unbekannte Typen, doppelte Schlüssel und Panels ohne Controls verwirft der Kern; Texte werden von HTML befreit. Test: `ExtensionPointsTest::test_editor_extension_panels_are_cleaned`.
 
-**Dateien:** Formulareingaben heißen `fc[<field_id>]`. REST-Einsendung (`multipart/form-data`) und admin-post geben `$_FILES` über `FormCaptain\Support\UploadedFiles::by_field()` als `field_id → Datei` an den Validator weiter (höchstens 20 Dateien, eine je Feld). Mit `enctype="multipart/form-data"` (über `form_captain_form_attributes_v1`) sendet das Frontend-Skript des Kerns `FormData` statt JSON. Dateigrößen zählen nicht gegen `request_bytes`; dieses Limit gilt dann nur für die übrigen Felder. Der Kern verschiebt, speichert oder öffnet hochgeladene Dateien nie. Ablage, Prüfung, Quarantäne und Löschung (`form_captain_delete_entry_files_v1`) liegen bei der Erweiterung.
+**Dateien:** Formulareingaben heißen `fc[<field_id>]`. REST-Einsendung (`multipart/form-data`) und admin-post geben `$_FILES` über `FormCaptain\Support\UploadedFiles::lists_by_field()` als `field_id → Liste von Dateien` an den Validator weiter (höchstens 20 Dateien je Anfrage). `fc[<field_id>]` ergibt eine Liste mit einer Datei, `fc[<field_id>][]` (Eingabe mit `multiple`, seit 1.3.0, SET-FC-39) alle Dateien; tiefere Verschachtelung wird ignoriert. Der Validator bekommt `files` (Liste) und `file` (erste Datei, wie 1.1.0); ob ein Feld mehrere Dateien zulässt, entscheidet die Erweiterung (z. B. Fehlercode `too_many_files`). Mit `enctype="multipart/form-data"` (über `form_captain_form_attributes_v1`) sendet das Frontend-Skript des Kerns `FormData` statt JSON. Dateigrößen zählen nicht gegen `request_bytes`; dieses Limit gilt dann nur für die übrigen Felder. Der Kern verschiebt, speichert oder öffnet hochgeladene Dateien nie. Ablage, Prüfung, Quarantäne und Löschung (`form_captain_delete_entry_files_v1`) liegen bei der Erweiterung.

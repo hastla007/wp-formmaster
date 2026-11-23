@@ -28,6 +28,7 @@ final class SettingsHintsTest extends TestCase {
 
 	public function tear_down(): void {
 		remove_all_filters( 'form_captain_settings_fields_v1' );
+		remove_all_filters( 'form_captain_settings_covered_hints_v1' );
 		delete_option( 'fc_test_addon_settings' );
 		unset( $_GET['tab'] );
 		parent::tear_down();
@@ -168,6 +169,25 @@ final class SettingsHintsTest extends TestCase {
 		Settings::set_group( 'general', array( 'show_pro_hints' => false ) );
 		$this->assertSame( array(), SettingsSchema::visible_pro_hints( 'general' ) );
 		$this->assertStringNotContainsString( 'fc-pro-hints', $this->render_tab( 'general' ) );
+	}
+
+	/**
+	 * SET-FC-P6-01: an add-on that configures a feature per form (recipient rules in Form Captain Pro)
+	 * declares the hint row as covered without a global settings field (contract 1.3.0).
+	 */
+	public function test_addon_can_cover_a_hint_row_without_a_field(): void {
+		$this->assertContains( 'recipient_rules', array_column( SettingsSchema::visible_pro_hints( 'email' ), 'id' ) );
+		add_filter( 'form_captain_settings_covered_hints_v1', static fn( array $ids ): array => array_merge( $ids, array( 'recipient_rules', 'unknown.hint', 42 ) ) );
+		$this->assertSame( array( 'recipient_rules' ), SettingsSchema::covered_hints(), 'unknown and malformed ids are ignored' );
+		$ids = array_column( SettingsSchema::visible_pro_hints( 'email' ), 'id' );
+		$this->assertNotContains( 'recipient_rules', $ids );
+		$this->assertContains( 'pdf.attach_notification', $ids, 'other rows stay' );
+		$this->assertStringNotContainsString( 'data-fc-hint="recipient_rules"', $this->render_tab( 'email' ) );
+		$this->assertArrayNotHasKey( 'recipient_rules', SettingsSchema::extension_fields(), 'no field is created' );
+
+		remove_all_filters( 'form_captain_settings_covered_hints_v1' );
+		add_filter( 'form_captain_settings_covered_hints_v1', static fn(): string => 'recipient_rules' );
+		$this->assertSame( array(), SettingsSchema::covered_hints(), 'a non-array result counts as nothing' );
 	}
 
 	public function test_registered_field_replaces_the_hint_row_and_is_saved_by_the_addon(): void {

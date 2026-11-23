@@ -33,7 +33,7 @@ Die Anrede gilt für alles, was Form Captain selbst schreibt: Verwaltung, Fehler
 
 ## Ohne JavaScript
 
-Das Formular funktioniert auch ohne JavaScript: Es wird an `wp-admin/admin-post.php` gesendet, danach leitet WordPress zurück auf die Seite (Parameter `fc_r` – nur ein zufälliger Schlüssel, keine Daten). Bei Fehlern werden Meldungen und Eingaben (ohne sensible Felder und Einwilligung) für 10 Minuten wieder angezeigt.
+Das Formular funktioniert auch ohne JavaScript: Es wird an `wp-admin/admin-post.php` gesendet, danach leitet WordPress zurück auf die Seite (Parameter `fc_r` – nur ein zufälliger Schlüssel, keine Daten). Bei Fehlern werden Meldungen und Eingaben (ohne sensible Felder und Einwilligung) für 10 Minuten wieder angezeigt. Ist der eingebaute Proof of Work aktiv, kann der Browser ohne JavaScript nicht rechnen: Die Einsendung wird trotzdem angenommen, aber strenger begrenzt und im Eintrag als „Spamprüfung ohne Proof of Work“ markiert (siehe [Einstellungen](einstellungen.md)).
 
 ## Caching
 
@@ -53,9 +53,9 @@ Standardmäßig aktiv und ohne Drittanbieter: unsichtbares Honeypot-Feld, Mindes
 
 ## SEO und Yoast SEO
 
-Form Captain verändert **keine** SEO-Daten: Seitentitel, Meta-Beschreibung, Canonical, Robots-Regeln, Open Graph, Sitemaps und strukturierte Daten pflegen Sie wie gewohnt in WordPress bzw. Yoast SEO. Formulare erzeugen keine eigenen URLs, keine Sitemap-Einträge und kein eigenes JSON-LD – sie sind eingebetteter Seiteninhalt.
+Form Captain verändert **keine** SEO-Daten: Seitentitel, Meta-Beschreibung, Canonical, Robots-Regeln, Open Graph, Sitemaps und strukturierte Daten pflegst du wie gewohnt in WordPress bzw. Yoast SEO. Formulare erzeugen keine eigenen URLs, keine Sitemap-Einträge und kein eigenes JSON-LD – sie sind eingebetteter Seiteninhalt.
 
-Ein Formular ersetzt keinen hilfreichen Seiteninhalt: Erklären Sie auf der Seite, worum es geht und was nach dem Absenden passiert. Ist Yoast SEO aktiv, berücksichtigt die Inhaltsanalyse beim Shortcode nur die sichtbaren Feldbeschriftungen und Hilfetexte – nie eingegebene Werte. Ohne Yoast funktioniert alles unverändert.
+Ein Formular ersetzt keinen hilfreichen Seiteninhalt: Erkläre auf der Seite, worum es geht und was nach dem Absenden passiert. Ist Yoast SEO aktiv, berücksichtigt die Inhaltsanalyse beim Shortcode nur die sichtbaren Feldbeschriftungen und Hilfetexte – nie eingegebene Werte. Ohne Yoast funktioniert alles unverändert.
 
 ## Für Entwickler
 

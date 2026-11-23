@@ -26,7 +26,7 @@ define( 'FORM_CAPTAIN_FILE', __FILE__ );
 define( 'FORM_CAPTAIN_DIR', __DIR__ . '/' );
 define( 'FORM_CAPTAIN_MIN_WP', '7.0' );
 define( 'FORM_CAPTAIN_MIN_PHP', '8.5' );
-define( 'FORM_CAPTAIN_CONTRACT_VERSION', '1.2.0' );
+define( 'FORM_CAPTAIN_CONTRACT_VERSION', '1.3.0' );
 
 if ( version_compare( PHP_VERSION, FORM_CAPTAIN_MIN_PHP, '<' ) || version_compare( get_bloginfo( 'version' ), FORM_CAPTAIN_MIN_WP, '<' ) ) {
 	add_action(

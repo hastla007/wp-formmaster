@@ -6,7 +6,7 @@ Stand 23.11.2026 · Aufgabe SET-FC-05 (a) · Entscheidungen E1 (Captcha im Kern,
 
 - Selbst gehostet: keine Anfrage an Dritte, keine Cookies, keine personenbezogenen Daten (keine IP, kein Fingerabdruck).
 - Barrierefrei: kein Rätsel, kein Bild, nichts zu klicken. Der Browser rechnet im Hintergrund (Ø ≈ 25 000 SHA-256, unter einer Sekunde auf einem Mittelklasse-Telefon).
-- Ohne JavaScript: Fallback auf die bestehenden Prüfungen (Honeypot, Mindestzeit, Sperrliste, Sendegrenzen). Formulare mit Spamschutz „strenger“ verlangen die Lösung auch ohne JavaScript (dann ist das Formular ohne JS nicht nutzbar – bewusste Wahl des Betreibers).
+- Ohne JavaScript: Das Formular bleibt nutzbar (Barrierefreiheit, schrittweise Verbesserung). Weil der Browser dann nicht rechnet, gilt für eine Einsendung ohne Lösung im Modus „global“ eine viel strengere Sendegrenze (eigener Zähler, Vorgabe ein Fünftel von `spam.rate_limit`, mindestens 1 je Zeitfenster; Filter `form_captain_pow_nojs_rate_limit_v1`), und der Eintrag wird als „Spamprüfung ohne Proof of Work“ markiert (Liste, Detail, CSV). Sie wird nie still verworfen (Entscheidung 22, SET-FC-P4-08). Daneben gelten die bestehenden Prüfungen (Honeypot, Mindestzeit, Sperrliste, Sendegrenzen). Formulare mit Spamschutz „strenger“ verlangen die Lösung auch ohne JavaScript (dann ist das Formular ohne JS nicht nutzbar – bewusste Wahl des Betreibers).
 - Prinzip wie ALTCHA / Friendly Captcha. Es macht Massen-Spam teurer, verhindert ihn aber nicht allein.
 
 ## Dateien (zum Übernehmen mit eigenem Präfix)
@@ -55,7 +55,7 @@ Lösung (Browser → Server, Formularfeld `_fc_pow`): Base64 von JSON
 7. Einmalverwendung: `challenge` wird im Einmal-Speicher bis Ablauf + 60 s vermerkt; schon vorhanden → `replayed`.
 8. Sonst `ok`.
 
-Der Einmal-Speicher wird erst bei Schritt 7 berührt, also nur für korrekt signierte, richtige Lösungen.
+Der Einmal-Speicher wird erst bei Schritt 7 berührt, also nur für korrekt signierte, richtige Lösungen. Form Captain prüft die Lösung zusätzlich vor der Feldprüfung ohne Einmal-Speicher (`PowCaptcha::precheck()`), zusammen mit Honeypot und Mindestzeit: Ist die Einsendung danach schon Spam, bekommen Erweiterungsfelder (z. B. Datei-Uploads) ihre Daten nicht und speichern nichts (SET-FC-P4-09). Eine wiederverwendete Lösung erkennt erst die eigentliche Prüfung.
 
 ## Parameter
 
@@ -72,3 +72,4 @@ Der Einmal-Speicher wird erst bei Schritt 7 berührt, also nur für korrekt sign
 - Je Formular `spam.mode`: `global` (Einstellung gilt), `strict` (Captcha immer, `pow` falls global keiner gewählt, kein Fallback ohne JS), `off` (kein Captcha für dieses Formular; übrige Prüfungen bleiben).
 - Spam-Gründe der Einsendung: `pow_missing`, `pow_invalid`, `pow_replayed`. Wie bei allen Spam-Gründen sieht der Besucher eine normale Erfolgsmeldung, die Einsendung landet im Spam.
 - Die REST-Route des Formular-Skripts erwartet eine Lösung; die No-JS-Route (`admin-post.php`) nur bei `strict`.
+- No-JS-Einsendung ohne Lösung bei `global` (SET-FC-P4-08, Entscheidung 22): Nachdem Honeypot, Mindestzeit und Sperrliste bestanden sind, zählt sie zusätzlich im Zähler `submit_without_pow` (je Formular und Besucher, gleiches Zeitfenster wie die übrigen Sendegrenzen). Grenze: `RateLimiter::without_pow_limit()` = max(1, `spam.rate_limit` / 5), Filter `form_captain_pow_nojs_rate_limit_v1` `( int $limit, int $per_visitor_limit )`, Werte unter 1 zählen als 1. Über der Grenze antwortet Form Captain sichtbar mit `rate_limited` (HTTP 429, „Bitte später erneut versuchen“) – kein stiller Spam. Angenommene Einsendungen behalten ihren Status („neu“) und tragen in `fc_entries.spam_reason` den Vermerk `pow_skipped` (`PowCaptcha::NOTE_WITHOUT_POW`); Eintragsliste, Detailansicht und CSV-Status zeigen „– Spamprüfung ohne Proof of Work“. Ohne den Anbieter `pow` oder mit Lösung passiert nichts davon.

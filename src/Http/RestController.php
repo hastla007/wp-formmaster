@@ -195,7 +195,7 @@ final class RestController {
 				'user_id'        => get_current_user_id(),
 				'body_bytes'     => strlen( $body ),
 				'request_id'     => Logger::correlation_id(),
-				'files'          => UploadedFiles::by_field( (array) $request->get_file_params() ),
+				'files'          => UploadedFiles::lists_by_field( (array) $request->get_file_params() ),
 				'js'             => true, // Route of frontend.js: a proof-of-work solution is expected.
 			)
 		);

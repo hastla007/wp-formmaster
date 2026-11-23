@@ -14,6 +14,9 @@
  *    last link learns "already confirmed" afterwards (its hash is kept). Then
  *    the outbox is planned (notifications, actions) and the event is fired, as for a normal entry.
  * 5. Unconfirmed entries are deleted by the retention cleanup after `delete_after_days`.
+ * 6. Data protection wins over the link validity (SET-FC-P2-6, decision 22): saving refuses a link
+ *    validity longer than the effective retention period (form and global settings), and at
+ *    runtime the link of an existing entry never outlives the entry (link_expires(), link_hours_for()).
  *
  * Trusted submissions (contract API, imports) never need a confirmation: the calling plugin
  * is responsible for the person's consent.
@@ -104,7 +107,7 @@ final class DoubleOptIn {
 	/** @param array<string,mixed> $form */
 	public static function pending_message( array $form ): string {
 		$message = trim( wp_strip_all_tags( (string) self::settings( $form )['pending_message'] ) );
-		return '' !== $message ? $message : __( 'Almost done: we have sent you an e-mail. Please confirm your submission with the link in this e-mail.', 'form-captain' );
+		return '' !== $message ? $message : __( 'Almost done: we have sent you an email. Please confirm your submission with the link in this email.', 'form-captain' );
 	}
 
 	/** Deadline after which an unconfirmed entry is deleted. */
@@ -119,7 +122,68 @@ final class DoubleOptIn {
 	 * @param array<string,mixed> $form
 	 */
 	public static function link_expires( array $entry, array $form ): int {
-		return (int) strtotime( (string) $entry['created_gmt'] . ' UTC' ) + (int) self::settings( $form )['link_hours'] * HOUR_IN_SECONDS;
+		$expires = (int) strtotime( (string) $entry['created_gmt'] . ' UTC' ) + (int) self::settings( $form )['link_hours'] * HOUR_IN_SECONDS;
+		// The retention cleanup deletes the entry at expires_gmt, also when it is unconfirmed: the link
+		// must not promise more (SET-FC-P2-6). Covers configurations saved before the save-time check.
+		if ( ! empty( $entry['expires_gmt'] ) ) {
+			$expires = min( $expires, (int) strtotime( (string) $entry['expires_gmt'] . ' UTC' ) );
+		}
+		return $expires;
+	}
+
+	/**
+	 * Hours the link of this entry is valid from its creation, for the text of the mail ({link_hours}):
+	 * the setting, shortened to the time until the entry would be deleted (SET-FC-P2-6). Rounded down,
+	 * so the mail never promises more than the link keeps.
+	 *
+	 * @param array<string,mixed> $entry
+	 * @param array<string,mixed> $form
+	 */
+	public static function link_hours_for( array $entry, array $form ): int {
+		$hours = (int) self::settings( $form )['link_hours'];
+		if ( empty( $entry['created_gmt'] ) ) {
+			return $hours;
+		}
+		$span = self::link_expires( $entry, $form ) - (int) strtotime( (string) $entry['created_gmt'] . ' UTC' );
+		return max( 1, min( $hours, intdiv( max( 0, $span ), HOUR_IN_SECONDS ) ) );
+	}
+
+	/**
+	 * Longest allowed link validity in hours for a retention period, null when nothing is deleted
+	 * automatically (`manual`). Measured from now, as for a new submission (SET-FC-P2-6).
+	 */
+	public static function max_link_hours( string $retention_mode ): ?int {
+		$now     = Clock::now();
+		$expires = RetentionService::expires_for( $retention_mode, $now );
+		if ( null === $expires ) {
+			return null;
+		}
+		return max( 1, intdiv( (int) strtotime( $expires . ' UTC' ) - (int) strtotime( $now . ' UTC' ), HOUR_IN_SECONDS ) );
+	}
+
+	/**
+	 * Forms that follow the global retention, use double opt-in and whose link would stay valid longer
+	 * than $global_mode keeps their submissions (SET-FC-P2-6).
+	 *
+	 * @return array<int,string> form_id => title
+	 */
+	public static function forms_exceeding_retention( string $global_mode ): array {
+		$max = self::max_link_hours( $global_mode );
+		if ( null === $max ) {
+			return array();
+		}
+		$out = array();
+		foreach ( ( new FormRepository() )->all_settings() as $id => $row ) {
+			$settings = $row['settings'];
+			if ( null !== RetentionService::normalize_mode( (string) ( $settings['retention']['mode'] ?? '' ) ) ) {
+				continue; // Own retention period, checked when the form is saved.
+			}
+			$doi = self::settings( array( 'settings' => $settings ) + array( 'id' => $id ) );
+			if ( $doi['enabled'] && (int) $doi['link_hours'] > $max ) {
+				$out[ $id ] = '' !== $row['title'] ? $row['title'] : '#' . $id;
+			}
+		}
+		return $out;
 	}
 
 	/**

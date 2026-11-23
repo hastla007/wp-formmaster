@@ -2,7 +2,8 @@
 /**
  * Central submission flow (P4-01, P4-02, P4-03, P4-16, P3-10, P3-15, P3-17, P8-13).
  *
- * Order: form status → token/idempotency → limits → rate limit → signed context → validation
+ * Order: form status → token/idempotency → limits → rate limit → signed context → spam pre-checks
+ * without values (honeypot, minimum time, proof of work; SET-FC-P4-09) → validation
  * → spam → transaction (entry, values, context nonce, outbox) → COMMIT → event + worker nudge.
  *
  * @package FormCaptain
@@ -15,6 +16,7 @@ namespace FormCaptain\Service;
 use FormCaptain\Domain\SubmissionValidator;
 use FormCaptain\Jobs\Scheduler;
 use FormCaptain\Repository\EntryRepository;
+use FormCaptain\Security\PowCaptcha;
 use FormCaptain\Security\RateLimiter;
 use FormCaptain\Security\SignedContext;
 use FormCaptain\Security\SpamGuard;
@@ -49,7 +51,8 @@ final class SubmissionService {
 	 *                                  honeypot; or a flat field_id/key => value map for trusted callers.
 	 * @param array<string,mixed> $meta trusted, plugin, idempotency_key, request_key, signed_context, ip,
 	 *                                  source_url, source_post_id, user_id, request_id, body_bytes,
-	 *                                  files (field_id => uploaded file, Support\UploadedFiles)
+	 *                                  files (field_id => list of uploaded files or one file,
+	 *                                  Support\UploadedFiles::lists_by_field())
 	 * @return array<string,mixed> result object (api-v1.md)
 	 */
 	public function submit( array $form, array $raw, array $meta = array() ): array {
@@ -166,15 +169,24 @@ final class SubmissionService {
 			}
 		}
 
-		// 6. Field validation (P3-05, P3-07).
-		$checked = $this->validator->validate(
+		// 6. Field validation (P3-05, P3-07). Checks without field values run first: an already spammy
+		// submission does not hand its files to an extension, which would store them (SET-FC-P4-09).
+		$spam_meta = array(
+			'trusted'   => $trusted,
+			'issued_at' => $issued_at,
+			'now'       => Clock::timestamp(),
+			'js'        => ! empty( $meta['js'] ),
+		);
+		$early     = $this->spam->precheck( $form, $raw, $spam_meta );
+		$checked   = $this->validator->validate(
 			$fields,
 			$input,
 			array(
-				'today'       => wp_date( 'Y-m-d' ),
-				'accept_keys' => $trusted,
-				'files'       => is_array( $meta['files'] ?? null ) ? $meta['files'] : array(),
-				'form'        => $form,
+				'today'           => wp_date( 'Y-m-d' ),
+				'accept_keys'     => $trusted,
+				'files'           => is_array( $meta['files'] ?? null ) ? $meta['files'] : array(),
+				'form'            => $form,
+				'skip_extensions' => null !== $early,
 			)
 		);
 		if ( $checked['errors'] ) {
@@ -190,18 +202,18 @@ final class SubmissionService {
 		$values = $checked['values'];
 
 		// 7. Spam (P3-08, T-SUB-09/10).
-		$spam_reason = $this->spam->check(
-			$form,
-			$raw,
-			$values,
-			$fields,
-			array(
-				'trusted'   => $trusted,
-				'issued_at' => $issued_at,
-				'now'       => Clock::timestamp(),
-				'js'        => ! empty( $meta['js'] ),
-			)
-		);
+		$spam_reason = $this->spam->check( $form, $raw, $values, $fields, $spam_meta );
+
+		// 7b. No JavaScript, no proof-of-work solution (mode "global"): accepted, but with a much
+		// stricter sending limit and a mark on the entry, never dropped silently (SET-FC-P4-08).
+		$spam_note = null;
+		if ( null === $spam_reason && ! $trusted && PowCaptcha::unsolved_without_js( $form, $raw, ! empty( $meta['js'] ) ) ) {
+			$strict = $this->limiter->check_without_pow( $form_id, isset( $meta['ip'] ) ? (string) $meta['ip'] : RateLimiter::client_ip() );
+			if ( ! $strict['allowed'] ) {
+				return $fail( Errors::RATE_LIMITED, array( 'retry_after' => (int) $strict['retry_after'] ) );
+			}
+			$spam_note = PowCaptcha::NOTE_WITHOUT_POW;
+		}
 
 		// Double opt-in (SET-FC-10): public, non-spam submissions wait for the visitor's confirmation.
 		$doi = null === $spam_reason && ! $trusted ? DoubleOptIn::required_for( $form, $fields ) : null;
@@ -213,7 +225,7 @@ final class SubmissionService {
 			'form_version_id' => (int) $version['version_id'],
 			'status'          => null !== $spam_reason ? 'spam' : 'new',
 			'request_key'     => $request_key,
-			'spam_reason'     => $spam_reason,
+			'spam_reason'     => $spam_reason ?? $spam_note,
 			'source_url'      => self::source_url( $meta['source_url'] ?? null ),
 			'source_post_id'  => self::source_post_id( $meta['source_post_id'] ?? null ),
 			'user_id'         => ! empty( $meta['user_id'] ) ? (int) $meta['user_id'] : null,

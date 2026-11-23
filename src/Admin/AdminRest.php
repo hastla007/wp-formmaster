@@ -329,8 +329,8 @@ final class AdminRest {
 		return new \WP_REST_Response(
 			array(
 				'success' => true,
-				/* translators: %s: e-mail address */
-				'message' => sprintf( __( 'Test e-mail sent to %s.', 'form-captain' ), $result['to'] ),
+				/* translators: %s: email address */
+				'message' => sprintf( __( 'Test email sent to %s.', 'form-captain' ), $result['to'] ),
 			)
 		);
 	}

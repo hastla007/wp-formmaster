@@ -75,7 +75,7 @@ final class AdminPostController {
 					'source_post_id' => $post['_fc_src'] ?? null,
 					'user_id'        => 0, // No nonce in cached HTML → no user binding (ADR 0003).
 					'body_bytes'     => max( 0, (int) ( $server['CONTENT_LENGTH'] ?? 0 ) - self::file_bytes( $files ) ),
-					'files'          => UploadedFiles::by_field( $files ),
+					'files'          => UploadedFiles::lists_by_field( $files ),
 				)
 			);
 		}
@@ -127,8 +127,10 @@ final class AdminPostController {
 	 */
 	private static function file_bytes( array $files ): int {
 		$sum = 0;
-		foreach ( UploadedFiles::by_field( $files ) as $file ) {
-			$sum += max( 0, (int) $file['size'] );
+		foreach ( UploadedFiles::lists_by_field( $files ) as $list ) {
+			foreach ( $list as $file ) {
+				$sum += max( 0, (int) $file['size'] );
+			}
 		}
 		return $sum;
 	}

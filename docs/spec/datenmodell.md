@@ -49,7 +49,7 @@ Indizes: `UNIQUE form_version (form_id, version_no)`.
 | `status` | VARCHAR(20) NOT NULL | `new`, `read`, `archived`, `spam`, `trash` |
 | `previous_status` | VARCHAR(20) NULL | für Wiederherstellung aus Papierkorb |
 | `request_key` | CHAR(64) NOT NULL UNIQUE | Idempotenz: SHA-256(form_id + Submission-Token-Nonce) |
-| `spam_reason` | VARCHAR(40) NULL | `honeypot`, `too_fast`, `blocklist` |
+| `spam_reason` | VARCHAR(40) NULL | `honeypot`, `too_fast`, `blocklist`, `pow_missing`, `pow_invalid`, `pow_replayed`, Erweiterungen; bei einem Eintrag, der **kein** Spam ist, nur der Vermerk `pow_skipped` (ohne JavaScript, ohne Proof-of-Work-Lösung, SET-FC-P4-08) |
 | `source_url` | VARCHAR(2048) NULL | Seite der Einsendung, ohne Query-String |
 | `source_post_id` | BIGINT UNSIGNED NULL | |
 | `user_id` | BIGINT UNSIGNED NULL | eingeloggter Nutzer |

@@ -20,7 +20,7 @@ Jeder Schritt lässt sich überspringen; „Checkliste ausblenden“ beendet die
 - Spalten: Titel, Status, Einbettung (Shortcode mit „Kopieren“), Anzahl Einträge, zuletzt geändert.
 - Suche, Statusfilter (Alle, Veröffentlicht, Entwürfe, Pausiert, Archiviert) und Seitenblättern.
 - Zeilenaktionen: Bearbeiten, Duplizieren, Vorschau, Pausieren/Fortsetzen, Archivieren bzw. „Als Entwurf wiederherstellen“, JSON exportieren, Löschen.
-- **Löschen** ist nur ohne Einträge möglich. Hat ein Formular Einträge, archivieren Sie es – oder löschen Sie es mit dem zusätzlichen Recht *Einträge löschen* zusammen mit allen Einträgen („Mit Einträgen löschen“, nicht rückgängig zu machen).
+- **Löschen** ist nur ohne Einträge möglich. Hat ein Formular Einträge, archiviere es – oder lösche es mit dem zusätzlichen Recht *Einträge löschen* zusammen mit allen Einträgen („Mit Einträgen löschen“, nicht rückgängig zu machen).
 
 ## Editor
 
@@ -36,12 +36,12 @@ Jeder Schritt lässt sich überspringen; „Checkliste ausblenden“ beendet die
 **Feldtypen (Free):** Einzeiliger Text, Absatz, E-Mail, Telefon, Zahl, Auswahlliste (optional Mehrfachauswahl), Optionsfelder, Checkboxen, Datum, Überschrift/HTML-Hinweis, versteckter Wert, Einwilligung. Weitere Typen können Erweiterungen registrieren.
 
 - **HTML-Hinweis:** erlaubt sind nur `p, br, strong, em, b, i, ul, ol, li, a, h3, h4, span`. Alles andere (Skripte, iframes, `javascript:`-Links, Event-Attribute) wird beim Speichern entfernt.
-- **Einwilligung:** nie vorangekreuzt. Ändern Sie den Text, erhöht sich die Revision automatisch; bestehende Einträge behalten den Nachweis ihrer Version.
+- **Einwilligung:** nie vorangekreuzt. Änderst du den Text, erhöht sich die Revision automatisch; bestehende Einträge behalten den Nachweis ihrer Version.
 - **Sensible Felder** landen standardmäßig weder in E-Mails noch in Connector-Aktionen.
 - **Versteckte Werte** können von Besuchern verändert werden – nie für Vertrauensentscheidungen nutzen.
 - **Muster für einzeiligen Text:** Buchstaben, Buchstaben und Ziffern, Postleitzahl Deutschland (5 Ziffern), Österreich und Schweiz (4 Ziffern), „beliebiges Land“ (2–10 Buchstaben, Ziffern, Leer- oder Bindestriche) oder ein **eigenes Muster** (regulärer Ausdruck, z. B. `[A-Z]{2}-[0-9]{4}`). Eigene Muster mit verschachtelten Wiederholungen, Rückverweisen oder Lookarounds werden abgelehnt, weil sie die Website ausbremsen können.
 - **Telefon:** „beliebige Telefonnummer“ (Standard) oder „international mit + und Ländervorwahl“ (z. B. `+49 30 1234567`).
-- **Mindestalter am Datumsfeld:** Nur Geburtsdaten von Personen, die am Tag der Einsendung mindestens so alt sind, werden angenommen. Es gibt bewusst keine Vorgabe – welches Alter nötig ist, klären Sie rechtlich für Ihr Land und Ihren Zweck.
+- **Mindestalter am Datumsfeld:** Nur Geburtsdaten von Personen, die am Tag der Einsendung mindestens so alt sind, werden angenommen. Es gibt bewusst keine Vorgabe – welches Alter nötig ist, klärst du rechtlich für dein Land und deinen Zweck.
 - **Eigene Fehlermeldung:** ersetzt die Standardmeldung des Feldes (leer = Standard).
 - **Autofill:** sagt dem Browser, welche gespeicherten Angaben passen (Name, E-Mail, Telefon, Straße, PLZ, Ort, Land …). „Automatisch“ nutzt bei E-Mail und Telefon die passende Art.
 
@@ -80,7 +80,7 @@ Zeigt Aktionen aktivierter Connectoren (z. B. „Ticket anlegen“). Aktion hinz
 
 ## Vorschau
 
-„Vorschau“ speichert ungesicherte Änderungen und öffnet die Vorschau (Desktop/Mobil). Der Link ist zufällig, an Ihr Benutzerkonto gebunden und 30 Minuten gültig. In der Vorschau ist Absenden deaktiviert – es entstehen keine Einträge, E-Mails oder Aktionen.
+„Vorschau“ speichert ungesicherte Änderungen und öffnet die Vorschau (Desktop/Mobil). Der Link ist zufällig, an dein Benutzerkonto gebunden und 30 Minuten gültig. In der Vorschau ist Absenden deaktiviert – es entstehen keine Einträge, E-Mails oder Aktionen.
 
 ## JSON-Export und -Import
 

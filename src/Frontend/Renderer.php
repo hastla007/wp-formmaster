@@ -497,6 +497,8 @@ final class Renderer {
 				'required'         => $required,
 				'invalid'          => '' !== $error,
 				'aria-describedby' => trim( ( '' !== (string) ( $field['help'] ?? '' ) ? $help_id . ' ' : '' ) . $error_id ),
+				// Contract 1.3.0 (SET-FC-39): the core accepts several files per field as `<name>[]`.
+				'multiple_files'   => true,
 			)
 		);
 		if ( ! is_string( $control ) || '' === $control ) {

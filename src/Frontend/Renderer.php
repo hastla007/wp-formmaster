@@ -162,6 +162,8 @@ final class Renderer {
 			$html .= '<input type="hidden" name="_fc_src" value="' . esc_attr( (string) $source ) . '">';
 		}
 		$html .= $ctx_hidden;
+		// Language of this page; mails to the visitor are sent in it (SET-FC-21). Same for every visitor, so cache-safe.
+		$html .= '<input type="hidden" name="_fc_locale" value="' . esc_attr( determine_locale() ) . '">';
 		$html .= self::honeypot( $public_id, $prefix );
 
 		$has_required = false;

@@ -52,3 +52,5 @@
 /* Settings of extensions (contract 1.1.0). */
 .fc-rule { border-left: 3px solid #dcdcde; padding: 4px 0 4px 10px; margin: 0 0 12px; }
 .fc-json textarea { font-family: Menlo, Consolas, monospace; font-size: 12px; }
+.fc-test-mail { margin: 8px 0 16px; }
+.fc-notice-success { color: #00a32a; margin: 4px 0 12px; font-size: 12px; }

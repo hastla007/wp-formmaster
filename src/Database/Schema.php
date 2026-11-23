@@ -16,7 +16,10 @@ final class Schema {
 	 *
 	 * v2 adds fc_entries.consent_withdrawn_gmt (+ index). dbDelta() adds the column
 	 * to existing v1 tables, so install and upgrade produce the same schema.
-	 * v3 adds fc_entries.entry_number (+ index) for reference numbers (SET-FC-29).
+	 * v3 (one step for SET-FC-29 and SET-FC-10/21) adds fc_entries.entry_number (+ index) for
+	 * reference numbers, fc_entries.locale (language of the page with the form) and the
+	 * double opt-in columns confirmation_status, confirmation_token (SHA-256 of the link
+	 * token), confirmed_gmt and unconfirmed_until_gmt (+ index).
 	 *
 	 * @return array<string,string> table => sql
 	 */
@@ -74,6 +77,11 @@ final class Schema {
   anonymized_gmt datetime DEFAULT NULL,
   consent_withdrawn_gmt datetime DEFAULT NULL,
   entry_number varchar(40) DEFAULT NULL,
+  locale varchar(20) DEFAULT NULL,
+  confirmation_status varchar(10) DEFAULT NULL,
+  confirmation_token char(64) DEFAULT NULL,
+  confirmed_gmt datetime DEFAULT NULL,
+  unconfirmed_until_gmt datetime DEFAULT NULL,
   PRIMARY KEY  (id),
   UNIQUE KEY request_key (request_key),
   KEY form_status_created (form_id,status,created_gmt),
@@ -81,7 +89,8 @@ final class Schema {
   KEY expires (expires_gmt),
   KEY trashed (trashed_gmt),
   KEY consent_withdrawn (consent_withdrawn_gmt),
-  KEY entry_number (entry_number)
+  KEY entry_number (entry_number),
+  KEY unconfirmed (confirmation_status,unconfirmed_until_gmt)
 ) ENGINE=InnoDB $c;",
 			Tables::ENTRY_VALUES  => "CREATE TABLE {$t(Tables::ENTRY_VALUES)} (
   id bigint(20) unsigned NOT NULL AUTO_INCREMENT,

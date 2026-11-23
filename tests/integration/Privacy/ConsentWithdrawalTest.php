@@ -319,6 +319,24 @@ final class ConsentWithdrawalTest extends TestCase {
 		$this->assertMatchesRegularExpression( '/Z$/', (string) $dto['consent_withdrawn_gmt'] );
 	}
 
+	/** Entries table as of schema v2 (without the v3 columns of SET-FC-29 and SET-FC-10/21). */
+	private static function v2_definition(): string {
+		return str_replace(
+			array(
+				"  entry_number varchar(40) DEFAULT NULL,\n",
+				",\n  KEY entry_number (entry_number)",
+				"  locale varchar(20) DEFAULT NULL,\n",
+				"  confirmation_status varchar(10) DEFAULT NULL,\n",
+				"  confirmation_token char(64) DEFAULT NULL,\n",
+				"  confirmed_gmt datetime DEFAULT NULL,\n",
+				"  unconfirmed_until_gmt datetime DEFAULT NULL,\n",
+				",\n  KEY unconfirmed (confirmation_status,unconfirmed_until_gmt)",
+			),
+			'',
+			Schema::definitions()[ Tables::ENTRIES ]
+		);
+	}
+
 	/** Columns and indexes of a table, comparable between installations. */
 	private static function shape( string $table ): array {
 		global $wpdb;
@@ -350,13 +368,13 @@ final class ConsentWithdrawalTest extends TestCase {
 
 			// v1 table without the column, then migration step 2.
 			$wpdb->prefix = $real . 'fcup_';
-			$v1           = str_replace( array( "  consent_withdrawn_gmt datetime DEFAULT NULL,\n", ",\n  KEY consent_withdrawn (consent_withdrawn_gmt)", "  entry_number varchar(40) DEFAULT NULL,\n", ",\n  KEY entry_number (entry_number)" ), '', Schema::definitions()[ Tables::ENTRIES ] );
+			$v1           = str_replace( array( "  consent_withdrawn_gmt datetime DEFAULT NULL,\n", ",\n  KEY consent_withdrawn (consent_withdrawn_gmt)" ), '', self::v2_definition() );
 			$this->assertStringNotContainsString( 'consent_withdrawn', $v1 );
 			$wpdb->query( $v1 );
 			$this->assertNotContains( 'consent_withdrawn_gmt', array_column( self::shape( Tables::name( Tables::ENTRIES ) )[0], 0 ) );
 			( new Migrator() )->migrate_v2();
 			( new Migrator() )->migrate_v2(); // idempotent
-			( new Migrator() )->migrate_v3(); // v3 (entry_number) on top, idempotent as well
+			( new Migrator() )->migrate_v3(); // v3 (entry number, locale, double opt-in) on top, idempotent as well
 			$upgraded = self::shape( Tables::name( Tables::ENTRIES ) );
 		} finally {
 			foreach ( array( 'fcfresh_', 'fcup_' ) as $p ) {
@@ -400,6 +418,69 @@ final class ConsentWithdrawalTest extends TestCase {
 			// The ALTER statements committed the test transaction implicitly (incl. the intermediate
 			// version/state options); persist the restored state so later tests see a clean install.
 			$wpdb->query( 'COMMIT' );
+		}
+	}
+
+	public function test_upgrade_from_v2_adds_all_v3_columns_in_one_step(): void {
+		global $wpdb;
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		$real = $wpdb->prefix;
+		try {
+			$wpdb->prefix = $real . 'fcfresh_';
+			dbDelta( Schema::definitions()[ Tables::ENTRIES ] );
+			$fresh = self::shape( Tables::name( Tables::ENTRIES ) );
+
+			$wpdb->prefix = $real . 'fcup_';
+			$wpdb->query( self::v2_definition() );
+			$v2 = array_column( self::shape( Tables::name( Tables::ENTRIES ) )[0], 0 );
+			$this->assertContains( 'consent_withdrawn_gmt', $v2 );
+			foreach ( Migrator::V3_COLUMNS as $column ) {
+				$this->assertNotContains( $column, $v2 );
+			}
+			( new Migrator() )->migrate_v3();
+			( new Migrator() )->migrate_v3(); // idempotent
+			$upgraded = self::shape( Tables::name( Tables::ENTRIES ) );
+		} finally {
+			foreach ( array( 'fcfresh_', 'fcup_' ) as $p ) {
+				$wpdb->query( 'DROP TABLE IF EXISTS ' . $real . $p . Tables::ENTRIES );
+			}
+			$wpdb->prefix = $real;
+		}
+		$this->assertContains( 'entry_number:1:entry_number', $fresh[1] );
+		$this->assertContains( 'unconfirmed:2:unconfirmed_until_gmt', $fresh[1] );
+		$this->assertSame( $fresh, $upgraded );
+	}
+
+	public function test_migrator_upgrades_v2_installation_to_v3(): void {
+		global $wpdb;
+		$table    = Tables::name( Tables::ENTRIES );
+		$before   = self::shape_unordered( $table );
+		$migrator = new Migrator();
+		try {
+			$drop = array( 'DROP INDEX entry_number', 'DROP INDEX unconfirmed' );
+			foreach ( Migrator::V3_COLUMNS as $column ) {
+				$drop[] = 'DROP COLUMN ' . $column;
+			}
+			$wpdb->query( "ALTER TABLE {$table} " . implode( ', ', $drop ) );
+			update_option( Migrator::OPTION_VERSION, 2 );
+			$this->assertTrue( $migrator->needs_migration() );
+
+			$verify = new \ReflectionMethod( Migrator::class, 'verify' );
+			try {
+				$verify->invoke( $migrator, 3 );
+				$this->fail( 'verify(3) must detect the missing columns' );
+			} catch ( \RuntimeException $e ) {
+				$this->assertStringContainsString( 'missing_column:entries.entry_number', $e->getMessage() );
+			}
+
+			$this->assertTrue( $migrator->migrate() );
+			$this->assertSame( 3, $migrator->installed_version() );
+			$this->assertSame( $before, self::shape_unordered( $table ) );
+		} finally {
+			$migrator->migrate_v3();
+			update_option( Migrator::OPTION_VERSION, Migrator::TARGET_VERSION );
+			delete_option( Migrator::OPTION_STATE );
+			$wpdb->query( 'COMMIT' ); // ALTER committed implicitly, see above.
 		}
 	}
 

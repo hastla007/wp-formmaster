@@ -1,11 +1,12 @@
 {
-  "admin-settings.css": "eecb20fc0f",
-  "admin-settings.js": "8c46b950ca",
+  "admin-settings.css": "1253f42de6",
+  "admin-settings.js": "42bf9426da",
   "block-editor.js": "4d631db04c",
-  "editor.css": "9b7ba61477",
-  "editor.js": "3a2a07284d",
+  "editor.css": "54ff984557",
+  "editor.js": "00c1467f7c",
   "forms-admin.css": "b1954863db",
   "forms-admin.js": "a676920114",
   "frontend.css": "7ca0f4de56",
-  "frontend.js": "823e7b6708"
+  "frontend.js": "94001f14ca",
+  "proof-of-work.js": "eb932db91b"
 }

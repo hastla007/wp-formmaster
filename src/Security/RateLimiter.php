@@ -26,7 +26,7 @@ final class RateLimiter {
 	/** Token route limit per IP hash (RL-01). */
 	public const TOKEN_LIMIT = 30;
 
-	/** Flood brake per form (RL-04). */
+	/** Flood brake per form (RL-04): default of the setting spam.form_total (SpamLimits). */
 	public const FORM_TOTAL_LIMIT = 300;
 
 	/** form_captain_submit_v1 per form + source (RL-09). */
@@ -105,7 +105,7 @@ final class RateLimiter {
 	 */
 	public function hit( string $bucket, int $form_id, int $limit, ?int $window = null ): array {
 		global $wpdb;
-		$window = $window ?? Limits::get( 'rate_window_seconds' );
+		$window = $window ?? SpamLimits::window_seconds();
 		$table  = Tables::name( Tables::RATE_LIMITS );
 		$now    = Clock::now();
 		$cutoff = Clock::plus( -$window );
@@ -145,7 +145,7 @@ final class RateLimiter {
 		$checks   = array(
 			array( self::ip_bucket( 'submit', $form_id, $ip ), $per_form ),
 			array( self::ip_bucket( 'submit_global', 0, $ip ), Limits::get( 'rate_global_per_ip' ) ),
-			array( self::bucket( 'submit_form_total', $form_id, '' ), self::FORM_TOTAL_LIMIT ),
+			array( self::bucket( 'submit_form_total', $form_id, '' ), SpamLimits::get( 'form_total' ) ),
 		);
 		foreach ( $checks as $check ) {
 			$r = $this->hit( $check[0], $form_id, $check[1] );
@@ -175,6 +175,6 @@ final class RateLimiter {
 	public function purge_old(): int {
 		global $wpdb;
 		$table = Tables::name( Tables::RATE_LIMITS );
-		return (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE window_start_gmt < %s LIMIT 5000", Clock::plus( -Limits::get( 'rate_window_seconds' ) ) ) );
+		return (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE window_start_gmt < %s LIMIT 5000", Clock::plus( -SpamLimits::window_seconds() ) ) );
 	}
 }

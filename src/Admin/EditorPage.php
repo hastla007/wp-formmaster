@@ -17,6 +17,7 @@ use FormCaptain\Repository\FormRepository;
 use FormCaptain\Service\FormService;
 use FormCaptain\Service\PreviewTokens;
 use FormCaptain\Service\Templates;
+use FormCaptain\Settings\FormMessagingSettings;
 use FormCaptain\Support\Asset;
 
 final class EditorPage {
@@ -95,8 +96,9 @@ final class EditorPage {
 			'formsUrl'          => admin_url( 'admin.php?page=form-captain-forms' ),
 			'integrationsUrl'   => admin_url( 'admin.php?page=form-captain-integrations' ),
 			'adminEmail'        => (string) get_option( 'admin_email' ),
+			'userEmail'         => (string) wp_get_current_user()->user_email,
 			'initialTab'        => in_array( $tab, array( 'fields', 'notifications', 'confirmation', 'settings', 'actions' ), true ) ? $tab : 'fields',
-			'messages'          => self::error_messages() + $ext['messages'], // Core messages win.
+			'messages'          => self::error_messages() + FormMessagingSettings::error_messages() + $ext['messages'], // Core messages win.
 			'extensions'        => $ext['panels'],
 			'patterns'          => \FormCaptain\Domain\ValidationPatterns::options(),
 			'autocomplete'      => self::autocomplete_options(),

@@ -154,7 +154,7 @@ final class RetentionService {
 	/**
 	 * Cleanup run with batch size and time budget. Repeatable and resumable.
 	 *
-	 * @return array{expired:int,trash:int,failed:int,done:bool,purged_jobs:int,purged_logs:int}
+	 * @return array{expired:int,trash:int,unconfirmed:int,failed:int,done:bool,purged_jobs:int,purged_logs:int}
 	 */
 	public function run( ?int $time_budget = null ): array {
 		$deadline = microtime( true ) + (float) ( $time_budget ?? Limits::get( 'job_batch_seconds' ) );
@@ -162,6 +162,7 @@ final class RetentionService {
 		$stats    = array(
 			'expired'     => 0,
 			'trash'       => 0,
+			'unconfirmed' => 0,
 			'failed'      => 0,
 			'done'        => true,
 			'purged_jobs' => 0,
@@ -172,11 +173,14 @@ final class RetentionService {
 		$skip     = array();
 		$cutoff   = Clock::plus( -max( 1, (int) Settings::get( 'privacy.trash_days' ) ) * DAY_IN_SECONDS );
 
-		foreach ( array( 'expired', 'trash' ) as $kind ) {
+		foreach ( array( 'expired', 'trash', 'unconfirmed' ) as $kind ) {
 			while ( true ) {
-				$ids = 'expired' === $kind
-					? $this->entries->ids_expired( Clock::now(), $batch + count( $skip ) )
-					: $this->entries->ids_trashed_before( $cutoff, $batch + count( $skip ) );
+				$ids = match ( $kind ) {
+					'expired' => $this->entries->ids_expired( Clock::now(), $batch + count( $skip ) ),
+					'trash' => $this->entries->ids_trashed_before( $cutoff, $batch + count( $skip ) ),
+					// Double opt-in never confirmed within the form's period (SET-FC-10).
+					default => $this->entries->ids_unconfirmed_before( Clock::now(), $batch + count( $skip ) ),
+				};
 				$ids = array_values( array_diff( $ids, $skip ) );
 				if ( ! $ids ) {
 					break;
@@ -214,14 +218,14 @@ final class RetentionService {
 			self::OPTION_LAST_STATS,
 			array(
 				'at'      => Clock::now(),
-				'deleted' => $stats['expired'] + $stats['trash'],
+				'deleted' => $stats['expired'] + $stats['trash'] + $stats['unconfirmed'],
 				'failed'  => $stats['failed'],
 				'done'    => $stats['done'],
 			),
 			false
 		);
-		if ( $stats['expired'] + $stats['trash'] + $stats['failed'] > 0 ) {
-			Logger::log( 'info', 'cleanup_run', sprintf( 'expired=%d trash=%d failed=%d done=%d', $stats['expired'], $stats['trash'], $stats['failed'], (int) $stats['done'] ) );
+		if ( $stats['expired'] + $stats['trash'] + $stats['unconfirmed'] + $stats['failed'] > 0 ) {
+			Logger::log( 'info', 'cleanup_run', sprintf( 'expired=%d trash=%d unconfirmed=%d failed=%d done=%d', $stats['expired'], $stats['trash'], $stats['unconfirmed'], $stats['failed'], (int) $stats['done'] ) );
 		}
 		if ( ! $stats['done'] ) {
 			$this->jobs->enqueue( self::JOB_TYPE, self::JOB_TYPE . ':run:' . gmdate( 'Y-m-d-H-i', Clock::timestamp() ), array( 'task' => 'run' ) );
@@ -356,7 +360,7 @@ final class RetentionService {
 			return JobResult::success();
 		}
 		$stats = $this->run();
-		return JobResult::success( array( 'deleted' => $stats['expired'] + $stats['trash'] ) );
+		return JobResult::success( array( 'deleted' => $stats['expired'] + $stats['trash'] + $stats['unconfirmed'] ) );
 	}
 
 	/**

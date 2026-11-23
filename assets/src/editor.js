@@ -1187,6 +1187,123 @@
 		return el( FieldError, { code: props.errors[ props.path ] } );
 	}
 
+	/** "Send test to me" (SET-FC-19): the real mail with sample values, current editor settings. */
+	function TestMailButton( props ) {
+		var state = useState( null );
+		var busy = useState( false );
+		var send = function () {
+			busy[ 1 ]( true );
+			state[ 1 ]( null );
+			apiFetch( { path: boot.restPath + '/test-mail', method: 'POST', data: { kind: props.kind, settings: props.settings } } ).then(
+				function ( res ) {
+					busy[ 1 ]( false );
+					state[ 1 ]( { status: 'success', text: res.message } );
+				},
+				function ( err ) {
+					busy[ 1 ]( false );
+					state[ 1 ]( { status: 'error', text: ( err && err.message ) || __( 'The request failed.', 'form-captain' ) } );
+				}
+			);
+		};
+		return el(
+			'div',
+			{ className: 'fc-test-mail' },
+			el( C.Button, { variant: 'secondary', isBusy: busy[ 0 ], disabled: busy[ 0 ], onClick: send }, __( 'Send test to me', 'form-captain' ) ),
+			el( 'p', { className: 'description' }, sprintf( __( 'Sends this e-mail with sample values to your own address (%s), never to the recipients. Unsaved changes are used.', 'form-captain' ), boot.userEmail || '' ) ),
+			state[ 0 ] && el( 'p', { className: state[ 0 ].status === 'error' ? 'fc-field-error' : 'fc-notice-success', role: state[ 0 ].status === 'error' ? 'alert' : 'status' }, state[ 0 ].text )
+		);
+	}
+
+	/** Double opt-in (SET-FC-10). */
+	function DoubleOptInSection( props ) {
+		var s = props.settings;
+		var d = s.double_opt_in || {};
+		var emails = props.fields.filter( function ( f ) {
+			return f.type === 'email';
+		} );
+		var setD = function ( patch ) {
+			props.onChange( Object.assign( {}, s, { double_opt_in: Object.assign( {}, d, patch ) } ) );
+		};
+		return el(
+			Fragment,
+			null,
+			el( 'h2', null, __( 'Double opt-in', 'form-captain' ) ),
+			el( C.CheckboxControl, {
+				label: __( 'Accept submissions only after the visitor confirmed them by e-mail', 'form-captain' ),
+				help: __( 'Notifications and actions run only after the confirmation. Whether you need double opt-in (e.g. for newsletters) is a legal question – have the texts checked.', 'form-captain' ),
+				checked: !! d.enabled,
+				onChange: function ( v ) {
+					setD( { enabled: v } );
+				},
+			} ),
+			d.enabled &&
+				el(
+					Fragment,
+					null,
+					el( C.SelectControl, {
+						label: __( 'E-mail field for the confirmation link', 'form-captain' ),
+						value: d.email_field || '',
+						options: [ { value: '', label: __( '— Select —', 'form-captain' ) } ].concat(
+							emails.map( function ( f ) {
+								return { value: f.id, label: fieldLabel( f ) + ( f.required ? '' : ' (' + __( 'not required', 'form-captain' ) + ')' ) };
+							} )
+						),
+						onChange: function ( v ) {
+							setD( { email_field: v } );
+						},
+					} ),
+					el( SettingError, { errors: props.errors, path: 'double_opt_in.email_field' } ),
+					el( C.TextControl, {
+						label: __( 'Subject', 'form-captain' ),
+						help: __( 'Leave empty for the default text in the language of the page.', 'form-captain' ),
+						value: d.subject || '',
+						onChange: function ( v ) {
+							setD( { subject: v } );
+						},
+					} ),
+					el( SettingError, { errors: props.errors, path: 'double_opt_in.subject' } ),
+					el( C.TextareaControl, {
+						label: __( 'Message', 'form-captain' ),
+						help: __( 'Placeholders: {confirm_link}, {link_hours}, {form_title}, {site_title}, {field:key}. Without {confirm_link} the link is added below the text. Simple HTML is allowed: p, br, strong, em, b, i, ul, ol, li, a, h3, h4, span. Leave empty for the default text.', 'form-captain' ),
+						rows: 5,
+						value: d.body || '',
+						onChange: function ( v ) {
+							setD( { body: v } );
+						},
+					} ),
+					el( C.TextareaControl, {
+						label: __( 'Message after submitting', 'form-captain' ),
+						help: __( 'Shown instead of the success message until the visitor confirmed. Leave empty for the default text.', 'form-captain' ),
+						rows: 2,
+						value: d.pending_message || '',
+						onChange: function ( v ) {
+							setD( { pending_message: v } );
+						},
+					} ),
+					el( SettingError, { errors: props.errors, path: 'double_opt_in.pending_message' } ),
+					el( NumberInput, {
+						label: __( 'Link valid for (hours)', 'form-captain' ),
+						help: __( '1 to 720 hours. Default: 48.', 'form-captain' ),
+						value: d.link_hours === undefined ? 48 : d.link_hours,
+						onChange: function ( v ) {
+							setD( { link_hours: v } );
+						},
+					} ),
+					el( SettingError, { errors: props.errors, path: 'double_opt_in.link_hours' } ),
+					el( NumberInput, {
+						label: __( 'Delete unconfirmed submissions after (days)', 'form-captain' ),
+						help: __( '1 to 90 days, at least as long as the link is valid. Default: 7.', 'form-captain' ),
+						value: d.delete_after_days === undefined ? 7 : d.delete_after_days,
+						onChange: function ( v ) {
+							setD( { delete_after_days: v } );
+						},
+					} ),
+					el( SettingError, { errors: props.errors, path: 'double_opt_in.delete_after_days' } ),
+					el( TestMailButton, { kind: 'double_opt_in', settings: s } )
+				)
+		);
+	}
+
 	function NotificationsTab( props ) {
 		var s = props.settings;
 		var n = s.notification || {};
@@ -1291,7 +1408,8 @@
 								} );
 							} )
 						),
-					el( SettingError, { errors: props.errors, path: 'notification.fields' } )
+					el( SettingError, { errors: props.errors, path: 'notification.fields' } ),
+					el( TestMailButton, { kind: 'admin', settings: s } )
 				),
 			el( 'h2', null, __( 'Confirmation email to the visitor', 'form-captain' ) ),
 			el( C.CheckboxControl, { label: __( 'Send a confirmation email', 'form-captain' ), checked: !! cm.enabled, onChange: function ( v ) {
@@ -1307,9 +1425,15 @@
 						setCM( { subject: v } );
 					} } ),
 					el( SettingError, { errors: props.errors, path: 'confirmation_mail.subject' } ),
-					el( C.TextareaControl, { label: __( 'Message', 'form-captain' ), rows: 5, value: cm.body || '', onChange: function ( v ) {
-						setCM( { body: v } );
-					} } ),
+					el( C.TextareaControl, {
+						label: __( 'Message', 'form-captain' ),
+						help: sprintf( __( 'Placeholders: %s. Simple HTML is allowed: p, br, strong, em, b, i, ul, ol, li, a, h3, h4, span; everything else is removed. Plain text stays plain text.', 'form-captain' ), placeholders.replace( '{admin_email}, ', '{site_title}, ' ) ),
+						rows: 5,
+						value: cm.body || '',
+						onChange: function ( v ) {
+							setCM( { body: v } );
+						},
+					} ),
 					el(
 						'fieldset',
 						{ className: 'fc-checklist-fields' },
@@ -1332,8 +1456,10 @@
 								},
 							} );
 						} )
-					)
+					),
+					el( TestMailButton, { kind: 'confirmation', settings: s } )
 				),
+			el( DoubleOptInSection, { settings: s, fields: fields, errors: props.errors, onChange: props.onChange } ),
 			el( 'h2', null, __( 'Sender', 'form-captain' ) ),
 			el( 'p', { className: 'description' }, __( 'Copied from the global email settings when the form was created. Changes here only affect this form.', 'form-captain' ) ),
 			el( C.TextControl, {
@@ -1351,7 +1477,20 @@
 					props.onChange( Object.assign( {}, s, { email: Object.assign( {}, s.email || {}, { from_address: v } ) } ) );
 				},
 			} ),
-			el( SettingError, { errors: props.errors, path: 'email.from_address' } )
+			el( SettingError, { errors: props.errors, path: 'email.from_address' } ),
+			el( C.SelectControl, {
+				label: __( 'E-mail format', 'form-captain' ),
+				help: __( 'HTML e-mails always contain a plain-text version as well.', 'form-captain' ),
+				value: ( s.email || {} ).format || 'global',
+				options: [
+					{ value: 'global', label: __( 'As in the global e-mail settings', 'form-captain' ) },
+					{ value: 'html', label: __( 'HTML', 'form-captain' ) },
+					{ value: 'text', label: __( 'Plain text', 'form-captain' ) },
+				],
+				onChange: function ( v ) {
+					props.onChange( Object.assign( {}, s, { email: Object.assign( {}, s.email || {}, { format: v } ) } ) );
+				},
+			} )
 		);
 	}
 
@@ -1498,6 +1637,21 @@
 					props.onChange( Object.assign( {}, s, { appearance: { mode: v } } ) );
 				},
 			} ),
+			el( 'h2', null, __( 'Spam protection', 'form-captain' ) ),
+			el( C.SelectControl, {
+				label: __( 'Captcha for this form', 'form-captain' ),
+				help: __( 'Honeypot, minimum time, blocklist and rate limits always apply. "Stricter" requires the captcha also from visitors without JavaScript (built-in proof of work if no captcha is chosen globally).', 'form-captain' ),
+				value: ( s.spam || {} ).mode || 'global',
+				options: [
+					{ value: 'global', label: __( 'As in the global spam settings', 'form-captain' ) },
+					{ value: 'strict', label: __( 'Stricter: always require the captcha', 'form-captain' ) },
+					{ value: 'off', label: __( 'No captcha for this form', 'form-captain' ) },
+				],
+				onChange: function ( v ) {
+					props.onChange( Object.assign( {}, s, { spam: { mode: v } } ) );
+				},
+			} ),
+			el( SettingError, { errors: props.errors || {}, path: 'spam.mode' } ),
 			el( 'h2', null, __( 'Retention', 'form-captain' ) ),
 			el( RetentionControl, {
 				value: ( s.retention || {} ).mode || 'global',

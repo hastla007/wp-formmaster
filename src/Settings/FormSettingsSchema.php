@@ -96,12 +96,13 @@ final class FormSettingsSchema {
 				'label'      => __( 'Confirmation subject', 'form-captain' ),
 				'help'       => __( 'Required when the confirmation e-mail is on.', 'form-captain' ),
 			),
+			// SET-FC-19: plain text or simple HTML from the allowlist of html fields.
 			'confirmation_mail.body'      => array(
-				'type'       => 'text',
-				'max_length' => 5000,
-				'default'    => '',
-				'label'      => __( 'Confirmation text', 'form-captain' ),
-				'help'       => __( 'Plain text, up to 5000 characters.', 'form-captain' ),
+				'type'     => 'custom',
+				'default'  => '',
+				'sanitize' => static fn( mixed $raw ): array => array( FormMessagingSettings::sanitize_body( $raw ), null ),
+				'label'    => __( 'Confirmation text', 'form-captain' ),
+				'help'     => __( 'Plain text or simple HTML (paragraphs, bold, lists, links), up to 5000 characters.', 'form-captain' ),
 			),
 			'confirmation_mail.fields'    => array(
 				'type'    => 'field_list',
@@ -171,6 +172,18 @@ final class FormSettingsSchema {
 				'error'   => 'invalid_email',
 				'label'   => __( 'Sender address', 'form-captain' ),
 				'help'    => __( 'Copied from the global setting when the form is created. Empty uses the global sender.', 'form-captain' ),
+			),
+			// SET-FC-19: e-mail format of this form.
+			'email.format'                => array(
+				'type'    => 'enum',
+				'options' => array(
+					'global' => __( 'Use the global setting', 'form-captain' ),
+					'html'   => __( 'HTML', 'form-captain' ),
+					'text'   => __( 'Plain text', 'form-captain' ),
+				),
+				'default' => 'global',
+				'label'   => __( 'Email format', 'form-captain' ),
+				'help'    => __( 'Format of the e-mails of this form. "Use the global setting" follows Settings → E-mail.', 'form-captain' ),
 			),
 
 			// SET-FC-01: `global` or a retention period (manual, 1d…30y, see RetentionPeriod).
@@ -253,6 +266,71 @@ final class FormSettingsSchema {
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::limit_value( 'closed_message', $ctx ),
 				'label'    => __( 'Message when closed', 'form-captain' ),
 				'help'     => __( 'Shown instead of the form outside the period or when the maximum is reached. Empty uses the default text.', 'form-captain' ),
+			),
+
+			// SET-FC-17: spam protection of this form.
+			'spam.mode'                   => array(
+				'type'    => 'enum',
+				'options' => array(
+					'global' => __( 'As in the global spam settings', 'form-captain' ),
+					'strict' => __( 'Stricter: always require the captcha', 'form-captain' ),
+					'off'    => __( 'No captcha for this form', 'form-captain' ),
+				),
+				'default' => 'global',
+				'error'   => 'invalid_spam_mode',
+				'label'   => __( 'Captcha for this form', 'form-captain' ),
+				'help'    => __( 'Honeypot, minimum time, blocklist and rate limits always apply. "Stricter" requires the captcha also from visitors without JavaScript (built-in proof of work if no captcha is chosen globally).', 'form-captain' ),
+			),
+
+			// SET-FC-10: double opt-in; values are checked together in FormMessagingSettings::sanitize_double_opt_in().
+			'double_opt_in.enabled'       => array(
+				'type'     => 'custom',
+				'default'  => false,
+				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'enabled', $ctx ),
+				'label'    => __( 'Double opt-in', 'form-captain' ),
+				'help'     => __( 'Visitors confirm their submission with a link sent by e-mail. Unconfirmed submissions are deleted automatically.', 'form-captain' ),
+			),
+			'double_opt_in.email_field'   => array(
+				'type'     => 'custom',
+				'default'  => '',
+				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'email_field', $ctx ),
+				'label'    => __( 'E-mail field for the confirmation link', 'form-captain' ),
+				'help'     => __( 'A required e-mail field of this form that receives the confirmation link.', 'form-captain' ),
+			),
+			'double_opt_in.subject'       => array(
+				'type'     => 'custom',
+				'default'  => '',
+				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'subject', $ctx ),
+				'label'    => __( 'Double opt-in subject', 'form-captain' ),
+				'help'     => __( 'Up to 190 characters. Empty uses the default subject.', 'form-captain' ),
+			),
+			'double_opt_in.body'          => array(
+				'type'     => 'custom',
+				'default'  => '',
+				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'body', $ctx ),
+				'label'    => __( 'Double opt-in text', 'form-captain' ),
+				'help'     => __( 'Plain text or simple HTML, up to 5000 characters. {confirm_link} and {link_hours} are replaced. Empty uses the default text.', 'form-captain' ),
+			),
+			'double_opt_in.pending_message' => array(
+				'type'     => 'custom',
+				'default'  => '',
+				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'pending_message', $ctx ),
+				'label'    => __( 'Message until confirmed', 'form-captain' ),
+				'help'     => __( 'Shown after sending, up to 1000 characters. Empty uses the default text.', 'form-captain' ),
+			),
+			'double_opt_in.link_hours'    => array(
+				'type'     => 'custom',
+				'default'  => 48,
+				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'link_hours', $ctx ),
+				'label'    => __( 'Link valid for (hours)', 'form-captain' ),
+				'help'     => __( '1 to 720 hours. Default: 48.', 'form-captain' ),
+			),
+			'double_opt_in.delete_after_days' => array(
+				'type'     => 'custom',
+				'default'  => 7,
+				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'delete_after_days', $ctx ),
+				'label'    => __( 'Delete unconfirmed submissions after (days)', 'form-captain' ),
+				'help'     => __( '1 to 90 days, at least as long as the link is valid. Default: 7.', 'form-captain' ),
 			),
 		);
 		foreach ( $defs as $path => $def ) {
@@ -481,6 +559,18 @@ final class FormSettingsSchema {
 		$errors = array();
 		$limits = FormLimits::sanitize( $ctx['section'] ?? array(), $errors );
 		return array( $limits[ $key ], $errors[ 'limits.' . $key ] ?? null );
+	}
+
+	/**
+	 * One value of settings.double_opt_in, checked together with the other values of the section.
+	 *
+	 * @param array<string,mixed> $ctx
+	 * @return array{0:mixed,1:?string}
+	 */
+	private static function double_opt_in_value( string $key, array $ctx ): array {
+		$errors = array();
+		$doi    = FormMessagingSettings::sanitize_double_opt_in( $ctx['section'] ?? array(), (array) ( $ctx['fields'] ?? array() ), $errors );
+		return array( $doi[ $key ], $errors[ 'double_opt_in.' . $key ] ?? null );
 	}
 
 	/**

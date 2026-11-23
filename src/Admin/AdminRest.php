@@ -13,6 +13,7 @@ declare(strict_types=1);
 namespace FormCaptain\Admin;
 
 use FormCaptain\Install\Capabilities;
+use FormCaptain\Mail\TestMail;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\FormRepository;
 use FormCaptain\Service\FormService;
@@ -115,6 +116,16 @@ final class AdminRest {
 				'methods'             => 'PUT',
 				'callback'            => array( $this, 'update_actions' ),
 				'permission_callback' => $this->cap( Capabilities::MANAGE_FORMS, Capabilities::MANAGE_INTEGRATIONS ),
+			)
+		);
+		register_rest_route(
+			self::NS,
+			'/admin/forms/' . $id . '/test-mail',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'test_mail' ),
+				// No route args: they would be checked before the permission (401/403 first); TestMail checks `kind`.
+				'permission_callback' => $this->cap( Capabilities::MANAGE_FORMS ),
 			)
 		);
 		register_rest_route(
@@ -294,6 +305,26 @@ final class AdminRest {
 		);
 		$response->header( 'Cache-Control', 'no-store, private' );
 		return $response;
+	}
+
+	/** "Send test to me" (SET-FC-19): real form mail with sample values to the current user. */
+	public function test_mail( \WP_REST_Request $request ): \WP_REST_Response {
+		$form = $this->forms->find( (int) $request['id'] );
+		if ( ! $form ) {
+			return $this->error( new \WP_Error( 'not_found', __( 'Form not found.', 'form-captain' ), array( 'status' => 404 ) ) );
+		}
+		$settings = $request->get_param( 'settings' );
+		$result   = Plugin::instance()->get( TestMail::class )->send( $form, (string) $request->get_param( 'kind' ), is_array( $settings ) ? $settings : null, wp_get_current_user() );
+		if ( is_wp_error( $result ) ) {
+			return $this->error( $result );
+		}
+		return new \WP_REST_Response(
+			array(
+				'success' => true,
+				/* translators: %s: e-mail address */
+				'message' => sprintf( __( 'Test e-mail sent to %s.', 'form-captain' ), $result['to'] ),
+			)
+		);
 	}
 
 	public function list_templates(): \WP_REST_Response {

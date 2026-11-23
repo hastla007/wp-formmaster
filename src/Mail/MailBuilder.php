@@ -18,9 +18,11 @@ declare(strict_types=1);
 namespace FormCaptain\Mail;
 
 use FormCaptain\Domain\Fields\FieldTypes;
-
+use FormCaptain\Domain\HtmlSanitizer;
 use FormCaptain\Repository\FormRepository;
+use FormCaptain\Service\DoubleOptIn;
 use FormCaptain\Service\EntryNumbers;
+use FormCaptain\Settings\FormMessagingSettings;
 use FormCaptain\Settings\Settings;
 
 final class MailBuilder {
@@ -115,9 +117,9 @@ final class MailBuilder {
 			'reply_to'   => $reply_to,
 			'from_email' => $from['email'],
 			'from_name'  => $from['name'],
-			'format'     => $this->format( $settings ),
-			'html'       => $this->html( $title, $intro, $rows, $link, __( 'View submission in WordPress', 'form-captain' ) ),
-			'text'       => $this->text( $intro, $rows, $link, __( 'View submission in WordPress', 'form-captain' ) ),
+			'format'     => $this->format( $settings, $form ),
+			'html'       => self::wrap_html( $this->html( $title, $intro, $rows, $link, __( 'View submission in WordPress', 'form-captain' ) ), self::frame( 'admin', $form ) ),
+			'text'       => self::wrap_text( $this->text( $intro, $rows, $link, __( 'View submission in WordPress', 'form-captain' ) ), self::frame( 'admin', $form ) ),
 			'rejected'   => array_values( array_unique( $rejected ) ),
 		);
 	}
@@ -164,7 +166,7 @@ final class MailBuilder {
 		if ( '' === $body ) {
 			$body = __( 'Thank you! We have received your message and will get back to you as soon as possible.', 'form-captain' );
 		}
-		$body  = wp_strip_all_tags( $this->replace_placeholders( $body, $form, $fields, $values, $entry ) );
+		$body  = $this->body( $body, $form, $fields, $values, array(), $entry );
 		$opted = isset( $settings['fields'] ) && is_array( $settings['fields'] ) ? $settings['fields'] : array();
 		$rows  = $opted ? $this->rows( $fields, $values, $opted ) : array();
 		$title = (string) ( $form['title'] ?? '' );
@@ -173,12 +175,71 @@ final class MailBuilder {
 		return array(
 			'to'         => array( $to ),
 			'subject'    => $subject,
-			'reply_to'   => null,
+			'reply_to'   => self::visitor_reply_to(),
 			'from_email' => $from['email'],
 			'from_name'  => $from['name'],
-			'format'     => $this->format( $settings ),
-			'html'       => $this->html( $title, $body, $rows, null, '' ),
-			'text'       => $this->text( $body, $rows, null, '' ),
+			'format'     => $this->format( $settings, $form ),
+			'html'       => self::wrap_html( $this->html( $title, $body['html'], $rows, null, '', true ), self::frame( 'confirmation', $form ) ),
+			'text'       => self::wrap_text( $this->text( $body['text'], $rows, null, '' ), self::frame( 'confirmation', $form ) ),
+			'rejected'   => array_values( array_unique( $rejected ) ),
+		);
+	}
+
+	/**
+	 * Double opt-in mail with the confirmation link (SET-FC-10). Goes only to the configured,
+	 * validated e-mail field; placeholders {confirm_link}, {link_hours}, {form_title},
+	 * {site_title} and {field:key}. Without {confirm_link} the link is added below the text.
+	 *
+	 * @param array<string,mixed>                     $form
+	 * @param array<string,mixed>                     $entry
+	 * @param array<string,string|array<int,string>> $values
+	 * @return array<string,mixed>|\WP_Error
+	 */
+	public function double_opt_in( array $form, array $entry, array $values, string $link ): array|\WP_Error {
+		$settings = DoubleOptIn::settings( $form );
+		$fields   = self::fields( $this->schema_for( $form, $entry ) );
+		$rejected = array();
+		$raw      = $values[ $settings['email_field'] ] ?? '';
+		if ( ! is_string( $raw ) || '' === trim( $raw ) || self::header_unsafe( $raw ) || ! is_email( trim( $raw ) ) ) {
+			return new \WP_Error( 'invalid_recipient', 'No valid double opt-in recipient' );
+		}
+		$to = sanitize_email( trim( $raw ) );
+
+		$subject_tpl = trim( (string) $settings['subject'] );
+		if ( '' === $subject_tpl ) {
+			/* translators: %s: form title placeholder */
+			$subject_tpl = sprintf( __( 'Please confirm your submission: %s', 'form-captain' ), '{form_title}' );
+		}
+		$subject = $this->subject( $subject_tpl, $form, $fields, $values, $rejected, $entry );
+
+		$template = trim( (string) $settings['body'] );
+		if ( '' === $template ) {
+			$template = __( 'Please confirm your submission to "{form_title}" with this link:', 'form-captain' ) . "\n{confirm_link}\n\n"
+				. __( 'The link is valid for {link_hours} hours. If you did not send this form, simply ignore this e-mail; your submission will then be deleted automatically.', 'form-captain' );
+		}
+		// A link written by hand (<a href="{confirm_link}">…</a>) only gets the URL.
+		$template = str_replace( array( 'href="{confirm_link}"', "href='{confirm_link}'" ), 'href="{confirm_url}"', $template );
+		$extra    = array(
+			'{confirm_url}'  => array( esc_url( $link ), $link ),
+			'{confirm_link}' => array( '<a href="' . esc_url( $link ) . '">' . esc_html( $link ) . '</a>', $link ),
+			'{link_hours}'   => array( (string) (int) $settings['link_hours'], (string) (int) $settings['link_hours'] ),
+		);
+		$body     = $this->body( $template, $form, $fields, $values, $extra, $entry );
+		if ( ! str_contains( $template, '{confirm_link}' ) && ! str_contains( $template, '{confirm_url}' ) ) {
+			$body['html'] .= '<p><a href="' . esc_url( $link ) . '">' . esc_html__( 'Confirm submission', 'form-captain' ) . '</a></p>';
+			$body['text'] .= "\n\n" . $link;
+		}
+		$from  = $this->from( $form, $rejected );
+		$frame = self::frame( 'double_opt_in', $form );
+		return array(
+			'to'         => array( $to ),
+			'subject'    => $subject,
+			'reply_to'   => self::visitor_reply_to(),
+			'from_email' => $from['email'],
+			'from_name'  => $from['name'],
+			'format'     => $this->format( $settings, $form ),
+			'html'       => self::wrap_html( $this->html( (string) ( $form['title'] ?? '' ), $body['html'], array(), null, '', true ), $frame ),
+			'text'       => self::wrap_text( $this->text( $body['text'], array(), null, '' ), $frame ),
 			'rejected'   => array_values( array_unique( $rejected ) ),
 		);
 	}
@@ -237,10 +298,86 @@ final class MailBuilder {
 		);
 	}
 
-	/** @param array<string,mixed> $settings */
-	private function format( array $settings ): string {
-		$format = (string) ( $settings['format'] ?? Settings::get( 'email.format' ) ?? 'html' );
-		return 'text' === $format ? 'text' : 'html';
+	/**
+	 * Format of one mail: the section's own value, then the form's `email.format`, then the
+	 * global setting ("global" or an empty value means: ask the next level; SET-FC-17).
+	 *
+	 * @param array<string,mixed> $settings section settings (notification, confirmation_mail, double_opt_in)
+	 * @param array<string,mixed> $form
+	 */
+	private function format( array $settings, array $form = array() ): string {
+		foreach ( array( $settings['format'] ?? null, $form['settings']['email']['format'] ?? null, Settings::get( 'email.format' ) ) as $candidate ) {
+			if ( in_array( $candidate, array( 'html', 'text' ), true ) ) {
+				return $candidate;
+			}
+		}
+		return 'html';
+	}
+
+	/** Fixed reply-to address for mails to visitors (SET-FC-03), null when not set. */
+	public static function visitor_reply_to(): ?string {
+		$address = trim( (string) Settings::get( 'email.reply_to' ) );
+		return '' !== $address && ! self::header_unsafe( $address ) && is_email( $address ) ? sanitize_email( $address ) : null;
+	}
+
+	/**
+	 * Logo and footer shared by every mail (SET-FC-03).
+	 *
+	 * Filter `form_captain_mail_footer_v1` ( string $footer, string $kind, array $form ): the filter
+	 * wins over the setting; kinds are admin, confirmation, double_opt_in and test.
+	 *
+	 * @param array<string,mixed> $form
+	 * @return array{footer:string,logo:array{url:string,width:int,height:int,alt:string}|null}
+	 */
+	public static function frame( string $kind, array $form = array() ): array {
+		$footer = apply_filters( 'form_captain_mail_footer_v1', (string) Settings::get( 'email.footer_text' ), $kind, $form );
+		$footer = is_string( $footer ) ? trim( wp_strip_all_tags( $footer ) ) : '';
+		$logo   = null;
+		$id     = (int) Settings::get( 'email.logo_id' );
+		if ( $id > 0 && wp_attachment_is_image( $id ) ) {
+			$src = wp_get_attachment_image_src( $id, 'medium' );
+			if ( is_array( $src ) && ! empty( $src[0] ) ) {
+				$logo = array(
+					'url'    => (string) $src[0],
+					'width'  => (int) ( $src[1] ?? 0 ),
+					'height' => (int) ( $src[2] ?? 0 ),
+					'alt'    => wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES ),
+				);
+			}
+		}
+		return array(
+			'footer' => mb_substr( $footer, 0, 2000 ),
+			'logo'   => $logo,
+		);
+	}
+
+	/**
+	 * Adds logo (top) and footer (bottom) to an HTML document built by html().
+	 *
+	 * @param array{footer:string,logo:array{url:string,width:int,height:int,alt:string}|null} $frame
+	 */
+	public static function wrap_html( string $html, array $frame ): string {
+		if ( null !== $frame['logo'] ) {
+			$width = $frame['logo']['width'] > 0 ? min( 240, $frame['logo']['width'] ) : 240;
+			$img   = '<p><img src="' . esc_url( $frame['logo']['url'] ) . '" alt="' . esc_attr( $frame['logo']['alt'] ) . '" width="' . (int) $width . '" style="max-width:240px;height:auto;border:0;"></p>';
+			$pos   = strpos( $html, '>', (int) strpos( $html, '<body' ) );
+			$html  = false !== $pos ? substr_replace( $html, $img, $pos + 1, 0 ) : $img . $html;
+		}
+		if ( '' !== $frame['footer'] ) {
+			$foot = '<hr style="border:0;border-top:1px solid #dcdcde;margin:24px 0 12px;"><p style="font-size:12px;color:#50575e;">' . nl2br( esc_html( $frame['footer'] ) ) . '</p>';
+			$pos  = strrpos( $html, '</body>' );
+			$html = false !== $pos ? substr_replace( $html, $foot, $pos, 0 ) : $html . $foot;
+		}
+		return $html;
+	}
+
+	/**
+	 * Adds the footer to a plain-text mail, separated by the usual signature delimiter.
+	 *
+	 * @param array{footer:string,logo:array<string,mixed>|null} $frame
+	 */
+	public static function wrap_text( string $text, array $frame ): string {
+		return '' === $frame['footer'] ? $text : rtrim( $text ) . "\n\n-- \n" . $frame['footer'] . "\n";
 	}
 
 	/**
@@ -264,27 +401,77 @@ final class MailBuilder {
 	 * @param array<int,array<string,mixed>>          $fields
 	 * @param array<string,string|array<int,string>> $values
 	 */
-	private function replace_placeholders( string $text, array $form, array $fields, array $values, array $entry = array() ): string {
+	private function replace_placeholders( string $text, array $form, array $fields, array $values, array $entry = array(), bool $escape = false ): string {
+		$esc  = static fn( string $v ): string => $escape ? esc_html( $v ) : $v;
 		$text = str_replace(
 			array( '{form_title}', '{site_title}', '{entry_number}' ),
-			array( (string) ( $form['title'] ?? '' ), wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES ), $entry ? EntryNumbers::display( $entry ) : '' ),
+			array( $esc( (string) ( $form['title'] ?? '' ) ), $esc( wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES ) ), $entry ? $esc( EntryNumbers::display( $entry ) ) : '' ),
 			$text
 		);
 		return (string) preg_replace_callback(
 			'/\{field:([a-z][a-z0-9_]{0,39})\}/',
-			function ( array $m ) use ( $fields, $values ): string {
+			function ( array $m ) use ( $fields, $values, $esc ): string {
 				foreach ( $fields as $field ) {
 					if ( ( $field['key'] ?? '' ) === $m[1] ) {
 						if ( ! empty( $field['sensitive'] ) || ! self::mailable_type( (string) $field['type'] ) ) {
 							return '';
 						}
-						return self::display_value( $field, $values[ $field['id'] ] ?? '' );
+						return $esc( self::display_value( $field, $values[ $field['id'] ] ?? '' ) );
 					}
 				}
 				return '';
 			},
 			$text
 		);
+	}
+
+	/**
+	 * Body of a mail to the visitor (SET-FC-19): plain text as before, or simple HTML from the
+	 * allowlist of html fields. Field values are escaped before they enter the HTML, and the
+	 * result is cleaned again at send time. $extra holds trusted placeholders (e.g. the double
+	 * opt-in link) as [placeholder => [html, text]]; they are added after cleaning.
+	 *
+	 * @param array<string,mixed>                     $form
+	 * @param array<int,array<string,mixed>>          $fields
+	 * @param array<string,string|array<int,string>> $values
+	 * @param array<string,array{0:string,1:string}>  $extra
+	 * @param array<string,mixed>                     $entry for {entry_number}
+	 * @return array{html:string,text:string}
+	 */
+	private function body( string $template, array $form, array $fields, array $values, array $extra = array(), array $entry = array() ): array {
+		if ( FormMessagingSettings::is_html( $template ) ) {
+			$html = HtmlSanitizer::clean( $this->replace_placeholders( $template, $form, $fields, $values, $entry, true ) );
+			$html = strtr( $html, array_map( static fn( array $p ): string => $p[0], $extra ) );
+			return array(
+				'html' => $html,
+				'text' => self::html_to_text( $html ),
+			);
+		}
+		$text = wp_strip_all_tags( $this->replace_placeholders( $template, $form, $fields, $values, $entry ) );
+		$html = nl2br( esc_html( $text ) );
+		return array(
+			'html' => strtr( $html, array_map( static fn( array $p ): string => $p[0], $extra ) ),
+			'text' => strtr( $text, array_map( static fn( array $p ): string => $p[1], $extra ) ),
+		);
+	}
+
+	/** Plain-text alternative of allowlisted HTML: paragraphs, line breaks, list items and link targets survive. */
+	public static function html_to_text( string $html ): string {
+		$html = (string) preg_replace_callback(
+			'#<a\s[^>]*href=("|\')([^"\']*)\1[^>]*>(.*?)</a>#is',
+			static function ( array $m ): string {
+				$label = trim( wp_strip_all_tags( $m[3] ) );
+				$url   = html_entity_decode( $m[2], ENT_QUOTES, 'UTF-8' );
+				return '' === $label || $label === $url ? $url : $label . ' (' . $url . ')';
+			},
+			$html
+		);
+		$html = (string) preg_replace( '#<br\s*/?>#i', "\n", $html );
+		$html = (string) preg_replace( '#<li[^>]*>#i', "\n- ", $html );
+		$html = (string) preg_replace( '#</(p|h3|h4|ul|ol)>#i', "\n\n", $html );
+		$text = html_entity_decode( wp_strip_all_tags( $html ), ENT_QUOTES, 'UTF-8' );
+		$text = (string) preg_replace( "/[ \t]+\n/", "\n", $text );
+		return trim( (string) preg_replace( "/\n{3,}/", "\n\n", $text ) );
 	}
 
 	/**
@@ -379,10 +566,10 @@ final class MailBuilder {
 	/**
 	 * @param array<int,array{label:string,value:string}> $rows
 	 */
-	private function html( string $title, string $intro, array $rows, ?string $link, string $link_label ): string {
+	private function html( string $title, string $intro, array $rows, ?string $link, string $link_label, bool $intro_is_html = false ): string {
 		$out  = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:14px;color:#1d2327;">';
 		$out .= '<h2 style="font-size:18px;">' . esc_html( $title ) . '</h2>';
-		$out .= '<p>' . nl2br( esc_html( $intro ) ) . '</p>';
+		$out .= $intro_is_html ? '<div>' . $intro . '</div>' : '<p>' . nl2br( esc_html( $intro ) ) . '</p>';
 		if ( $rows ) {
 			$out .= '<table cellpadding="6" cellspacing="0" style="border-collapse:collapse;">';
 			foreach ( $rows as $row ) {

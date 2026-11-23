@@ -238,4 +238,18 @@ final class SettingsAuditTest extends TestCase {
 		$this->assertFalse( $this->plugin()->get( \FormCaptain\Admin\EditorPage::class )->bootstrap( 0 )['consentLink'] );
 		$this->assertFalse( $consent( (int) $service->create_from_template( 'contact' ) )['privacy_link'] );
 	}
+
+	public function test_import_preview_names_the_configured_grace_period(): void {
+		$this->as_admin();
+		Settings::set_group( 'privacy', array( 'grace_days' => 30 ) );
+		$data                                     = SettingsTransfer::export();
+		$data['settings']['privacy']['retention'] = '90d';
+		$this->page()->import_preview( (string) wp_json_encode( $data ) );
+		$_GET['tab'] = 'status';
+		ob_start();
+		$this->page()->render();
+		$html = (string) ob_get_clean();
+		unset( $_GET['tab'] );
+		$this->assertStringContainsString( 'never sooner than 30 days after this change', $html );
+	}
 }

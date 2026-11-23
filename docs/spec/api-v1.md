@@ -27,6 +27,7 @@ Adapter registrieren sich ausschließlich in oder nach `form_captain_loaded_v1`.
 | `form_captain_form_created_v1` | `array $form` (Form-DTO) |
 | `form_captain_form_updated_v1` | `array $form`, `string $change` (`saved`, `published`, `paused`, `unpublished`, `archived`) |
 | `form_captain_entry_created_v1` | `array $event` (Entry-Event, s. u.) |
+| `form_captain_entry_pending_v1` | `int $entry_id`, `int $form_id` – nach dem Commit einer öffentlichen Einsendung, die auf die Double-Opt-in-Bestätigung wartet (SET-FC-P4-04). Keine Werte; `entry_created_v1` folgt erst in der Bestätigungsanfrage. Für Erweiterungen, die Daten dieser Anfrage (z. B. hochgeladene Dateien) dem Eintrag zuordnen müssen |
 | `form_captain_entry_status_changed_v1` | `int $entry_id`, `string $old`, `string $new`, `int $form_id` |
 | `form_captain_entry_deleted_v1` | `int $entry_id`, `int $form_id`, `string $reason` (`manual`, `retention`, `erasure`, `anonymized`, `form_deleted`, `consent_withdrawn`, `import_reverted`) |
 | `form_captain_entries_imported_v1` | `string $import_id`, `int $form_id`, `int $count` – nach jedem Import-Schritt mit neu angelegten Entries (CSV-Eintragsimport, `docs/planung/import.md` 7); für importierte Entries gibt es kein `entry_created_v1` |

@@ -145,8 +145,18 @@ final class DoubleOptInTest extends FrontendTestCase {
 				$events[] = $e['entry_id'];
 			}
 		);
+		$pending = array();
+		add_action(
+			'form_captain_entry_pending_v1',
+			static function ( int $entry_id, int $form_id ) use ( &$pending ): void {
+				$pending[] = array( $entry_id, $form_id );
+			},
+			10,
+			2
+		);
 		$res = $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() + array( 'f_name01' => 'Erika' ) ) );
 		$this->assertTrue( $res['success'] );
+		$this->assertSame( array( array( (int) $res['entry_id'], (int) $form['id'] ) ), $pending, 'SET-FC-P4-04: extensions can link request data (uploads) right away' );
 		$this->assertStringContainsString( 'confirm', $res['message'] );
 		$this->assertArrayNotHasKey( 'redirect_url', $res );
 		$id    = (int) $res['entry_id'];
@@ -180,6 +190,7 @@ final class DoubleOptInTest extends FrontendTestCase {
 		$this->assertNull( $entry['unconfirmed_until_gmt'] );
 		$this->assertSame( array( DoubleOptIn::JOB_TYPE, 'mail.admin', 'connector.action' ), $this->job_types( $id ) );
 		$this->assertSame( array( $id ), $events );
+		$this->assertCount( 1, $pending, 'the confirmation does not fire the pending action again' );
 
 		// Single use: a second click changes nothing.
 		$again = $this->doi()->page( $token, true );

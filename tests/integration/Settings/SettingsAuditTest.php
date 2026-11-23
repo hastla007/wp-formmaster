@@ -320,4 +320,31 @@ final class SettingsAuditTest extends TestCase {
 		$this->assertTrue( $cli->settings_reset( 'general', false, true ) );
 		$this->assertSame( 7, get_option( 'fc_audit_addon' )['audit.days'], 'reset includes the add-on values of the section' );
 	}
+
+	public function test_filters_win_over_trash_days_rate_limit_and_minimum_time(): void {
+		Settings::set_group( 'privacy', array( 'trash_days' => 30 ) );
+		Settings::set_group( 'spam', array( 'rate_limit' => 5, 'min_seconds' => 3 ) );
+		$this->assertSame( 30, \FormCaptain\Service\RetentionService::trash_days() );
+		$this->assertSame( 5, \FormCaptain\Security\SpamLimits::get( 'rate_limit' ) );
+		$this->assertSame( 3, \FormCaptain\Security\SpamLimits::get( 'min_seconds' ) );
+
+		$days = static fn(): int => 120;
+		$spam = static fn( array $l ): array => array(
+			'rate_limit'  => 40,
+			'min_seconds' => 0,
+		) + $l;
+		add_filter( 'form_captain_trash_days_v1', $days );
+		add_filter( 'form_captain_spam_limits_v1', $spam );
+		try {
+			$this->assertSame( 120, \FormCaptain\Service\RetentionService::trash_days() );
+			$this->assertSame( 40, \FormCaptain\Security\SpamLimits::get( 'rate_limit' ) );
+			$this->assertNull( ( new \FormCaptain\Security\SpamGuard() )->check_min_time( time(), time() ), 'minimum time switched off by the filter' );
+		} finally {
+			remove_filter( 'form_captain_trash_days_v1', $days );
+			remove_filter( 'form_captain_spam_limits_v1', $spam );
+		}
+		add_filter( 'form_captain_trash_days_v1', static fn(): int => 0 );
+		$this->assertSame( 1, \FormCaptain\Service\RetentionService::trash_days(), 'kept within the bounds' );
+		remove_all_filters( 'form_captain_trash_days_v1' );
+	}
 }

@@ -328,7 +328,7 @@ final class EntriesPage {
 				sprintf(
 					/* translators: %s: number of days */
 					__( 'Items in the trash are deleted permanently after %s days.', 'form-captain' ),
-					number_format_i18n( (int) Settings::get( 'privacy.trash_days' ) )
+					number_format_i18n( \FormCaptain\Service\RetentionService::trash_days() )
 				)
 			) . '</p>';
 		}

@@ -86,7 +86,7 @@ final class SpamGuard {
 	}
 
 	public function check_min_time( ?int $issued_at, int $now ): ?string {
-		$min = max( 0, min( 60, (int) Settings::get( 'spam.min_seconds' ) ) );
+		$min = SpamLimits::get( 'min_seconds' );
 		if ( $min <= 0 || null === $issued_at ) {
 			return null;
 		}

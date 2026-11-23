@@ -17,7 +17,6 @@ use FormCaptain\Install\Capabilities;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\JobRepository;
-use FormCaptain\Settings\Settings;
 use FormCaptain\Support\Clock;
 use FormCaptain\Support\Errors;
 use FormCaptain\Support\Logger;
@@ -107,7 +106,7 @@ final class EntryService {
 		if ( 'trash' !== $entry['status'] ) {
 			return self::conflict( __( 'Only submissions in the trash can be restored.', 'form-captain' ) );
 		}
-		$days = max( 1, (int) Settings::get( 'privacy.trash_days' ) );
+		$days = RetentionService::trash_days();
 		if ( ! empty( $entry['trashed_gmt'] ) && strtotime( $entry['trashed_gmt'] . ' UTC' ) < Clock::timestamp() - $days * DAY_IN_SECONDS ) {
 			return self::conflict( __( 'The restore period for this submission has expired.', 'form-captain' ) );
 		}

@@ -308,6 +308,75 @@ final class DoubleOptInTest extends FrontendTestCase {
 		$this->assertTrue( $this->plugin()->get( EntryService::class )->resend_notification( $confirmed ) );
 	}
 
+	/**
+	 * SET-FC-P2-6 (decision 22, data protection wins): saving refuses a link validity longer than the
+	 * effective retention period, in the form settings and in the global settings.
+	 */
+	public function test_link_validity_longer_than_retention_is_refused_on_save(): void {
+		$service = $this->plugin()->get( FormService::class );
+		$schema  = array( 'fields' => array( array( 'id' => 'f_mail01', 'type' => 'email', 'key' => 'email', 'label' => 'E-Mail', 'required' => true ) ) );
+		$doi     = array( 'enabled' => true, 'email_field' => 'f_mail01', 'link_hours' => 48, 'delete_after_days' => 7 );
+
+		// Own retention of the form: 1 day < 48 hours.
+		$res = $service->sanitize_settings( array( 'double_opt_in' => $doi, 'retention' => array( 'mode' => '1d' ) ), $schema );
+		$this->assertSame( 'doi_link_longer_than_retention', $res['errors']['double_opt_in.link_hours'] );
+		$this->assertSame( 24, $res['settings']['double_opt_in']['link_hours'], 'the stored value is shortened, never longer than the retention' );
+		$this->assertArrayHasKey( 'doi_link_longer_than_retention', \FormCaptain\Settings\FormMessagingSettings::error_messages(), 'the editor shows a clear message' );
+		$res = $service->sanitize_settings( array( 'double_opt_in' => $doi, 'retention' => array( 'mode' => '2d' ) ), $schema );
+		$this->assertArrayNotHasKey( 'double_opt_in.link_hours', $res['errors'], '48 hours fit into 2 days' );
+		$res = $service->sanitize_settings( array( 'double_opt_in' => array( 'enabled' => false ) + $doi, 'retention' => array( 'mode' => '1d' ) ), $schema );
+		$this->assertArrayNotHasKey( 'double_opt_in.link_hours', $res['errors'], 'no check while double opt-in is off' );
+
+		// The form follows the global retention.
+		$privacy              = \FormCaptain\Settings\Settings::all()['privacy'];
+		$privacy['retention'] = '1d';
+		\FormCaptain\Settings\Settings::set_group( 'privacy', $privacy );
+		$res = $service->sanitize_settings( array( 'double_opt_in' => $doi, 'retention' => array( 'mode' => 'global' ) ), $schema );
+		$this->assertSame( 'doi_link_longer_than_retention', $res['errors']['double_opt_in.link_hours'] );
+		$res = $service->sanitize_settings( array( 'double_opt_in' => $doi, 'retention' => array( 'mode' => 'manual' ) ), $schema );
+		$this->assertArrayNotHasKey( 'double_opt_in.link_hours', $res['errors'], 'nothing is deleted automatically' );
+
+		// Global settings: a shorter retention is refused while a form that follows it has a longer link.
+		$privacy['retention'] = '12m';
+		\FormCaptain\Settings\Settings::set_group( 'privacy', $privacy );
+		$this->doi_form( array( 'link_hours' => 48 ) );
+		$this->doi_form( array( 'link_hours' => 72 ), array( 'retention' => array( 'mode' => '6m' ) ) ); // Own period: not affected.
+		list( $values, $errors ) = \FormCaptain\Settings\SettingsSchema::sanitize_group( 'privacy', array( 'retention' => '1d', 'retention_confirm' => '1' ) );
+		$this->assertStringContainsString( 'shorter than the validity of the confirmation link', $errors['privacy.retention'] );
+		$this->assertStringContainsString( '"Kontakt"', $errors['privacy.retention'] );
+		$this->assertSame( '12m', $values['retention'], 'the retention is not changed' );
+		list( $values, $errors ) = \FormCaptain\Settings\SettingsSchema::sanitize_group( 'privacy', array( 'retention' => '2d', 'retention_confirm' => '1' ) );
+		$this->assertArrayNotHasKey( 'privacy.retention', $errors );
+		$this->assertSame( '2d', $values['retention'] );
+	}
+
+	/**
+	 * SET-FC-P2-6: for a configuration saved before the check, the link of an entry never outlives
+	 * the entry; the mail states the shortened validity.
+	 */
+	public function test_link_of_an_existing_configuration_ends_with_the_retention(): void {
+		$form = $this->doi_form( array( 'link_hours' => 48, 'delete_after_days' => 7 ), array( 'retention' => array( 'mode' => '1d' ) ) );
+		$res   = $this->service()->submit( $form, $this->payload( $form, $this->valid_fields() ) );
+		$entry = $this->entries()->find( (int) $res['entry_id'] );
+		$this->assertNotEmpty( $entry['expires_gmt'] );
+		$this->assertSame( (int) strtotime( $entry['expires_gmt'] . ' UTC' ), DoubleOptIn::link_expires( $entry, $form ), 'link ends when the entry would be deleted' );
+		$this->assertSame( 24, DoubleOptIn::link_hours_for( $entry, $form ) );
+
+		$token = $this->mailed_token();
+		$mails = tests_retrieve_phpmailer_instance()->mock_sent;
+		$this->assertStringContainsString( 'gültig 24 Stunden', (string) end( $mails )['body'], 'the mail promises 24, not 48 hours' );
+
+		$this->assertSame( 'ok', $this->doi()->check( $token )['code'] );
+		Clock::freeze( Clock::timestamp() + 25 * HOUR_IN_SECONDS );
+		$this->assertSame( 'expired', $this->doi()->check( $token )['code'], 'after the retention, not after 48 hours' );
+		Clock::freeze( null );
+
+		// Without a retention period nothing changes.
+		$manual = $this->doi_form( array( 'link_hours' => 48 ), array( 'retention' => array( 'mode' => 'manual' ) ) );
+		$res    = $this->service()->submit( $manual, $this->payload( $manual, array( 'f_name01' => 'B', 'f_mail01' => 'b@example.org' ) ) );
+		$this->assertSame( 48, DoubleOptIn::link_hours_for( $this->entries()->find( (int) $res['entry_id'] ), $manual ) );
+	}
+
 	/** SET-FC-P3-7: periods and texts of the double opt-in carry the "legal review" hint. */
 	public function test_settings_help_asks_for_a_legal_review(): void {
 		$this->assertStringContainsString( 'have them checked legally', \FormCaptain\Settings\FormSettingsSchema::definitions()['double_opt_in.enabled']['help'] );

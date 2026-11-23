@@ -31,8 +31,10 @@ declare(strict_types=1);
 namespace FormCaptain\Settings;
 
 use FormCaptain\Domain\Fields\FieldTypes;
+use FormCaptain\Service\DoubleOptIn;
 use FormCaptain\Service\FormLimits;
 use FormCaptain\Service\FormService;
+use FormCaptain\Service\RetentionService;
 
 final class FormSettingsSchema {
 
@@ -515,6 +517,19 @@ final class FormSettingsSchema {
 				}
 				if ( '' === $out['confirmation_mail']['subject'] ) {
 					$errors['confirmation_mail.subject'] = 'subject_required';
+				}
+			},
+			// SET-FC-P2-6 (decision 22): the confirmation link never stays valid longer than the
+			// submissions of this form are kept; data protection wins.
+			'double_opt_in'     => static function ( array &$out, array &$errors ): void {
+				if ( empty( $out['double_opt_in']['enabled'] ) || isset( $errors['double_opt_in.link_hours'] ) ) {
+					return;
+				}
+				$max = DoubleOptIn::max_link_hours( RetentionService::mode_for_form( array( 'settings' => $out ) ) );
+				if ( null !== $max && (int) $out['double_opt_in']['link_hours'] > $max ) {
+					$errors['double_opt_in.link_hours']    = 'doi_link_longer_than_retention';
+					$out['double_opt_in']['link_hours']    = $max;
+					$out['double_opt_in']['delete_after_days'] = max( (int) ceil( $max / 24 ), min( 90, (int) $out['double_opt_in']['delete_after_days'] ) );
 				}
 			},
 			'confirmation'      => static function ( array &$out, array &$errors ): void {

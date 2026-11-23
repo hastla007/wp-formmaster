@@ -137,7 +137,7 @@ Filter `form_captain_country_presets_v1` (Array Schlüssel → `label`, `values`
 | `double_opt_in.enabled` | bool | false | Einsendung gilt erst nach Bestätigung |
 | `double_opt_in.email_field` | Feld-ID (Pflicht-E-Mail-Feld) | leer | |
 | `double_opt_in.subject` / `.body` / `.pending_message` | Text ≤ 190 / 5000 / 1000 | leer = Standardtext | Platzhalter `{confirm_link}`, `{link_hours}` |
-| `double_opt_in.link_hours` | int 1–720 | 48 | |
+| `double_opt_in.link_hours` | int 1–720 | 48 | höchstens die wirksame Aufbewahrung des Formulars (eigene oder `privacy.retention`), sonst Fehler `doi_link_longer_than_retention` und Kürzung; eine kürzere globale Aufbewahrung wird abgelehnt, solange ein Formular mit Double-Opt-in ihr folgt und länger gilt. Zur Laufzeit endet der Link spätestens mit `expires_gmt` des Eintrags, `{link_hours}` nennt die gekürzte Zahl (SET-FC-P2-6, Entscheidung 22) |
 | `double_opt_in.delete_after_days` | int 1–90, ≥ Link-Gültigkeit | 7 | unbestätigte Einsendungen werden gelöscht |
 
 Filter `form_captain_double_opt_in_v1` gewinnt über die Formularwerte.

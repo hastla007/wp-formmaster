@@ -217,12 +217,14 @@ final class MailBuilder {
 			$template = __( 'Please confirm your submission to "{form_title}" with this link:', 'form-captain' ) . "\n{confirm_link}\n\n"
 				. __( 'The link is valid for {link_hours} hours. If you did not send this form, simply ignore this e-mail; your submission will then be deleted automatically.', 'form-captain' );
 		}
+		// Hours shortened to the time until the entry would be deleted (SET-FC-P2-6).
+		$hours = (string) DoubleOptIn::link_hours_for( $entry, $form );
 		// A link written by hand (<a href="{confirm_link}">…</a>) only gets the URL.
 		$template = str_replace( array( 'href="{confirm_link}"', "href='{confirm_link}'" ), 'href="{confirm_url}"', $template );
 		$extra    = array(
 			'{confirm_url}'  => array( esc_url( $link ), $link ),
 			'{confirm_link}' => array( '<a href="' . esc_url( $link ) . '">' . esc_html( $link ) . '</a>', $link ),
-			'{link_hours}'   => array( (string) (int) $settings['link_hours'], (string) (int) $settings['link_hours'] ),
+			'{link_hours}'   => array( $hours, $hours ),
 		);
 		$body     = $this->body( $template, $form, $fields, $values, $extra, $entry );
 		if ( ! str_contains( $template, '{confirm_link}' ) && ! str_contains( $template, '{confirm_url}' ) ) {

@@ -864,6 +864,18 @@ final class SettingsSchema {
 				$errors['privacy.retention'] = __( 'Changing the retention period affects existing submissions. Please confirm the change.', 'form-captain' );
 				$values['retention']         = $current['retention'];
 			}
+			if ( ! isset( $errors['privacy.retention'] ) && ( $values['retention'] ?? '' ) !== ( $current['retention'] ?? '' ) ) {
+				// SET-FC-P2-6 (decision 22): a double opt-in link must never outlive the submission.
+				$conflicts = \FormCaptain\Service\DoubleOptIn::forms_exceeding_retention( (string) $values['retention'] );
+				if ( $conflicts ) {
+					$errors['privacy.retention'] = sprintf(
+						/* translators: %s: list of form titles */
+						__( 'This retention period is shorter than the validity of the confirmation link (double opt-in) in these forms: %s. Shorten the link validity there first or choose a longer period.', 'form-captain' ),
+						implode( ', ', array_map( static fn( string $title ): string => '"' . $title . '"', $conflicts ) )
+					);
+					$values['retention'] = $current['retention'];
+				}
+			}
 			if ( empty( $values['delete_data_on_uninstall'] ) ) {
 				$values['delete_data_on_uninstall']  = false;
 				$values['delete_data_confirmed_gmt'] = '';

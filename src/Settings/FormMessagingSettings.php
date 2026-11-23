@@ -153,14 +153,15 @@ final class FormMessagingSettings {
 	 */
 	public static function error_messages(): array {
 		return array(
-			'invalid_spam_mode'            => __( 'Please choose one of the offered spam protection options.', 'form-captain' ),
-			'invalid_doi_email_field'      => __( 'Double opt-in needs an email field of this form.', 'form-captain' ),
-			'doi_email_field_required'     => __( 'Choose the email field that receives the confirmation link.', 'form-captain' ),
-			'doi_email_field_not_required' => __( 'The email field for double opt-in must be required.', 'form-captain' ),
-			'text_too_long'                => __( 'This text is too long.', 'form-captain' ),
-			'doi_link_hours_range'         => __( 'Enter a link validity between 1 and 720 hours.', 'form-captain' ),
-			'doi_delete_days_range'        => __( 'Enter a number of days between 1 and 90.', 'form-captain' ),
-			'doi_delete_before_expiry'     => __( 'Unconfirmed submissions may only be deleted after the link has expired.', 'form-captain' ),
+			'invalid_spam_mode'              => __( 'Please choose one of the offered spam protection options.', 'form-captain' ),
+			'invalid_doi_email_field'        => __( 'Double opt-in needs an email field of this form.', 'form-captain' ),
+			'doi_email_field_required'       => __( 'Choose the email field that receives the confirmation link.', 'form-captain' ),
+			'doi_email_field_not_required'   => __( 'The email field for double opt-in must be required.', 'form-captain' ),
+			'text_too_long'                  => __( 'This text is too long.', 'form-captain' ),
+			'doi_link_hours_range'           => __( 'Enter a link validity between 1 and 720 hours.', 'form-captain' ),
+			'doi_link_longer_than_retention' => __( 'The confirmation link may not stay valid longer than submissions of this form are kept (retention period), otherwise the submission could be deleted before it is confirmed. Shorten the link validity or keep submissions longer.', 'form-captain' ),
+			'doi_delete_days_range'          => __( 'Enter a number of days between 1 and 90.', 'form-captain' ),
+			'doi_delete_before_expiry'       => __( 'Unconfirmed submissions may only be deleted after the link has expired.', 'form-captain' ),
 		);
 	}
 }

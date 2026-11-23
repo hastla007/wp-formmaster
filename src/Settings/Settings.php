@@ -38,6 +38,7 @@ final class Settings {
 				'delete_data_on_uninstall'  => false,
 				'delete_data_confirmed_gmt' => '',
 				'policy_page_hint'          => true,
+				'change_log_months'         => 12,
 			),
 			'spam'       => array(
 				'honeypot'         => true,

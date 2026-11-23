@@ -51,7 +51,8 @@ final class SettingsSchema {
 	 * Definitions keyed by "group.key".
 	 *
 	 * Keys: type (bool|int|enum|string|email|hex|text|datetime), default, tab, label, help,
-	 * options (enum), min/max (int), max_length (string/text), internal (not user editable).
+	 * options (enum), min/max (int), max_length (string/text), internal (not user editable),
+	 * secret (masked in the change log, never exported).
 	 *
 	 * @return array<string,array<string,mixed>>
 	 */
@@ -142,6 +143,13 @@ final class SettingsSchema {
 				'type'  => 'bool',
 				'label' => __( 'Offer a link to the privacy policy page in consent texts', 'form-captain' ),
 				'help'  => __( 'Consent fields can link to the privacy policy page that is set in WordPress under Settings → Privacy.', 'form-captain' ),
+			),
+			'privacy.change_log_months'         => array(
+				'type'  => 'int',
+				'min'   => 1,
+				'max'   => 120,
+				'label' => __( 'Keep the settings change log for (months)', 'form-captain' ),
+				'help'  => __( 'Changes of settings and permissions are listed with user, time, old and new value under System status. Secret values are never shown.', 'form-captain' ),
 			),
 			'spam.honeypot'                     => array(
 				'type'  => 'bool',
@@ -487,6 +495,18 @@ final class SettingsSchema {
 			default:
 				return array( null, __( 'Invalid value.', 'form-captain' ) );
 		}
+	}
+
+	/**
+	 * Secret values (keys, passwords, tokens) are masked in the change log and never exported.
+	 * A definition can mark itself with `secret => true`; names that look like secrets count too.
+	 */
+	public static function is_secret( string $path ): bool {
+		$def = self::definitions()[ $path ] ?? null;
+		if ( is_array( $def ) && ! empty( $def['secret'] ) ) {
+			return true;
+		}
+		return (bool) preg_match( '/secret|token|password|passwd|api_?key|private_?key|credential/i', $path );
 	}
 
 	/** True when the sender domain differs from the site domain (deliverability hint, P2-22). */

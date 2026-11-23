@@ -15,6 +15,7 @@ Gespeichert als eine Option `form_captain_settings` (Array, autoload). Jede Opti
 | Datenschutz | `privacy.trash_days` | int 1–90 | 30 | |
 | Datenschutz | `privacy.delete_data_on_uninstall` | bool | false | erfordert Bestätigungstext |
 | Datenschutz | `privacy.policy_page_hint` | bool | true | Link auf WP-Datenschutzseite in Consent |
+| Datenschutz | `privacy.change_log_months` | int 1–120 | 12 | Aufbewahrung des Änderungsprotokolls; Filter `form_captain_change_log_months_v1` gewinnt |
 | Spamschutz | `spam.honeypot` | bool | true | |
 | Spamschutz | `spam.min_seconds` | int 0–60 | 3 | |
 | Spamschutz | `spam.rate_limit` | int 1–100 | 5 | je 10 min / Formular / IP-Hash |
@@ -44,3 +45,7 @@ Neue Formularwerte: einen Eintrag in `definitions()` im passenden Abschnitt erg�
 | `recipient_rules`, `pdf_attachment`, `email_designer` | E-Mail |
 | `upload_retention` | Datenschutz |
 | `upload_virus_scan` | Spamschutz |
+
+## Änderungsprotokoll (SET-FC-15)
+
+`FormCaptain\Settings\ChangeLog` hängt an `update_option_form_captain_settings` und schreibt jede Änderung, egal über welchen Weg (Oberfläche, WP-CLI, Import, Code): Zeitpunkt (UTC), Benutzer-ID, Quelle (`ui`, `cli`, `import`, `system`), Schlüssel, alter und neuer Wert. Rollenänderungen erscheinen als `access.<rolle>.<recht>` (alt/neu `true`/`false`). Geheime Werte (`secret => true` in der Definition oder Name mit `secret`, `token`, `password`, `api_key`, `private_key`, `credential`) werden als `••••••` gespeichert, lange Werte auf 200 Zeichen gekürzt. Ablage in der Option `form_captain_settings_changelog` (nicht autoload, höchstens 1000 Einträge), Löschung nach `privacy.change_log_months` Monaten durch die tägliche Bereinigung – nicht nach 30 Tagen wie das technische Protokoll. Ansicht: Reiter *Systemstatus → Änderungsprotokoll* (letzte 50 Einträge).

@@ -32,6 +32,10 @@ Eine Änderung muss bestätigt werden. Sie sehen vorher je Option die Anzahl bet
 
 Standardmäßig bleiben Formulare und Einträge beim Löschen des Plugins erhalten. Für vollständige Löschung: Häkchen setzen **und** `DELETE` bzw. `LÖSCHEN` eingeben, dann speichern. Die Pluginliste zeigt danach einen Warnhinweis. Häkchen entfernen hebt die Bestätigung auf.
 
+## Änderungsprotokoll
+
+*Systemstatus → Änderungsprotokoll* zeigt die letzten 50 Änderungen an Einstellungen und Rollenrechten: wann, wer, über welchen Weg (Einstellungsseite, WP-CLI, Import, System), welcher Wert von alt auf neu. Geheime Werte werden nie angezeigt. Wie lange Einträge bleiben, stellen Sie unter *Datenschutz & Speicherung* ein (Standard 12 Monate).
+
 ## Diagnosebericht für den Support
 
 *Systemstatus → Bericht kopieren*. Der Bericht enthält Status, Fehlercodes und Korrelations-IDs, aber **keine** Feldwerte, E-Mail-Adressen, IP-Adressen, Tokens oder Schlüssel. Der Support findet mit der Korrelations-ID die passenden Protokolleinträge. Per WP-CLI: `wp form-captain status`.

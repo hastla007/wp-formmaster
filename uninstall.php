@@ -58,6 +58,7 @@ $form_captain_options = array(
 	'form_captain_last_cleanup',
 	'form_captain_last_cleanup_at',
 	'form_captain_entry_import_runs',
+	'form_captain_settings_changelog',
 );
 foreach ( $form_captain_options as $form_captain_option ) {
 	delete_option( $form_captain_option );

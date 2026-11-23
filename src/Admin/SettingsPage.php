@@ -18,6 +18,7 @@ use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
 use FormCaptain\Settings\AccessControl;
+use FormCaptain\Settings\ChangeLog;
 use FormCaptain\Settings\Settings;
 use FormCaptain\Settings\SettingsSchema;
 use FormCaptain\Support\Asset;
@@ -48,6 +49,7 @@ final class SettingsPage {
 		add_action( 'form_captain_cleanup', array( self::class, 'expire_previous_secret' ) );
 		add_action( 'after_plugin_row_' . plugin_basename( FORM_CAPTAIN_FILE ), array( $this, 'plugin_row_notice' ) );
 		$plugin->get( SiteHealth::class )->register();
+		ChangeLog::register();
 	}
 
 	public function enqueue(): void {
@@ -69,6 +71,14 @@ final class SettingsPage {
 	 * @return array{type:string,messages:string[],errors:array<string,string>}
 	 */
 	public function save_tab( string $tab, array $input ): array {
+		return ChangeLog::with_source( 'ui', fn(): array => $this->do_save_tab( $tab, $input ) );
+	}
+
+	/**
+	 * @param array<string,mixed> $input
+	 * @return array{type:string,messages:string[],errors:array<string,string>}
+	 */
+	private function do_save_tab( string $tab, array $input ): array {
 		if ( 'access' === $tab ) {
 			return $this->save_access( (array) ( $input['roles'] ?? array() ) );
 		}
@@ -119,6 +129,7 @@ final class SettingsPage {
 			return self::notice( 'error', array( __( 'Changing role permissions requires the capability to promote users.', 'form-captain' ) ) );
 		}
 		$result = AccessControl::apply( $roles );
+		ChangeLog::with_source( 'ui', static fn() => ChangeLog::record_roles( $result ) );
 		Logger::log( 'info', 'roles_changed', 'changes=' . $result['changed'] );
 		return self::notice( 'success', array( $result['changed'] ? __( 'Permissions saved.', 'form-captain' ) : __( 'No changes.', 'form-captain' ), self::access_summary() ) );
 	}
@@ -134,11 +145,16 @@ final class SettingsPage {
 
 	/** @return array{type:string,messages:string[],errors:array<string,string>} */
 	public function reset_tab( string $tab ): array {
+		return ChangeLog::with_source( 'ui', fn(): array => $this->do_reset_tab( $tab ) );
+	}
+
+	/** @return array{type:string,messages:string[],errors:array<string,string>} */
+	private function do_reset_tab( string $tab ): array {
 		if ( 'access' === $tab ) {
 			if ( ! current_user_can( 'promote_users' ) ) {
 				return self::notice( 'error', array( __( 'Changing role permissions requires the capability to promote users.', 'form-captain' ) ) );
 			}
-			AccessControl::reset();
+			ChangeLog::record_roles( AccessControl::reset() );
 			return self::notice( 'success', array( __( 'Permissions were reset: only administrators have access.', 'form-captain' ), self::access_summary() ) );
 		}
 		if ( ! in_array( $tab, SettingsSchema::GROUPS, true ) ) {
@@ -738,6 +754,30 @@ final class SettingsPage {
 		$this->render_reset( 'access' );
 	}
 
+	private function render_change_log(): void {
+		echo '<h2>' . esc_html__( 'Settings change log', 'form-captain' ) . '</h2>';
+		/* translators: %d: number of months */
+		echo '<p>' . esc_html( sprintf( _n( 'Changes of settings and role permissions from the last %d month. Secret values are masked.', 'Changes of settings and role permissions from the last %d months. Secret values are masked.', ChangeLog::months(), 'form-captain' ), ChangeLog::months() ) ) . '</p>';
+		$entries = ChangeLog::latest( 50 );
+		if ( ! $entries ) {
+			echo '<p>' . esc_html__( 'No changes recorded yet.', 'form-captain' ) . '</p>';
+			return;
+		}
+		$sources = array(
+			'ui'     => __( 'Settings screen', 'form-captain' ),
+			'cli'    => __( 'WP-CLI', 'form-captain' ),
+			'import' => __( 'Import', 'form-captain' ),
+			'system' => __( 'System', 'form-captain' ),
+		);
+		echo '<div class="fc-table-scroll"><table class="widefat striped fc-change-log"><thead><tr><th scope="col">' . esc_html__( 'Time', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'User', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'Source', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'Setting', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'Old value', 'form-captain' ) . '</th><th scope="col">' . esc_html__( 'New value', 'form-captain' ) . '</th></tr></thead><tbody>';
+		foreach ( $entries as $e ) {
+			$user = $e['user'] ? get_userdata( (int) $e['user'] ) : false;
+			$name = $user ? $user->display_name : ( $e['user'] ? '#' . (int) $e['user'] : '—' );
+			echo '<tr><td>' . esc_html( (string) get_date_from_gmt( (string) $e['time'], (string) get_option( 'date_format' ) . ' ' . (string) get_option( 'time_format' ) ) ) . '</td><td>' . esc_html( $name ) . '</td><td>' . esc_html( $sources[ $e['source'] ] ?? (string) $e['source'] ) . '</td><td><code>' . esc_html( (string) $e['key'] ) . '</code></td><td>' . esc_html( (string) $e['old'] ) . '</td><td>' . esc_html( (string) $e['new'] ) . '</td></tr>';
+		}
+		echo '</tbody></table></div>';
+	}
+
 	private function render_status(): void {
 		$d        = $this->status->collect();
 		$problems = $this->status->problems( $d );
@@ -782,6 +822,8 @@ final class SettingsPage {
 		echo '<p>' . esc_html__( 'Copy this report into a support request. It contains status data, error codes and correlation IDs only.', 'form-captain' ) . '</p>';
 		echo '<label for="fc-report" class="screen-reader-text">' . esc_html__( 'Diagnostics report', 'form-captain' ) . '</label><textarea id="fc-report" class="large-text code" rows="14" readonly>' . esc_textarea( $this->status->report_text( $d ) ) . '</textarea>';
 		echo '<p><button type="button" class="button" data-fc-copy="fc-report">' . esc_html__( 'Copy report', 'form-captain' ) . '</button></p>';
+
+		$this->render_change_log();
 
 		echo '<h2>' . esc_html__( 'Signing key', 'form-captain' ) . '</h2>';
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" data-fc-confirm="' . esc_attr__( 'Renewing the signing key invalidates links and open forms older than 26 hours. Continue?', 'form-captain' ) . '">';

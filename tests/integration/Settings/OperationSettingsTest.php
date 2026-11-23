@@ -354,4 +354,14 @@ final class OperationSettingsTest extends TestCase {
 		$boot = $this->plugin()->get( \FormCaptain\Admin\EditorPage::class )->bootstrap( 0 );
 		$this->assertEquals( (object) array(), $boot['fieldSuggestions'], 'editor gets an empty object without suggestions' );
 	}
+
+	/** SET-FC-P3-4: privacy.policy_page_hint decides whether new consent fields link the privacy policy page. */
+	public function test_policy_page_hint_reaches_the_editor(): void {
+		$this->as_admin();
+		$editor = $this->plugin()->get( \FormCaptain\Admin\EditorPage::class );
+		$this->assertTrue( $editor->bootstrap( 0 )['privacyLink'], 'default: link' );
+		Settings::set_group( 'privacy', array( 'policy_page_hint' => false ) );
+		$this->assertFalse( $editor->bootstrap( 0 )['privacyLink'] );
+		$this->assertStringContainsString( 'f.privacy_link = boot.privacyLink !== false', (string) file_get_contents( dirname( __DIR__, 3 ) . '/assets/src/editor.js' ) );
+	}
 }

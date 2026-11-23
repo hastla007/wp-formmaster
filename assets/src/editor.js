@@ -204,7 +204,7 @@
 			f.label = __( 'Consent', 'form-captain' );
 			f.required = true;
 			f.consent_text = __( 'I agree that my details will be stored to process my request.', 'form-captain' );
-			f.privacy_link = true;
+			f.privacy_link = boot.privacyLink !== false; // Setting privacy.policy_page_hint (SET-FC-P3-4).
 			f.consent_revision = 1;
 		}
 		if ( type === 'email' ) {

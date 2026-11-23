@@ -44,13 +44,13 @@ final class FormSettingsSchema {
 	public static function definitions(): array {
 		$defs = array(
 			// Notification to the site owner.
-			'notification.enabled'        => array(
+			'notification.enabled'            => array(
 				'type'    => 'bool',
 				'default' => true,
 				'label'   => __( 'Send a notification', 'form-captain' ),
 				'help'    => __( 'Sends an e-mail to the recipients below for every new submission.', 'form-captain' ),
 			),
-			'notification.to'             => array(
+			'notification.to'                 => array(
 				'type'      => 'recipients',
 				'default'   => array( '{admin_email}' ),
 				'max_items' => 10,
@@ -58,7 +58,7 @@ final class FormSettingsSchema {
 				'label'     => __( 'Recipients', 'form-captain' ),
 				'help'      => __( 'Up to 10 addresses. {admin_email} stands for the site administrator address.', 'form-captain' ),
 			),
-			'notification.reply_to_field' => array(
+			'notification.reply_to_field'     => array(
 				'type'       => 'field_ref',
 				'field_type' => 'email',
 				'default'    => '',
@@ -66,7 +66,7 @@ final class FormSettingsSchema {
 				'label'      => __( 'Reply-to field', 'form-captain' ),
 				'help'       => __( 'An e-mail field of this form whose value is used as reply-to address.', 'form-captain' ),
 			),
-			'notification.subject'        => array(
+			'notification.subject'            => array(
 				'type'       => 'string',
 				'max_length' => 190,
 				/* translators: {form_title} is a placeholder and must not be translated. */
@@ -74,7 +74,7 @@ final class FormSettingsSchema {
 				'label'      => __( 'Subject', 'form-captain' ),
 				'help'       => __( 'Placeholders such as {form_title} are replaced when the e-mail is sent.', 'form-captain' ),
 			),
-			'notification.fields'         => array(
+			'notification.fields'             => array(
 				'type'    => 'field_selection',
 				'default' => 'all_non_sensitive',
 				'error'   => 'fields_required',
@@ -83,13 +83,13 @@ final class FormSettingsSchema {
 			),
 
 			// Confirmation e-mail to the visitor.
-			'confirmation_mail.enabled'   => array(
+			'confirmation_mail.enabled'       => array(
 				'type'    => 'bool',
 				'default' => false,
 				'label'   => __( 'Send a confirmation e-mail', 'form-captain' ),
 				'help'    => __( 'Needs an e-mail field marked as confirmation recipient.', 'form-captain' ),
 			),
-			'confirmation_mail.subject'   => array(
+			'confirmation_mail.subject'       => array(
 				'type'       => 'string',
 				'max_length' => 190,
 				'default'    => '',
@@ -97,14 +97,14 @@ final class FormSettingsSchema {
 				'help'       => __( 'Required when the confirmation e-mail is on.', 'form-captain' ),
 			),
 			// SET-FC-19: plain text or simple HTML from the allowlist of html fields.
-			'confirmation_mail.body'      => array(
+			'confirmation_mail.body'          => array(
 				'type'     => 'custom',
 				'default'  => '',
 				'sanitize' => static fn( mixed $raw ): array => array( FormMessagingSettings::sanitize_body( $raw ), null ),
 				'label'    => __( 'Confirmation text', 'form-captain' ),
 				'help'     => __( 'Plain text or simple HTML (paragraphs, bold, lists, links), up to 5000 characters.', 'form-captain' ),
 			),
-			'confirmation_mail.fields'    => array(
+			'confirmation_mail.fields'        => array(
 				'type'    => 'field_list',
 				'default' => array(),
 				'label'   => __( 'Fields in the confirmation', 'form-captain' ),
@@ -112,7 +112,7 @@ final class FormSettingsSchema {
 			),
 
 			// What the visitor sees after sending.
-			'confirmation.type'           => array(
+			'confirmation.type'               => array(
 				'type'    => 'enum',
 				'options' => array(
 					'message' => __( 'Show a message', 'form-captain' ),
@@ -122,7 +122,7 @@ final class FormSettingsSchema {
 				'label'   => __( 'After sending', 'form-captain' ),
 				'help'    => __( 'Show a message below the form or redirect to a published page.', 'form-captain' ),
 			),
-			'confirmation.message'        => array(
+			'confirmation.message'            => array(
 				'type'          => 'text',
 				'max_length'    => 1000,
 				'empty_default' => true,
@@ -130,7 +130,7 @@ final class FormSettingsSchema {
 				'label'         => __( 'Confirmation message', 'form-captain' ),
 				'help'          => __( 'Shown after a successful submission. Empty uses the default text.', 'form-captain' ),
 			),
-			'confirmation.page_id'        => array(
+			'confirmation.page_id'            => array(
 				'type'    => 'page',
 				'default' => 0,
 				'error'   => 'invalid_page',
@@ -138,7 +138,7 @@ final class FormSettingsSchema {
 				'help'    => __( 'A published page without password.', 'form-captain' ),
 			),
 
-			'paused_message'              => array(
+			'paused_message'                  => array(
 				'type'          => 'text',
 				'max_length'    => 500,
 				'empty_default' => true,
@@ -148,7 +148,7 @@ final class FormSettingsSchema {
 			),
 
 			// Copied from the global settings when a form is created (P2-20).
-			'appearance.mode'             => array(
+			'appearance.mode'                 => array(
 				'type'    => 'enum',
 				'options' => array(
 					'inherit' => __( 'Use theme styles', 'form-captain' ),
@@ -159,14 +159,14 @@ final class FormSettingsSchema {
 				'label'   => __( 'Form styling', 'form-captain' ),
 				'help'    => __( 'Copied from the global setting when the form is created.', 'form-captain' ),
 			),
-			'email.from_name'             => array(
+			'email.from_name'                 => array(
 				'type'       => 'string',
 				'max_length' => 190,
 				'default'    => static fn(): string => (string) Settings::get( 'email.from_name' ),
 				'label'      => __( 'Sender name', 'form-captain' ),
 				'help'       => __( 'Copied from the global setting when the form is created.', 'form-captain' ),
 			),
-			'email.from_address'          => array(
+			'email.from_address'              => array(
 				'type'    => 'email',
 				'default' => static fn(): string => (string) Settings::get( 'email.from_address' ),
 				'error'   => 'invalid_email',
@@ -174,7 +174,7 @@ final class FormSettingsSchema {
 				'help'    => __( 'Copied from the global setting when the form is created. Empty uses the global sender.', 'form-captain' ),
 			),
 			// SET-FC-19: e-mail format of this form.
-			'email.format'                => array(
+			'email.format'                    => array(
 				'type'    => 'enum',
 				'options' => array(
 					'global' => __( 'Use the global setting', 'form-captain' ),
@@ -187,7 +187,7 @@ final class FormSettingsSchema {
 			),
 
 			// SET-FC-01: `global` or a retention period (manual, 1d…30y, see RetentionPeriod).
-			'retention.mode'              => array(
+			'retention.mode'                  => array(
 				'type'     => 'custom',
 				'default'  => 'global',
 				'error'    => 'invalid_retention',
@@ -204,7 +204,7 @@ final class FormSettingsSchema {
 			),
 
 			// Stored with save_actions() (OP-FRM-04); sanitize_settings() only passes the list through.
-			'actions'                     => array(
+			'actions'                         => array(
 				'type'     => 'list',
 				'default'  => array(),
 				'internal' => true,
@@ -213,7 +213,7 @@ final class FormSettingsSchema {
 			),
 
 			// Texts per form (SET-FC-02, SET-FC-11); empty = translated default at render time.
-			'submit_label'                => array(
+			'submit_label'                    => array(
 				'type'           => 'string',
 				'max_length'     => FormService::SUBMIT_LABEL_MAX,
 				'too_long_error' => 'text_too_long',
@@ -221,7 +221,7 @@ final class FormSettingsSchema {
 				'label'          => __( 'Submit button text', 'form-captain' ),
 				'help'           => __( 'Text of the send button, up to 60 characters. Empty uses "Send".', 'form-captain' ),
 			),
-			'texts.required_hint'         => array(
+			'texts.required_hint'             => array(
 				'type'           => 'string',
 				'max_length'     => 190,
 				'too_long_error' => 'text_too_long',
@@ -229,7 +229,7 @@ final class FormSettingsSchema {
 				'label'          => __( 'Required fields hint', 'form-captain' ),
 				'help'           => __( 'Shown above the form when it has required fields. Empty uses the default text.', 'form-captain' ),
 			),
-			'texts.error_summary'         => array(
+			'texts.error_summary'             => array(
 				'type'           => 'string',
 				'max_length'     => 190,
 				'too_long_error' => 'text_too_long',
@@ -239,28 +239,28 @@ final class FormSettingsSchema {
 			),
 
 			// Submission period and maximum number of entries (SET-FC-18); checks in FormLimits::sanitize().
-			'limits.opens_at'             => array(
+			'limits.opens_at'                 => array(
 				'type'     => 'custom',
 				'default'  => '',
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::limit_value( 'opens_at', $ctx ),
 				'label'    => __( 'Accept submissions from', 'form-captain' ),
 				'help'     => __( 'Date and time in the site time zone. Empty means the form is open right away.', 'form-captain' ),
 			),
-			'limits.closes_at'            => array(
+			'limits.closes_at'                => array(
 				'type'     => 'custom',
 				'default'  => '',
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::limit_value( 'closes_at', $ctx ),
 				'label'    => __( 'Accept submissions until', 'form-captain' ),
 				'help'     => __( 'Date and time in the site time zone; must be after the start. Empty means no end.', 'form-captain' ),
 			),
-			'limits.max_entries'          => array(
+			'limits.max_entries'              => array(
 				'type'     => 'custom',
 				'default'  => 0,
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::limit_value( 'max_entries', $ctx ),
 				'label'    => __( 'Maximum number of entries', 'form-captain' ),
 				'help'     => __( '0 means no limit. Spam and entries in the trash do not count.', 'form-captain' ),
 			),
-			'limits.closed_message'       => array(
+			'limits.closed_message'           => array(
 				'type'     => 'custom',
 				'default'  => '',
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::limit_value( 'closed_message', $ctx ),
@@ -269,7 +269,7 @@ final class FormSettingsSchema {
 			),
 
 			// SET-FC-17: spam protection of this form.
-			'spam.mode'                   => array(
+			'spam.mode'                       => array(
 				'type'    => 'enum',
 				'options' => array(
 					'global' => __( 'As in the global spam settings', 'form-captain' ),
@@ -283,42 +283,42 @@ final class FormSettingsSchema {
 			),
 
 			// SET-FC-10: double opt-in; values are checked together in FormMessagingSettings::sanitize_double_opt_in().
-			'double_opt_in.enabled'       => array(
+			'double_opt_in.enabled'           => array(
 				'type'     => 'custom',
 				'default'  => false,
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'enabled', $ctx ),
 				'label'    => __( 'Double opt-in', 'form-captain' ),
 				'help'     => __( 'Visitors confirm their submission with a link sent by e-mail. Unconfirmed submissions are deleted automatically.', 'form-captain' ),
 			),
-			'double_opt_in.email_field'   => array(
+			'double_opt_in.email_field'       => array(
 				'type'     => 'custom',
 				'default'  => '',
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'email_field', $ctx ),
 				'label'    => __( 'E-mail field for the confirmation link', 'form-captain' ),
 				'help'     => __( 'A required e-mail field of this form that receives the confirmation link.', 'form-captain' ),
 			),
-			'double_opt_in.subject'       => array(
+			'double_opt_in.subject'           => array(
 				'type'     => 'custom',
 				'default'  => '',
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'subject', $ctx ),
 				'label'    => __( 'Double opt-in subject', 'form-captain' ),
 				'help'     => __( 'Up to 190 characters. Empty uses the default subject.', 'form-captain' ),
 			),
-			'double_opt_in.body'          => array(
+			'double_opt_in.body'              => array(
 				'type'     => 'custom',
 				'default'  => '',
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'body', $ctx ),
 				'label'    => __( 'Double opt-in text', 'form-captain' ),
 				'help'     => __( 'Plain text or simple HTML, up to 5000 characters. {confirm_link} and {link_hours} are replaced. Empty uses the default text.', 'form-captain' ),
 			),
-			'double_opt_in.pending_message' => array(
+			'double_opt_in.pending_message'   => array(
 				'type'     => 'custom',
 				'default'  => '',
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'pending_message', $ctx ),
 				'label'    => __( 'Message until confirmed', 'form-captain' ),
 				'help'     => __( 'Shown after sending, up to 1000 characters. Empty uses the default text.', 'form-captain' ),
 			),
-			'double_opt_in.link_hours'    => array(
+			'double_opt_in.link_hours'        => array(
 				'type'     => 'custom',
 				'default'  => 48,
 				'sanitize' => static fn( mixed $raw, array $ctx ): array => self::double_opt_in_value( 'link_hours', $ctx ),

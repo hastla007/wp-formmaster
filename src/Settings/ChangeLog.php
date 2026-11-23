@@ -84,7 +84,7 @@ final class ChangeLog {
 			foreach ( array_unique( array_merge( array_keys( $o ), array_keys( $n ) ) ) as $key ) {
 				$before = $o[ $key ] ?? null;
 				$after  = $n[ $key ] ?? null;
-				$path = $group . '.' . $key;
+				$path   = $group . '.' . $key;
 				// Not a change by anyone: a new key first written with its default, or a key that no longer exists.
 				$filled  = null === $before && isset( $defs[ $path ] ) && $after === $defs[ $path ]['default'];
 				$dropped = null === $after && ! isset( $defs[ $path ] );

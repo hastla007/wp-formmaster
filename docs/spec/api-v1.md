@@ -10,7 +10,7 @@ form_captain_contract_version(): string
 ```
 
 - **1.1.0** (16.11.2026): „Erweiterungspunkte für Pro-Funktionen“, `form_captain_validate_v1`, `context_ref` in `form_captain_get_render_v1`, Versionsbindung `version_for`.
-- **1.2.0** (23.11.2026, Einstellungs-Baustein): `form_captain_settings_fields_v1`, `form_captain_mail_attachments_v1`, `form_captain_editor_extensions_v1`, `form_captain_captcha_providers_v1`, `form_captain_accepted_context_purposes_v1`, `form_captain_minimum_db_versions_v1` und alle Filter unter „Einstellungen und Geschäftsregeln“. Einige davon kamen nach dem 16.11. noch unter der Nummer 1.1.0 hinzu; ein Add-on, das einen dieser Punkte braucht, prüft auf `1.2.0` oder neuer (vorher wird der Filter nur nicht angewendet).
+- **1.2.0** (23.11.2026, Einstellungs-Baustein): `form_captain_settings_fields_v1`, `form_captain_mail_attachments_v1`, `form_captain_editor_extensions_v1`, `form_captain_captcha_providers_v1`, `form_captain_accepted_context_purposes_v1`, `form_captain_minimum_db_versions_v1`, `form_captain_entry_pending_v1` (SET-FC-P4-04) und alle Filter unter „Einstellungen und Geschäftsregeln“. Einige davon kamen nach dem 16.11. noch unter der Nummer 1.1.0 hinzu; ein Add-on, das einen dieser Punkte braucht, prüft auf `1.2.0` oder neuer (vorher wird der Filter nur nicht angewendet).
 
 SemVer: Minor = additive Erweiterungen (neue optionale Payload-Schlüssel, neue Funktionen); Major = inkompatibel, neue Namensfamilie `_v2`, `_v1` bleibt mindestens 12 Monate parallel bestehen. Deprecations werden mit `_deprecated_hook()` angekündigt und im Changelog geführt.
 
@@ -208,6 +208,7 @@ Grundregel S2: Die Einstellung liefert den Wert, der Filter gewinnt, der Kern be
 | `form_captain_pow_max_number_v1` | `( int $max_number )` → Schwierigkeit des Proof-of-Work (Standard 50 000) |
 | `form_captain_retention_seconds_v1` | `( ?int $seconds, string $mode, string $created_gmt )` → Sekunden oder `null` (= keine automatische Löschung); höchstens ein Tag Minimum |
 | `form_captain_retention_grace_days_v1` | `( int $days )` → Schonfrist vor der Löschung |
+| `form_captain_trash_days_v1` | `( int $days )` → Tage im Papierkorb vor dem endgültigen Löschen (Einstellung `privacy.trash_days`, danach auf 1–365 begrenzt, SET-FC-P1-07) |
 | `form_captain_expiry_notice_days_v1` | `( int $days )` → Vorwarnung in der Eintragsliste |
 | `form_captain_log_level_v1` | `( string $level )` → `error`/`warning`/`info`/`debug` |
 | `form_captain_log_days_v1` | `( int $days )` → Aufbewahrung des Protokolls |

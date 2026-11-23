@@ -49,7 +49,7 @@ final class SettingsTransfer {
 			$settings[ $def['group'] ][ $def['key'] ] = $all[ $def['group'] ][ $def['key'] ] ?? $def['default'];
 			$keys[]                                   = $path;
 		}
-		$out = array(
+		$out        = array(
 			'format'         => self::FORMAT,
 			'format_version' => self::FORMAT_VERSION,
 			'plugin_version' => FORM_CAPTAIN_VERSION,

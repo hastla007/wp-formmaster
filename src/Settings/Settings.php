@@ -43,11 +43,14 @@ final class Settings {
 				'policy_page_hint'          => true,
 			),
 			'spam'       => array(
-				'honeypot'         => true,
-				'min_seconds'      => 3,
-				'rate_limit'       => 5,
-				'blocklist'        => '',
-				'captcha_provider' => 'none',
+				'honeypot'          => true,
+				'min_seconds'       => 3,
+				'rate_limit'        => 5,
+				'blocklist'         => '',
+				'captcha_provider'  => 'none',
+				'window_minutes'    => 10,
+				'form_total'        => 300,
+				'receipts_per_hour' => 3,
 			),
 		);
 	}

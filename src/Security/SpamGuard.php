@@ -40,7 +40,8 @@ final class SpamGuard {
 		$reason  = null;
 		if ( ! $trusted ) {
 			$reason = $this->check_honeypot( (string) ( $form['public_id'] ?? '' ), $raw )
-				?? $this->check_min_time( isset( $meta['issued_at'] ) ? (int) $meta['issued_at'] : null, (int) ( $meta['now'] ?? time() ) );
+				?? $this->check_min_time( isset( $meta['issued_at'] ) ? (int) $meta['issued_at'] : null, (int) ( $meta['now'] ?? time() ) )
+				?? PowCaptcha::check( $form, $raw, ! empty( $meta['js'] ) );
 		}
 		$reason = $reason ?? $this->check_blocklist( $values, $fields );
 		/**
@@ -58,6 +59,9 @@ final class SpamGuard {
 				'public_id' => (string) ( $form['public_id'] ?? '' ),
 				'trusted'   => $trusted,
 				'raw'       => $raw,
+				// SET-FC-05/17: provider that applies to this form ("none" when the form switched it off).
+				'captcha'   => PowCaptcha::provider_for( $form ),
+				'spam_mode' => PowCaptcha::spam_mode( $form ),
 			),
 			$values
 		);

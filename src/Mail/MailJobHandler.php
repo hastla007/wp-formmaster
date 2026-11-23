@@ -18,12 +18,14 @@ use FormCaptain\Jobs\JobResult;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
+use FormCaptain\Security\SpamLimits;
 use FormCaptain\Service\DoubleOptIn;
 use FormCaptain\Support\Logger;
 use FormCaptain\Support\Secret;
 
 final class MailJobHandler {
 
+	/** Default of the setting spam.receipts_per_hour (Security\SpamLimits). */
 	public const RECEIPTS_PER_HOUR = 3;
 
 	private bool $registered = false;
@@ -224,7 +226,7 @@ final class MailJobHandler {
 	}
 
 	private function receipt_allowed( string $email ): bool {
-		return (int) get_transient( $this->receipt_key( $email ) ) < self::RECEIPTS_PER_HOUR;
+		return (int) get_transient( $this->receipt_key( $email ) ) < SpamLimits::get( 'receipts_per_hour' );
 	}
 
 	private function count_receipt( string $email ): void {

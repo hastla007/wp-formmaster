@@ -191,6 +191,7 @@ final class SubmissionService {
 				'trusted'   => $trusted,
 				'issued_at' => $issued_at,
 				'now'       => Clock::timestamp(),
+				'js'        => ! empty( $meta['js'] ),
 			)
 		);
 

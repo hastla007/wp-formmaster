@@ -58,10 +58,21 @@ final class Assets {
 		$mode = 'base' === $mode ? 'base' : 'inherit';
 		if ( ! wp_style_is( self::HANDLE, 'registered' ) ) {
 			wp_register_style( self::HANDLE, Asset::url( 'frontend.css' ), array(), Asset::version( 'frontend.css' ) );
+			// Dependency-free proof-of-work solver (SET-FC-05); only does work when the token route sends a challenge.
+			wp_register_script(
+				self::HANDLE . '-pow',
+				Asset::url( 'proof-of-work.js' ),
+				array(),
+				Asset::version( 'proof-of-work.js' ),
+				array(
+					'in_footer' => true,
+					'strategy'  => 'defer',
+				)
+			);
 			wp_register_script(
 				self::HANDLE,
 				Asset::url( 'frontend.js' ),
-				array(),
+				array( self::HANDLE . '-pow' ),
 				Asset::version( 'frontend.js' ),
 				array(
 					'in_footer' => true,

@@ -171,7 +171,7 @@ final class SettingsSchema {
 				'type'  => 'int',
 				'min'   => 1,
 				'max'   => 100,
-				'label' => __( 'Submissions per form and visitor in 10 minutes', 'form-captain' ),
+				'label' => __( 'Submissions per form and visitor in the time window', 'form-captain' ),
 				'help'  => __( 'Visitors are recognised by a daily changing pseudonymous hash, never by the stored IP address.', 'form-captain' ),
 			),
 			'spam.blocklist'                    => array(
@@ -183,8 +183,29 @@ final class SettingsSchema {
 			'spam.captcha_provider'             => array(
 				'type'    => 'enum',
 				'options' => self::captcha_options(),
-				'label'   => __( 'External captcha', 'form-captain' ),
-				'help'    => __( 'Form Captain does not include an external captcha. Extensions can add one; activation is opt-in and shows which data the provider receives.', 'form-captain' ),
+				'label'   => __( 'Captcha', 'form-captain' ),
+				'help'    => __( 'The built-in proof of work runs on your own server: the visitor\'s browser solves a small calculation in the background – no puzzle, no cookies, no external service, no personal data. Without JavaScript the other checks apply. External captchas from extensions send visitor data to a third party; have their use checked legally before enabling them. Forms can switch the captcha off or make it stricter.', 'form-captain' ),
+			),
+			'spam.window_minutes'               => array(
+				'type'  => 'int',
+				'min'   => \FormCaptain\Security\SpamLimits::BOUNDS['window_minutes'][0],
+				'max'   => \FormCaptain\Security\SpamLimits::BOUNDS['window_minutes'][1],
+				'label' => __( 'Time window for submission limits (minutes)', 'form-captain' ),
+				'help'  => __( 'All submission limits count within this window. Default: 10 minutes.', 'form-captain' ),
+			),
+			'spam.form_total'                   => array(
+				'type'  => 'int',
+				'min'   => \FormCaptain\Security\SpamLimits::BOUNDS['form_total'][0],
+				'max'   => \FormCaptain\Security\SpamLimits::BOUNDS['form_total'][1],
+				'label' => __( 'Submissions per form in the time window (all visitors)', 'form-captain' ),
+				'help'  => __( 'Flood brake against attacks from many addresses. Raise it for large campaigns. Default: 300.', 'form-captain' ),
+			),
+			'spam.receipts_per_hour'            => array(
+				'type'  => 'int',
+				'min'   => \FormCaptain\Security\SpamLimits::BOUNDS['receipts_per_hour'][0],
+				'max'   => \FormCaptain\Security\SpamLimits::BOUNDS['receipts_per_hour'][1],
+				'label' => __( 'E-mails to one visitor address per hour', 'form-captain' ),
+				'help'  => __( 'Limits confirmation and double opt-in e-mails to the same address, so forms cannot be misused to flood a mailbox. Default: 3.', 'form-captain' ),
 			),
 		);
 		foreach ( $out as $path => $def ) {
@@ -199,13 +220,17 @@ final class SettingsSchema {
 	}
 
 	/**
-	 * Captcha providers: always "none"; extensions add opt-in providers via form_captain_spam_checks_v1
+	 * Captcha providers: always "none" and the built-in "pow" (Security\PowCaptcha, no data leaves the
+	 * site); extensions add opt-in external providers via form_captain_spam_checks_v1
 	 * with `type = captcha`, `label`, `data` (what is sent), `purpose`, `privacy_url`.
 	 *
 	 * @return array<string,string>
 	 */
 	public static function captcha_options(): array {
-		$opts = array( 'none' => __( 'None (recommended)', 'form-captain' ) );
+		$opts = array(
+			'none' => __( 'None', 'form-captain' ),
+			'pow'  => __( 'Built-in proof of work (recommended, no external service)', 'form-captain' ),
+		);
 		foreach ( self::captcha_providers() as $key => $p ) {
 			$opts[ $key ] = (string) $p['label'];
 		}
@@ -216,7 +241,7 @@ final class SettingsSchema {
 	public static function captcha_providers(): array {
 		$out = array();
 		foreach ( (array) apply_filters( 'form_captain_spam_checks_v1', array() ) as $key => $def ) {
-			if ( is_string( $key ) && preg_match( '/^[a-z0-9_]{2,40}$/', $key ) && 'none' !== $key && is_array( $def ) && 'captcha' === ( $def['type'] ?? '' ) ) {
+			if ( is_string( $key ) && preg_match( '/^[a-z0-9_]{2,40}$/', $key ) && ! in_array( $key, array( 'none', 'pow' ), true ) && is_array( $def ) && 'captcha' === ( $def['type'] ?? '' ) ) {
 				$out[ $key ] = array(
 					'label'       => (string) ( $def['label'] ?? $key ),
 					'data'        => (string) ( $def['data'] ?? '' ),
@@ -296,7 +321,7 @@ final class SettingsSchema {
 			}
 		}
 
-		if ( 'spam' === $group && 'none' !== ( $values['captcha_provider'] ?? 'none' ) && ( $values['captcha_provider'] ?? '' ) !== ( $current['captcha_provider'] ?? '' ) && empty( $input['captcha_confirm'] ) ) {
+		if ( 'spam' === $group && ! in_array( $values['captcha_provider'] ?? 'none', array( 'none', 'pow' ), true ) && ( $values['captcha_provider'] ?? '' ) !== ( $current['captcha_provider'] ?? '' ) && empty( $input['captcha_confirm'] ) ) {
 			$errors['spam.captcha_provider'] = __( 'An external captcha sends visitor data to a third party. Confirm that you have read the data flow and updated your privacy policy.', 'form-captain' );
 			$values['captcha_provider']      = $current['captcha_provider'] ?? 'none';
 		}

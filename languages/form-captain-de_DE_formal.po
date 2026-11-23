@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Form Captain 1.0.0-dev\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/formmaster-int\n"
-"POT-Creation-Date: 2026-11-23T18:34:41+00:00\n"
+"POT-Creation-Date: 2026-11-23T18:52:44+00:00\n"
 "PO-Revision-Date: 2026-11-16 12:00+0000\n"
 "Last-Translator: Captain Suite\n"
 "Language-Team: Deutsch (Sie)\n"
@@ -47,7 +47,7 @@ msgstr "formular"
 #: src/Admin/Menu.php:61 src/Admin/Menu.php:81 src/Admin/Menu.php:101
 #: src/Admin/SettingsPage.php:636 src/Admin/SiteHealth.php:28
 #: src/Admin/SiteHealth.php:41 src/Admin/SiteHealth.php:168
-#: src/Privacy/PrivacyIntegration.php:88 assets/src/block-editor.js:100
+#: src/Privacy/PrivacyIntegration.php:89 assets/src/block-editor.js:100
 msgid "Form Captain"
 msgstr "Form Captain"
 
@@ -847,8 +847,8 @@ msgid "Any consent state"
 msgstr "Beliebiger Einwilligungsstatus"
 
 #: src/Admin/EntriesPage.php:364 src/Export/CsvExporter.php:52
-#: src/Integrations/ConnectorRegistry.php:457
-#: src/Privacy/PrivacyIntegration.php:216
+#: src/Integrations/ConnectorRegistry.php:471
+#: src/Privacy/PrivacyIntegration.php:217
 msgid "Consent withdrawn"
 msgstr "Einwilligung widerrufen"
 
@@ -950,7 +950,7 @@ msgstr "Details"
 
 #: src/Admin/EntriesPage.php:481 src/Admin/EntriesPage.php:778
 #: src/Admin/Tables/EntriesListTable.php:73
-#: src/Privacy/PrivacyIntegration.php:177 assets/src/block-editor.js:72
+#: src/Privacy/PrivacyIntegration.php:178 assets/src/block-editor.js:72
 #: assets/src/block-editor.js:86
 msgid "Form"
 msgstr "Formular"
@@ -964,7 +964,7 @@ msgid "Form version"
 msgstr "Formularversion"
 
 #: src/Admin/EntriesPage.php:486 src/Admin/Tables/EntriesListTable.php:72
-#: src/Export/CsvExporter.php:45 src/Privacy/PrivacyIntegration.php:203
+#: src/Export/CsvExporter.php:45 src/Privacy/PrivacyIntegration.php:204
 msgid "Reference number"
 msgstr "Vorgangsnummer"
 
@@ -980,7 +980,7 @@ msgstr "Letzte Änderung"
 #: src/Admin/EntriesPage.php:806 src/Admin/IntegrationsPage.php:358
 #: src/Admin/Tables/EntriesListTable.php:75
 #: src/Admin/Tables/FormsListTable.php:43 src/Export/CsvExporter.php:47
-#: src/Import/EntryImportAdmin.php:571 src/Privacy/PrivacyIntegration.php:185
+#: src/Import/EntryImportAdmin.php:571 src/Privacy/PrivacyIntegration.php:186
 msgid "Status"
 msgstr "Status"
 
@@ -1108,7 +1108,7 @@ msgid "Canceled"
 msgstr "Abgebrochen"
 
 #: src/Admin/EntriesPage.php:608 src/Admin/IntegrationsPage.php:179
-#: src/Integrations/ConnectorRegistry.php:332
+#: src/Integrations/ConnectorRegistry.php:342
 msgid "Paused (connector disabled)"
 msgstr "Pausiert (Connector deaktiviert)"
 
@@ -1751,17 +1751,29 @@ msgstr "Letzter Lauf / nächster Schritt"
 msgid "Manage"
 msgstr "Verwalten"
 
-#: src/Admin/IntegrationsPage.php:364
+#: src/Admin/IntegrationsPage.php:369
 msgid "Remote ID:"
 msgstr "Remote-ID:"
 
-#: src/Admin/IntegrationsPage.php:373
+#: src/Admin/IntegrationsPage.php:378
 msgid "Retry"
 msgstr "Erneut versuchen"
 
-#: src/Admin/IntegrationsPage.php:376 src/Import/ImportAdmin.php:167
+#: src/Admin/IntegrationsPage.php:381 src/Import/ImportAdmin.php:167
 msgid "Cancel"
 msgstr "Abbrechen"
+
+#: src/Admin/IntegrationsPage.php:402
+msgid "Event: status changed"
+msgstr "Ereignis: Status geändert"
+
+#: src/Admin/IntegrationsPage.php:403
+msgid "Event: consent withdrawn"
+msgstr "Ereignis: Einwilligung widerrufen"
+
+#: src/Admin/IntegrationsPage.php:404
+msgid "Event: submission deleted"
+msgstr "Ereignis: Einsendung gelöscht"
 
 #: src/Admin/Menu.php:69
 msgid "Dashboard"
@@ -2996,29 +3008,29 @@ msgid "Submission"
 msgstr "Einsendung"
 
 #: src/Admin/Tables/EntriesListTable.php:125 src/Export/CsvExporter.php:333
-#: src/Privacy/PrivacyIntegration.php:326
+#: src/Privacy/PrivacyIntegration.php:327
 msgid "New"
 msgstr "Neu"
 
 #: src/Admin/Tables/EntriesListTable.php:126 src/Export/CsvExporter.php:334
-#: src/Privacy/PrivacyIntegration.php:327
+#: src/Privacy/PrivacyIntegration.php:328
 msgid "Read"
 msgstr "Gelesen"
 
 #: src/Admin/Tables/EntriesListTable.php:127
 #: src/Admin/Tables/FormsListTable.php:103
 #: src/Admin/Tables/FormsListTable.php:139 src/Export/CsvExporter.php:335
-#: src/Privacy/PrivacyIntegration.php:328 assets/src/editor.js:2075
+#: src/Privacy/PrivacyIntegration.php:329 assets/src/editor.js:2075
 msgid "Archived"
 msgstr "Archiviert"
 
 #: src/Admin/Tables/EntriesListTable.php:128 src/Export/CsvExporter.php:336
-#: src/Privacy/PrivacyIntegration.php:329
+#: src/Privacy/PrivacyIntegration.php:330
 msgid "Spam"
 msgstr "Spam"
 
 #: src/Admin/Tables/EntriesListTable.php:129 src/Export/CsvExporter.php:337
-#: src/Privacy/PrivacyIntegration.php:330
+#: src/Privacy/PrivacyIntegration.php:331
 msgid "Trash"
 msgstr "Papierkorb"
 
@@ -3183,7 +3195,7 @@ msgstr "Mit Einträgen löschen"
 msgid "Or insert the “Form Captain” block in the block editor."
 msgstr "Oder fügen Sie im Block-Editor den Block „Form Captain“ ein."
 
-#: src/Api/ContractApi.php:44
+#: src/Api/ContractApi.php:45
 msgid ""
 "Form Captain is not ready yet. Call the contract API in or after "
 "form_captain_loaded_v1."
@@ -3191,28 +3203,28 @@ msgstr ""
 "Form Captain ist noch nicht bereit. Rufen Sie die Contract-API in oder nach "
 "form_captain_loaded_v1 auf."
 
-#: src/Api/ContractApi.php:55 src/Api/ContractApi.php:182
-#: src/Api/ContractApi.php:186 src/Support/Errors.php:63
+#: src/Api/ContractApi.php:56 src/Api/ContractApi.php:186
+#: src/Api/ContractApi.php:190 src/Support/Errors.php:63
 msgid "This form is not available."
 msgstr "Dieses Formular ist nicht verfügbar."
 
-#: src/Api/ContractApi.php:103
+#: src/Api/ContractApi.php:107
 msgid "Unknown scope requested."
 msgstr "Unbekannter Bereich angefordert."
 
-#: src/Api/ContractApi.php:110
+#: src/Api/ContractApi.php:114
 msgid "You are not allowed to read this entry."
 msgstr "Sie sind nicht berechtigt, diesen Eintrag zu lesen."
 
-#: src/Api/ContractApi.php:113
+#: src/Api/ContractApi.php:117
 msgid "Reading sensitive values requires the export capability."
 msgstr "Zum Lesen sensibler Werte ist die Export-Berechtigung erforderlich."
 
-#: src/Api/ContractApi.php:117
+#: src/Api/ContractApi.php:121
 msgid "Entry not found."
 msgstr "Eintrag nicht gefunden."
 
-#: src/Api/ContractApi.php:231
+#: src/Api/ContractApi.php:235
 msgid ""
 "submit_v1 requires context \"source\" (plugin slug) and "
 "\"idempotency_key\" (max. 191 characters)."
@@ -4507,7 +4519,7 @@ msgstr "Einstellungen verwalten"
 msgid "Manage integrations"
 msgstr "Integrationen verwalten"
 
-#: src/Integrations/ConnectorRegistry.php:172
+#: src/Integrations/ConnectorRegistry.php:182
 msgid ""
 "The registered object does not implement the connector interface or uses an "
 "invalid key."
@@ -4515,38 +4527,38 @@ msgstr ""
 "Das registrierte Objekt implementiert die Connector-Schnittstelle nicht oder "
 "verwendet einen ungültigen Schlüssel."
 
-#: src/Integrations/ConnectorRegistry.php:191
+#: src/Integrations/ConnectorRegistry.php:201
 msgid "The connector key does not match the registered key."
 msgstr ""
 "Der Connector-Schlüssel stimmt nicht mit dem registrierten Schlüssel überein."
 
 #. translators: 1: contract version required by the connector, 2: contract version of Form Captain
-#: src/Integrations/ConnectorRegistry.php:196
+#: src/Integrations/ConnectorRegistry.php:206
 #, php-format
 msgid "The connector expects contract %1$s, Form Captain provides %2$s."
 msgstr "Der Connector erwartet Contract %1$s, Form Captain stellt %2$s bereit."
 
-#: src/Integrations/ConnectorRegistry.php:271
+#: src/Integrations/ConnectorRegistry.php:281
 msgid "This connector is not installed."
 msgstr "Dieser Connector ist nicht installiert."
 
-#: src/Integrations/ConnectorRegistry.php:277
+#: src/Integrations/ConnectorRegistry.php:287
 msgid "The connector requirements are not met."
 msgstr "Die Voraussetzungen des Connectors sind nicht erfüllt."
 
-#: src/Integrations/ConnectorRegistry.php:331
+#: src/Integrations/ConnectorRegistry.php:341
 msgid "Paused (connector missing)"
 msgstr "Pausiert (Connector fehlt)"
 
-#: src/Integrations/ConnectorRegistry.php:383
+#: src/Integrations/ConnectorRegistry.php:393
 msgid "The connector plugin is not active or was removed."
 msgstr "Das Connector-Plugin ist nicht aktiv oder wurde entfernt."
 
-#: src/Integrations/ConnectorRegistry.php:405
+#: src/Integrations/ConnectorRegistry.php:415
 msgid "Connector plugin missing"
 msgstr "Connector-Plugin fehlt"
 
-#: src/Integrations/ConnectorRegistry.php:406
+#: src/Integrations/ConnectorRegistry.php:416
 msgid ""
 "Install and activate the connector plugin, or remove the action from the "
 "form."
@@ -4554,11 +4566,11 @@ msgstr ""
 "Installieren und aktivieren Sie das Connector-Plugin oder entfernen Sie die "
 "Aktion aus dem Formular."
 
-#: src/Integrations/ConnectorRegistry.php:409
+#: src/Integrations/ConnectorRegistry.php:419
 msgid "Connector disabled"
 msgstr "Connector deaktiviert"
 
-#: src/Integrations/ConnectorRegistry.php:410
+#: src/Integrations/ConnectorRegistry.php:420
 msgid ""
 "Activate the connector under Form Captain → Integrations. Paused jobs "
 "continue automatically."
@@ -4566,11 +4578,11 @@ msgstr ""
 "Aktivieren Sie den Connector unter Form Captain → Integrationen. Pausierte "
 "Aufträge werden automatisch fortgesetzt."
 
-#: src/Integrations/ConnectorRegistry.php:413
+#: src/Integrations/ConnectorRegistry.php:423
 msgid "Incompatible contract version"
 msgstr "Inkompatible Contract-Version"
 
-#: src/Integrations/ConnectorRegistry.php:414
+#: src/Integrations/ConnectorRegistry.php:424
 msgid ""
 "Update the connector or Form Captain so that both support the same contract "
 "major version."
@@ -4578,21 +4590,21 @@ msgstr ""
 "Aktualisieren Sie den Connector oder Form Captain, sodass beide dieselbe "
 "Contract-Hauptversion unterstützen."
 
-#: src/Integrations/ConnectorRegistry.php:417
+#: src/Integrations/ConnectorRegistry.php:427
 msgid "Requirements not met"
 msgstr "Voraussetzungen nicht erfüllt"
 
-#: src/Integrations/ConnectorRegistry.php:418
+#: src/Integrations/ConnectorRegistry.php:428
 msgid "Complete the connector configuration shown in its requirements."
 msgstr ""
 "Vervollständigen Sie die Connector-Konfiguration gemäß den angezeigten "
 "Voraussetzungen."
 
-#: src/Integrations/ConnectorRegistry.php:421
+#: src/Integrations/ConnectorRegistry.php:431
 msgid "Pro feature not available"
 msgstr "Pro-Funktion nicht verfügbar"
 
-#: src/Integrations/ConnectorRegistry.php:422
+#: src/Integrations/ConnectorRegistry.php:432
 msgid ""
 "This action needs Form Captain Pro with a valid license. Renew or activate "
 "the license, or disable the action."
@@ -4600,11 +4612,11 @@ msgstr ""
 "Diese Aktion benötigt Form Captain Pro mit gültiger Lizenz. Verlängern oder "
 "aktivieren Sie die Lizenz oder deaktivieren Sie die Aktion."
 
-#: src/Integrations/ConnectorRegistry.php:425
+#: src/Integrations/ConnectorRegistry.php:435
 msgid "Workflow or action missing"
 msgstr "Workflow oder Aktion fehlt"
 
-#: src/Integrations/ConnectorRegistry.php:426
+#: src/Integrations/ConnectorRegistry.php:436
 msgid ""
 "The plugin that provided this action is inactive. Reactivate it or remove "
 "the action from the form."
@@ -4612,21 +4624,33 @@ msgstr ""
 "Das Plugin, das diese Aktion bereitgestellt hat, ist inaktiv. Aktivieren Sie "
 "es erneut oder entfernen Sie die Aktion aus dem Formular."
 
-#: src/Integrations/ConnectorRegistry.php:429
+#: src/Integrations/ConnectorRegistry.php:439
 msgid "Action disabled in form"
 msgstr "Aktion im Formular deaktiviert"
 
-#: src/Integrations/ConnectorRegistry.php:430
+#: src/Integrations/ConnectorRegistry.php:440
 msgid "Enable the action in the form editor if it should run."
 msgstr ""
 "Aktivieren Sie die Aktion im Formular-Editor, wenn sie ausgeführt werden "
 "soll."
 
-#: src/Integrations/ConnectorRegistry.php:433
+#: src/Integrations/ConnectorRegistry.php:443
+msgid "Action no longer uses this event"
+msgstr "Aktion nutzt dieses Ereignis nicht mehr"
+
+#: src/Integrations/ConnectorRegistry.php:444
+msgid ""
+"No action needed. The action no longer subscribes to this event, so the job "
+"was stopped."
+msgstr ""
+"Keine Aktion erforderlich. Die Aktion abonniert dieses Ereignis nicht mehr, "
+"deshalb wurde der Auftrag gestoppt."
+
+#: src/Integrations/ConnectorRegistry.php:447
 msgid "Action removed from form"
 msgstr "Aktion aus dem Formular entfernt"
 
-#: src/Integrations/ConnectorRegistry.php:434
+#: src/Integrations/ConnectorRegistry.php:448
 msgid ""
 "No action needed. The job was stopped because the form no longer contains "
 "this action."
@@ -4634,33 +4658,33 @@ msgstr ""
 "Keine Aktion erforderlich. Der Auftrag wurde gestoppt, weil das Formular "
 "diese Aktion nicht mehr enthält."
 
-#: src/Integrations/ConnectorRegistry.php:437
+#: src/Integrations/ConnectorRegistry.php:451
 msgid "Field mapping incomplete"
 msgstr "Feldzuordnung unvollständig"
 
-#: src/Integrations/ConnectorRegistry.php:438
+#: src/Integrations/ConnectorRegistry.php:452
 msgid ""
 "Map all required fields of the action in the form editor, then retry the job."
 msgstr ""
 "Ordnen Sie im Formular-Editor alle Pflichtfelder der Aktion zu und versuchen "
 "Sie den Auftrag dann erneut."
 
-#: src/Integrations/ConnectorRegistry.php:441
+#: src/Integrations/ConnectorRegistry.php:455
 msgid "Mapped field has the wrong type"
 msgstr "Zugeordnetes Feld hat den falschen Typ"
 
-#: src/Integrations/ConnectorRegistry.php:442
+#: src/Integrations/ConnectorRegistry.php:456
 msgid ""
 "Choose a field of a supported type in the action mapping, then retry the job."
 msgstr ""
 "Wählen Sie in der Aktionszuordnung ein Feld eines unterstützten Typs und "
 "versuchen Sie den Auftrag dann erneut."
 
-#: src/Integrations/ConnectorRegistry.php:445
+#: src/Integrations/ConnectorRegistry.php:459
 msgid "Sensitive field blocked"
 msgstr "Sensibles Feld gesperrt"
 
-#: src/Integrations/ConnectorRegistry.php:446
+#: src/Integrations/ConnectorRegistry.php:460
 msgid ""
 "Sensitive fields are never sent unless the action explicitly allows them. "
 "Map a different field."
@@ -4668,37 +4692,37 @@ msgstr ""
 "Sensible Felder werden nie gesendet, sofern die Aktion dies nicht "
 "ausdrücklich erlaubt. Ordnen Sie ein anderes Feld zu."
 
-#: src/Integrations/ConnectorRegistry.php:449
+#: src/Integrations/ConnectorRegistry.php:463
 msgid "Entry deleted"
 msgstr "Eintrag gelöscht"
 
-#: src/Integrations/ConnectorRegistry.php:450
+#: src/Integrations/ConnectorRegistry.php:464
 msgid "No action needed. The entry was deleted before the job ran."
 msgstr ""
 "Keine Aktion erforderlich. Der Eintrag wurde gelöscht, bevor der Auftrag "
 "ausgeführt wurde."
 
-#: src/Integrations/ConnectorRegistry.php:453
+#: src/Integrations/ConnectorRegistry.php:467
 msgid "Entry anonymized"
 msgstr "Eintrag anonymisiert"
 
-#: src/Integrations/ConnectorRegistry.php:454
+#: src/Integrations/ConnectorRegistry.php:468
 msgid "No action needed. Personal data was removed before the job ran."
 msgstr ""
 "Keine Aktion erforderlich. Die personenbezogenen Daten wurden entfernt, "
 "bevor der Auftrag ausgeführt wurde."
 
-#: src/Integrations/ConnectorRegistry.php:458
+#: src/Integrations/ConnectorRegistry.php:472
 msgid "No action needed. The job was stopped because consent was withdrawn."
 msgstr ""
 "Keine Aktion erforderlich. Der Auftrag wurde gestoppt, weil die Einwilligung "
 "widerrufen wurde."
 
-#: src/Integrations/ConnectorRegistry.php:461
+#: src/Integrations/ConnectorRegistry.php:475
 msgid "Timeout"
 msgstr "Zeitüberschreitung"
 
-#: src/Integrations/ConnectorRegistry.php:462
+#: src/Integrations/ConnectorRegistry.php:476
 msgid ""
 "The target system did not answer in time. The job is retried automatically; "
 "check the target system if it keeps failing."
@@ -4707,11 +4731,11 @@ msgstr ""
 "automatisch erneut versucht; prüfen Sie das Zielsystem, falls der Fehler "
 "weiter auftritt."
 
-#: src/Integrations/ConnectorRegistry.php:465
+#: src/Integrations/ConnectorRegistry.php:479
 msgid "Connector error"
 msgstr "Connector-Fehler"
 
-#: src/Integrations/ConnectorRegistry.php:466
+#: src/Integrations/ConnectorRegistry.php:480
 msgid ""
 "The connector raised an error. The job is retried automatically; contact the "
 "connector vendor if it keeps failing."
@@ -4720,21 +4744,21 @@ msgstr ""
 "versucht; wenden Sie sich an den Anbieter des Connectors, falls der Fehler "
 "weiter auftritt."
 
-#: src/Integrations/ConnectorRegistry.php:469
+#: src/Integrations/ConnectorRegistry.php:483
 msgid "Invalid connector response"
 msgstr "Ungültige Connector-Antwort"
 
-#: src/Integrations/ConnectorRegistry.php:470
+#: src/Integrations/ConnectorRegistry.php:484
 msgid "The connector returned an invalid result. Update the connector plugin."
 msgstr ""
 "Der Connector hat ein ungültiges Ergebnis geliefert. Aktualisieren Sie das "
 "Connector-Plugin."
 
-#: src/Integrations/ConnectorRegistry.php:473
+#: src/Integrations/ConnectorRegistry.php:487
 msgid "Worker interrupted"
 msgstr "Worker unterbrochen"
 
-#: src/Integrations/ConnectorRegistry.php:474
+#: src/Integrations/ConnectorRegistry.php:488
 msgid ""
 "The job is retried automatically. If this repeats, check PHP time limits and "
 "the cron setup."
@@ -4742,11 +4766,11 @@ msgstr ""
 "Der Auftrag wird automatisch erneut versucht. Wenn sich dies wiederholt, "
 "prüfen Sie die PHP-Zeitlimits und die Cron-Einrichtung."
 
-#: src/Integrations/ConnectorRegistry.php:477
+#: src/Integrations/ConnectorRegistry.php:491
 msgid "Queue delayed"
 msgstr "Warteschlange verzögert"
 
-#: src/Integrations/ConnectorRegistry.php:478
+#: src/Integrations/ConnectorRegistry.php:492
 msgid ""
 "Jobs are waiting longer than 15 minutes. Check WP-Cron or run \"wp form-"
 "captain jobs run\" from a system cron."
@@ -4754,7 +4778,7 @@ msgstr ""
 "Aufträge warten länger als 15 Minuten. Prüfen Sie WP-Cron oder führen Sie "
 "„wp form-captain jobs run“ über einen System-Cron aus."
 
-#: src/Integrations/ConnectorRegistry.php:489
+#: src/Integrations/ConnectorRegistry.php:503
 msgid ""
 "Check the connector documentation for this code. You can retry the job once "
 "the cause is fixed."
@@ -4762,12 +4786,12 @@ msgstr ""
 "Schlagen Sie diesen Code in der Dokumentation des Connectors nach. Sie "
 "können den Auftrag erneut versuchen, sobald die Ursache behoben ist."
 
-#: src/Integrations/ConnectorRegistry.php:502
+#: src/Integrations/ConnectorRegistry.php:516
 msgid "Actions can only be registered in or after form_captain_loaded_v1."
 msgstr ""
 "Aktionen können nur in oder nach form_captain_loaded_v1 registriert werden."
 
-#: src/Integrations/ConnectorRegistry.php:505
+#: src/Integrations/ConnectorRegistry.php:519
 msgid ""
 "Invalid action key. Expected \"connector.action\" in lowercase letters, "
 "digits and underscores."
@@ -4775,47 +4799,47 @@ msgstr ""
 "Ungültiger Aktionsschlüssel. Erwartet wird „connector.action“ in "
 "Kleinbuchstaben, Ziffern und Unterstrichen."
 
-#: src/Integrations/ConnectorRegistry.php:508
+#: src/Integrations/ConnectorRegistry.php:522
 msgid "The action namespace \"core\" is reserved for built-in actions."
 msgstr "Der Aktions-Namensraum „core“ ist für integrierte Aktionen reserviert."
 
-#: src/Integrations/ConnectorRegistry.php:511
+#: src/Integrations/ConnectorRegistry.php:525
 msgid "An action with this key is already registered."
 msgstr "Eine Aktion mit diesem Schlüssel ist bereits registriert."
 
-#: src/Integrations/ConnectorRegistry.php:531
+#: src/Integrations/ConnectorRegistry.php:545
 msgid "The action definition needs a label."
 msgstr "Die Aktionsdefinition benötigt eine Bezeichnung."
 
-#: src/Integrations/ConnectorRegistry.php:535
+#: src/Integrations/ConnectorRegistry.php:549
 msgid "The action definition needs a contract constraint such as \"^1.0\"."
 msgstr "Die Aktionsdefinition benötigt eine Contract-Bedingung wie „^1.0“."
 
-#: src/Integrations/ConnectorRegistry.php:538
+#: src/Integrations/ConnectorRegistry.php:552
 msgid "The action expects an incompatible contract version."
 msgstr "Die Aktion erwartet eine inkompatible Contract-Version."
 
-#: src/Integrations/ConnectorRegistry.php:542
+#: src/Integrations/ConnectorRegistry.php:556
 msgid "Invalid connector key in action definition."
 msgstr "Ungültiger Connector-Schlüssel in der Aktionsdefinition."
 
-#: src/Integrations/ConnectorRegistry.php:547
+#: src/Integrations/ConnectorRegistry.php:561
 msgid "Every action setting needs a valid key."
 msgstr "Jede Aktionseinstellung benötigt einen gültigen Schlüssel."
 
-#: src/Integrations/ConnectorRegistry.php:562
+#: src/Integrations/ConnectorRegistry.php:576
 msgid "Every mapping entry needs a valid key."
 msgstr "Jeder Zuordnungseintrag benötigt einen gültigen Schlüssel."
 
-#: src/Integrations/ConnectorRegistry.php:861
+#: src/Integrations/ConnectorRegistry.php:943
 msgid "This action is not registered."
 msgstr "Diese Aktion ist nicht registriert."
 
-#: src/Integrations/ConnectorRegistry.php:900
+#: src/Integrations/ConnectorRegistry.php:984
 msgid "This is a test message from Form Captain."
 msgstr "Dies ist eine Testnachricht von Form Captain."
 
-#: src/Integrations/ConnectorRegistry.php:907
+#: src/Integrations/ConnectorRegistry.php:991
 msgid "Sample value"
 msgstr "Beispielwert"
 
@@ -4986,16 +5010,16 @@ msgstr "Beispieltext"
 msgid "Second line"
 msgstr "Zweite Zeile"
 
-#: src/Privacy/PrivacyIntegration.php:66 src/Privacy/PrivacyIntegration.php:78
+#: src/Privacy/PrivacyIntegration.php:67 src/Privacy/PrivacyIntegration.php:79
 msgid "Form Captain – form submissions"
 msgstr "Form Captain – Formular-Einsendungen"
 
-#: src/Privacy/PrivacyIntegration.php:94
+#: src/Privacy/PrivacyIntegration.php:95
 msgid "[retention period]"
 msgstr "[Aufbewahrungsfrist]"
 
 #. translators: %s: retention period
-#: src/Privacy/PrivacyIntegration.php:97
+#: src/Privacy/PrivacyIntegration.php:98
 #, php-format
 msgid ""
 "This website uses forms to receive inquiries. The data you enter is stored "
@@ -5009,37 +5033,37 @@ msgstr ""
 "Speicherung erforderlich ist. Formulardaten werden nicht an Dritte "
 "weitergegeben, sofern dies im Formular nicht angegeben ist."
 
-#: src/Privacy/PrivacyIntegration.php:152
+#: src/Privacy/PrivacyIntegration.php:153
 msgid "Form submissions"
 msgstr "Formular-Einsendungen"
 
-#: src/Privacy/PrivacyIntegration.php:153
+#: src/Privacy/PrivacyIntegration.php:154
 msgid "Submissions you sent through forms on this website."
 msgstr "Einsendungen, die Sie über Formulare dieser Website gesendet haben."
 
-#: src/Privacy/PrivacyIntegration.php:181
+#: src/Privacy/PrivacyIntegration.php:182
 msgid "Received on"
 msgstr "Eingegangen am"
 
-#: src/Privacy/PrivacyIntegration.php:192
+#: src/Privacy/PrivacyIntegration.php:193
 msgid "Email confirmation (double opt-in)"
 msgstr "E-Mail-Bestätigung (Double-Opt-in)"
 
 #. translators: %s: date and time
-#: src/Privacy/PrivacyIntegration.php:195
+#: src/Privacy/PrivacyIntegration.php:196
 #, php-format
 msgid "Confirmed on %s"
 msgstr "Bestätigt am %s"
 
-#: src/Privacy/PrivacyIntegration.php:196
+#: src/Privacy/PrivacyIntegration.php:197
 msgid "Not confirmed"
 msgstr "Nicht bestätigt"
 
-#: src/Privacy/PrivacyIntegration.php:209
+#: src/Privacy/PrivacyIntegration.php:210
 msgid "Scheduled deletion"
 msgstr "Geplante Löschung"
 
-#: src/Privacy/PrivacyIntegration.php:212
+#: src/Privacy/PrivacyIntegration.php:213
 msgid ""
 "No automatic deletion; the submission is deleted manually by the website "
 "operator."
@@ -5047,32 +5071,32 @@ msgstr ""
 "Keine automatische Löschung; die Einsendung wird vom Betreiber der Website "
 "manuell gelöscht."
 
-#: src/Privacy/PrivacyIntegration.php:222
+#: src/Privacy/PrivacyIntegration.php:223
 msgid "Language"
 msgstr "Sprache"
 
-#: src/Privacy/PrivacyIntegration.php:244
+#: src/Privacy/PrivacyIntegration.php:245
 msgid "Removed field"
 msgstr "Entferntes Feld"
 
 #. translators: %s: date and time of the note
-#: src/Privacy/PrivacyIntegration.php:258
+#: src/Privacy/PrivacyIntegration.php:259
 #, php-format
 msgid "Internal note (%s)"
 msgstr "Interne Notiz (%s)"
 
 #. translators: 1: date, 2: revision
-#: src/Privacy/PrivacyIntegration.php:296
+#: src/Privacy/PrivacyIntegration.php:297
 #, php-format
 msgid "Given on %1$s, revision %2$s"
 msgstr "Erteilt am %1$s, Revision %2$s"
 
-#: src/Privacy/PrivacyIntegration.php:301
+#: src/Privacy/PrivacyIntegration.php:302
 msgid "Not given"
 msgstr "Nicht erteilt"
 
 #. translators: %s: entry ID
-#: src/Privacy/PrivacyIntegration.php:359
+#: src/Privacy/PrivacyIntegration.php:360
 #, php-format
 msgid ""
 "Submission #%s could not be erased. Please try again or delete it manually."
@@ -5081,12 +5105,12 @@ msgstr ""
 "oder löschen Sie sie manuell."
 
 #. translators: %s: number of submissions
-#: src/Privacy/PrivacyIntegration.php:364
+#: src/Privacy/PrivacyIntegration.php:365
 #, php-format
 msgid "%s form submissions were anonymized."
 msgstr "%s Formular-Einsendungen wurden anonymisiert."
 
-#: src/Privacy/PrivacyIntegration.php:367
+#: src/Privacy/PrivacyIntegration.php:368
 msgid ""
 "Some submissions were sent to connected integrations. Data in those systems "
 "is not deleted automatically unless the integration supports it."

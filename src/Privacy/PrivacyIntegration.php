@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace FormCaptain\Privacy;
 
 use FormCaptain\Domain\Fields\FieldTypes;
+use FormCaptain\Integrations\ConnectorEvents;
 use FormCaptain\Plugin;
 use FormCaptain\Repository\EntryRepository;
 use FormCaptain\Repository\FormRepository;
@@ -385,6 +386,7 @@ final class PrivacyIntegration {
 			if ( ! $entry ) {
 				return false;
 			}
+			ConnectorEvents::remember( $entry );
 			$this->jobs->cancel_for_entry( $entry_id, 'entry_deleted' );
 			apply_filters( 'form_captain_delete_entry_files_v1', $entry_id );
 			$this->entries->delete_file_rows( $entry_id );
@@ -407,6 +409,7 @@ final class PrivacyIntegration {
 			if ( ! $entry ) {
 				return false;
 			}
+			ConnectorEvents::remember( $entry ); // state before anonymization for the deletion event (SET-FC-40)
 			$version = $this->version( (int) $entry['form_version_id'] );
 			$types   = array();
 			foreach ( (array) ( $version['schema']['fields'] ?? array() ) as $field ) {

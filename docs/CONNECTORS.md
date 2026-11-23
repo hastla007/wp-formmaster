@@ -53,9 +53,11 @@ form_captain_register_action_v1( 'my.create_lead', [
 		[ 'key' => 'phone', 'label' => 'Telefon', 'types' => [ 'tel' ] ],
 		[ 'key' => 'iban',  'label' => 'IBAN', 'types' => [ 'text' ], 'allow_sensitive' => true ], // nur wenn fachlich nötig
 	],
-	'events'    => [ 'entry_created' ],
+	'events'    => [ 'entry_created' ], // seit Vertrag 1.4.0 auch 'entry_status_changed', 'consent_withdrawn', 'entry_deleted'
 ], [ $this, 'create_lead' ] );
 ```
+
+`events` (seit Vertrag 1.4.0, SET-FC-40): `entry_created` (Standard), `entry_status_changed`, `consent_withdrawn`, `entry_deleted`. Nur abonnierte Ereignisse erzeugen Jobs. `consent_withdrawn` und `entry_deleted` tragen **nur IDs** (`values` und `context` leer, Mapping wird nicht ausgewertet, `event_data` mit Eintrags-ID, Formular-ID, öffentlicher Formular-ID, Vorgangsnummer, Zeitpunkten und Grund/Quelle). Payload, Idempotency-Keys und Regeln: `docs/spec/api-v1.md`, Abschnitt „Ereignisse für Formularaktionen“.
 
 Fehlercodes der Registrierung (`WP_Error`): `not_ready` (vor `form_captain_loaded_v1`), `invalid_request` (Key-Format, Duplikat, fehlendes `label`/`contract`, ungültige Setting-/Mapping-Keys), `incompatible_contract`.
 
@@ -75,7 +77,8 @@ $job = [
 	'values'    => [ 'email' => 'a@example.org' ], // nur gemappte, validierte Felder
 	'context'   => [ 'purpose' => …, 'ref_type' => …, 'ref_id' => …, 'verified' => bool ] | [],
 	'test_mode' => false,
-	// zusätzlich (Minor-additiv): 'action_key', 'instance_id', 'attempt'
+	// zusätzlich (Minor-additiv): 'action_key', 'instance_id', 'attempt';
+	// seit 1.4.0 'event' (entry_created | entry_status_changed | consent_withdrawn | entry_deleted) und 'event_data' (nur IDs/Zeiten)
 ];
 ```
 
@@ -117,6 +120,7 @@ Vom Kern gesetzte Codes (Integrationen zeigt je Code den nächsten Schritt):
 | `entitlement_missing` | Pro-Recht fehlt/abgelaufen | fail |
 | `entry_deleted`, `entry_anonymized`, `entry_spam` | Entry nicht mehr zustellbar | fail, Callback wird nicht aufgerufen |
 | `action_removed`, `action_disabled` | Aktion im Formular entfernt/aus | fail |
+| `event_not_subscribed` | Aktion nennt das Ereignis des Jobs nicht mehr in `events` (seit 1.4.0) | fail |
 | `mapping_incomplete`, `mapping_type_mismatch`, `sensitive_field` | Mapping ungültig | fail (nach Korrektur manuell wiederholen) |
 | `exception`, `invalid_result`, `lock_expired` | technischer Fehler | retry |
 

@@ -52,7 +52,7 @@ final class ExtensionPointsTest extends TestCase {
 	}
 
 	public function test_contract_version_is_1_3(): void {
-		$this->assertSame( '1.3.0', form_captain_contract_version() );
+		$this->assertSame( '1.4.0', form_captain_contract_version() );
 	}
 
 	public function test_extension_field_is_rendered_by_the_extension_inside_the_core_frame(): void {

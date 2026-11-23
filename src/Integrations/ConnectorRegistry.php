@@ -50,6 +50,15 @@ final class ConnectorRegistry {
 
 	private const SETTING_TYPES = array( 'text', 'textarea', 'email', 'url', 'number', 'select', 'checkbox' );
 
+	/**
+	 * Events an action can subscribe to with `events` (SET-FC-40, contract 1.4.0). Jobs for the
+	 * events after `entry_created` are queued by ConnectorEvents.
+	 */
+	public const EVENTS = array( 'entry_created', 'entry_status_changed', 'consent_withdrawn', 'entry_deleted' );
+
+	/** Events whose jobs carry IDs only: no field values, no entry context, no mapping. */
+	public const ID_ONLY_EVENTS = array( 'consent_withdrawn', 'entry_deleted' );
+
 	/** @var array<string,ConnectorInterface> valid (compatible) connectors */
 	private array $connectors = array();
 
@@ -73,6 +82,7 @@ final class ConnectorRegistry {
 		add_action( 'init', array( $this, 'boot' ), 5 );
 		add_filter( 'form_captain_job_handlers', array( $this, 'add_job_handler' ) );
 		$plugin->get( CoreActions::class )->register( $plugin );
+		$plugin->get( ConnectorEvents::class )->register();
 	}
 
 	/**
@@ -429,6 +439,10 @@ final class ConnectorRegistry {
 				'label' => __( 'Action disabled in form', 'form-captain' ),
 				'next'  => __( 'Enable the action in the form editor if it should run.', 'form-captain' ),
 			),
+			'event_not_subscribed'  => array(
+				'label' => __( 'Action no longer uses this event', 'form-captain' ),
+				'next'  => __( 'No action needed. The action no longer subscribes to this event, so the job was stopped.', 'form-captain' ),
+			),
 			'action_removed'        => array(
 				'label' => __( 'Action removed from form', 'form-captain' ),
 				'next'  => __( 'No action needed. The job was stopped because the form no longer contains this action.', 'form-captain' ),
@@ -569,7 +583,7 @@ final class ConnectorRegistry {
 				'allow_sensitive' => ! empty( $m['allow_sensitive'] ),
 			);
 		}
-		$events = array_values( array_intersect( array_map( 'strval', (array) ( $d['events'] ?? array( 'entry_created' ) ) ), array( 'entry_created' ) ) );
+		$events = array_values( array_unique( array_intersect( array_map( 'strval', (array) ( $d['events'] ?? array( 'entry_created' ) ) ), self::EVENTS ) ) );
 		return array(
 			'label'     => $label,
 			'version'   => (string) ( $d['version'] ?? '1.0.0' ),
@@ -683,6 +697,14 @@ final class ConnectorRegistry {
 			return JobResult::retry( $reason, 'Action ' . $action_key . ' is waiting: ' . $reason );
 		}
 
+		$event = (string) ( $payload['event'] ?? 'entry_created' );
+		if ( ! in_array( $event, self::EVENTS, true ) || ! in_array( $event, (array) $action['definition']['events'], true ) ) {
+			return JobResult::fail( 'event_not_subscribed', 'Action ' . $action_key . ' does not subscribe to ' . $event );
+		}
+		if ( in_array( $event, self::ID_ONLY_EVENTS, true ) ) {
+			return $this->handle_id_only_job( $action, $job, $payload, $event );
+		}
+
 		$entries  = $this->plugin->get( EntryRepository::class );
 		$entry_id = (int) ( $job['entry_id'] ?? 0 );
 		$entry    = $entry_id ? $entries->find( $entry_id ) : null;
@@ -703,18 +725,9 @@ final class ConnectorRegistry {
 		if ( ! $form ) {
 			return JobResult::fail( 'form_not_found', 'Form no longer exists' );
 		}
-		$instance = null;
-		foreach ( (array) ( $form['settings']['actions'] ?? array() ) as $candidate ) {
-			if ( is_array( $candidate ) && ( $candidate['instance_id'] ?? '' ) === $instance_id ) {
-				$instance = $candidate;
-				break;
-			}
-		}
-		if ( null === $instance || ( $instance['action_key'] ?? '' ) !== $action_key ) {
-			return JobResult::fail( 'action_removed', 'Action instance no longer configured' );
-		}
-		if ( empty( $instance['enabled'] ) ) {
-			return JobResult::fail( 'action_disabled', 'Action instance disabled' );
+		$instance = self::configured_instance( $form, $action_key, $instance_id );
+		if ( $instance instanceof JobResult ) {
+			return $instance;
 		}
 		$version = $forms->find_version( (int) $entry['form_version_id'] );
 		$schema  = $version['schema'] ?? $form['schema'];
@@ -733,6 +746,8 @@ final class ConnectorRegistry {
 			'context'         => is_array( $entry['context'] ) ? $entry['context'] : array(),
 			'test_mode'       => false,
 			'attempt'         => (int) ( $job['attempts'] ?? 1 ),
+			'event'           => $event,
+			'event_data'      => 'entry_created' === $event ? ConnectorEvents::base_data( 'entry_created', $entry, $form ) : (array) ( $payload['data'] ?? array() ),
 		);
 		JobGrant::open( $entry_id, $built['field_ids'], $built['sensitive_ids'] );
 		try {
@@ -741,6 +756,73 @@ final class ConnectorRegistry {
 			JobGrant::close();
 		}
 		return $result;
+	}
+
+	/**
+	 * Runs a job of an ID-only event (consent_withdrawn, entry_deleted): the entry may be gone or
+	 * withdrawn, so it is not read. The callback gets empty `values` and `context`, never field
+	 * access (no JobGrant); the mapping is not evaluated. The form and the enabled action instance
+	 * must still exist, because the instance settings belong to them.
+	 *
+	 * @param array{definition:array<string,mixed>,callback:callable} $action
+	 * @param array<string,mixed>                                     $job
+	 * @param array<string,mixed>                                     $payload
+	 */
+	private function handle_id_only_job( array $action, array $job, array $payload, string $event ): JobResult {
+		$action_key  = (string) ( $payload['action_key'] ?? '' );
+		$instance_id = (string) ( $payload['instance_id'] ?? '' );
+		$form        = $this->plugin->get( FormRepository::class )->find( (int) ( $job['form_id'] ?? 0 ) );
+		if ( ! $form ) {
+			return JobResult::fail( 'form_not_found', 'Form no longer exists' );
+		}
+		$instance = self::configured_instance( $form, $action_key, $instance_id );
+		if ( $instance instanceof JobResult ) {
+			return $instance;
+		}
+		$data = array();
+		foreach ( (array) ( $payload['data'] ?? array() ) as $key => $value ) {
+			if ( is_scalar( $value ) || null === $value ) {
+				$data[ (string) $key ] = $value;
+			}
+		}
+		$call = array(
+			'form_id'         => (int) $form['id'],
+			'entry_id'        => (int) ( $payload['entry_id'] ?? 0 ),
+			'idempotency_key' => (string) $job['idempotency_key'],
+			'action_key'      => $action_key,
+			'instance_id'     => $instance_id,
+			'settings'        => self::sanitize_action_settings( $action['definition'], (array) ( $instance['settings'] ?? array() ) ),
+			'values'          => array(),
+			'context'         => array(),
+			'test_mode'       => false,
+			'attempt'         => (int) ( $job['attempts'] ?? 1 ),
+			'event'           => $event,
+			'event_data'      => $data,
+		);
+		return self::invoke( $action['callback'], $call );
+	}
+
+	/**
+	 * The enabled action instance of the form, or the failed result.
+	 *
+	 * @param array<string,mixed> $form
+	 * @return array<string,mixed>|JobResult
+	 */
+	private static function configured_instance( array $form, string $action_key, string $instance_id ): array|JobResult {
+		$instance = null;
+		foreach ( (array) ( $form['settings']['actions'] ?? array() ) as $candidate ) {
+			if ( is_array( $candidate ) && ( $candidate['instance_id'] ?? '' ) === $instance_id ) {
+				$instance = $candidate;
+				break;
+			}
+		}
+		if ( null === $instance || ( $instance['action_key'] ?? '' ) !== $action_key ) {
+			return JobResult::fail( 'action_removed', 'Action instance no longer configured' );
+		}
+		if ( empty( $instance['enabled'] ) ) {
+			return JobResult::fail( 'action_disabled', 'Action instance disabled' );
+		}
+		return $instance;
 	}
 
 	/**
@@ -879,6 +961,8 @@ final class ConnectorRegistry {
 			'context'         => array(),
 			'test_mode'       => true,
 			'attempt'         => 1,
+			'event'           => 'entry_created',
+			'event_data'      => array(),
 		);
 		$result = self::invoke( $action['callback'], $call );
 		Logger::log( 'info', 'connector_test_run', $action_key . ' ' . $result->status . ' ' . $result->code );

@@ -44,7 +44,7 @@ final class ContractApiTest extends TestCase {
 	}
 
 	public function test_contract_version(): void {
-		$this->assertSame( '1.3.0', form_captain_contract_version() );
+		$this->assertSame( '1.4.0', form_captain_contract_version() );
 		$this->assertSame( FORM_CAPTAIN_CONTRACT_VERSION, form_captain_contract_version() );
 	}
 
@@ -53,7 +53,8 @@ final class ContractApiTest extends TestCase {
 		wp_set_current_user( 0 );
 		$dto = form_captain_get_form_v1( $form['public_id'] );
 		$this->assertIsArray( $dto );
-		$this->assertSame( array( 'id', 'public_id', 'title', 'status', 'version', 'fields' ), array_keys( $dto ) );
+		$this->assertSame( array( 'id', 'public_id', 'title', 'status', 'version', 'fields', 'double_opt_in' ), array_keys( $dto ) );
+		$this->assertFalse( $dto['double_opt_in'] );
 		$this->assertSame( 1, $dto['version'] );
 		$this->assertSame( array( 'id', 'key', 'type', 'label', 'required', 'sensitive', 'options' ), array_keys( $dto['fields'][0] ) );
 		$this->assertTrue( $dto['fields'][2]['sensitive'] );
@@ -67,6 +68,29 @@ final class ContractApiTest extends TestCase {
 		$this->assertSame( 'draft', form_captain_get_form_v1( $draft )['status'] );
 		$this->assertNull( form_captain_get_form_v1( $draft )['version'] );
 		$this->assertSame( 'form_not_found', form_captain_get_form_v1( 999999 )->get_error_code() );
+	}
+
+	/**
+	 * Contract 1.4.0: `double_opt_in` in the form summary is true only when double opt-in is
+	 * effectively active – switched on and an email field of the published version set.
+	 */
+	public function test_get_form_reports_whether_double_opt_in_is_effective(): void {
+		remove_all_filters( 'form_captain_double_opt_in_v1' );
+		$fields = array(
+			array( 'id' => 'f_name01', 'type' => 'text', 'key' => 'name', 'label' => 'Name' ),
+			array( 'id' => 'f_mail01', 'type' => 'email', 'key' => 'email', 'label' => 'E-Mail' ),
+		);
+		$on     = $this->create_published_form( $fields, array( 'double_opt_in' => array( 'enabled' => true, 'email_field' => 'f_mail01' ) ) );
+		$off    = $this->create_published_form( $fields, array( 'double_opt_in' => array( 'enabled' => false, 'email_field' => 'f_mail01' ) ) );
+		$nomail = $this->create_published_form( $fields, array( 'double_opt_in' => array( 'enabled' => true, 'email_field' => 'f_name01' ) ) );
+		$this->assertTrue( form_captain_get_form_v1( $on['public_id'] )['double_opt_in'] );
+		$this->assertFalse( form_captain_get_form_v1( $off['public_id'] )['double_opt_in'] );
+		$this->assertFalse( form_captain_get_form_v1( $nomail['public_id'] )['double_opt_in'], 'Switched on without an email field is not effective' );
+
+		// The filter that decides at submission decides here too.
+		add_filter( 'form_captain_double_opt_in_v1', static fn( array $s ): array => array( 'enabled' => false ) + $s );
+		$this->assertFalse( form_captain_get_form_v1( $on['public_id'] )['double_opt_in'] );
+		remove_all_filters( 'form_captain_double_opt_in_v1' );
 	}
 
 	public function test_get_entry_scopes_and_rights(): void {

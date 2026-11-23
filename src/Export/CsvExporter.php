@@ -338,6 +338,11 @@ final class CsvExporter {
 			/* translators: %s: status of the submission, e.g. "New" */
 			$label = sprintf( __( '%s – not confirmed yet', 'form-captain' ), $label );
 		}
+		// SET-FC-P4-08: sent without JavaScript, so the proof-of-work check could not run.
+		if ( 'spam' !== $entry['status'] && \FormCaptain\Security\PowCaptcha::NOTE_WITHOUT_POW === ( $entry['spam_reason'] ?? null ) ) {
+			/* translators: %s: status of the submission, e.g. "New" */
+			$label = sprintf( __( '%s – spam check without proof of work', 'form-captain' ), $label );
+		}
 		return $label;
 	}
 

@@ -300,6 +300,7 @@ final class EntriesListTable extends \WP_List_Table {
 			'honeypot' => __( 'Honeypot field filled', 'form-captain' ),
 			'too_fast' => __( 'Submitted too fast', 'form-captain' ),
 			'blocklist' => __( 'Blocklist match', 'form-captain' ),
+			\FormCaptain\Security\PowCaptcha::NOTE_WITHOUT_POW => __( 'Spam check without proof of work (sent without JavaScript)', 'form-captain' ),
 			default => $reason,
 		};
 	}

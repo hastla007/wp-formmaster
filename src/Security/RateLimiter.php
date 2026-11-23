@@ -156,6 +156,34 @@ final class RateLimiter {
 		return array( 'allowed' => true, 'retry_after' => 0 );
 	}
 
+	/**
+	 * Submissions per form, visitor and window sent without JavaScript and therefore without a
+	 * proof-of-work solution (SET-FC-P4-08, decision 22): a fifth of `spam.rate_limit`, at least 1.
+	 */
+	public static function without_pow_limit(): int {
+		$default = max( 1, intdiv( SpamLimits::get( 'rate_limit' ), 5 ) );
+		/**
+		 * Submissions per form and visitor within the sending-limit window that may arrive without
+		 * JavaScript and without a proof-of-work solution (spam mode "global", provider `pow`).
+		 * Default: a fifth of the per-visitor limit `spam.rate_limit`, at least 1. Values below 1 count as 1.
+		 *
+		 * @param int $limit
+		 * @param int $per_visitor_limit effective spam.rate_limit
+		 */
+		return max( 1, (int) apply_filters( 'form_captain_pow_nojs_rate_limit_v1', $default, SpamLimits::get( 'rate_limit' ) ) );
+	}
+
+	/**
+	 * Own, stricter bucket for No-JS submissions without a proof-of-work solution (SET-FC-P4-08).
+	 * Counted in addition to check_submission().
+	 *
+	 * @return array{allowed:bool,retry_after:int}
+	 */
+	public function check_without_pow( int $form_id, string $ip ): array {
+		$r = $this->hit( self::ip_bucket( 'submit_without_pow', $form_id, $ip ), $form_id, self::without_pow_limit() );
+		return array( 'allowed' => $r['allowed'], 'retry_after' => $r['retry_after'] );
+	}
+
 	/** @return array{allowed:bool,retry_after:int} RL-01 */
 	public function check_token( string $ip ): array {
 		$r = $this->hit( self::ip_bucket( 'token', 0, $ip ), 0, self::TOKEN_LIMIT );

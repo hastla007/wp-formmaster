@@ -33,7 +33,7 @@ Die Anrede gilt für alles, was Form Captain selbst schreibt: Verwaltung, Fehler
 
 ## Ohne JavaScript
 
-Das Formular funktioniert auch ohne JavaScript: Es wird an `wp-admin/admin-post.php` gesendet, danach leitet WordPress zurück auf die Seite (Parameter `fc_r` – nur ein zufälliger Schlüssel, keine Daten). Bei Fehlern werden Meldungen und Eingaben (ohne sensible Felder und Einwilligung) für 10 Minuten wieder angezeigt.
+Das Formular funktioniert auch ohne JavaScript: Es wird an `wp-admin/admin-post.php` gesendet, danach leitet WordPress zurück auf die Seite (Parameter `fc_r` – nur ein zufälliger Schlüssel, keine Daten). Bei Fehlern werden Meldungen und Eingaben (ohne sensible Felder und Einwilligung) für 10 Minuten wieder angezeigt. Ist der eingebaute Proof of Work aktiv, kann der Browser ohne JavaScript nicht rechnen: Die Einsendung wird trotzdem angenommen, aber strenger begrenzt und im Eintrag als „Spamprüfung ohne Proof of Work“ markiert (siehe [Einstellungen](einstellungen.md)).
 
 ## Caching
 

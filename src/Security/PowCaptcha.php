@@ -7,7 +7,10 @@
  *   removed by the normal rate-limit purge after expiry.
  * - Challenges are only handed out by the token route, never in cached HTML.
  * - Without JavaScript (admin-post fallback) a missing solution is accepted with the existing checks
- *   (honeypot, minimum time, blocklist, rate limits), unless the form's spam mode is "strict".
+ *   (honeypot, minimum time, blocklist, rate limits), unless the form's spam mode is "strict". Such a
+ *   submission is never dropped silently, but it counts against a much stricter sending limit
+ *   (RateLimiter::check_without_pow()) and the entry is marked NOTE_WITHOUT_POW (SET-FC-P4-08,
+ *   decision 22).
  *
  * Effective provider of a form: spam.mode "off" → none; "strict" → global provider, or `pow` when
  * none is chosen globally; "global" → global provider (spam.captcha_provider).
@@ -33,6 +36,13 @@ final class PowCaptcha {
 	public const REASON_MISSING  = 'pow_missing';
 	public const REASON_INVALID  = 'pow_invalid';
 	public const REASON_REPLAYED = 'pow_replayed';
+
+	/**
+	 * Value of fc_entries.spam_reason for a NON-spam entry that was sent without JavaScript and
+	 * therefore without a proof-of-work solution (mode "global", SET-FC-P4-08). The entry keeps its
+	 * normal status; list, detail and CSV show "spam check without proof of work".
+	 */
+	public const NOTE_WITHOUT_POW = 'pow_skipped';
 
 	private const KEY_PURPOSE = 'form-captain/pow/v1';
 
@@ -94,6 +104,22 @@ final class PowCaptcha {
 	 */
 	public static function challenge_for( array $form ): ?array {
 		return self::PROVIDER === self::provider_for( $form ) ? self::engine()->create( (string) $form['public_id'] ) : null;
+	}
+
+	/**
+	 * True for a public No-JS submission (admin-post fallback) without a solution to a form whose
+	 * effective provider is `pow` in mode "global": check() lets it pass, the caller applies the
+	 * stricter limit and marks the entry (SET-FC-P4-08).
+	 *
+	 * @param array<string,mixed> $form
+	 * @param array<string,mixed> $raw
+	 */
+	public static function unsolved_without_js( array $form, array $raw, bool $js ): bool {
+		if ( $js || 'global' !== self::spam_mode( $form ) || self::PROVIDER !== self::provider_for( $form ) ) {
+			return false;
+		}
+		$payload = $raw['_fc_pow'] ?? null;
+		return null === $payload || '' === $payload || array() === $payload;
 	}
 
 	/**

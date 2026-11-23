@@ -206,6 +206,7 @@ Grundregel S2: Die Einstellung liefert den Wert, der Filter gewinnt, der Kern be
 | `form_captain_limits_v1` | `( array<string,int> $limits )` → Budgets (`docs/spec/budgets.md`) |
 | `form_captain_spam_limits_v1` | `( array{window_minutes:int,form_total:int,receipts_per_hour:int} $values )` → Werte |
 | `form_captain_pow_max_number_v1` | `( int $max_number )` → Schwierigkeit des Proof-of-Work (Standard 50 000) |
+| `form_captain_pow_nojs_rate_limit_v1` | (seit 1.3.0) `( int $limit, int $per_visitor_limit )` → Einsendungen je Formular, Besucher und Zeitfenster ohne JavaScript und ohne Proof-of-Work-Lösung (Modus „global“, Anbieter `pow`); Standard max(1, `spam.rate_limit` / 5), Werte unter 1 zählen als 1 (SET-FC-P4-08) |
 | `form_captain_retention_seconds_v1` | `( ?int $seconds, string $mode, string $created_gmt )` → Sekunden oder `null` (= keine automatische Löschung); höchstens ein Tag Minimum |
 | `form_captain_retention_grace_days_v1` | `( int $days )` → Schonfrist vor der Löschung |
 | `form_captain_trash_days_v1` | `( int $days )` → Tage im Papierkorb vor dem endgültigen Löschen (Einstellung `privacy.trash_days`, danach auf 1–365 begrenzt, SET-FC-P1-07) |

@@ -422,6 +422,9 @@ final class EntriesPage {
 			/* translators: %s: date and time */
 			echo '<p class="description fc-doi-confirmed">' . esc_html( sprintf( __( 'Confirmed by the person via the e-mail link (double opt-in) on %s.', 'form-captain' ), get_date_from_gmt( (string) $entry['confirmed_gmt'], $fmt ) ) ) . '</p>';
 		}
+		if ( 'spam' !== $entry['status'] && \FormCaptain\Security\PowCaptcha::NOTE_WITHOUT_POW === ( $entry['spam_reason'] ?? null ) ) {
+			echo '<div class="notice notice-warning inline fc-without-pow"><p>' . esc_html__( 'Spam check without proof of work: this submission was sent without JavaScript, so the proof-of-work check could not run. Honeypot, minimum time, blocklist and a stricter sending limit applied. Check the content before you rely on it.', 'form-captain' ) . '</p></div>';
+		}
 		if ( ! empty( $entry['expires_gmt'] ) && ! $unconfirmed ) {
 			/* translators: %s: date */
 			echo '<p class="description">' . esc_html( sprintf( __( 'Will be deleted automatically on %s.', 'form-captain' ), get_date_from_gmt( (string) $entry['expires_gmt'], (string) get_option( 'date_format' ) ) ) ) . '</p>';
@@ -486,7 +489,8 @@ final class EntriesPage {
 		$this->detail_row( __( 'Last change', 'form-captain' ), get_date_from_gmt( (string) $entry['updated_gmt'], $fmt ) );
 		$this->detail_row( __( 'Status', 'form-captain' ), CsvExporter::status_label( $entry ) );
 		if ( ! empty( $entry['spam_reason'] ) ) {
-			$this->detail_row( __( 'Spam reason', 'form-captain' ), EntriesListTable::spam_reason_label( (string) $entry['spam_reason'] ) );
+			// SET-FC-P4-08: a non-spam entry can carry the note "without proof of work".
+			$this->detail_row( 'spam' === $entry['status'] ? __( 'Spam reason', 'form-captain' ) : __( 'Spam check', 'form-captain' ), EntriesListTable::spam_reason_label( (string) $entry['spam_reason'] ) );
 		}
 		if ( ! empty( $entry['source_url'] ) ) {
 			$this->detail_row( __( 'Source page', 'form-captain' ), (string) $entry['source_url'] );

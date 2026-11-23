@@ -78,7 +78,7 @@ Im Reiter E-Mail legst du eine Fußzeile fest (z. B. Firmenname, Anschrift, Regi
 
 ## Spamschutz: eingebauter Proof of Work und Grenzen
 
-„Eingebauter Proof of Work“ schützt ohne externen Dienst, ohne Cookies und ohne Rätsel: Der Browser rechnet im Hintergrund eine kleine Aufgabe. Ohne JavaScript gelten die übrigen Prüfungen. Je Formular (Reiter Einstellungen im Editor) kannst du das Captcha abschalten oder „strenger“ wählen. Zeitfenster, Höchstzahl je Formular und Mails je Besucheradresse sind einstellbar. Einzelheiten: `docs/spam-proof-of-work.md`.
+„Eingebauter Proof of Work“ schützt ohne externen Dienst, ohne Cookies und ohne Rätsel: Der Browser rechnet im Hintergrund eine kleine Aufgabe. Ohne JavaScript bleibt das Formular nutzbar; dann gelten die übrigen Prüfungen und zusätzlich eine viel strengere Sendegrenze (ein Fünftel des Rate-Limits je Formular, mindestens eine Einsendung je Zeitfenster). Solche Einträge sind in der Liste, im Detail und in der CSV als „Spamprüfung ohne Proof of Work“ markiert – prüfe sie, bevor du dich auf sie verlässt. Je Formular (Reiter Einstellungen im Editor) kannst du das Captcha abschalten oder „strenger“ wählen. Zeitfenster, Höchstzahl je Formular und Mails je Besucheradresse sind einstellbar. Einzelheiten: `docs/spam-proof-of-work.md`.
 
 ## Double-Opt-in je Formular
 

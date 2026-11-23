@@ -15,6 +15,7 @@ namespace FormCaptain\Service;
 use FormCaptain\Domain\SubmissionValidator;
 use FormCaptain\Jobs\Scheduler;
 use FormCaptain\Repository\EntryRepository;
+use FormCaptain\Security\PowCaptcha;
 use FormCaptain\Security\RateLimiter;
 use FormCaptain\Security\SignedContext;
 use FormCaptain\Security\SpamGuard;
@@ -203,6 +204,17 @@ final class SubmissionService {
 			)
 		);
 
+		// 7b. No JavaScript, no proof-of-work solution (mode "global"): accepted, but with a much
+		// stricter sending limit and a mark on the entry, never dropped silently (SET-FC-P4-08).
+		$spam_note = null;
+		if ( null === $spam_reason && ! $trusted && PowCaptcha::unsolved_without_js( $form, $raw, ! empty( $meta['js'] ) ) ) {
+			$strict = $this->limiter->check_without_pow( $form_id, isset( $meta['ip'] ) ? (string) $meta['ip'] : RateLimiter::client_ip() );
+			if ( ! $strict['allowed'] ) {
+				return $fail( Errors::RATE_LIMITED, array( 'retry_after' => (int) $strict['retry_after'] ) );
+			}
+			$spam_note = PowCaptcha::NOTE_WITHOUT_POW;
+		}
+
 		// Double opt-in (SET-FC-10): public, non-spam submissions wait for the visitor's confirmation.
 		$doi = null === $spam_reason && ! $trusted ? DoubleOptIn::required_for( $form, $fields ) : null;
 
@@ -213,7 +225,7 @@ final class SubmissionService {
 			'form_version_id' => (int) $version['version_id'],
 			'status'          => null !== $spam_reason ? 'spam' : 'new',
 			'request_key'     => $request_key,
-			'spam_reason'     => $spam_reason,
+			'spam_reason'     => $spam_reason ?? $spam_note,
 			'source_url'      => self::source_url( $meta['source_url'] ?? null ),
 			'source_post_id'  => self::source_post_id( $meta['source_post_id'] ?? null ),
 			'user_id'         => ! empty( $meta['user_id'] ) ? (int) $meta['user_id'] : null,

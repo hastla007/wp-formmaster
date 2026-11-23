@@ -90,7 +90,9 @@ final class SettingsHintsTest extends TestCase {
 	}
 
 	/**
-	 * Guard (S1): the core names no entitlement keys and the settings code knows nothing about licences.
+	 * Guard (S1): no licence code, no entitlement keys and no licence calls in the core; the settings code
+	 * knows nothing about licences. The only allowed place is the generic default-deny gate for actions
+	 * that declare requires.entitlement (contract v1, decision 22 (6)).
 	 */
 	public function test_core_contains_no_entitlement_names_and_settings_no_licence_code(): void {
 		$it = new \RecursiveIteratorIterator( new \RecursiveDirectoryIterator( FORM_CAPTAIN_DIR . 'src' ) );
@@ -109,7 +111,8 @@ final class SettingsHintsTest extends TestCase {
 	/**
 	 * Guard over the whole free plugin (S1, SET-FC-P6): no entitlement key names of any Captain add-on,
 	 * no licence client, and words about licences only where they are known and explained:
-	 * ConnectorRegistry (requires.entitlement of contract v1, waits for the owner: SET-FC-P6-02),
+	 * ConnectorRegistry (requires.entitlement of contract v1: a generic gate that defaults to "not granted"
+	 * and knows no keys, allowed by S1 since decision 22 (6), SET-FC-P6-02),
 	 * the detection of the separate plugin "License Captain" on the dashboard and two comments.
 	 * A new place fails here and has to be explained in docs/WORDPRESS-ORG.md first.
 	 */

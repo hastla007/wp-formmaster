@@ -7743,3 +7743,11 @@ msgstr "Formular-Einstellungen"
 #: assets/src/editor.js:2319
 msgid "Reload latest version (discards your changes)"
 msgstr "Neueste Version laden (verwirft Ihre Änderungen)"
+
+#: src/Privacy/PrivacyIntegration.php
+msgid "Scheduled deletion"
+msgstr "Geplante Löschung"
+
+#: src/Privacy/PrivacyIntegration.php
+msgid "No automatic deletion; the submission is deleted manually by the website operator."
+msgstr "Keine automatische Löschung; die Einsendung wird vom Betreiber der Website manuell gelöscht."

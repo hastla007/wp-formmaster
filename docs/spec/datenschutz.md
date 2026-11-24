@@ -155,11 +155,13 @@ Ein Hinweis wird nur Nutzern mit `form_captain_read_entries` angezeigt.
   "text_hash": "sha256:9b1c…(64 hex)",
   "revision": 3,
   "form_version": 7,
-  "given_at": "2026-11-16T09:41:07Z"
+  "given_at": "2026-11-16T09:41:07Z",
+  "locale": "en_US"
 } }
 ```
 
 - `text_hash` = `hash('sha256', N(consent_text))` mit N = `wp_strip_all_tags` nach Platzhalter-Ersetzung → Whitespace-Folgen zu einem Leerzeichen → `trim` → Unicode NFC (falls `Normalizer` verfügbar, sonst unverändert; Systemstatus meldet fehlendes `intl`).
+- Mehrsprachige Formulare (SET-FC-36): `text_hash` ist der Hash des **angezeigten** Texts (Übersetzung, sonst Quelltext), `locale` die Sprache der Einsendung (wie `fc_entries.locale`, seit Vertrag 1.5.0). `revision` steigt formularweit, wenn sich der Quelltext oder eine Übersetzung des Einwilligungstexts ändert (erkannt beim Veröffentlichen/Speichern und bei der ersten Einsendung mit dem geänderten Text).
 - `given_at` = `fc_entries.created_gmt` (Serverzeit UTC, ISO 8601), nicht Clientzeit.
 - `form_version` = `version_no` aus `fc_form_versions` (zu `fc_entries.form_version_id`), gegen die validiert wurde.
 - Anzeige im Entry-Detail: „Einwilligung erteilt am {Datum}, Text-Revision {n}“ + Link „Wortlaut anzeigen“ (öffnet Snapshot-Text).

@@ -69,6 +69,7 @@ Hinweise:
 - Die Datei wird direkt gestreamt und nicht auf dem Server gespeichert. Maximal 100 000 Zeilen je Export, sonst bitte den Zeitraum eingrenzen; höchstens 10 Exporte je Stunde und Nutzer.
 - Gelöschte Einträge sind nie enthalten; anonymisierte erscheinen mit Status „Anonymisiert“ und Platzhaltern.
 - Die Spalte **Reference number** (Vorgangsnummer) ist standardmäßig ausgewählt; Einträge ohne Nummer bleiben leer.
+- Die Spalte **Language** (Sprache) ist standardmäßig ausgewählt und enthält die Sprache der Einsendung (z. B. `en_US`), auf mehrsprachigen Websites die Sprache der Seite mit dem Formular. Alle Sprachen stehen in einer Datei mit denselben Spalten.
 - Die Spalte **Consent withdrawn** (Einwilligung widerrufen) ist standardmäßig ausgewählt und enthält bei widerrufener Einwilligung Datum und Uhrzeit, sonst bleibt sie leer. Du kannst sie abwählen.
 - Jeder Export wird im technischen Protokoll vermerkt (Nutzer-ID, Formular, Zeilenzahl – keine Inhalte).
 

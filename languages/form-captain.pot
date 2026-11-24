@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-23T18:52:44+00:00\n"
+"POT-Creation-Date: 2026-11-24T06:27:12+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: form-captain\n"
@@ -119,7 +119,7 @@ msgstr ""
 #: src/Service/FormService.php:302
 #: src/Service/FormService.php:346
 #: src/Service/FormService.php:384
-#: src/Service/FormService.php:417
+#: src/Service/FormService.php:418
 msgid "Form not found."
 msgstr ""
 
@@ -681,7 +681,7 @@ msgstr ""
 
 #: src/Admin/EntriesPage.php:82
 #: src/Admin/EntriesPage.php:108
-#: src/Export/CsvExporter.php:366
+#: src/Export/CsvExporter.php:370
 msgid "Your session has expired. Please reload the page."
 msgstr ""
 
@@ -837,7 +837,7 @@ msgid "Any consent state"
 msgstr ""
 
 #: src/Admin/EntriesPage.php:364
-#: src/Export/CsvExporter.php:52
+#: src/Export/CsvExporter.php:54
 #: src/Integrations/ConnectorRegistry.php:471
 #: src/Privacy/PrivacyIntegration.php:217
 msgid "Consent withdrawn"
@@ -1247,7 +1247,7 @@ msgid "Export submissions"
 msgstr ""
 
 #: src/Admin/EntriesPage.php:770
-#: src/Export/CsvExporter.php:359
+#: src/Export/CsvExporter.php:363
 msgid "You are not allowed to export submissions."
 msgstr ""
 
@@ -1405,12 +1405,12 @@ msgid "The form has errors. Open the editor to fix them before publishing."
 msgstr ""
 
 #: src/Admin/FormsPage.php:325
-#: src/Service/FormService.php:489
+#: src/Service/FormService.php:490
 msgid "This form was created with a newer version of Form Captain."
 msgstr ""
 
 #: src/Admin/FormsPage.php:326
-#: src/Service/FormService.php:453
+#: src/Service/FormService.php:454
 msgid "The file is too large (maximum 256 KB)."
 msgstr ""
 
@@ -1443,7 +1443,7 @@ msgstr ""
 #: src/Admin/FormsPage.php:333
 #: src/Service/FormService.php:101
 #: src/Service/FormService.php:362
-#: src/Service/FormService.php:518
+#: src/Service/FormService.php:519
 msgid "The form could not be saved."
 msgstr ""
 
@@ -2073,7 +2073,7 @@ msgid "Email"
 msgstr ""
 
 #: src/Admin/SettingsPage.php:927
-#: src/Frontend/Renderer.php:191
+#: src/Frontend/Renderer.php:202
 msgid "Send"
 msgstr ""
 
@@ -2586,62 +2586,74 @@ msgid "MySQL 9.7 or newer, or MariaDB 12.3 or newer."
 msgstr ""
 
 #. translators: %d: installed database schema version
-#: src/Admin/SystemStatus.php:253
+#: src/Admin/SystemStatus.php:255
 #, php-format
 msgid "The database was set up by a newer Form Captain version (schema %d). Reinstall the newer version or restore a backup from before the update. No data was changed."
 msgstr ""
 
 #. translators: 1: current schema version, 2: target schema version
-#: src/Admin/SystemStatus.php:259
+#: src/Admin/SystemStatus.php:261
 #, php-format
 msgid "The database update from schema %1$d to %2$d failed. Make sure the database user may create and alter tables (CREATE, ALTER, INDEX), then open any Form Captain page again; the update resumes automatically. Submissions are still saved."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:264
+#: src/Admin/SystemStatus.php:266
 msgid "The database schema is not up to date. Deactivate and activate Form Captain or check the error log."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:269
+#: src/Admin/SystemStatus.php:271
 msgid "A Form Captain database table is missing."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:271
+#: src/Admin/SystemStatus.php:273
 msgid "Some Form Captain tables do not use InnoDB. Transactions are not available; integrity is checked here instead."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:275
+#: src/Admin/SystemStatus.php:277
 msgid "There are stored values without a submission. Run the cleanup."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:279
+#: src/Admin/SystemStatus.php:281
 msgid "Jobs are waiting longer than 15 minutes and WP-Cron is disabled. Run \"wp form-captain jobs run\" every minute from a system cron."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:280
+#: src/Admin/SystemStatus.php:282
 msgid "Jobs are waiting longer than 15 minutes. WP-Cron may not run reliably on this site; consider a system cron with \"wp form-captain jobs run\"."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:283
+#: src/Admin/SystemStatus.php:285
 msgid "Some jobs failed permanently (dead-letter). Review them under Integrations or Entries and retry them."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:286
+#: src/Admin/SystemStatus.php:288
 msgid "Some integration jobs are paused because their connector plugin is missing. Reinstall and activate the connector, or cancel the jobs under Integrations."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:289
+#: src/Admin/SystemStatus.php:291
 msgid "It looks like older data was restored. Expired submissions will be cleaned up now. Please repeat erasure requests completed after the backup date."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:292
+#: src/Admin/SystemStatus.php:294
 msgid "Some submissions could not be deleted by the cleanup three times in a row. Check the error log and delete them manually if needed."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:299
+#: src/Admin/SystemStatus.php:301
 msgid "Debug logging is switched on. It writes many log entries; switch the log level back to \"Information\" under General when you have finished troubleshooting."
 msgstr ""
 
-#: src/Admin/SystemStatus.php:302
+#. translators: %s: comma-separated list of multilingual plugins, e.g. "wpml, polylang"
+#: src/Admin/SystemStatus.php:307
+#, php-format
+msgid "Several multilingual plugins are active (%s). Form Captain uses none of them and shows all forms in the source language. Keep only one multilingual plugin active."
+msgstr ""
+
+#. translators: 1: multilingual plugin (wpml or polylang), 2: installed version, 3: minimum version
+#: src/Admin/SystemStatus.php:314
+#, php-format
+msgid "The multilingual plugin %1$s is installed in version %2$s; Form Captain supports it from version %3$s. Forms are shown in the source language until it is updated."
+msgstr ""
+
+#: src/Admin/SystemStatus.php:321
 msgid "Emails failed in the last 24 hours. Send a test email and check your mail configuration (e.g. an SMTP plugin)."
 msgstr ""
 
@@ -2650,13 +2662,13 @@ msgid "Submission"
 msgstr ""
 
 #: src/Admin/Tables/EntriesListTable.php:125
-#: src/Export/CsvExporter.php:333
+#: src/Export/CsvExporter.php:337
 #: src/Privacy/PrivacyIntegration.php:327
 msgid "New"
 msgstr ""
 
 #: src/Admin/Tables/EntriesListTable.php:126
-#: src/Export/CsvExporter.php:334
+#: src/Export/CsvExporter.php:338
 #: src/Privacy/PrivacyIntegration.php:328
 msgid "Read"
 msgstr ""
@@ -2664,20 +2676,20 @@ msgstr ""
 #: src/Admin/Tables/EntriesListTable.php:127
 #: src/Admin/Tables/FormsListTable.php:103
 #: src/Admin/Tables/FormsListTable.php:139
-#: src/Export/CsvExporter.php:335
+#: src/Export/CsvExporter.php:339
 #: src/Privacy/PrivacyIntegration.php:329
 #: assets/src/editor.js:2075
 msgid "Archived"
 msgstr ""
 
 #: src/Admin/Tables/EntriesListTable.php:128
-#: src/Export/CsvExporter.php:336
+#: src/Export/CsvExporter.php:340
 #: src/Privacy/PrivacyIntegration.php:330
 msgid "Spam"
 msgstr ""
 
 #: src/Admin/Tables/EntriesListTable.php:129
-#: src/Export/CsvExporter.php:337
+#: src/Export/CsvExporter.php:341
 #: src/Privacy/PrivacyIntegration.php:331
 msgid "Trash"
 msgstr ""
@@ -3065,45 +3077,50 @@ msgstr ""
 msgid "Submitted at"
 msgstr ""
 
+#: src/Export/CsvExporter.php:51
+#: src/Privacy/PrivacyIntegration.php:223
+msgid "Language"
+msgstr ""
+
 #. translators: %s: field label
-#: src/Export/CsvExporter.php:73
+#: src/Export/CsvExporter.php:75
 #, php-format
 msgid "%s (removed)"
 msgstr ""
 
-#: src/Export/CsvExporter.php:245
+#: src/Export/CsvExporter.php:247
 msgid "Please choose a form to export."
 msgstr ""
 
-#: src/Export/CsvExporter.php:250
+#: src/Export/CsvExporter.php:252
 msgid "Please choose at least one column."
 msgstr ""
 
-#: src/Export/CsvExporter.php:255
+#: src/Export/CsvExporter.php:257
 msgid "This export is too large. Please narrow the date range."
 msgstr ""
 
-#: src/Export/CsvExporter.php:330
+#: src/Export/CsvExporter.php:334
 msgid "Anonymized"
 msgstr ""
 
 #. translators: %s: status of the submission, e.g. "New"
-#: src/Export/CsvExporter.php:343
+#: src/Export/CsvExporter.php:347
 #, php-format
 msgid "%s – not confirmed yet"
 msgstr ""
 
 #. translators: %s: status of the submission, e.g. "New"
-#: src/Export/CsvExporter.php:348
+#: src/Export/CsvExporter.php:352
 #, php-format
 msgid "%s – spam check without proof of work"
 msgstr ""
 
-#: src/Export/CsvExporter.php:362
+#: src/Export/CsvExporter.php:366
 msgid "Exports must be requested via POST."
 msgstr ""
 
-#: src/Export/CsvExporter.php:372
+#: src/Export/CsvExporter.php:376
 msgid "Too many exports. Please wait a moment."
 msgstr ""
 
@@ -3135,59 +3152,59 @@ msgstr ""
 msgid "Field hidden: %s"
 msgstr ""
 
-#: src/Frontend/Renderer.php:56
+#: src/Frontend/Renderer.php:57
 msgid "This form does not exist (anymore). Please choose another form."
 msgstr ""
 
-#: src/Frontend/Renderer.php:61
+#: src/Frontend/Renderer.php:64
 #: src/Settings/FormSettingsSchema.php:147
 #: src/Support/Errors.php:62
 msgid "This form is currently not accepting submissions."
 msgstr ""
 
-#: src/Frontend/Renderer.php:63
+#: src/Frontend/Renderer.php:66
 msgid "This form is paused. Visitors see the message below instead of the form."
 msgstr ""
 
-#: src/Frontend/Renderer.php:71
+#: src/Frontend/Renderer.php:74
 msgid "This form is archived and not shown to visitors."
 msgstr ""
 
-#: src/Frontend/Renderer.php:72
+#: src/Frontend/Renderer.php:75
 msgid "This form is not published yet and not shown to visitors."
 msgstr ""
 
-#: src/Frontend/Renderer.php:79
+#: src/Frontend/Renderer.php:82
 msgid "This form is outside its submission period or has reached its maximum number of entries. Visitors see the message below instead of the form."
 msgstr ""
 
-#: src/Frontend/Renderer.php:110
+#: src/Frontend/Renderer.php:113
 msgid "Preview – submissions are not saved."
 msgstr ""
 
 #. translators: %s: required marker (asterisk)
-#: src/Frontend/Renderer.php:179
+#: src/Frontend/Renderer.php:190
 #, php-format
 msgid "Fields marked with %s are required."
 msgstr ""
 
-#: src/Frontend/Renderer.php:238
+#: src/Frontend/Renderer.php:249
 msgid "Leave this field empty"
 msgstr ""
 
-#: src/Frontend/Renderer.php:340
+#: src/Frontend/Renderer.php:351
 msgid "Privacy policy"
 msgstr ""
 
-#: src/Frontend/Renderer.php:367
+#: src/Frontend/Renderer.php:378
 msgid "— Please choose —"
 msgstr ""
 
-#: src/Frontend/Renderer.php:535
+#: src/Frontend/Renderer.php:546
 msgid "Form Captain:"
 msgstr ""
 
-#: src/Frontend/Renderer.php:535
+#: src/Frontend/Renderer.php:546
 msgid "(Only visible to form managers.)"
 msgstr ""
 
@@ -3195,11 +3212,11 @@ msgstr ""
 msgid "Form Captain: The form in this shortcode does not exist (anymore)."
 msgstr ""
 
-#: src/Http/RestController.php:174
+#: src/Http/RestController.php:182
 msgid "Unsupported request format."
 msgstr ""
 
-#: src/Http/RestController.php:206
+#: src/Http/RestController.php:219
 msgid "Method not allowed."
 msgstr ""
 
@@ -3753,7 +3770,7 @@ msgid "The form source is too large (maximum 256 KB)."
 msgstr ""
 
 #: src/Import/ImportService.php:191
-#: src/Service/FormService.php:515
+#: src/Service/FormService.php:516
 msgid "Imported form"
 msgstr ""
 
@@ -4469,10 +4486,6 @@ msgstr ""
 msgid "No automatic deletion; the submission is deleted manually by the website operator."
 msgstr ""
 
-#: src/Privacy/PrivacyIntegration.php:223
-msgid "Language"
-msgstr ""
-
 #: src/Privacy/PrivacyIntegration.php:245
 msgid "Removed field"
 msgstr ""
@@ -4663,7 +4676,7 @@ msgid "This form is closed and no longer accepts submissions."
 msgstr ""
 
 #: src/Service/FormService.php:50
-#: src/Service/FormService.php:847
+#: src/Service/FormService.php:848
 msgid "Untitled form"
 msgstr ""
 
@@ -4697,39 +4710,39 @@ msgstr ""
 msgid "Not all entries could be deleted. Please try again."
 msgstr ""
 
-#: src/Service/FormService.php:457
+#: src/Service/FormService.php:458
 msgid "The file is not a valid Form Captain form definition."
 msgstr ""
 
 #. translators: 1: field key, 2: property name
-#: src/Service/FormService.php:473
+#: src/Service/FormService.php:474
 #, php-format
 msgid "Field \"%1$s\": markup removed from %2$s."
 msgstr ""
 
 #. translators: 1: field key, 2: property name
-#: src/Service/FormService.php:479
+#: src/Service/FormService.php:480
 #, php-format
 msgid "Field \"%1$s\": disallowed HTML removed from %2$s."
 msgstr ""
 
-#: src/Service/FormService.php:492
+#: src/Service/FormService.php:493
 msgid "The form definition contains errors and was not imported."
 msgstr ""
 
 #. translators: %s: setting path
-#: src/Service/FormService.php:507
+#: src/Service/FormService.php:508
 #, php-format
 msgid "Invalid action configuration removed (%s)."
 msgstr ""
 
 #. translators: 1: setting path, 2: error code
-#: src/Service/FormService.php:512
+#: src/Service/FormService.php:513
 #, php-format
 msgid "Setting %1$s was invalid and has been reset (%2$s)."
 msgstr ""
 
-#: src/Service/FormService.php:837
+#: src/Service/FormService.php:838
 msgid "The form definition is invalid."
 msgstr ""
 
@@ -4742,7 +4755,7 @@ msgstr ""
 msgid "This preview link belongs to another user."
 msgstr ""
 
-#: src/Service/SubmissionService.php:447
+#: src/Service/SubmissionService.php:453
 #: src/Settings/FormSettingsSchema.php:131
 #: src/Support/Errors.php:65
 msgid "Thank you! Your submission has been received."
@@ -6049,6 +6062,14 @@ msgstr ""
 #, php-format
 msgid "Form Captain supports MySQL %1$s or newer and MariaDB %2$s or newer; this site uses %3$s %4$s. Forms keep working and nothing is blocked, but older database servers are no longer tested. Ask your host for an update."
 msgstr ""
+
+#. translators: %d: number of outdated translations
+#: src/Translation/TranslationModule.php:108
+#, php-format
+msgid "%d translation of this form is outdated. Visitors see the source text there until the translation is updated in your multilingual plugin."
+msgid_plural "%d translations of this form are outdated. Visitors see the source text there until the translations are updated in your multilingual plugin."
+msgstr[0] ""
+msgstr[1] ""
 
 #: assets/src/admin-settings.js:37
 msgid "Copied"

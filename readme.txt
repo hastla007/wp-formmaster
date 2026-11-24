@@ -27,6 +27,7 @@ Form Captain is a WordPress-native form builder and submission manager. Forms ar
 * Privacy tools: WordPress personal data exporter and eraser, retention (90 days, 12 months or manual), consent records, data stays on your site
 * Gutenberg block and shortcode, server-rendered and accessible markup, works without JavaScript and with page caching
 * Compatible with Yoast SEO (no changes to titles, meta, canonical, sitemaps or schema)
+* Multilingual forms with WPML or Polylang: one form, labels, options, messages and confirmation emails in the language of the page
 * Form import/export as JSON
 * Versioned public developer API and connector registry for custom integrations
 

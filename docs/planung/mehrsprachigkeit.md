@@ -1,6 +1,6 @@
 # Mehrsprachigkeit (P9-07)
 
-**Status:** Planung. Umsetzung erst nach Freigabe dieser Zuordnung und der Testmatrix. Free v1.0 ist übersetzungsfertig (Textdomain `form-captain`, de_DE/de_AT), übersetzt aber **keine Formularinhalte**.
+**Status:** Umgesetzt am 24.11.2026 (SET-FC-36, Entscheidung 23: in Form Captain Free, Variante A, Formular-JSON-Export nur Quellsprache). Vertrag 1.5.0. Mindestversionen: **WPML 4.7.0** (Texte über WPML String Translation; ohne String Translation folgt nur die Bestätigungsseite der Sprache) und **Polylang 3.7.0**; ältere installierte Versionen meldet der Systemstatus, der Adapter bleibt dann aus. Code: `src/Integrations/TranslationProviderInterface.php`, `src/Translation/` (`Translations`, `TranslationModule`, `WpmlProvider`, `PolylangProvider`); Tests `tests/integration/Translation/MultilingualTest.php` (ML-01 … ML-12 mit Testanbieter) und `TranslationAdaptersTest.php` (Adapter gegen nachgebildete WPML-Hooks und Polylang-Funktionen). Die Hook- und Funktionsnamen (Abschnitt 5) entsprechen der dokumentierten API beider Plugins; gegen die Online-Dokumentation und echte Installationen konnte in der Umsetzungsumgebung nicht geprüft werden (kein Netzzugang zu wpml.org/polylang.pro/downloads.wordpress.org) – vor der Freigabe einmal mit echten Mindest- und aktuellen Versionen nachprüfen (Testmatrix Abschnitt 6, Zeile „Provider“).
 **Ziel:** Ein Formular kann auf mehrsprachigen Websites in der Sprache der aufgerufenen Seite angezeigt werden, ohne Feld-IDs, Entries oder Exporte je Sprache aufzuspalten. Unterstützt werden zunächst die Mehrsprachigkeits-Plugins WPML und Polylang über einen gemeinsamen Adapter.
 
 ## 1. Abgrenzung
@@ -12,7 +12,7 @@
 | Feldwerte der Einsendung | werden nie übersetzt | – |
 | Optionswerte (`options[].value`) | sprachneutral, stabil | nicht übersetzbar |
 
-## 2. Zuordnungsmodell (Entscheidung vorgeschlagen)
+## 2. Zuordnungsmodell (Variante A, entschieden 24.11.2026)
 
 **Variante A – ein Formular, übersetzte Zeichenketten (empfohlen).** Ein `fc_forms`-Datensatz, eine Feldstruktur, gleiche `public_id` in allen Sprachen. Übersetzbare Texte werden beim Veröffentlichen beim Mehrsprachigkeits-Plugin registriert und beim Rendern in der aktuellen Sprache aufgelöst.
 
@@ -35,6 +35,7 @@ Für A gilt:
 - Registrierung erfolgt beim **Veröffentlichen** aus dem Snapshot (`fc_form_versions`); jeder registrierte Text trägt den Hash des Quelltexts. Ändert sich der Quelltext, gilt die Übersetzung als **veraltet**: Ausgabe in Quellsprache, Hinweis im Editor („3 Übersetzungen veraltet“).
 - Fehlende Übersetzung → Quellsprache (kein leeres Label).
 - Validierung und Bedingungen arbeiten ausschließlich auf IDs und Optionswerten; sie sind sprachunabhängig.
+- **Umsetzung, Ergänzungen zur Tabelle:** Zusätzlich übersetzt werden die übrigen Besuchertexte des Formulars: `settings.submit_label`, `settings.texts.required_hint`, `settings.texts.error_summary`, `settings.limits.closed_message` sowie `settings.double_opt_in.subject`/`.body`/`.pending_message` (Double-Opt-in-Mail in der Sprache des Eintrags). Optionswerte über 100 Zeichen heißen `{field_id}.option.h<12 Zeichen MD5>`. Einstellungstexte wirken ohne Veröffentlichen; sie werden beim Speichern eines veröffentlichten Formulars erneut angemeldet. Quellhashes liegen in der Option `form_captain_i18n_{form_id}` (keine Übersetzungen); „veraltet“ heißt: die Übersetzung, die das Plugin für den Namen liefert, ist dieselbe wie vor der Änderung des Quelltexts (oder fehlt bei Polylang, das nach Quelltext sucht).
 
 ## 3. Datenmodell-Ergänzungen
 
@@ -96,9 +97,9 @@ interface TranslationProviderInterface {
 | ML-11 | Seitencache + Sprachwechsel | korrekte Sprache, Token gültig |
 | ML-12 | `html`/`consent_text`-Übersetzung mit unzulässigem HTML | bereinigt nach Allowlist |
 
-## 7. Offene Entscheidungen
+## 7. Entscheidungen (24.11.2026, Entscheidung 23)
 
-- Variante A als verbindlich bestätigen (Produktverantwortung).
-- Gehört der Adapter in Free oder Pro? Vorschlag: Free (Grundfunktion für mehrsprachige Sites, kein künstliches Limit); Entscheidung offen.
-- Übersetzungen im Formular-JSON-Export mitliefern (ja/nein).
-- Mindestversionen der unterstützten Mehrsprachigkeits-Plugins.
+- Variante A ist verbindlich.
+- Der Adapter gehört in Form Captain **Free**; es gibt keinen Pro-Schlüssel und keine Pro-Hinweiszeile dafür (E3 geändert).
+- Der Formular-JSON-Export enthält nur die Quellsprache.
+- Mindestversionen: WPML 4.7.0, Polylang 3.7.0 (siehe Status oben; vor der Freigabe mit echten Installationen nachprüfen).

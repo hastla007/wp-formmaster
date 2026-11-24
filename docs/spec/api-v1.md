@@ -5,7 +5,7 @@ Nur das in diesem Dokument Aufgeführte ist öffentliche API. Klassen unter `For
 ## Version
 
 ```php
-FORM_CAPTAIN_CONTRACT_VERSION // '1.4.0' (seit 23.11.2026; 1.0.0 → 1.1.0 → 1.2.0 → 1.3.0 → 1.4.0 jeweils additiv)
+FORM_CAPTAIN_CONTRACT_VERSION // '1.5.0' (seit 24.11.2026; 1.0.0 → 1.1.0 → 1.2.0 → 1.3.0 → 1.4.0 → 1.5.0 jeweils additiv)
 form_captain_contract_version(): string
 ```
 
@@ -13,6 +13,7 @@ form_captain_contract_version(): string
 - **1.2.0** (23.11.2026, Einstellungs-Baustein): `form_captain_settings_fields_v1`, `form_captain_mail_attachments_v1`, `form_captain_editor_extensions_v1`, `form_captain_captcha_providers_v1`, `form_captain_accepted_context_purposes_v1`, `form_captain_minimum_db_versions_v1`, `form_captain_entry_pending_v1` (SET-FC-P4-04) und alle Filter unter „Einstellungen und Geschäftsregeln“. Einige davon kamen nach dem 16.11. noch unter der Nummer 1.1.0 hinzu; ein Add-on, das einen dieser Punkte braucht, prüft auf `1.2.0` oder neuer (vorher wird der Filter nur nicht angewendet).
 - **1.3.0** (23.11.2026, Abschluss der Prüfphase): `form_captain_settings_covered_hints_v1` (Add-on meldet Hinweiszeilen ohne eigenes Einstellungsfeld ab, SET-FC-P6-01), mehrere Dateien je Upload-Feld (Kontext `files` in `form_captain_validate_field_v1`, `multiple_files` in `form_captain_render_field_v1`, SET-FC-39) und `form_captain_pow_nojs_rate_limit_v1` (SET-FC-P4-08). Ein Add-on prüft auf `1.3.0` oder neuer; ältere Kerne geben nur eine Datei (`file`) und kennen den Filter nicht.
 - **1.4.0** (23.11.2026, SET-FC-40): weitere Ereignisse für Formularaktionen – `events` in `form_captain_register_action_v1` nimmt neben `entry_created` auch `entry_status_changed`, `consent_withdrawn` und `entry_deleted` an (Abschnitt „Ereignisse für Formularaktionen“); der Callback bekommt zusätzlich `event` und `event_data`. Ein Add-on prüft auf `1.4.0` oder neuer; ältere Kerne verwerfen die neuen Ereignisnamen still (die Aktion hört dann nur auf `entry_created`) und übergeben weder `event` noch `event_data`. Außerdem `double_opt_in` (bool) in der Formularübersicht von `form_captain_get_form_v1` (wirksames Double-Opt-in, z. B. für die Warnung im Produkteditor von Form Captain Pro, SET-FC-P2-7a); ältere Kerne liefern den Schlüssel nicht.
+- **1.5.0** (24.11.2026, SET-FC-36, Entscheidung 23): Formularinhalte je Sprache – Filter `form_captain_translation_providers_v1` und Interface `FormCaptain\Integrations\TranslationProviderInterface` (Abschnitt „Mehrsprachigkeit“). Der Kern bringt Adapter für WPML und Polylang mit. Außerdem `locale` im Einwilligungsnachweis (`consent_json`) und die Spalte `meta:locale` im CSV-Export. Ein Add-on, das einen eigenen Anbieter anmeldet, prüft auf `1.5.0` oder neuer; ältere Kerne wenden den Filter nicht an.
 
 SemVer: Minor = additive Erweiterungen (neue optionale Payload-Schlüssel, neue Funktionen); Major = inkompatibel, neue Namensfamilie `_v2`, `_v1` bleibt mindestens 12 Monate parallel bestehen. Deprecations werden mit `_deprecated_hook()` angekündigt und im Changelog geführt.
 
@@ -49,7 +50,7 @@ Adapter registrieren sich ausschließlich in oder nach `form_captain_loaded_v1`.
 
 ```php
 [
-  'contract'   => '1.4.0',            // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
+  'contract'   => '1.5.0',            // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
   'entry_id'   => 123,
   'form_id'    => 7,
   'form_public_id' => 'a1b2c3d4e5f6g7h8',
@@ -70,7 +71,7 @@ Gefeuert **einmal** je Entry, nachdem `consent_withdrawn_gmt` gespeichert und of
 
 ```php
 [
-  'contract'       => '1.4.0',        // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
+  'contract'       => '1.5.0',        // FORM_CAPTAIN_CONTRACT_VERSION beim Feuern
   'entry_id'       => 123,
   'form_id'        => 7,
   'form_public_id' => 'a1b2c3d4e5f6g7h8',
@@ -172,7 +173,7 @@ Eine Aktion abonniert Ereignisse über `events` (Standard `['entry_created']`; u
 ```php
 [
   'event'          => 'entry_deleted',     // entry_created | entry_status_changed | consent_withdrawn | entry_deleted
-  'contract'       => '1.4.0',             // Vertragsversion beim Anlegen des Jobs
+  'contract'       => '1.5.0',             // Vertragsversion beim Anlegen des Jobs
   'entry_id'       => 123,
   'form_id'        => 7,
   'form_public_id' => 'a1b2c3d4e5f6g7h8',
@@ -239,6 +240,34 @@ Connectoren sind nach Installation **deaktiviert**; nur aktivierte Connectoren d
 | `form_captain_client_ip` | `( string $ip )` → Adresse für Rate-Limits; gewinnt über `spam.client_ip_source`. Kein `_v1`, aus Version 1.0. |
 
 **Versionsbindung (seit Contract 1.1.0):** Eine Zweck-Definition für `form_captain_register_context_purpose_v1()` darf `version_for` enthalten: `callable( string $ref_type, string $ref_id, int $form_id ): int` liefert die Versionsnummer, an die der Kontext gebunden ist (0 = aktuelle Version). Nur zusammen mit `submit_check`. Liegt ein verifizierter Kontext vor, rendert und prüft Form Captain gegen diese veröffentlichte Version und speichert den Eintrag mit ihr; fehlt die Version, wird abgelehnt (`invalid_context`, keine andere Version). Die Version kommt nur vom Eigentümer des Zwecks, nie aus der Anfrage. Ältere Kerne ignorieren den Schlüssel.
+
+## Mehrsprachigkeit (seit 1.5.0, SET-FC-36)
+
+Formularinhalte erscheinen in der Sprache der aufgerufenen Seite (Variante A aus `docs/planung/mehrsprachigkeit.md`, Entscheidung 23): ein Formular, eine Feldstruktur, dieselbe `public_id` in allen Sprachen. Feldwerte und Optionswerte werden nie übersetzt; Validierung und Bedingungen arbeiten nur mit IDs und Optionswerten.
+
+### `form_captain_translation_providers_v1` (Filter)
+
+`( TranslationProviderInterface[] $providers )` → Liste. Standard: die Adapter des Kerns für WPML (ab 4.7.0, Texte über String Translation) und Polylang (ab 3.7.0). Ein Add-on hängt einen eigenen Anbieter an oder entfernt einen. Einträge, die das Interface nicht erfüllen, eine ungültige oder doppelte `id()` haben oder eine Ausnahme werfen, werden ignoriert. **Genau ein** Anbieter darf aktiv sein (`is_active()`): Sind mehrere aktiv, nutzt der Kern keinen, zeigt alle Formulare in der Quellsprache und meldet es im Systemstatus (`translation_providers`). Eine installierte, aber zu alte WPML- oder Polylang-Version meldet der Systemstatus ebenfalls (`translation_provider_<id>`); der Adapter bleibt dann aus.
+
+```php
+namespace FormCaptain\Integrations;
+interface TranslationProviderInterface {
+    public function id(): string;                 // ^[a-z0-9_]{2,40}$, z. B. 'wpml', 'polylang'
+    public function is_active(): bool;
+    public function current_language(): ?string;  // Sprachcode des Plugins, z. B. 'en'
+    public function languages(): array;           // aktive Sprachcodes
+    public function locale( string $lang ): ?string; // 'en' → 'en_US'
+    public function register( string $context, string $name, string $value ): void;
+    public function translate( string $context, string $name, string $value, ?string $lang = null ): string; // ohne Übersetzung $value
+    public function translated_post_id( int $post_id, string $lang ): ?int;
+}
+```
+
+- **Registrierung:** beim Veröffentlichen aus dem Snapshot der Version (dazu beim Speichern eines veröffentlichten Formulars die sofort wirksamen Einstellungstexte). Kontext `form-captain/{public_id}`, Namen: `title`, `{field_id}.label|help|placeholder`, `{field_id}.option.{value}` (Werte über 100 Zeichen als `h` + 12 Zeichen MD5), `{field_id}.content` (`html`), `{field_id}.consent_text`, `settings.confirmation.message`, `settings.paused_message`, `settings.confirmation_mail.subject|body`, außerdem `settings.submit_label`, `settings.texts.required_hint|error_summary`, `settings.limits.closed_message`, `settings.double_opt_in.subject|body|pending_message`. Die Admin-Mail wird nicht übersetzt.
+- **Quellhash:** Je registriertem Text speichert der Kern den Hash des Quelltexts (Option `form_captain_i18n_{form_id}`, keine Übersetzungen). Ändert sich der Quelltext, gilt eine vorhandene Übersetzung als veraltet: Ausgabe in der Quellsprache, Hinweis im Formular-Editor („N Übersetzungen veraltet“), bis die Übersetzung im Mehrsprachigkeits-Plugin geändert wurde. Fehlende Übersetzung → Quellsprache.
+- **Ausgabe:** übersetzte `html`-Inhalte und Einwilligungstexte durchlaufen die HTML-Allowlist erneut. `confirmation.page_id` → `translated_post_id()`, ohne veröffentlichte Übersetzung die Originalseite.
+- **Anfragen:** Token und Einsendung sind sprachunabhängig. `lang` (Token-Endpunkt und Einsendung, dazu das Formularfeld `_fc_lang`) wird nur angenommen, wenn der Anbieter die Sprache als aktiv meldet; dann folgen Formulartexte und Meldungen dieser Sprache.
+- **Daten:** `fc_entries.locale` = Locale der Sprache (`locale()`), sonst wie bisher die Sprache der Seite. `consent_json` je Feld zusätzlich `locale`; `text_hash` ist der Hash des **angezeigten** Texts; `revision` steigt, wenn sich der Quelltext oder eine Übersetzung des Einwilligungstexts ändert (erkannt beim Veröffentlichen/Speichern und bei der ersten Einsendung mit dem geänderten Text). Bestätigungs- und Double-Opt-in-Mail in der Sprache des Eintrags (`switch_to_locale()` im Job). CSV: Spalte `meta:locale`. Der Formular-JSON-Export enthält nur die Quellsprache.
 
 ## Einstellungen und Geschäftsregeln (seit 1.2.0)
 

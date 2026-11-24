@@ -113,6 +113,8 @@ final class SystemStatus {
 				'country_profile'  => (string) Settings::get( 'general.country_profile' ),
 			),
 			'recent_errors' => $this->recent_errors(),
+			// Form contents per language (SET-FC-36): provider in use, active providers, conflicts.
+			'translations'  => \FormCaptain\Translation\Translations::status(),
 		);
 	}
 
@@ -298,6 +300,23 @@ final class SystemStatus {
 		if ( ! empty( $d['settings']['debug_logging'] ) ) {
 			$out['debug_logging'] = __( 'Debug logging is switched on. It writes many log entries; switch the log level back to "Information" under General when you have finished troubleshooting.', 'form-captain' );
 		}
+		// Form contents per language (SET-FC-36).
+		if ( ! empty( $d['translations']['conflict'] ) ) {
+			$out['translation_providers'] = sprintf(
+				/* translators: %s: comma-separated list of multilingual plugins, e.g. "wpml, polylang" */
+				__( 'Several multilingual plugins are active (%s). Form Captain uses none of them and shows all forms in the source language. Keep only one multilingual plugin active.', 'form-captain' ),
+				implode( ', ', array_map( 'strval', (array) $d['translations']['active'] ) )
+			);
+		}
+		foreach ( (array) ( $d['translations']['unsupported'] ?? array() ) as $provider => $info ) {
+			$out[ 'translation_provider_' . $provider ] = sprintf(
+				/* translators: 1: multilingual plugin (wpml or polylang), 2: installed version, 3: minimum version */
+				__( 'The multilingual plugin %1$s is installed in version %2$s; Form Captain supports it from version %3$s. Forms are shown in the source language until it is updated.', 'form-captain' ),
+				(string) $provider,
+				(string) ( $info['version'] ?? '' ),
+				(string) ( $info['minimum'] ?? '' )
+			);
+		}
 		if ( array_sum( $d['mail']['failed_24h'] ) > 0 ) {
 			$out['mail'] = __( 'Emails failed in the last 24 hours. Send a test email and check your mail configuration (e.g. an SMTP plugin).', 'form-captain' );
 		}
@@ -311,10 +330,10 @@ final class SystemStatus {
 	public function report_text( ?array $data = null ): string {
 		$d     = $data ?? $this->collect();
 		$lines = array( '### Form Captain diagnostics ###', 'generated_gmt: ' . Clock::now() );
-		foreach ( array( 'environment', 'schema', 'queue', 'mail', 'integrations', 'settings' ) as $section ) {
+		foreach ( array( 'environment', 'schema', 'queue', 'mail', 'integrations', 'settings', 'translations' ) as $section ) {
 			$lines[] = '';
 			$lines[] = '## ' . $section;
-			foreach ( $d[ $section ] as $k => $v ) {
+			foreach ( (array) ( $d[ $section ] ?? array() ) as $k => $v ) {
 				$lines[] = $k . ': ' . self::scalar( $v );
 			}
 		}

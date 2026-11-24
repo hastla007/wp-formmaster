@@ -29,7 +29,7 @@ final class CsvExporter {
 	public const ACTION       = 'form_captain_export_entries';
 	public const NONCE_ACTION = 'form_captain_export_entries';
 	public const MAX_ROWS     = 100000;
-	public const META_COLUMNS = array( 'meta:id', 'meta:entry_number', 'meta:created', 'meta:status', 'meta:form_version', 'meta:source_url', 'meta:consent_withdrawn' );
+	public const META_COLUMNS = array( 'meta:id', 'meta:entry_number', 'meta:created', 'meta:status', 'meta:form_version', 'meta:source_url', 'meta:locale', 'meta:consent_withdrawn' );
 
 	public function __construct( private EntryRepository $entries, private FormRepository $forms ) {}
 
@@ -47,6 +47,8 @@ final class CsvExporter {
 			'meta:status'       => array( 'label' => __( 'Status', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
 			'meta:form_version' => array( 'label' => __( 'Form version', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
 			'meta:source_url'   => array( 'label' => __( 'Source page', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
+			// Language of the submission (SET-FC-36); one file and the same columns for all languages.
+			'meta:locale'       => array( 'label' => __( 'Language', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false ),
 		);
 		// Selected by default so withdrawn consents are marked in every export; can be deselected.
 		$cols['meta:consent_withdrawn'] = array( 'label' => __( 'Consent withdrawn', 'form-captain' ), 'sensitive' => false, 'field' => null, 'removed' => false );
@@ -304,6 +306,8 @@ final class CsvExporter {
 				return $version ? (string) $version['version_no'] : '';
 			case 'meta:source_url':
 				return self::escape_cell( (string) ( $entry['source_url'] ?? '' ) );
+			case 'meta:locale':
+				return self::escape_cell( (string) ( $entry['locale'] ?? '' ) );
 			case 'meta:consent_withdrawn':
 				return ! empty( $entry['consent_withdrawn_gmt'] ) ? get_date_from_gmt( (string) $entry['consent_withdrawn_gmt'], 'Y-m-d H:i:s' ) : '';
 		}

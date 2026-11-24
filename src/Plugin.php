@@ -44,6 +44,8 @@ final class Plugin {
 		Privacy\PrivacyIntegration::class,
 		Integrations\ConnectorRegistry::class,
 		Cli\Commands::class,
+		// Form contents per language (SET-FC-36).
+		Translation\TranslationModule::class,
 	);
 
 	public static function boot(): void {

@@ -112,6 +112,12 @@ final class MailJobHandler {
 		}
 		// Mails to the visitor use the language of the page with the form (SET-FC-21).
 		$switched = 'admin' !== $kind && self::switch_locale( (string) ( $entry['locale'] ?? '' ) );
+		if ( 'admin' !== $kind ) {
+			// Own texts of the form (subject, body) in the language of the submission (SET-FC-36);
+			// the admin email is never translated.
+			$lang = \FormCaptain\Translation\Translations::lang_for_locale( (string) ( $entry['locale'] ?? '' ) );
+			$form = null !== $lang ? \FormCaptain\Translation\Translations::localize_form( $form, $lang ) : $form;
+		}
 		try {
 			return $this->deliver( $job, $kind, $entry, $form );
 		} finally {

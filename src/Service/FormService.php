@@ -401,6 +401,7 @@ final class FormService {
 			}
 		}
 		$this->forms->delete( $id );
+		\FormCaptain\Translation\Translations::forget( $id ); // Source hashes of the translations (SET-FC-36).
 		return true;
 	}
 

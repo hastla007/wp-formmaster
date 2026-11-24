@@ -25,6 +25,7 @@ use FormCaptain\Support\Clock;
 use FormCaptain\Support\Errors;
 use FormCaptain\Support\Limits;
 use FormCaptain\Support\Logger;
+use FormCaptain\Translation\Translations;
 
 final class SubmissionService {
 
@@ -32,7 +33,7 @@ final class SubmissionService {
 	public const CODE_DUPLICATE = 'duplicate_request';
 
 	/** Top-level request keys that are never field values. */
-	private const RESERVED = array( '_fc_form', '_fc_token', '_fc_ctx', '_fc_src', '_fc_locale', '_fc_pow', 'action', 'fields', 'fc' );
+	private const RESERVED = array( '_fc_form', '_fc_token', '_fc_ctx', '_fc_src', '_fc_locale', '_fc_lang', '_fc_pow', 'action', 'fields', 'fc' );
 
 	public function __construct(
 		private EntryRepository $entries,
@@ -79,6 +80,11 @@ final class SubmissionService {
 			return $fail( Errors::STORAGE_FAILED );
 		}
 
+		// Texts of the form in the language of the request (SET-FC-36): paused and closed messages,
+		// error summary, confirmation. Validation works on IDs and option values only.
+		$source = $form;
+		$form   = Translations::localize_form( $form );
+
 		// 1. Form must be published (T-SUB-05: no existence oracle for drafts/archived).
 		$status = (string) ( $form['status'] ?? '' );
 		if ( 'paused' === $status ) {
@@ -89,7 +95,7 @@ final class SubmissionService {
 		if ( null === $version ) {
 			return $fail( Errors::FORM_NOT_FOUND );
 		}
-		$fields = $version['fields'];
+		$fields = Translations::localize_fields( $form, $version['fields'] );
 
 		// 2. Request size (P3-17).
 		if ( isset( $meta['body_bytes'] ) && (int) $meta['body_bytes'] > Limits::get( 'request_bytes' ) ) {
@@ -165,7 +171,7 @@ final class SubmissionService {
 					return $fail( Errors::INVALID_CONTEXT, array( 'message' => SignedContext::public_message( Errors::INVALID_CONTEXT ) ) );
 				}
 				$version = $pinned;
-				$fields  = $version['fields'];
+				$fields  = Translations::localize_fields( $form, $version['fields'] );
 			}
 		}
 
@@ -230,7 +236,7 @@ final class SubmissionService {
 			'source_post_id'  => self::source_post_id( $meta['source_post_id'] ?? null ),
 			'user_id'         => ! empty( $meta['user_id'] ) ? (int) $meta['user_id'] : null,
 			'expires_gmt'     => self::expires_gmt( $form, $now ),
-			'locale'          => self::locale( $meta['locale'] ?? ( $trusted ? null : ( $raw['_fc_locale'] ?? null ) ) ),
+			'locale'          => self::locale( $meta['locale'] ?? ( $trusted ? null : ( Translations::request_locale() ?? $raw['_fc_locale'] ?? null ) ) ),
 		);
 		if ( null !== $doi ) {
 			$entry['confirmation_status']   = DoubleOptIn::STATUS_PENDING;
@@ -239,7 +245,7 @@ final class SubmissionService {
 		if ( null !== $context ) {
 			$entry['context'] = $context;
 		}
-		$consent = $this->consent_proof( $fields, $checked['consent'], (int) $version['version_no'], $now );
+		$consent = $this->consent_proof( $source, $version['fields'], $fields, $checked['consent'], (int) $version['version_no'], $now, $entry['locale'] );
 		if ( $consent ) {
 			$entry['consent'] = $consent;
 		}
@@ -446,14 +452,18 @@ final class SubmissionService {
 		$message = trim( wp_strip_all_tags( (string) ( $conf['message'] ?? '' ) ) );
 		$message = '' !== $message ? $message : __( 'Thank you! Your submission has been received.', 'form-captain' );
 		if ( 'page' === ( $conf['type'] ?? '' ) ) {
-			$page = get_post( (int) ( $conf['page_id'] ?? 0 ) );
-			if ( $page instanceof \WP_Post && 'publish' === $page->post_status && '' === (string) $page->post_password && is_post_type_viewable( $page->post_type ) ) {
-				$url = (string) get_permalink( $page );
-				if ( '' !== $url && '' !== wp_validate_redirect( $url, '' ) ) {
-					return array(
-						'message'      => $message,
-						'redirect_url' => $url,
-					);
+			// The page in the language of the request (SET-FC-36), otherwise the original page.
+			$page_id = (int) ( $conf['page_id'] ?? 0 );
+			foreach ( array_unique( array( Translations::post_id( $page_id ), $page_id ) ) as $candidate ) {
+				$page = get_post( $candidate );
+				if ( $page instanceof \WP_Post && 'publish' === $page->post_status && '' === (string) $page->post_password && is_post_type_viewable( $page->post_type ) ) {
+					$url = (string) get_permalink( $page );
+					if ( '' !== $url && '' !== wp_validate_redirect( $url, '' ) ) {
+						return array(
+							'message'      => $message,
+							'redirect_url' => $url,
+						);
+					}
 				}
 			}
 		}
@@ -509,25 +519,35 @@ final class SubmissionService {
 	}
 
 	/**
-	 * Consent proof per consent field (datenschutz.md 5.2).
+	 * Consent proof per consent field (datenschutz.md 5.2): hash of the text as it was shown (in the
+	 * language of the submission, SET-FC-36), the language and the consent revision.
 	 *
-	 * @param array<int,array<string,mixed>> $fields
+	 * @param array<string,mixed>            $form    form row (source language)
+	 * @param array<int,array<string,mixed>> $sources fields of the version in the source language
+	 * @param array<int,array<string,mixed>> $fields  fields as shown
 	 * @param array<string,bool>             $given
 	 * @return array<string,array<string,mixed>>
 	 */
-	private function consent_proof( array $fields, array $given, int $version_no, string $now ): array {
-		$out = array();
+	private function consent_proof( array $form, array $sources, array $fields, array $given, int $version_no, string $now, ?string $locale ): array {
+		$by_id = array();
+		foreach ( $sources as $source ) {
+			$by_id[ (string) $source['id'] ] = $source;
+		}
+		$lang = Translations::language();
+		$out  = array();
 		foreach ( $fields as $field ) {
 			$id = (string) $field['id'];
 			if ( 'consent' !== ( $field['type'] ?? '' ) || ! array_key_exists( $id, $given ) ) {
 				continue;
 			}
+			$hash       = Translations::consent_hash( (string) ( $field['consent_text'] ?? '' ) );
 			$out[ $id ] = array(
 				'given'        => $given[ $id ],
-				'text_hash'    => 'sha256:' . hash( 'sha256', self::normalize_consent_text( (string) ( $field['consent_text'] ?? '' ) ) ),
-				'revision'     => max( 1, (int) ( $field['consent_revision'] ?? 1 ) ),
+				'text_hash'    => $hash,
+				'revision'     => Translations::consent_revision( $form, $by_id[ $id ] ?? $field, $hash, $lang ),
 				'form_version' => $version_no,
 				'given_at'     => str_replace( ' ', 'T', $now ) . 'Z',
+				'locale'       => $locale,
 			);
 		}
 		return $out;

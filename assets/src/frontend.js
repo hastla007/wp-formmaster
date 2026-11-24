@@ -176,6 +176,11 @@
 				'&ctx_ref_type=' + encodeURIComponent( form.getAttribute( 'data-fc-ctx-ref-type' ) || '' ) +
 				'&ctx_ref_id=' + encodeURIComponent( form.getAttribute( 'data-fc-ctx-ref-id' ) || '' );
 		}
+		var lang = form.getAttribute( 'data-fc-lang' );
+		if ( lang ) {
+			// Language of the multilingual plugin: messages of the answer follow it (SET-FC-36).
+			url += ( url.indexOf( '?' ) === -1 ? '?' : '&' ) + 'lang=' + encodeURIComponent( lang );
+		}
 		form._fcTokenPromise = fetch( url, { method: 'GET', cache: 'no-store', credentials: 'same-origin', headers: { Accept: 'application/json' } } )
 			.then( function ( res ) {
 				return res.json();

@@ -12,7 +12,8 @@
 Die Anrede gilt überall gleich: in der Verwaltung, in den Formularen, Fehlermeldungen und E-Mails an
 Besucher. Welche Fassung Besucher sehen, folgt der Sprache der Website bzw. der Seite (Einstellungen →
 Allgemein → Sprache der Website). Eigene Texte im Formular (Beschriftungen, Erfolgsmeldung, E-Mail-Texte)
-übersetzt Form Captain nicht; sie erscheinen so, wie sie im Formular stehen.
+gehören nicht in diese Kataloge: Sie erscheinen so, wie sie im Formular stehen, oder – mit WPML bzw. Polylang –
+in der Übersetzung, die dort gepflegt wird (SET-FC-36, `docs/planung/mehrsprachigkeit.md`).
 
 PHP lädt die `.mo`-Dateien über `load_plugin_textdomain()`, JavaScript die JSON-Dateien über
 `wp_set_script_translations( $handle, 'form-captain', FORM_CAPTAIN_DIR . 'languages' )`

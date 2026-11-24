@@ -25,6 +25,7 @@ use FormCaptain\Support\Errors;
 use FormCaptain\Support\Limits;
 use FormCaptain\Support\Logger;
 use FormCaptain\Support\UploadedFiles;
+use FormCaptain\Translation\Translations;
 
 final class RestController {
 
@@ -110,8 +111,15 @@ final class RestController {
 		return (bool) $served;
 	}
 
-	/** OP-PUB-01 */
+	/**
+	 * OP-PUB-01. The token is the same in every language; messages follow `lang` when the
+	 * multilingual plugin reports that language as active (SET-FC-36).
+	 */
 	public function token( \WP_REST_Request $request ): \WP_REST_Response {
+		return Translations::with_language( $request->get_param( 'lang' ), fn(): \WP_REST_Response => $this->issue_token( $request ) );
+	}
+
+	private function issue_token( \WP_REST_Request $request ): \WP_REST_Response {
 		$rate = $this->plugin->get( RateLimiter::class )->check_token( RateLimiter::client_ip() );
 		if ( ! $rate['allowed'] ) {
 			$res = self::respond( self::error_body( Errors::RATE_LIMITED ), 429 );
@@ -185,18 +193,23 @@ final class RestController {
 		if ( ! $form ) {
 			return self::respond( self::error_body( Errors::FORM_NOT_FOUND ), 404 );
 		}
-		$result = $this->plugin->get( SubmissionService::class )->submit(
-			$form,
-			$raw,
-			array(
-				'ip'             => RateLimiter::client_ip(),
-				'source_url'     => (string) $request->get_header( 'referer' ),
-				'source_post_id' => $raw['_fc_src'] ?? null,
-				'user_id'        => get_current_user_id(),
-				'body_bytes'     => strlen( $body ),
-				'request_id'     => Logger::correlation_id(),
-				'files'          => UploadedFiles::lists_by_field( (array) $request->get_file_params() ),
-				'js'             => true, // Route of frontend.js: a proof-of-work solution is expected.
+		// Language of the page with the form: `lang` (query) or `_fc_lang` (body), SET-FC-36.
+		$lang   = $request->get_param( 'lang' ) ?? ( $raw['_fc_lang'] ?? null );
+		$result = Translations::with_language(
+			$lang,
+			fn(): array => $this->plugin->get( SubmissionService::class )->submit(
+				$form,
+				$raw,
+				array(
+					'ip'             => RateLimiter::client_ip(),
+					'source_url'     => (string) $request->get_header( 'referer' ),
+					'source_post_id' => $raw['_fc_src'] ?? null,
+					'user_id'        => get_current_user_id(),
+					'body_bytes'     => strlen( $body ),
+					'request_id'     => Logger::correlation_id(),
+					'files'          => UploadedFiles::lists_by_field( (array) $request->get_file_params() ),
+					'js'             => true, // Route of frontend.js: a proof-of-work solution is expected.
+				)
 			)
 		);
 		return self::from_result( $result );

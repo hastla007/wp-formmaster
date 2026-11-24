@@ -87,6 +87,20 @@ Zeigt Aktionen aktivierter Connectoren (z. B. „Ticket anlegen“). Aktion hinz
 - **Export** (Zeilenaktion „JSON exportieren“): enthält nur Titel, Schema und Formulareinstellungen – keine Einträge, Dateien, Benutzer-IDs, öffentliche Kennung oder Zugangsdaten. Aktionen werden deaktiviert exportiert.
 - **Import** (unter der Formularliste „Formular aus JSON importieren“): `.json`-Datei bis 256 KB. Die Datei wird vollständig geprüft, bevor etwas gespeichert wird; ungültige oder zu neue Dateien werden abgelehnt. Texte werden bereinigt, ungültige Weiterleitungsseiten und Empfänger entfernt, Einwilligungs-Revisionen auf 1 gesetzt. Das Formular entsteht immer als **Entwurf** mit neuer Kennung, Aktionen bleiben aus. Der **Importbericht** listet Empfänger zur Prüfung sowie bereinigte und entfernte Werte.
 
+## Mehrsprachige Websites (WPML, Polylang)
+
+Nutzt deine Website **WPML** (ab 4.7.0, mit String Translation) oder **Polylang** (ab 3.7.0), erscheint ein Formular in der Sprache der aufgerufenen Seite. Es bleibt **ein** Formular mit derselben Kennung in allen Sprachen: Block oder Shortcode setzt du in jede Sprachversion der Seite unverändert ein, Einträge und CSV-Export bleiben in einer Liste.
+
+- **Was übersetzt wird:** Formulartitel (wenn angezeigt), Beschriftung, Hilfetext und Platzhalter jedes Felds, die Bezeichnungen der Auswahlmöglichkeiten, HTML-Hinweise, Einwilligungstexte, Bestätigungsmeldung, Meldung bei pausiertem oder geschlossenem Formular, Text des Absende-Knopfs, eigene Hinweise zu Pflichtfeldern und Fehlern sowie Betreff und Text der Bestätigungs- und Double-Opt-in-Mail. Die Bestätigungsseite wird auf ihre Übersetzung umgeleitet, wenn es eine veröffentlichte gibt. Die **Admin-Mail** bleibt in deiner Sprache.
+- **Was nie übersetzt wird:** die Werte, die Besucher eingeben, und die Werte der Auswahlmöglichkeiten. Bedingungen, Pflichtfelder und Auswertungen funktionieren deshalb in allen Sprachen gleich.
+- **So übersetzt du:** Veröffentliche das Formular. Form Captain meldet dabei alle Texte beim Mehrsprachigkeits-Plugin an (Gruppe `form-captain/<Kennung>`). Übersetze sie dort – bei WPML unter *WPML → Übersetzung von Zeichenketten*, bei Polylang unter *Sprachen → Übersetzungen*. Fehlt eine Übersetzung, erscheint der Originaltext.
+- **Texte geändert?** Änderst du einen Text und veröffentlichst neu, gilt die bisherige Übersetzung als **veraltet**: Besucher sehen den neuen Originaltext, bis du die Übersetzung angepasst hast. Der Editor zeigt oben „N Übersetzungen veraltet“.
+- **Einträge:** Jeder Eintrag merkt sich seine Sprache (Spalte „Sprache“ im CSV-Export). Die Bestätigungsmail geht in dieser Sprache raus. Der Einwilligungsnachweis enthält den Hash des Texts, den die Person tatsächlich gesehen hat, und die Sprache; die Revision steigt auch, wenn sich eine Übersetzung des Einwilligungstexts ändert.
+- **JSON-Export:** enthält nur die Originaltexte. Die Übersetzungen liegen beim Mehrsprachigkeits-Plugin.
+- **Nur ein Mehrsprachigkeits-Plugin:** Sind mehrere aktiv (oder ist die Version zu alt), nutzt Form Captain keines, zeigt alle Formulare im Original und meldet das unter *Einstellungen → Systemstatus*.
+
+Die Funktion gehört zu Form Captain (kostenlos), nicht zu Pro.
+
 ## Hinweise zu Pro
 
 Gelegentlich erscheint ein kurzer, wegklickbarer Hinweis auf Pro-Funktionen. Er lässt sich pro Benutzer schließen und global unter *Einstellungen → Allgemein* abschalten. Keine Free-Funktion ist gesperrt.

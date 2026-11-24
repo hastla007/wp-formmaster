@@ -66,16 +66,20 @@ final class AdminPostController {
 				'message' => Errors::public_message( Errors::PAYLOAD_TOO_LARGE ),
 			);
 		} else {
-			$result = $this->plugin->get( SubmissionService::class )->submit(
-				$form,
-				$post,
-				array(
-					'ip'             => RateLimiter::client_ip(),
-					'source_url'     => $back,
-					'source_post_id' => $post['_fc_src'] ?? null,
-					'user_id'        => 0, // No nonce in cached HTML → no user binding (ADR 0003).
-					'body_bytes'     => max( 0, (int) ( $server['CONTENT_LENGTH'] ?? 0 ) - self::file_bytes( $files ) ),
-					'files'          => UploadedFiles::lists_by_field( $files ),
+			// Language of the page with the form (SET-FC-36); only languages of the multilingual plugin are accepted.
+			$result = \FormCaptain\Translation\Translations::with_language(
+				$post['_fc_lang'] ?? null,
+				fn(): array => $this->plugin->get( SubmissionService::class )->submit(
+					$form,
+					$post,
+					array(
+						'ip'             => RateLimiter::client_ip(),
+						'source_url'     => $back,
+						'source_post_id' => $post['_fc_src'] ?? null,
+						'user_id'        => 0, // No nonce in cached HTML → no user binding (ADR 0003).
+						'body_bytes'     => max( 0, (int) ( $server['CONTENT_LENGTH'] ?? 0 ) - self::file_bytes( $files ) ),
+						'files'          => UploadedFiles::lists_by_field( $files ),
+					)
 				)
 			);
 		}

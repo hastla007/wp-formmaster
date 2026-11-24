@@ -24,6 +24,7 @@ use FormCaptain\Security\SubmissionToken;
 use FormCaptain\Service\FormLimits;
 use FormCaptain\Service\FormSchemaLoader;
 use FormCaptain\Settings\Settings;
+use FormCaptain\Translation\Translations;
 
 final class Renderer {
 
@@ -55,6 +56,8 @@ final class Renderer {
 		if ( '' === $public_id ) {
 			return $editor ? self::editor_notice( __( 'This form does not exist (anymore). Please choose another form.', 'form-captain' ) ) : '';
 		}
+		// Texts of the form in the current language (SET-FC-36); the source text when there is no current translation.
+		$form = Translations::localize_form( $form );
 		if ( ! $preview ) {
 			if ( 'paused' === $status ) {
 				$message = trim( (string) ( $form['settings']['paused_message'] ?? '' ) );
@@ -91,7 +94,7 @@ final class Renderer {
 				}
 			}
 		}
-		$fields = $version['fields'] ?? array();
+		$fields = Translations::localize_fields( $form, $version['fields'] ?? array() );
 		$mode   = (string) ( $form['settings']['appearance']['mode'] ?? Settings::get( 'appearance.mode' ) );
 		$mode   = 'base' === $mode ? 'base' : 'inherit';
 		Assets::mark_rendered( $mode );
@@ -135,6 +138,10 @@ final class Renderer {
 		if ( $preview ) {
 			$attrs['data-fc-preview'] = '1';
 		}
+		$lang = Translations::language();
+		if ( null !== $lang ) {
+			$attrs['data-fc-lang'] = $lang; // Token requests answer in this language (SET-FC-36).
+		}
 		$ctx_hidden = '';
 		$context    = (string) apply_filters( 'form_captain_render_context_v1', (string) ( $args['context'] ?? '' ), $form );
 		$ref        = is_array( $args['context_ref'] ?? null ) ? $args['context_ref'] : null;
@@ -164,6 +171,10 @@ final class Renderer {
 		$html .= $ctx_hidden;
 		// Language of this page; mails to the visitor are sent in it (SET-FC-21). Same for every visitor, so cache-safe.
 		$html .= '<input type="hidden" name="_fc_locale" value="' . esc_attr( determine_locale() ) . '">';
+		if ( null !== $lang ) {
+			// Language of the multilingual plugin; same for every visitor of this language version, so cache-safe.
+			$html .= '<input type="hidden" name="_fc_lang" value="' . esc_attr( $lang ) . '">';
+		}
 		$html .= self::honeypot( $public_id, $prefix );
 
 		$has_required = false;

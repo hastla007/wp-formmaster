@@ -6,7 +6,7 @@
  * In a network every site follows its own rule: data of a site is deleted only when this site
  * confirmed the deletion (and the network allows sites to do so). Sites are processed in batches;
  * an error on one site never stops the others. For very large networks run the uninstall with
- * WP-CLI (`wp plugin uninstall form-captain --network`) so no web timeout applies.
+ * WP-CLI (`wp plugin deactivate form-captain --network`, then `wp plugin uninstall form-captain`) so no web timeout applies.
  *
  * @package FormCaptain
  */

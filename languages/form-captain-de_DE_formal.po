@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Form Captain 1.0.0-dev\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/formmaster-int\n"
-"POT-Creation-Date: 2026-11-23T18:52:44+00:00\n"
+"POT-Creation-Date: 2026-11-24T06:28:42+00:00\n"
 "PO-Revision-Date: 2026-11-16 12:00+0000\n"
 "Last-Translator: Captain Suite\n"
 "Language-Team: Deutsch (Sie)\n"
@@ -45,9 +45,11 @@ msgstr "formular"
 #. Plugin Name of the plugin
 #: form-captain.php:3 src/Admin/DashboardPage.php:220 src/Admin/Menu.php:60
 #: src/Admin/Menu.php:61 src/Admin/Menu.php:81 src/Admin/Menu.php:101
-#: src/Admin/SettingsPage.php:636 src/Admin/SiteHealth.php:28
-#: src/Admin/SiteHealth.php:41 src/Admin/SiteHealth.php:168
-#: src/Privacy/PrivacyIntegration.php:89 assets/src/block-editor.js:100
+#: src/Admin/NetworkPage.php:46 src/Admin/NetworkPage.php:47
+#: src/Admin/NetworkPage.php:186 src/Admin/SettingsPage.php:636
+#: src/Admin/SiteHealth.php:28 src/Admin/SiteHealth.php:41
+#: src/Admin/SiteHealth.php:168 src/Privacy/PrivacyIntegration.php:89
+#: assets/src/block-editor.js:100
 msgid "Form Captain"
 msgstr "Form Captain"
 
@@ -405,7 +407,7 @@ msgstr "Ort"
 msgid "State / region"
 msgstr "Bundesland / Region"
 
-#: src/Admin/EditorPage.php:133 src/Admin/SettingsPage.php:950
+#: src/Admin/EditorPage.php:133 src/Admin/SettingsPage.php:953
 msgid "Country"
 msgstr "Land"
 
@@ -688,7 +690,7 @@ msgstr ""
 msgid "Preview: %s"
 msgstr "Vorschau: %s"
 
-#: src/Admin/EditorPage.php:379 src/Admin/SettingsPage.php:925
+#: src/Admin/EditorPage.php:379 src/Admin/SettingsPage.php:928
 #: src/Admin/Tables/FormsListTable.php:151 assets/src/editor.js:2046
 #: assets/src/editor.js:2392
 msgid "Preview"
@@ -1000,7 +1002,7 @@ msgstr "Quellseite"
 msgid "Source post"
 msgstr "Quellbeitrag"
 
-#: src/Admin/EntriesPage.php:504 src/Admin/SettingsPage.php:1197
+#: src/Admin/EntriesPage.php:504 src/Admin/SettingsPage.php:1200
 msgid "User"
 msgstr "Benutzer"
 
@@ -1120,7 +1122,7 @@ msgstr "Interne Notizen"
 msgid "No notes yet."
 msgstr "Noch keine Notizen."
 
-#: src/Admin/EntriesPage.php:626 src/Admin/SettingsPage.php:1195
+#: src/Admin/EntriesPage.php:626 src/Admin/SettingsPage.php:1198
 msgid "System"
 msgstr "System"
 
@@ -1348,7 +1350,7 @@ msgstr ""
 "oder Zugangsdaten. Das Formular wird als Entwurf angelegt; Connector-"
 "Aktionen bleiben deaktiviert, bis Sie sie aktivieren."
 
-#: src/Admin/FormsPage.php:253 src/Admin/SettingsPage.php:1194
+#: src/Admin/FormsPage.php:253 src/Admin/SettingsPage.php:1197
 msgid "Import"
 msgstr "Importieren"
 
@@ -1783,6 +1785,218 @@ msgstr "Dashboard"
 msgid "This area is not available yet."
 msgstr "Dieser Bereich ist noch nicht verfügbar."
 
+#: src/Admin/NetworkPage.php:124 src/Admin/NetworkPage.php:183
+msgid "You are not allowed to manage the network settings of Form Captain."
+msgstr ""
+"Sie dürfen die Netzwerk-Einstellungen von Form Captain nicht verwalten."
+
+#: src/Admin/NetworkPage.php:172
+msgid "Up to date"
+msgstr "Aktuell"
+
+#: src/Admin/NetworkPage.php:173
+msgid "Migration pending (runs on the next request)"
+msgstr "Migration ausstehend (läuft beim nächsten Aufruf)"
+
+#: src/Admin/NetworkPage.php:174
+msgid "Migration running"
+msgstr "Migration läuft"
+
+#: src/Admin/NetworkPage.php:175
+msgid "Migration failed"
+msgstr "Migration fehlgeschlagen"
+
+#: src/Admin/NetworkPage.php:176
+msgid "Installation planned (runs on the first request)"
+msgstr "Einrichtung vorgemerkt (läuft beim ersten Aufruf)"
+
+#: src/Admin/NetworkPage.php:177
+msgid "Not installed yet (installs on the first request)"
+msgstr "Noch nicht eingerichtet (wird beim ersten Aufruf eingerichtet)"
+
+#: src/Admin/NetworkPage.php:188
+msgid ""
+"Every site keeps its own forms, submissions, settings and queue. This page "
+"shows only the technical state of each site, never form or submission "
+"contents."
+msgstr ""
+"Jede Website hat ihre eigenen Formulare, Einsendungen, Einstellungen und "
+"Warteschlange. Diese Seite zeigt nur den technischen Zustand jeder Website, "
+"nie Formular- oder Einsendungsinhalte."
+
+#: src/Admin/NetworkPage.php:199
+msgid "Network settings saved."
+msgstr "Netzwerk-Einstellungen gespeichert."
+
+#: src/Admin/NetworkPage.php:200
+msgid "The network settings were not saved. Please check your input."
+msgstr ""
+"Die Netzwerk-Einstellungen wurden nicht gespeichert. Bitte prüfen Sie Ihre "
+"Eingaben."
+
+#: src/Admin/NetworkPage.php:201
+msgid ""
+"The migration of all sites has started. It runs in the background on the "
+"main site, 10 sites at a time."
+msgstr ""
+"Die Migration aller Websites wurde gestartet und läuft im Hintergrund auf "
+"der Hauptwebsite, jeweils 10 Websites auf einmal."
+
+#: src/Admin/NetworkPage.php:212
+msgid "Database migration"
+msgstr "Datenbankmigration"
+
+#. translators: %d: schema version
+#: src/Admin/NetworkPage.php:216
+#, php-format
+msgid ""
+"Each site migrates its own database tables on its next request. You can also "
+"migrate all sites now (current schema: %d)."
+msgstr ""
+"Jede Website aktualisiert ihre Datenbanktabellen beim nächsten Aufruf "
+"selbst. Sie können auch jetzt alle Websites migrieren (aktuelles Schema: %d)."
+
+#. translators: 1: processed sites, 2: all sites, 3: failed sites
+#: src/Admin/NetworkPage.php:224
+#, php-format
+msgid "Last run: %1$d of %2$d sites processed, %3$d failed."
+msgstr "Letzter Lauf: %1$d von %2$d Websites bearbeitet, %3$d fehlgeschlagen."
+
+#: src/Admin/NetworkPage.php:229
+msgid "The run continues in the background."
+msgstr "Der Lauf wird im Hintergrund fortgesetzt."
+
+#: src/Admin/NetworkPage.php:229
+msgid "The run is finished."
+msgstr "Der Lauf ist abgeschlossen."
+
+#: src/Admin/NetworkPage.php:231
+msgid "Failed sites (site ID: error code):"
+msgstr "Fehlgeschlagene Websites (Website-ID: Fehlercode):"
+
+#: src/Admin/NetworkPage.php:240
+msgid "Migrate all sites again"
+msgstr "Alle Websites erneut migrieren"
+
+#: src/Admin/NetworkPage.php:240
+msgid "Migrate all sites"
+msgstr "Alle Websites migrieren"
+
+#: src/Admin/NetworkPage.php:248
+msgid "Sites"
+msgstr "Websites"
+
+#: src/Admin/NetworkPage.php:250
+msgid "Site"
+msgstr "Website"
+
+#: src/Admin/NetworkPage.php:250
+msgid "Schema"
+msgstr "Schema"
+
+#: src/Admin/NetworkPage.php:250
+msgid "State"
+msgstr "Zustand"
+
+#: src/Admin/NetworkPage.php:250
+msgid "Queue (open / failed / paused / dead)"
+msgstr ""
+"Warteschlange (offen / fehlgeschlagen / pausiert / endgültig fehlgeschlagen)"
+
+#: src/Admin/NetworkPage.php:250
+msgid "Oldest due job"
+msgstr "Ältester fälliger Auftrag"
+
+#. translators: %s: minutes
+#: src/Admin/NetworkPage.php:265
+#, php-format
+msgid "%s min"
+msgstr "%s Min."
+
+#: src/Admin/NetworkPage.php:267
+msgid "Total on this page"
+msgstr "Summe auf dieser Seite"
+
+#: src/Admin/NetworkPage.php:287
+msgid "Network settings"
+msgstr "Netzwerk-Einstellungen"
+
+#: src/Admin/NetworkPage.php:291
+msgid "Super admin access to submissions"
+msgstr "Super-Admin-Zugriff auf Einsendungen"
+
+#: src/Admin/NetworkPage.php:291
+msgid ""
+"Super admins may read, edit, export and delete submissions on sites where "
+"they have no role of their own"
+msgstr ""
+"Super-Admins dürfen Einsendungen auf Websites lesen, bearbeiten, exportieren "
+"und löschen, auf denen sie keine eigene Rolle haben"
+
+#: src/Admin/NetworkPage.php:292
+msgid ""
+"Off by default: submissions often contain personal data that only the people "
+"responsible for a site should see. Super admins with a role on a site keep "
+"the access of that role."
+msgstr ""
+"Standardmäßig aus: Einsendungen enthalten oft personenbezogene Daten, die "
+"nur die Verantwortlichen einer Website sehen sollen. Super-Admins mit einer "
+"Rolle auf einer Website behalten die Rechte dieser Rolle."
+
+#: src/Admin/NetworkPage.php:293
+msgid "Data deletion on uninstall"
+msgstr "Datenlöschung bei Deinstallation"
+
+#: src/Admin/NetworkPage.php:293
+msgid ""
+"Sites may choose to delete their Form Captain data when the plugin is deleted"
+msgstr ""
+"Websites dürfen festlegen, dass ihre Form-Captain-Daten beim Löschen des "
+"Plugins gelöscht werden"
+
+#: src/Admin/NetworkPage.php:294
+msgid ""
+"Each site decides and confirms this itself in its privacy settings. Without "
+"this permission all data is kept on every site."
+msgstr ""
+"Jede Website entscheidet und bestätigt das selbst in ihren Datenschutz-"
+"Einstellungen. Ohne diese Erlaubnis bleiben alle Daten auf jeder Website "
+"erhalten."
+
+#: src/Admin/NetworkPage.php:297
+msgid "Presets for new sites"
+msgstr "Vorgaben für neue Websites"
+
+#: src/Admin/NetworkPage.php:298
+msgid ""
+"Used once, when a site sets up Form Captain for the first time. Existing "
+"sites keep their settings. Leave a field empty to use the plugin default."
+msgstr ""
+"Gilt einmalig, wenn eine Website Form Captain zum ersten Mal einrichtet. "
+"Bestehende Websites behalten ihre Einstellungen. Lassen Sie ein Feld leer, "
+"um den Standard des Plugins zu verwenden."
+
+#: src/Admin/NetworkPage.php:311
+msgid "Plugin default"
+msgstr "Standard des Plugins"
+
+#: src/Admin/NetworkPage.php:320
+msgid ""
+"A period such as 30d, 6m or 10y, or \"manual\" for no automatic deletion."
+msgstr ""
+"Ein Zeitraum wie 30d, 6m oder 10y oder „manual“ für keine automatische "
+"Löschung."
+
+#. translators: 1: minimum, 2: maximum
+#: src/Admin/NetworkPage.php:323
+#, php-format
+msgid "A number between %1$d and %2$d."
+msgstr "Eine Zahl zwischen %1$d und %2$d."
+
+#: src/Admin/NetworkPage.php:328
+msgid "Save network settings"
+msgstr "Netzwerk-Einstellungen speichern"
+
 #: src/Admin/SettingsPage.php:101
 msgid "This section cannot be saved."
 msgstr "Dieser Bereich kann nicht gespeichert werden."
@@ -1845,7 +2059,9 @@ msgstr ""
 msgid "Permissions saved."
 msgstr "Berechtigungen gespeichert."
 
-#. translators: 1: number of users who can read entries, 2: number of users who can export entries
+#. translators: 1: number of users who can read entries, 2: number of users
+#. who
+#. can export entries
 #: src/Admin/SettingsPage.php:204
 #, php-format
 msgid "%1$s users can read entries, %2$s users can export them."
@@ -1867,7 +2083,7 @@ msgstr ""
 msgid "This section cannot be reset."
 msgstr "Dieser Bereich kann nicht zurückgesetzt werden."
 
-#: src/Admin/SettingsPage.php:266 src/Admin/SettingsPage.php:1011
+#: src/Admin/SettingsPage.php:266 src/Admin/SettingsPage.php:1014
 msgid "No existing submissions are affected by this change."
 msgstr "Diese Änderung betrifft keine vorhandenen Einsendungen."
 
@@ -2117,7 +2333,7 @@ msgstr[1] ""
 "betroffen."
 
 #. translators: %s: number of days
-#: src/Admin/SettingsPage.php:858 src/Admin/SettingsPage.php:1158
+#: src/Admin/SettingsPage.php:858 src/Admin/SettingsPage.php:1161
 #, php-format
 msgid ""
 "I understand that changing the retention period schedules the deletion of "
@@ -2127,8 +2343,17 @@ msgstr ""
 "vorhandener Einsendungen neu plant (nie früher als %s Tage nach dieser "
 "Änderung)."
 
+#: src/Admin/SettingsPage.php:864
+msgid ""
+"The network administrator does not allow sites of this network to delete "
+"their data when the plugin is deleted. Forms and submissions are kept."
+msgstr ""
+"Die Netzwerk-Administration erlaubt Websites dieses Netzwerks nicht, ihre "
+"Daten beim Löschen des Plugins zu löschen. Formulare und Einsendungen "
+"bleiben erhalten."
+
 #. translators: %s: date
-#: src/Admin/SettingsPage.php:865
+#: src/Admin/SettingsPage.php:868
 #, php-format
 msgid ""
 "Confirmed on %s. Deleting the plugin will also delete all forms and "
@@ -2138,7 +2363,7 @@ msgstr ""
 "Einsendungen gelöscht."
 
 #. translators: 1: number of forms, 2: number of submissions
-#: src/Admin/SettingsPage.php:870
+#: src/Admin/SettingsPage.php:873
 #, php-format
 msgid ""
 "When you delete the plugin, %1$s forms, %2$s submissions and all uploaded "
@@ -2148,11 +2373,11 @@ msgstr ""
 "hochgeladenen Dateien endgültig entfernt. Geben Sie LÖSCHEN ein, um zu "
 "bestätigen."
 
-#: src/Admin/SettingsPage.php:875
+#: src/Admin/SettingsPage.php:878
 msgid "Confirmation word"
 msgstr "Bestätigungswort"
 
-#: src/Admin/SettingsPage.php:880
+#: src/Admin/SettingsPage.php:883
 msgid ""
 "The sender domain differs from your website domain. Many mail servers reject "
 "or mark such messages as spam. Use an address of your own domain or "
@@ -2164,7 +2389,7 @@ msgstr ""
 "Mailanbieter ein."
 
 #. translators: 1: provider, 2: data, 3: purpose
-#: src/Admin/SettingsPage.php:887
+#: src/Admin/SettingsPage.php:890
 #, php-format
 msgid ""
 "%1$s will receive: %2$s. Purpose: %3$s. Update your privacy policy before "
@@ -2173,15 +2398,15 @@ msgstr ""
 "%1$s erhält: %2$s. Zweck: %3$s. Ergänzen Sie Ihre Datenschutzerklärung, "
 "bevor Sie diesen Dienst aktivieren."
 
-#: src/Admin/SettingsPage.php:894
+#: src/Admin/SettingsPage.php:897
 msgid "Provider privacy policy"
 msgstr "Datenschutzerklärung des Anbieters"
 
-#: src/Admin/SettingsPage.php:899 src/Admin/SettingsPage.php:1161
+#: src/Admin/SettingsPage.php:902 src/Admin/SettingsPage.php:1164
 msgid "I have read the data flow and updated the privacy policy."
 msgstr "Ich habe den Datenfluss gelesen und die Datenschutzerklärung ergänzt."
 
-#: src/Admin/SettingsPage.php:906
+#: src/Admin/SettingsPage.php:909
 msgid ""
 "Form-specific options such as recipients, reply-to, subject, confirmation "
 "message, redirect and actions are set in each form, not here. Form import/"
@@ -2192,7 +2417,7 @@ msgstr ""
 "Formular ein, nicht hier. Formular-Import/-Export finden Sie in der "
 "Formularliste, den CSV-Export unter Einträge."
 
-#: src/Admin/SettingsPage.php:907
+#: src/Admin/SettingsPage.php:910
 msgid ""
 "Your theme styles forms by default. Base styles only use local CSS – no "
 "external fonts or files are loaded."
@@ -2200,7 +2425,7 @@ msgstr ""
 "Standardmäßig gestaltet Ihr Theme die Formulare. Die Basisstile verwenden "
 "nur lokales CSS – es werden keine externen Schriften oder Dateien geladen."
 
-#: src/Admin/SettingsPage.php:908
+#: src/Admin/SettingsPage.php:911
 msgid ""
 "Form Captain sends emails with WordPress (wp_mail). It does not manage SMTP "
 "servers or mail passwords; use an SMTP plugin of your choice for reliable "
@@ -2210,7 +2435,7 @@ msgstr ""
 "Mail-Passwörter werden nicht verwaltet; nutzen Sie für eine zuverlässige "
 "Zustellung ein SMTP-Plugin Ihrer Wahl."
 
-#: src/Admin/SettingsPage.php:909
+#: src/Admin/SettingsPage.php:912
 msgid ""
 "Submissions are stored only in this WordPress database. Form Captain does "
 "not control backups. Deleted submissions remain in existing backups until "
@@ -2223,7 +2448,7 @@ msgstr ""
 "werden abgelaufene Einsendungen automatisch erneut gelöscht; wiederholen Sie "
 "bereits abgeschlossene Löschanfragen."
 
-#: src/Admin/SettingsPage.php:910
+#: src/Admin/SettingsPage.php:913
 msgid ""
 "Honeypot, minimum fill-in time and rate limiting work without cookies and "
 "without sending data to third parties."
@@ -2231,7 +2456,7 @@ msgstr ""
 "Honeypot, Mindest-Ausfüllzeit und Rate-Limit funktionieren ohne Cookies und "
 "ohne Datenübermittlung an Dritte."
 
-#: src/Admin/SettingsPage.php:911
+#: src/Admin/SettingsPage.php:914
 msgid ""
 "Defaults for the CSV export of submissions. Every export can still use other "
 "values."
@@ -2239,25 +2464,25 @@ msgstr ""
 "Vorgaben für den CSV-Export von Einsendungen. Jeder Export kann trotzdem "
 "andere Werte verwenden."
 
-#: src/Admin/SettingsPage.php:927 src/Admin/SettingsPage.php:1223
+#: src/Admin/SettingsPage.php:930 src/Admin/SettingsPage.php:1226
 #: src/Domain/Fields/FieldTypes.php:23 src/Settings/SettingsSchema.php:42
 msgid "Email"
 msgstr "E-Mail"
 
-#: src/Admin/SettingsPage.php:927 src/Frontend/Renderer.php:191
+#: src/Admin/SettingsPage.php:930 src/Frontend/Renderer.php:191
 msgid "Send"
 msgstr "Senden"
 
-#: src/Admin/SettingsPage.php:928
+#: src/Admin/SettingsPage.php:931
 msgid "Schematic preview. The real look depends on your theme."
 msgstr ""
 "Schematische Vorschau. Das tatsächliche Aussehen hängt von Ihrem Theme ab."
 
-#: src/Admin/SettingsPage.php:932
+#: src/Admin/SettingsPage.php:935
 msgid "Privacy policy text"
 msgstr "Text für die Datenschutzerklärung"
 
-#: src/Admin/SettingsPage.php:933
+#: src/Admin/SettingsPage.php:936
 msgid ""
 "Suggested text (not legal advice). It is also available in the WordPress "
 "privacy policy guide."
@@ -2265,15 +2490,15 @@ msgstr ""
 "Textvorschlag (keine Rechtsberatung). Er ist auch im WordPress-Leitfaden für "
 "die Datenschutzerklärung verfügbar."
 
-#: src/Admin/SettingsPage.php:933
+#: src/Admin/SettingsPage.php:936
 msgid "Open the policy guide"
 msgstr "Leitfaden öffnen"
 
-#: src/Admin/SettingsPage.php:943
+#: src/Admin/SettingsPage.php:946
 msgid "Country profile"
 msgstr "Länderprofil"
 
-#: src/Admin/SettingsPage.php:944
+#: src/Admin/SettingsPage.php:947
 msgid ""
 "A country profile suggests settings for your country. Nothing changes until "
 "you have reviewed the suggestion and applied the selected rows. You can "
@@ -2284,60 +2509,60 @@ msgstr ""
 "haben. Jeden Wert können Sie danach wieder ändern."
 
 #. translators: %s: profile name
-#: src/Admin/SettingsPage.php:947
+#: src/Admin/SettingsPage.php:950
 #, php-format
 msgid "Last applied profile: %s"
 msgstr "Zuletzt übernommenes Profil: %s"
 
-#: src/Admin/SettingsPage.php:952
+#: src/Admin/SettingsPage.php:955
 msgid "not legally reviewed"
 msgstr "rechtlich nicht geprüft"
 
-#: src/Admin/SettingsPage.php:955
+#: src/Admin/SettingsPage.php:958
 msgid "Show suggestion"
 msgstr "Vorschlag anzeigen"
 
-#: src/Admin/SettingsPage.php:965 src/Admin/Tables/EntriesListTable.php:208
+#: src/Admin/SettingsPage.php:968 src/Admin/Tables/EntriesListTable.php:208
 msgid "Apply"
 msgstr "Übernehmen"
 
-#: src/Admin/SettingsPage.php:965 src/Admin/SettingsPage.php:1134
-#: src/Admin/SettingsPage.php:1197
+#: src/Admin/SettingsPage.php:968 src/Admin/SettingsPage.php:1137
+#: src/Admin/SettingsPage.php:1200
 msgid "Setting"
 msgstr "Einstellung"
 
-#: src/Admin/SettingsPage.php:965 src/Admin/SettingsPage.php:1134
+#: src/Admin/SettingsPage.php:968 src/Admin/SettingsPage.php:1137
 msgid "Current value"
 msgstr "Aktueller Wert"
 
-#: src/Admin/SettingsPage.php:965
+#: src/Admin/SettingsPage.php:968
 msgid "Suggested value"
 msgstr "Vorgeschlagener Wert"
 
-#: src/Admin/SettingsPage.php:965
+#: src/Admin/SettingsPage.php:968
 msgid "Legal status"
 msgstr "Rechtlicher Stand"
 
-#: src/Admin/SettingsPage.php:972
+#: src/Admin/SettingsPage.php:975
 msgid "invalid"
 msgstr "ungültig"
 
-#: src/Admin/SettingsPage.php:972
+#: src/Admin/SettingsPage.php:975
 msgid "unchanged"
 msgstr "unverändert"
 
 #. translators: %s: date
-#: src/Admin/SettingsPage.php:979
+#: src/Admin/SettingsPage.php:982
 #, php-format
 msgid "Legally reviewed on %s"
 msgstr "Rechtlich geprüft am %s"
 
-#: src/Admin/SettingsPage.php:980
+#: src/Admin/SettingsPage.php:983
 msgid "Not legally reviewed – neutral suggestion, have it checked"
 msgstr "Ungeprüft – neutraler Vorschlag, lassen Sie ihn rechtlich prüfen"
 
 #. translators: 1: postal code pattern, 2: phone number format
-#: src/Admin/SettingsPage.php:997
+#: src/Admin/SettingsPage.php:1000
 #, php-format
 msgid ""
 "After applying, the form editor suggests for new fields: postal code "
@@ -2347,20 +2572,20 @@ msgstr ""
 "Postleitzahl „%1$s“, Telefonnummer „%2$s“. Bestehende Felder bleiben "
 "unverändert."
 
-#: src/Admin/SettingsPage.php:998 assets/src/editor.js:901
+#: src/Admin/SettingsPage.php:1001 assets/src/editor.js:901
 msgid "Any"
 msgstr "Beliebig"
 
-#: src/Admin/SettingsPage.php:999 assets/src/editor.js:942
+#: src/Admin/SettingsPage.php:1002 assets/src/editor.js:942
 msgid "International with + and country code"
 msgstr "International mit + und Ländervorwahl"
 
-#: src/Admin/SettingsPage.php:999 assets/src/editor.js:941
+#: src/Admin/SettingsPage.php:1002 assets/src/editor.js:941
 msgid "Any phone number"
 msgstr "Beliebige Telefonnummer"
 
 #. translators: 1: number of submissions, 2: date
-#: src/Admin/SettingsPage.php:1008
+#: src/Admin/SettingsPage.php:1011
 #, php-format
 msgid ""
 "The new retention period affects %1$s submissions; earliest deletion on %2$s."
@@ -2369,13 +2594,13 @@ msgstr ""
 "%2$s."
 
 #. translators: %s: retention period
-#: src/Admin/SettingsPage.php:1013
+#: src/Admin/SettingsPage.php:1016
 #, php-format
 msgid "New submissions are deleted automatically %s after they were received."
 msgstr "Neue Einsendungen werden %s nach dem Eingang automatisch gelöscht."
 
 #. translators: %s: number of submissions
-#: src/Admin/SettingsPage.php:1018
+#: src/Admin/SettingsPage.php:1021
 #, php-format
 msgid ""
 "The new retention period affects %s submissions; nothing is deleted "
@@ -2384,33 +2609,33 @@ msgstr ""
 "Die neue Aufbewahrungsdauer betrifft %s Einsendungen; nichts wird "
 "automatisch gelöscht."
 
-#: src/Admin/SettingsPage.php:1024
+#: src/Admin/SettingsPage.php:1027
 msgid "I have reviewed the changes and want to apply the selected rows."
 msgstr ""
 "Ich habe die Änderungen geprüft und möchte die ausgewählten Zeilen "
 "übernehmen."
 
-#: src/Admin/SettingsPage.php:1025
+#: src/Admin/SettingsPage.php:1028
 msgid "Apply selected values"
 msgstr "Ausgewählte Werte übernehmen"
 
-#: src/Admin/SettingsPage.php:1027
+#: src/Admin/SettingsPage.php:1030
 msgid "Your settings already match this profile."
 msgstr "Ihre Einstellungen entsprechen bereits diesem Profil."
 
-#: src/Admin/SettingsPage.php:1039 src/Mail/MailBuilder.php:531
+#: src/Admin/SettingsPage.php:1042 src/Mail/MailBuilder.php:531
 msgid "Yes"
 msgstr "Ja"
 
-#: src/Admin/SettingsPage.php:1039 src/Mail/MailBuilder.php:531
+#: src/Admin/SettingsPage.php:1042 src/Mail/MailBuilder.php:531
 msgid "No"
 msgstr "Nein"
 
-#: src/Admin/SettingsPage.php:1047
+#: src/Admin/SettingsPage.php:1050
 msgid "Test email"
 msgstr "Test-E-Mail"
 
-#: src/Admin/SettingsPage.php:1051
+#: src/Admin/SettingsPage.php:1054
 msgid ""
 "Sends a short test message to your own user email address with the default "
 "sender."
@@ -2418,20 +2643,20 @@ msgstr ""
 "Sendet eine kurze Testnachricht mit dem Standard-Absender an die E-Mail-"
 "Adresse Ihres Benutzerkontos."
 
-#: src/Admin/SettingsPage.php:1052
+#: src/Admin/SettingsPage.php:1055
 msgid "Send test email"
 msgstr "Test-E-Mail senden"
 
-#: src/Admin/SettingsPage.php:1058
+#: src/Admin/SettingsPage.php:1061
 msgid "Reset this section"
 msgstr "Diesen Bereich zurücksetzen"
 
-#: src/Admin/SettingsPage.php:1059
+#: src/Admin/SettingsPage.php:1062
 msgid "Reset this section to the defaults?"
 msgstr "Diesen Bereich auf die Standardwerte zurücksetzen?"
 
 #. translators: %s: section name
-#: src/Admin/SettingsPage.php:1063
+#: src/Admin/SettingsPage.php:1066
 #, php-format
 msgid ""
 "Only the section \"%s\" is reset to the defaults. Other sections and "
@@ -2440,7 +2665,7 @@ msgstr ""
 "Nur der Bereich „%s“ wird auf die Standardwerte zurückgesetzt. Andere "
 "Bereiche und bestehende Formulare behalten ihre Werte."
 
-#: src/Admin/SettingsPage.php:1065
+#: src/Admin/SettingsPage.php:1068
 msgid ""
 "Resetting switches automatic deletion off (keep until deleted manually) and "
 "disables data deletion on uninstall. Existing submissions are rescheduled "
@@ -2450,7 +2675,7 @@ msgstr ""
 "manuellen Löschen) und deaktiviert das Löschen der Daten bei der "
 "Deinstallation. Vorhandene Einsendungen werden entsprechend neu geplant."
 
-#: src/Admin/SettingsPage.php:1068
+#: src/Admin/SettingsPage.php:1071
 msgid ""
 "Only administrators keep access. All other roles lose their Form Captain "
 "permissions."
@@ -2458,15 +2683,15 @@ msgstr ""
 "Nur Administratoren behalten den Zugriff. Alle anderen Rollen verlieren ihre "
 "Form-Captain-Berechtigungen."
 
-#: src/Admin/SettingsPage.php:1070
+#: src/Admin/SettingsPage.php:1073
 msgid "I understand the consequences."
 msgstr "Ich verstehe die Folgen."
 
-#: src/Admin/SettingsPage.php:1071
+#: src/Admin/SettingsPage.php:1074
 msgid "Reset section"
 msgstr "Bereich zurücksetzen"
 
-#: src/Admin/SettingsPage.php:1078
+#: src/Admin/SettingsPage.php:1081
 msgid ""
 "Choose which roles may use Form Captain. Entries can contain personal data – "
 "grant reading and exporting only to people who need it."
@@ -2475,23 +2700,23 @@ msgstr ""
 "personenbezogene Daten enthalten – erlauben Sie Lesen und Exportieren nur "
 "Personen, die dies benötigen."
 
-#: src/Admin/SettingsPage.php:1083
+#: src/Admin/SettingsPage.php:1086
 msgid "Role"
 msgstr "Rolle"
 
 #. translators: %s: number of users
-#: src/Admin/SettingsPage.php:1090
+#: src/Admin/SettingsPage.php:1093
 #, php-format
 msgid "%s user"
 msgid_plural "%s users"
 msgstr[0] "%s Benutzer"
 msgstr[1] "%s Benutzer"
 
-#: src/Admin/SettingsPage.php:1096
+#: src/Admin/SettingsPage.php:1099
 msgid "always"
 msgstr "immer"
 
-#: src/Admin/SettingsPage.php:1103
+#: src/Admin/SettingsPage.php:1106
 msgid ""
 "Administrators always keep \"Manage settings\" so nobody can lock themselves "
 "out. Changing permissions also requires the WordPress capability to promote "
@@ -2501,15 +2726,15 @@ msgstr ""
 "aussperren kann. Zum Ändern von Berechtigungen ist zusätzlich das WordPress-"
 "Recht zum Befördern von Benutzern erforderlich."
 
-#: src/Admin/SettingsPage.php:1104
+#: src/Admin/SettingsPage.php:1107
 msgid "Save permissions"
 msgstr "Berechtigungen speichern"
 
-#: src/Admin/SettingsPage.php:1110
+#: src/Admin/SettingsPage.php:1113
 msgid "Export and import settings"
 msgstr "Einstellungen exportieren und importieren"
 
-#: src/Admin/SettingsPage.php:1111
+#: src/Admin/SettingsPage.php:1114
 msgid ""
 "Transfers the settings of this page to another website as a JSON file. "
 "Secrets, role permissions, forms and submissions are not included; data "
@@ -2520,43 +2745,43 @@ msgstr ""
 "enthalten; die Datenlöschung bei Deinstallation muss auf der Zielseite immer "
 "neu bestätigt werden."
 
-#: src/Admin/SettingsPage.php:1114
+#: src/Admin/SettingsPage.php:1117
 msgid "Export settings"
 msgstr "Einstellungen exportieren"
 
-#: src/Admin/SettingsPage.php:1128
+#: src/Admin/SettingsPage.php:1131
 msgid "Import preview"
 msgstr "Importvorschau"
 
 #. translators: 1: plugin version, 2: date
-#: src/Admin/SettingsPage.php:1131
+#: src/Admin/SettingsPage.php:1134
 #, php-format
 msgid "Exported with Form Captain %1$s on %2$s (UTC)."
 msgstr "Exportiert mit Form Captain %1$s am %2$s (UTC)."
 
-#: src/Admin/SettingsPage.php:1134 src/Admin/SettingsPage.php:1197
+#: src/Admin/SettingsPage.php:1137 src/Admin/SettingsPage.php:1200
 msgid "New value"
 msgstr "Neuer Wert"
 
-#: src/Admin/SettingsPage.php:1141
+#: src/Admin/SettingsPage.php:1144
 msgid "The file contains no changes."
 msgstr "Die Datei enthält keine Änderungen."
 
 #. translators: %s: list of setting keys
-#: src/Admin/SettingsPage.php:1152
+#: src/Admin/SettingsPage.php:1155
 #, php-format
 msgid "Unknown keys will be ignored: %s"
 msgstr "Unbekannte Schlüssel werden ignoriert: %s"
 
-#: src/Admin/SettingsPage.php:1163
+#: src/Admin/SettingsPage.php:1166
 msgid "Import these settings"
 msgstr "Diese Einstellungen importieren"
 
-#: src/Admin/SettingsPage.php:1169
+#: src/Admin/SettingsPage.php:1172
 msgid "Settings file"
 msgstr "Einstellungsdatei"
 
-#: src/Admin/SettingsPage.php:1170
+#: src/Admin/SettingsPage.php:1173
 msgid ""
 "You see all changes before anything is saved. Invalid values and unknown "
 "keys are reported and not imported."
@@ -2564,24 +2789,24 @@ msgstr ""
 "Vor dem Speichern werden alle Änderungen angezeigt. Ungültige Werte und "
 "unbekannte Schlüssel werden gemeldet und nicht importiert."
 
-#: src/Admin/SettingsPage.php:1171
+#: src/Admin/SettingsPage.php:1174
 msgid "Show import preview"
 msgstr "Importvorschau anzeigen"
 
-#: src/Admin/SettingsPage.php:1177
+#: src/Admin/SettingsPage.php:1180
 msgid "On"
 msgstr "An"
 
-#: src/Admin/SettingsPage.php:1177
+#: src/Admin/SettingsPage.php:1180
 msgid "Off"
 msgstr "Aus"
 
-#: src/Admin/SettingsPage.php:1183
+#: src/Admin/SettingsPage.php:1186
 msgid "Settings change log"
 msgstr "Änderungsprotokoll der Einstellungen"
 
 #. translators: %d: number of months
-#: src/Admin/SettingsPage.php:1185
+#: src/Admin/SettingsPage.php:1188
 #, php-format
 msgid ""
 "Changes of settings and role permissions from the last %d month. Secret "
@@ -2596,31 +2821,31 @@ msgstr[1] ""
 "Änderungen an Einstellungen und Rollenrechten aus den letzten %d Monaten. "
 "Geheime Werte sind maskiert."
 
-#: src/Admin/SettingsPage.php:1188
+#: src/Admin/SettingsPage.php:1191
 msgid "No changes recorded yet."
 msgstr "Noch keine Änderungen aufgezeichnet."
 
-#: src/Admin/SettingsPage.php:1192
+#: src/Admin/SettingsPage.php:1195
 msgid "Settings screen"
 msgstr "Einstellungsseite"
 
-#: src/Admin/SettingsPage.php:1193
+#: src/Admin/SettingsPage.php:1196
 msgid "WP-CLI"
 msgstr "WP-CLI"
 
-#: src/Admin/SettingsPage.php:1197
+#: src/Admin/SettingsPage.php:1200
 msgid "Time"
 msgstr "Zeitpunkt"
 
-#: src/Admin/SettingsPage.php:1197
+#: src/Admin/SettingsPage.php:1200
 msgid "Source"
 msgstr "Quelle"
 
-#: src/Admin/SettingsPage.php:1197
+#: src/Admin/SettingsPage.php:1200
 msgid "Old value"
 msgstr "Alter Wert"
 
-#: src/Admin/SettingsPage.php:1209
+#: src/Admin/SettingsPage.php:1212
 msgid ""
 "Read-only overview for troubleshooting. It never shows submitted values, "
 "email addresses, IP addresses or secrets."
@@ -2628,27 +2853,27 @@ msgstr ""
 "Nur lesende Übersicht zur Fehlersuche. Sie zeigt nie eingesendete Werte, E-"
 "Mail-Adressen, IP-Adressen oder Geheimnisse."
 
-#: src/Admin/SettingsPage.php:1217
+#: src/Admin/SettingsPage.php:1220
 msgid "No problems detected."
 msgstr "Keine Probleme erkannt."
 
-#: src/Admin/SettingsPage.php:1220
+#: src/Admin/SettingsPage.php:1223
 msgid "Environment"
 msgstr "Umgebung"
 
-#: src/Admin/SettingsPage.php:1221
+#: src/Admin/SettingsPage.php:1224
 msgid "Database"
 msgstr "Datenbank"
 
-#: src/Admin/SettingsPage.php:1222
+#: src/Admin/SettingsPage.php:1225
 msgid "Queue and cron"
 msgstr "Warteschlange und Cron"
 
-#: src/Admin/SettingsPage.php:1224
+#: src/Admin/SettingsPage.php:1227
 msgid "Integrations and Captain Suite"
 msgstr "Integrationen und Captain Suite"
 
-#: src/Admin/SettingsPage.php:1234
+#: src/Admin/SettingsPage.php:1237
 msgid ""
 "WP-Cron is disabled (DISABLE_WP_CRON). Run this command every minute from "
 "your system cron:"
@@ -2656,35 +2881,35 @@ msgstr ""
 "WP-Cron ist deaktiviert (DISABLE_WP_CRON). Führen Sie diesen Befehl jede "
 "Minute über den System-Cron aus:"
 
-#: src/Admin/SettingsPage.php:1236
+#: src/Admin/SettingsPage.php:1239
 msgid "Recent errors"
 msgstr "Letzte Fehler"
 
-#: src/Admin/SettingsPage.php:1238
+#: src/Admin/SettingsPage.php:1241
 msgid "Time (UTC)"
 msgstr "Zeit (UTC)"
 
-#: src/Admin/SettingsPage.php:1238
+#: src/Admin/SettingsPage.php:1241
 msgid "Level"
 msgstr "Stufe"
 
-#: src/Admin/SettingsPage.php:1238
+#: src/Admin/SettingsPage.php:1241
 msgid "Code"
 msgstr "Code"
 
-#: src/Admin/SettingsPage.php:1238
+#: src/Admin/SettingsPage.php:1241
 msgid "Correlation ID"
 msgstr "Korrelations-ID"
 
-#: src/Admin/SettingsPage.php:1244
+#: src/Admin/SettingsPage.php:1247
 msgid "No warnings or errors recorded."
 msgstr "Keine Warnungen oder Fehler aufgezeichnet."
 
-#: src/Admin/SettingsPage.php:1246 src/Admin/SettingsPage.php:1248
+#: src/Admin/SettingsPage.php:1249 src/Admin/SettingsPage.php:1251
 msgid "Diagnostics report"
 msgstr "Diagnosebericht"
 
-#: src/Admin/SettingsPage.php:1247
+#: src/Admin/SettingsPage.php:1250
 msgid ""
 "Copy this report into a support request. It contains status data, error "
 "codes and correlation IDs only."
@@ -2692,15 +2917,15 @@ msgstr ""
 "Kopieren Sie diesen Bericht in eine Support-Anfrage. Er enthält nur "
 "Statusdaten, Fehlercodes und Korrelations-IDs."
 
-#: src/Admin/SettingsPage.php:1249
+#: src/Admin/SettingsPage.php:1252
 msgid "Copy report"
 msgstr "Bericht kopieren"
 
-#: src/Admin/SettingsPage.php:1254
+#: src/Admin/SettingsPage.php:1257
 msgid "Signing key"
 msgstr "Signaturschlüssel"
 
-#: src/Admin/SettingsPage.php:1255 src/Admin/SettingsPage.php:1260
+#: src/Admin/SettingsPage.php:1258 src/Admin/SettingsPage.php:1263
 msgid ""
 "Renewing the signing key invalidates links and open forms older than 26 "
 "hours. Continue?"
@@ -2708,7 +2933,7 @@ msgstr ""
 "Das Erneuern des Signaturschlüssels macht Links und offene Formulare "
 "ungültig, die älter als 26 Stunden sind. Fortfahren?"
 
-#: src/Admin/SettingsPage.php:1258
+#: src/Admin/SettingsPage.php:1261
 msgid ""
 "The signing key protects submission tokens and signed suite contexts. It is "
 "never displayed. Renew it if you suspect it was exposed."
@@ -2717,11 +2942,11 @@ msgstr ""
 "Kontexte. Er wird nie angezeigt. Erneuern Sie ihn, wenn Sie vermuten, dass "
 "er offengelegt wurde."
 
-#: src/Admin/SettingsPage.php:1259
+#: src/Admin/SettingsPage.php:1262
 msgid "Discard the previous key immediately (suspected compromise)"
 msgstr "Bisherigen Schlüssel sofort verwerfen (Verdacht auf Kompromittierung)"
 
-#: src/Admin/SettingsPage.php:1261
+#: src/Admin/SettingsPage.php:1264
 msgid "Renew signing key"
 msgstr "Signaturschlüssel erneuern"
 
@@ -3297,7 +3522,7 @@ msgid "Please enter at least %d characters."
 msgstr "Bitte geben Sie mindestens %d Zeichen ein."
 
 #: src/Domain/SubmissionValidator.php:467 src/Frontend/Assets.php:94
-#: src/Settings/SettingsSchema.php:961
+#: src/Settings/SettingsSchema.php:966
 msgid "Please enter a valid email address."
 msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein."
 
@@ -3320,7 +3545,7 @@ msgid "Please enter a valid date (YYYY-MM-DD)."
 msgstr "Bitte geben Sie ein gültiges Datum ein (JJJJ-MM-TT)."
 
 #: src/Domain/SubmissionValidator.php:479 src/Settings/SettingsSchema.php:764
-#: src/Settings/SettingsSchema.php:949
+#: src/Settings/SettingsSchema.php:954
 msgid "Please choose one of the offered options."
 msgstr "Bitte wählen Sie eine der angebotenen Optionen."
 
@@ -4532,7 +4757,8 @@ msgid "The connector key does not match the registered key."
 msgstr ""
 "Der Connector-Schlüssel stimmt nicht mit dem registrierten Schlüssel überein."
 
-#. translators: 1: contract version required by the connector, 2: contract version of Form Captain
+#. translators: 1: contract version required by the connector, 2: contract
+#. version of Form Captain
 #: src/Integrations/ConnectorRegistry.php:206
 #, php-format
 msgid "The connector expects contract %1$s, Form Captain provides %2$s."
@@ -5198,8 +5424,8 @@ msgid "Please confirm that you sent this submission."
 msgstr "Bitte bestätigen Sie, dass Sie diese Einsendung abgeschickt haben."
 
 #. translators: %d: maximum number of characters
-#: src/Service/EntryNumbers.php:44 src/Settings/SettingsSchema.php:966
-#: src/Settings/SettingsSchema.php:980 src/Settings/SettingsSchema.php:990
+#: src/Service/EntryNumbers.php:44 src/Settings/SettingsSchema.php:971
+#: src/Settings/SettingsSchema.php:985 src/Settings/SettingsSchema.php:995
 #, php-format
 msgid "Please use at most %d characters."
 msgstr "Bitte verwenden Sie höchstens %d Zeichen."
@@ -6821,8 +7047,8 @@ msgstr "Hochgeladene Dateien früher löschen als die Einsendung."
 msgid "Uploads"
 msgstr "Uploads"
 
-#: src/Settings/SettingsSchema.php:739 src/Settings/SettingsSchema.php:931
-#: src/Settings/SettingsSchema.php:1009
+#: src/Settings/SettingsSchema.php:739 src/Settings/SettingsSchema.php:936
+#: src/Settings/SettingsSchema.php:1014
 msgid "Invalid value."
 msgstr "Ungültiger Wert."
 
@@ -6862,14 +7088,22 @@ msgstr ""
 "(Double-Opt-in) in diesen Formularen: %s. Verkürzen Sie dort zuerst die "
 "Gültigkeit des Links oder wählen Sie eine längere Frist."
 
-#: src/Settings/SettingsSchema.php:910
+#: src/Settings/SettingsSchema.php:904
+msgid ""
+"The network administrator does not allow sites of this network to delete "
+"their data when the plugin is deleted."
+msgstr ""
+"Die Netzwerk-Administration erlaubt Websites dieses Netzwerks nicht, ihre "
+"Daten beim Löschen des Plugins zu löschen."
+
+#: src/Settings/SettingsSchema.php:915
 msgid ""
 "To delete all data on uninstall, type DELETE into the confirmation field."
 msgstr ""
 "Um bei der Deinstallation alle Daten zu löschen, geben Sie LÖSCHEN in das "
 "Bestätigungsfeld ein."
 
-#: src/Settings/SettingsSchema.php:918
+#: src/Settings/SettingsSchema.php:923
 msgid ""
 "An external captcha sends visitor data to a third party. Confirm that you "
 "have read the data flow and updated your privacy policy."
@@ -6877,29 +7111,29 @@ msgstr ""
 "Ein externes Captcha sendet Besucherdaten an Dritte. Bestätigen Sie, dass "
 "Sie den Datenfluss gelesen und Ihre Datenschutzerklärung ergänzt haben."
 
-#: src/Settings/SettingsSchema.php:940
+#: src/Settings/SettingsSchema.php:945
 msgid "Please enter a whole number."
 msgstr "Bitte geben Sie eine ganze Zahl ein."
 
 #. translators: 1: minimum, 2: maximum
-#: src/Settings/SettingsSchema.php:945
+#: src/Settings/SettingsSchema.php:950
 #, php-format
 msgid "Please enter a number between %1$d and %2$d."
 msgstr "Bitte geben Sie eine Zahl zwischen %1$d und %2$d ein."
 
-#: src/Settings/SettingsSchema.php:955
+#: src/Settings/SettingsSchema.php:960
 msgid "Please enter a color in the format #RRGGBB."
 msgstr "Bitte geben Sie eine Farbe im Format #RRGGBB ein."
 
-#: src/Settings/SettingsSchema.php:969
+#: src/Settings/SettingsSchema.php:974
 msgid "This field cannot be empty."
 msgstr "Dieses Feld darf nicht leer sein."
 
-#: src/Settings/SettingsSchema.php:983
+#: src/Settings/SettingsSchema.php:988
 msgid "The CSS must not contain HTML (<) or @import rules."
 msgstr "Das CSS darf kein HTML (<) und keine @import-Regeln enthalten."
 
-#: src/Settings/SettingsSchema.php:1005
+#: src/Settings/SettingsSchema.php:1010
 msgid "Please choose an image from the media library."
 msgstr "Bitte wählen Sie ein Bild aus der Mediathek."
 
@@ -6952,7 +7186,8 @@ msgstr ""
 msgid "Something went wrong. Please try again later."
 msgstr "Etwas ist schiefgelaufen. Bitte versuchen Sie es später erneut."
 
-#. translators: 1: minimum MySQL version, 2: minimum MariaDB version, 3: MySQL or MariaDB, 4: version of this server
+#. translators: 1: minimum MySQL version, 2: minimum MariaDB version, 3: MySQL
+#. or MariaDB, 4: version of this server
 #: src/Support/Requirements.php:85
 #, php-format
 msgid ""
@@ -7415,7 +7650,8 @@ msgstr "Bestätigung"
 msgid "Form settings"
 msgstr "Formular-Einstellungen"
 
-#. translators: %s: names of the editor tabs, e.g. "Notifications, Form settings"
+#. translators: %s: names of the editor tabs, e.g. "Notifications, Form
+#. settings"
 #: assets/src/editor.js:1298
 msgid "Problems in: %s"
 msgstr "Probleme in: %s"

@@ -1,6 +1,6 @@
 # Multisite (P9-08)
 
-**Status:** Umgesetzt im Kern (Form Captain Free) am 24.11.2026 (SET-FC-42, SET-FC-35, Entscheidung 23). Form Captain Pro folgt mit SET-FC-43 (Lizenz je Site, private Uploads, MS-11); beide werden gemeinsam freigegeben. Handbuch: [`../handbuch/multisite.md`](../handbuch/multisite.md).
+**Status:** Umgesetzt im Kern (Form Captain Free) am 24.11.2026 (SET-FC-44, SET-FC-35, Entscheidung 23). Form Captain Pro folgt mit SET-FC-45 (Lizenz je Site, private Uploads, MS-11); beide werden gemeinsam freigegeben. Handbuch: [`../handbuch/multisite.md`](../handbuch/multisite.md).
 **Bezug:** [`../spec/datenmodell.md`](../spec/datenmodell.md), [`../spec/rechte.md`](../spec/rechte.md), [`../RELEASE.md`](../RELEASE.md) Abschnitt 3.
 
 ## 1. Grundsatz
@@ -34,7 +34,7 @@
 
 Netzwerk-Admin-Seite *Netzwerkverwaltung → Form Captain*: Liste der Sites mit Schemaversion, Migrationszustand, Queue-Rückstand (aggregiert), Pro-Status; **keine** Formular- oder Entry-Inhalte.
 
-**Umsetzung (SET-FC-42):**
+**Umsetzung (SET-FC-44):**
 
 | Teil | Ort |
 |---|---|
@@ -73,7 +73,7 @@ Netzwerk-Admin-Seite *Netzwerkverwaltung → Form Captain*: Liste der Sites mit 
 | L-3: je Domain | Sites mit gleicher Hauptdomain (Subdirectory-Netz) zählen einmal, gemappte Domains einzeln | fair, aber komplexer und schwer prüfbar |
 
 - Vorschlag: **L-1** mit Netzwerk-Lizenzseite, auf der der Super-Admin Pro pro Site aktiviert; Staging/Development-Regel aus konzept.md gilt je Site. Bedarf eines Netzwerk-Tarifs erst nach Nachfrage.
-- Muss mit License Captain (Aktivierungsmodell, Site-URL-Erkennung) und captain-pro abgestimmt werden. **Entschieden (Entscheidung 23): L-1**, Umsetzung in Pro (SET-FC-43).
+- Muss mit License Captain (Aktivierungsmodell, Site-URL-Erkennung) und captain-pro abgestimmt werden. **Entschieden (Entscheidung 23): L-1**, Umsetzung in Pro (SET-FC-45).
 
 ## 7. Tests
 
@@ -92,11 +92,11 @@ Netzwerk-Admin-Seite *Netzwerkverwaltung → Form Captain*: Liste der Sites mit 
 | MS-11 | Pro-Aktivierung auf 6 Sites mit 5-Site-Tarif | 6. Aktivierung abgelehnt, Free intakt |
 | MS-12 | Subdomain- und Subdirectory-Netz, Domain-Mapping | Submission-Token, Redirects, Uploads korrekt je Site |
 
-Umgesetzt in `tests/integration/Multisite/MultisiteTest.php` (Gruppe `multisite`, Lauf `vendor/bin/phpunit -c phpunit-multisite.xml.dist`, CI-Job `integration-multisite`): MS-01 bis MS-10 und MS-12; MS-07 mit 200 Sites (Umgebungsvariable `FC_MS_SITES`), davon 5 mit erzwungenem Fehler, Wiederholung per WP-CLI. MS-12 deckt Unterverzeichnis-Site und gemappte Domain in einem Lauf ab; ein reines Subdomain-Netz braucht `SUBDOMAIN_INSTALL` beim Netzaufbau und wird mit der manuellen Release-Prüfung abgenommen. MS-11 gehört zu Pro (SET-FC-43). Zusätzlich: Netzwerkvorgaben nur für neue Sites, Verbot der Datenlöschung, Netzwerkdeaktivierung, Netzwerkseite ohne Inhalte.
+Umgesetzt in `tests/integration/Multisite/MultisiteTest.php` (Gruppe `multisite`, Lauf `vendor/bin/phpunit -c phpunit-multisite.xml.dist`, CI-Job `integration-multisite`): MS-01 bis MS-10 und MS-12; MS-07 mit 200 Sites (Umgebungsvariable `FC_MS_SITES`), davon 5 mit erzwungenem Fehler, Wiederholung per WP-CLI. MS-12 deckt Unterverzeichnis-Site und gemappte Domain in einem Lauf ab; ein reines Subdomain-Netz braucht `SUBDOMAIN_INSTALL` beim Netzaufbau und wird mit der manuellen Release-Prüfung abgenommen. MS-11 gehört zu Pro (SET-FC-45). Zusätzlich: Netzwerkvorgaben nur für neue Sites, Verbot der Datenlöschung, Netzwerkdeaktivierung, Netzwerkseite ohne Inhalte.
 
 ## 8. Entscheidungen (Entscheidung 23, 24.11.2026)
 
 1. Super-Admin-Zugriff auf Entries: standardmäßig aus, Netzwerkschalter (Abschnitt 5).
-2. Lizenzzählung: L-1, je Site (Abschnitt 6, SET-FC-43).
+2. Lizenzzählung: L-1, je Site (Abschnitt 6, SET-FC-45).
 3. Netzwerk-Defaults: nur Vorgaben für neue Sites, keine Sperre, bestehende Sites werden nie überschrieben (SET-FC-35).
 4. Freigabe: Free und Pro gleichzeitig.

@@ -1,6 +1,6 @@
 <?php
 /**
- * Multisite (SET-FC-42, SET-FC-35, docs/planung/multisite.md section 7): MS-01 to MS-10 and
+ * Multisite (SET-FC-44, SET-FC-35, docs/planung/multisite.md section 7): MS-01 to MS-10 and
  * MS-12 as far as the core is concerned (MS-11 is Pro licensing).
  *
  * Runs only in the multisite test run (`vendor/bin/phpunit -c phpunit-multisite.xml.dist`).

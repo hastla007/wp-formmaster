@@ -2,7 +2,7 @@
 /**
  * Activation: run migrations, register capabilities and schedules. Never deletes data.
  *
- * Network activation (SET-FC-42) only records the activation mode: every site installs itself
+ * Network activation (SET-FC-44) only records the activation mode: every site installs itself
  * lazily on its first request (`maybe_upgrade()`), so a large network never times out.
  *
  * @package FormCaptain

@@ -1,6 +1,6 @@
 <?php
 /**
- * Mass migration of all sites (SET-FC-42, docs/planung/multisite.md section 4).
+ * Mass migration of all sites (SET-FC-44, docs/planung/multisite.md section 4).
  *
  * Every site runs its own migrator (`form_captain_db_version` per site). The network action
  * "Migrate all sites" queues a job on the main site that handles 10 sites per run and then

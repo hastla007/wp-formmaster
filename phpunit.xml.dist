@@ -7,7 +7,7 @@
 	</testsuites>
 	<groups>
 		<exclude>
-			<!-- Multisite tests run in their own run: phpunit -c phpunit-multisite.xml.dist (SET-FC-42). -->
+			<!-- Multisite tests run in their own run: phpunit -c phpunit-multisite.xml.dist (SET-FC-44). -->
 			<group>multisite</group>
 		</exclude>
 	</groups>

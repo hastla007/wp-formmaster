@@ -1,6 +1,6 @@
 <?php
 /**
- * Network option `form_captain_network` (SET-FC-42, SET-FC-35, docs/planung/multisite.md).
+ * Network option `form_captain_network` (SET-FC-44, SET-FC-35, docs/planung/multisite.md).
  *
  * Holds network state only, never payload data: activation mode, progress of the mass migration,
  * the super admin switch for entries and the defaults for sites that install Form Captain for the

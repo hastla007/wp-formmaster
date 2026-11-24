@@ -98,7 +98,7 @@ jobs:
   integration-multisite:
     name: Multisite / WP ${{ matrix.wp }} / ${{ matrix.db }}
     runs-on: ubuntu-latest
-    # SET-FC-42: the whole suite on a network installation plus the multisite tests (MS-01 to MS-12, without MS-11).
+    # SET-FC-44: the whole suite on a network installation plus the multisite tests (MS-01 to MS-12, without MS-11).
     strategy:
       fail-fast: false
       matrix:

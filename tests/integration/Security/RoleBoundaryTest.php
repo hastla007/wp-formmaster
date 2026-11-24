@@ -193,7 +193,7 @@ final class RoleBoundaryTest extends TestCase {
 		$entry = (string) file_get_contents( FORM_CAPTAIN_DIR . 'uninstall.php' );
 		$this->assertMatchesRegularExpression( "/if \\( ! defined\\( 'WP_UNINSTALL_PLUGIN' \\) \\) \\{\\s*exit;/", $entry, 'Direct calls exit immediately' );
 		$this->assertStringContainsString( 'Uninstaller::run()', $entry );
-		// The per-site logic lives in Install\Uninstaller (one run per site in a network, SET-FC-42).
+		// The per-site logic lives in Install\Uninstaller (one run per site in a network, SET-FC-44).
 		$file = (string) file_get_contents( FORM_CAPTAIN_DIR . 'src/Install/Uninstaller.php' );
 		$this->assertStringContainsString( "['privacy']['delete_data_on_uninstall']", $file );
 		$this->assertStringContainsString( "['privacy']['delete_data_confirmed_gmt']", $file );

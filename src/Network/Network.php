@@ -1,6 +1,6 @@
 <?php
 /**
- * Multisite support (SET-FC-42, docs/planung/multisite.md).
+ * Multisite support (SET-FC-44, docs/planung/multisite.md).
  *
  * Data stays strictly per site: tables use the site prefix (`$wpdb->prefix`), options are site
  * options, every entry and form ID is resolved in the current site only. This module adds the

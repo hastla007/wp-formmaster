@@ -2,7 +2,7 @@
 /**
  * Deactivation: stop scheduled events only. Data, jobs and capabilities stay.
  *
- * Network deactivation (SET-FC-42) removes the cron hooks of every site in batches; a site that
+ * Network deactivation (SET-FC-44) removes the cron hooks of every site in batches; a site that
  * still has Form Captain activated on its own keeps its schedules.
  *
  * @package FormCaptain

@@ -1,7 +1,7 @@
 <?php
 /**
  * WP-CLI commands (ADR 0004): `wp form-captain jobs run|list|retry`, `cleanup`, `status`,
- * `settings list|get|set|reset|export|import` (SET-FC-14), `migrate [--network]` (SET-FC-42).
+ * `settings list|get|set|reset|export|import` (SET-FC-14), `migrate [--network]` (SET-FC-44).
  *
  * Logic lives in public methods returning data so it can be tested without WP-CLI.
  *
@@ -246,7 +246,7 @@ final class Commands {
 	}
 
 	/**
-	 * Migrates the current site or, with $network, all sites of the network (SET-FC-42).
+	 * Migrates the current site or, with $network, all sites of the network (SET-FC-44).
 	 *
 	 * @param callable(array<string,mixed>):void|null $progress called after every batch (network)
 	 * @return array{migrated:int,failed:array<int,string>}

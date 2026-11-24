@@ -1,6 +1,6 @@
 <?php
 /**
- * Uninstall (P5-06, SET-FC-42): keeps all data unless the administrator explicitly enabled
+ * Uninstall (P5-06, SET-FC-44): keeps all data unless the administrator explicitly enabled
  * "Delete all Form Captain data on uninstall" and confirmed it in the settings.
  *
  * In a network every site follows its own rule: data of a site is deleted only when this site

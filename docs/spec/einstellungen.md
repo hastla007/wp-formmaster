@@ -143,7 +143,7 @@ Filter `form_captain_country_presets_v1` (Array Schlüssel → `label`, `values`
 Filter `form_captain_double_opt_in_v1` gewinnt über die Formularwerte.
 
 
-## Netzwerk-Einstellungen (Multisite, SET-FC-42, SET-FC-35)
+## Netzwerk-Einstellungen (Multisite, SET-FC-44, SET-FC-35)
 
 Netzwerkoption `form_captain_network` (`get_site_option()`), bearbeitbar nur mit `manage_network_options` unter *Netzwerkverwaltung → Form Captain* (`src/Admin/NetworkPage.php`, Prüfung in `Network\NetworkSettings::sanitize()`). Enthält keine Nutzdaten.
 

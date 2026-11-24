@@ -168,9 +168,7 @@ final class Migrator {
 		}
 		if ( $version >= 1 ) {
 			foreach ( Tables::ALL as $table ) {
-				$name  = Tables::name( $table );
-				$found = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $name ) ) );
-				if ( $found !== $name ) {
+				if ( ! Tables::exists( Tables::name( $table ) ) ) {
 					throw new \RuntimeException( 'missing_table:' . esc_html( $table ) );
 				}
 			}

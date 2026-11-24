@@ -860,6 +860,9 @@ final class SettingsPage {
 		if ( 'privacy' === $tab && 'delete_data_on_uninstall' === $key ) {
 			$counts = $this->entries->count_for_forms( null );
 			echo '<div class="fc-uninstall">';
+			if ( ! \FormCaptain\Network\NetworkSettings::site_data_deletion_allowed() ) {
+				echo '<p class="fc-warning">' . esc_html__( 'The network administrator does not allow sites of this network to delete their data when the plugin is deleted. Forms and submissions are kept.', 'form-captain' ) . '</p>';
+			}
 			if ( $value && Settings::get( 'privacy.delete_data_confirmed_gmt' ) ) {
 				/* translators: %s: date */
 				echo '<p class="fc-warning">' . esc_html( sprintf( __( 'Confirmed on %s. Deleting the plugin will also delete all forms and submissions.', 'form-captain' ), self::local_date( (string) Settings::get( 'privacy.delete_data_confirmed_gmt' ) ) ) ) . '</p>';

@@ -70,4 +70,4 @@ Alle Codes mit Text und nächstem Schritt: `ConnectorRegistry::diagnostic_codes(
 
 ## 6. Abnahme (P8-22)
 
-Abgedeckt durch `tests/integration/Contract/*` und `tests/integration/Privacy/*`: Export/Eraser (Löschen und Anonymisieren), Entry-Löschung vor Zustellung, Replay/Duplikat (Signierter Kontext, Idempotency-Key), unbekannte Payload-Felder (Fixtures `tests/fixtures/contract/v1`). **Offen:** Retention-Weitergabe an Fremdsysteme, Review-Löschweitergabe (benötigt Review-Captain-Adapter) und Multisite (in v1 nicht unterstützt).
+Abgedeckt durch `tests/integration/Contract/*` und `tests/integration/Privacy/*`: Export/Eraser (Löschen und Anonymisieren), Entry-Löschung vor Zustellung, Replay/Duplikat (Signierter Kontext, Idempotency-Key), unbekannte Payload-Felder (Fixtures `tests/fixtures/contract/v1`). **Offen:** Retention-Weitergabe an Fremdsysteme, Review-Löschweitergabe (benötigt Review-Captain-Adapter). Multisite ist seit SET-FC-44 abgedeckt (Idempotenzschlüssel mit `{site_id}`, Daten je Site; `tests/integration/Multisite/MultisiteTest.php`).

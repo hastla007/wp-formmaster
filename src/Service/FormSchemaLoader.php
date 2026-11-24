@@ -16,7 +16,11 @@ use FormCaptain\Repository\FormRepository;
 
 final class FormSchemaLoader {
 
-	/** @var array<int,array{version_id:int,version_no:int,fields:array<int,array<string,mixed>>}> */
+	/**
+	 * Keyed by site and version ID: version IDs repeat across the sites of a network.
+	 *
+	 * @var array<string,array{version_id:int,version_no:int,fields:array<int,array<string,mixed>>}>
+	 */
 	private array $cache = array();
 
 	public function __construct( private FormRepository $forms, private SchemaValidator $validator ) {}
@@ -32,18 +36,19 @@ final class FormSchemaLoader {
 		if ( $version_id <= 0 ) {
 			return null;
 		}
-		if ( ! isset( $this->cache[ $version_id ] ) ) {
+		$key = get_current_blog_id() . ':' . $version_id;
+		if ( ! isset( $this->cache[ $key ] ) ) {
 			$version = $this->forms->find_version( $version_id );
 			if ( ! $version || (int) $version['form_id'] !== (int) $form['id'] ) {
 				return null;
 			}
-			$this->cache[ $version_id ] = array(
+			$this->cache[ $key ] = array(
 				'version_id' => $version_id,
 				'version_no' => (int) $version['version_no'],
 				'fields'     => $this->normalize( $version['schema'] ),
 			);
 		}
-		return $this->cache[ $version_id ];
+		return $this->cache[ $key ];
 	}
 
 	/**
@@ -55,15 +60,16 @@ final class FormSchemaLoader {
 	public function version( array $form, int $version_no ): ?array {
 		foreach ( $this->forms->versions_for( (int) $form['id'] ) as $version ) {
 			if ( (int) $version['version_no'] === $version_no ) {
-				$id = (int) $version['id'];
-				if ( ! isset( $this->cache[ $id ] ) ) {
-					$this->cache[ $id ] = array(
+				$id  = (int) $version['id'];
+				$key = get_current_blog_id() . ':' . $id;
+				if ( ! isset( $this->cache[ $key ] ) ) {
+					$this->cache[ $key ] = array(
 						'version_id' => $id,
 						'version_no' => $version_no,
 						'fields'     => $this->normalize( $version['schema'] ),
 					);
 				}
-				return $this->cache[ $id ];
+				return $this->cache[ $key ];
 			}
 		}
 		return null;

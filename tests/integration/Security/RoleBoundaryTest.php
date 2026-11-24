@@ -190,11 +190,14 @@ final class RoleBoundaryTest extends TestCase {
 	}
 
 	public function test_uninstall_deletes_only_after_confirmation_and_removes_every_option(): void {
-		$file = (string) file_get_contents( FORM_CAPTAIN_DIR . 'uninstall.php' );
-		$this->assertMatchesRegularExpression( "/if \\( ! defined\\( 'WP_UNINSTALL_PLUGIN' \\) \\) \\{\\s*exit;/", $file, 'Direct calls exit immediately' );
+		$entry = (string) file_get_contents( FORM_CAPTAIN_DIR . 'uninstall.php' );
+		$this->assertMatchesRegularExpression( "/if \\( ! defined\\( 'WP_UNINSTALL_PLUGIN' \\) \\) \\{\\s*exit;/", $entry, 'Direct calls exit immediately' );
+		$this->assertStringContainsString( 'Uninstaller::run()', $entry );
+		// The per-site logic lives in Install\Uninstaller (one run per site in a network, SET-FC-44).
+		$file = (string) file_get_contents( FORM_CAPTAIN_DIR . 'src/Install/Uninstaller.php' );
 		$this->assertStringContainsString( "['privacy']['delete_data_on_uninstall']", $file );
 		$this->assertStringContainsString( "['privacy']['delete_data_confirmed_gmt']", $file );
-		$this->assertLessThan( strpos( $file, 'DROP TABLE' ), strpos( $file, 'if ( ! $form_captain_delete )' ), 'Data is only deleted after the flag check' );
+		$this->assertLessThan( strpos( $file, 'DROP TABLE' ), strpos( $file, 'if ( ! $delete )' ), 'Data is only deleted after the flag check' );
 
 		// Every option the plugin stores (constants and literals in src/) is removed on uninstall.
 		$options = array();

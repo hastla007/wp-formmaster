@@ -37,4 +37,22 @@ final class Tables {
 		global $wpdb;
 		return $wpdb->prefix . $table;
 	}
+
+	/**
+	 * True when the table (full name with prefix) exists. Asks the table itself instead of
+	 * SHOW TABLES, which also covers temporary tables (test suites create those).
+	 */
+	public static function exists( string $full_name ): bool {
+		global $wpdb;
+		if ( ! preg_match( '/^[A-Za-z0-9_]+$/', $full_name ) ) {
+			return false;
+		}
+		$suppress = $wpdb->suppress_errors( true );
+		try {
+			$columns = $wpdb->get_results( "SHOW COLUMNS FROM `{$full_name}`" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		} finally {
+			$wpdb->suppress_errors( $suppress );
+		}
+		return ! empty( $columns );
+	}
 }

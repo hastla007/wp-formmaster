@@ -82,7 +82,7 @@ Ohne Befund geprüft (Auswahl): SQL ausschließlich über `prepare`, `ORDER BY` 
 3. **Code-Review der Pro-Funktionen** gegen T-UPL, T-DL, T-WH (Uploads, Downloads, Webhook-SSRF inkl. DNS-Rebinding) – im Free-Code nicht vorhanden und daher hier nicht geprüft.
 4. **Statische Analyse** mit PHPStan (Level laut `phpstan.neon.dist`) und einem Taint-Analyzer (z. B. Psalm-Taint) in CI; `vendor/bin/phpstan` war in dieser Umgebung nicht installiert.
 5. **Header-Härtung prüfen:** `Referrer-Policy: same-origin` auf Seiten mit `fc_r`-Parameter, optionale CSP für die Admin-Vorschau.
-6. **Multisite/Super-Admin** (laut Spec nicht unterstützt) explizit abweisen oder testen, bevor das Plugin dort aktivierbar ist.
+6. **Multisite/Super-Admin** (laut Spec nicht unterstützt) explizit abweisen oder testen, bevor das Plugin dort aktivierbar ist. *Erledigt 24.11.2026 (SET-FC-44): Multisite unterstützt; Super-Admins ohne eigene Rolle erhalten die Entry-Capabilities nicht (Standard), Daten strikt je Site; Tests MS-01 bis MS-12 (ohne MS-11) in `tests/integration/Multisite/MultisiteTest.php`.*
 7. **Security-Tests verpflichtend halten:** Die Tests unter `tests/integration/Security/` erfassen neue Routen, Handler und Optionen automatisch und schlagen fehl, bis diese bewusst eingetragen sind – nicht abschwächen, sondern Einträge ergänzen.
 
 ## Anhang A – Grep-Sweeps (Ergebnis)

@@ -142,3 +142,15 @@ Filter `form_captain_country_presets_v1` (Array Schlüssel → `label`, `values`
 
 Filter `form_captain_double_opt_in_v1` gewinnt über die Formularwerte.
 
+
+## Netzwerk-Einstellungen (Multisite, SET-FC-44, SET-FC-35)
+
+Netzwerkoption `form_captain_network` (`get_site_option()`), bearbeitbar nur mit `manage_network_options` unter *Netzwerkverwaltung → Form Captain* (`src/Admin/NetworkPage.php`, Prüfung in `Network\NetworkSettings::sanitize()`). Enthält keine Nutzdaten.
+
+| Schlüssel | Typ | Standard | Wirkung |
+|---|---|---|---|
+| `super_admin_entries` | bool | false | Super-Admins ohne eigene Rolle auf einer Site erhalten die Entry-Capabilities (lesen, bearbeiten, exportieren, löschen) nur, wenn an (Entscheidung 23) |
+| `allow_site_data_deletion` | bool | true | aus: `privacy.delete_data_on_uninstall` lässt sich auf keiner Site einschalten (Feldfehler), Deinstallation löscht nirgends Daten |
+| `site_defaults` | Pfad → Wert | leer | Vorgaben für neue Sites: `privacy.retention`, `privacy.trash_days`, `privacy.erasure_mode`, `privacy.log_days`; Prüfung wie auf der Einstellungsseite; angewendet nur, wenn eine Site `form_captain_settings` zum ersten Mal anlegt (`Settings::first_install_values()`). Bestehende Sites werden nie geändert; eine Sperre einzelner Werte gibt es nicht |
+| `activation`, `activated_gmt` | intern | – | `network` nach Netzwerkaktivierung |
+| `migration` | intern | idle | Fortschritt der Massenmigration (`RELEASE.md` 3.8) |

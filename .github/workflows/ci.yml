@@ -95,6 +95,46 @@ jobs:
       - name: Two-plugin contract tests (core + reference connector loaded as plugin)
         run: FC_LOAD_REFERENCE_CONNECTOR=1 vendor/bin/phpunit --group two-plugin
 
+  integration-multisite:
+    name: Multisite / WP ${{ matrix.wp }} / ${{ matrix.db }}
+    runs-on: ubuntu-latest
+    # SET-FC-44: the whole suite on a network installation plus the multisite tests (MS-01 to MS-12, without MS-11).
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { wp: '7.0.8', db: 'mariadb:12.3' }
+          - { wp: 'latest', db: 'mysql:9.7' }
+    services:
+      database:
+        image: ${{ matrix.db }}
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wp_tests
+          MYSQL_USER: wp
+          MYSQL_PASSWORD: wp
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: wp_tests
+          MARIADB_USER: wp
+          MARIADB_PASSWORD: wp
+        ports: [ '3306:3306' ]
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot || healthcheck.sh --connect"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+    env:
+      WP_TESTS_DB_HOST: 127.0.0.1:3306
+      WP_TESTS_DB_NAME: wp_tests
+      WP_TESTS_DB_USER: wp
+      WP_TESTS_DB_PASSWORD: wp
+      WP_VERSION: ${{ matrix.wp }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with: { php-version: '8.5', extensions: mysqli, tools: composer:v2 }
+      - run: composer install --no-interaction --no-progress
+      - run: bin/install-wp-tests.sh "$WP_VERSION"
+      - run: vendor/bin/phpunit -c phpunit-multisite.xml.dist
+
   e2e:
     name: Browser E2E (${{ matrix.browser }})
     runs-on: ubuntu-latest

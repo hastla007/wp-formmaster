@@ -67,7 +67,7 @@ Use a system cron job or run `wp form-captain jobs run`. As a fallback, opening 
 
 = Does Form Captain support multisite? =
 
-Not in version 1.0. The plugin can be activated on individual sites of a network, but network activation and network-wide settings are not supported yet.
+Yes. You can activate Form Captain on single sites or for the whole network. Every site keeps its own forms, submissions, settings and queue; each site sets itself up on its first request. The network admin page **Form Captain** shows the database schema and queue backlog of every site (never form or submission contents), migrates all sites in the background and sets presets for new sites. Super admins cannot see the submissions of sites where they have no role unless the network allows it.
 
 = Who can see submissions? =
 

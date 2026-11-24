@@ -84,8 +84,8 @@ final class AccessControl {
 	}
 
 	/**
-	 * Number of users who hold a capability through any of their roles (super admins excluded,
-	 * multisite is not supported in v1).
+	 * Number of users who hold a capability through any of their roles on this site. Super admins
+	 * without a role here are not counted (in a network they get no entry access by default, SET-FC-42).
 	 */
 	public static function users_with_cap( string $cap ): int {
 		$roles = array();

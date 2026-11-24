@@ -26,6 +26,8 @@ final class Plugin {
 	/** Module classes registered on boot, in order. */
 	private const MODULES = array(
 		Jobs\Scheduler::class,
+		Network\Network::class,
+		Network\NetworkMigration::class,
 		Http\RestController::class,
 		Http\AdminPostController::class,
 		Service\DoubleOptIn::class,
@@ -41,6 +43,7 @@ final class Plugin {
 		Admin\IntegrationsPage::class,
 		Admin\DashboardPage::class,
 		Admin\AdminRest::class,
+		Admin\NetworkPage::class,
 		Privacy\PrivacyIntegration::class,
 		Integrations\ConnectorRegistry::class,
 		Cli\Commands::class,

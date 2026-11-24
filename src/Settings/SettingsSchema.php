@@ -899,6 +899,11 @@ final class SettingsSchema {
 					$values['retention'] = $current['retention'];
 				}
 			}
+			if ( ! empty( $values['delete_data_on_uninstall'] ) && empty( $current['delete_data_on_uninstall'] ) && ! \FormCaptain\Network\NetworkSettings::site_data_deletion_allowed() ) {
+				// SET-FC-35: the network administrator decides whether sites may delete their data on uninstall.
+				$errors['privacy.delete_data_on_uninstall'] = __( 'The network administrator does not allow sites of this network to delete their data when the plugin is deleted.', 'form-captain' );
+				$values['delete_data_on_uninstall']         = false;
+			}
 			if ( empty( $values['delete_data_on_uninstall'] ) ) {
 				$values['delete_data_on_uninstall']  = false;
 				$values['delete_data_confirmed_gmt'] = '';

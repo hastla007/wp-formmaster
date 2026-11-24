@@ -138,7 +138,7 @@ final class Settings {
 	public static function ensure_defaults(): void {
 		$stored = get_option( self::OPTION, null );
 		if ( ! is_array( $stored ) ) {
-			add_option( self::OPTION, self::defaults(), '', true );
+			add_option( self::OPTION, self::first_install_values(), '', true );
 			return;
 		}
 		$all = self::all();
@@ -146,6 +146,24 @@ final class Settings {
 			$all['privacy']['retention'] = self::LEGACY_RETENTION;
 		}
 		update_option( self::OPTION, $all, true );
+	}
+
+	/**
+	 * Values of a site that stores its settings for the first time: the defaults with the network
+	 * presets for new sites (SET-FC-35). Only used when no settings exist yet, so the presets never
+	 * overwrite the settings of an existing site.
+	 *
+	 * @return array<string,array<string,mixed>>
+	 */
+	public static function first_install_values(): array {
+		$values = self::defaults();
+		foreach ( \FormCaptain\Network\NetworkSettings::site_defaults() as $path => $value ) {
+			list( $group, $key ) = array_pad( explode( '.', $path, 2 ), 2, '' );
+			if ( isset( $values[ $group ] ) && array_key_exists( $key, $values[ $group ] ) ) {
+				$values[ $group ][ $key ] = $value;
+			}
+		}
+		return $values;
 	}
 
 	/**

@@ -147,14 +147,25 @@ Rollback = Rückkehr zur letzten funktionierenden Plugin-Version **und** zu eine
 - Standard: `uninstall.php` entfernt nur geplante Cron-Hooks; Tabellen, Optionen und Capabilities bleiben.
 - Datenlöschung nur, wenn `privacy.delete_data_on_uninstall = true` **und** `privacy.delete_data_confirmed_gmt` gesetzt ist; dann: alle `fc_*`-Tabellen, Optionen `form_captain_settings`, `form_captain_db_version`, `form_captain_migration_state`, `form_captain_secret`, `form_captain_connectors`, `form_captain_activation_redirect`, `form_captain_worker_lock` sowie Capabilities.
 - Test: beide Varianten in der Upgrade-Matrix (U-12, U-13).
+- **Netzwerk (SET-FC-44):** `uninstall.php` ruft `Install\Uninstaller::run()` auf; im Netzwerk läuft die Regel oben **je Site** (Stapel zu 100 Sites über `switch_to_blog()`/`restore_current_blog()`): Cron-Hooks überall entfernt, Daten nur auf Sites mit eigener bestätigter Löschoption und nur, wenn das Netzwerk Sites die Löschung erlaubt (`form_captain_network.allow_site_data_deletion`). Fehler einer Site halten die übrigen nicht auf; die Netzwerkoption `form_captain_network` wird erst entfernt, wenn alle Sites fehlerfrei durchlaufen sind. Große Netze: `wp plugin deactivate form-captain --network`, dann `wp plugin uninstall form-captain` (kein Web-Timeout).
 
-### 3.7 WP-CLI (geplant)
+### 3.7 WP-CLI
 
 | Befehl | Zweck | Status |
 |---|---|---|
-| `wp form-captain jobs run` | Queue per System-Cron abarbeiten | ADR 0004, zu implementieren |
-| `wp form-captain status` | aggregierter Status inkl. Schema/Migration (siehe `BETRIEB.md` 5) | zu implementieren |
-| `wp form-captain migrate` | Migration ohne Web-Timeout ausführen bzw. fortsetzen | Vorschlag, zu implementieren |
+| `wp form-captain jobs run` | Queue per System-Cron abarbeiten | umgesetzt (ADR 0004) |
+| `wp form-captain status` | aggregierter Status inkl. Schema/Migration (siehe `BETRIEB.md` 5) | umgesetzt |
+| `wp form-captain migrate` | Migration der aktuellen Site ohne Web-Timeout ausführen bzw. fortsetzen; Exit-Code ≠ 0 bei Fehler | umgesetzt (SET-FC-44) |
+| `wp form-captain migrate --network` | alle Sites des Netzwerks migrieren, 10 je Stapel, Fehler je Site als Warnung mit Fehlercode, andere Sites laufen weiter | umgesetzt (SET-FC-44) |
+
+### 3.8 Multisite (SET-FC-44)
+
+- **Je Site unabhängig:** Jede Site hat eigene Tabellen (`{prefix}{site_id}_fc_*`), `form_captain_db_version` und `form_captain_migration_state`. Upgrade, abgebrochene Migration, Downgrade und Rollback (3.1–3.4) gelten unverändert je Site.
+- **Lazy:** Nach einem Netzwerk-Update migriert jede Site beim nächsten Request. Netzwerkaktivierung legt keine Tabellen an; neue Sites werden über `form_captain_install_pending` und das Cron-Ereignis `form_captain_install_site` vorgemerkt.
+- **Massenmigration:** *Netzwerkverwaltung → Form Captain → Alle Sites migrieren* startet einen Lauf (Job `network.migrate` auf der Hauptsite, 10 Sites je Job, Folgejob je Stapel). Fortschritt in `form_captain_network.migration` = `{status, run, target, total, done, failed: {site_id: code}, cursor}`. Ein erneuter Start ersetzt den laufenden Lauf; bereits aktuelle Sites sind darin ein No-op. Alternativ `wp form-captain migrate --network`.
+- **Fehler:** Eine fehlgeschlagene Site (`migration_failed`, `migration_running`, `schema_newer_than_plugin`, `site_failed`) wird mit Code in der Netzwerkübersicht gelistet und blockiert keine andere Site. Abhilfe wie 3.2 auf der betroffenen Site, danach Lauf erneut starten.
+- **Rollback im Netzwerk:** Plugin-Verzeichnis tauschen wie 3.4 (gilt für alle Sites zugleich); bei „nur mit DB-Restore“ die `fc_*`-Tabellen und `form_captain_*`-Optionen **aller betroffenen Sites** aus dem Backup einspielen. `form_captain_network` enthält keine Nutzdaten und muss nicht zurückgespielt werden.
+- **Rollback-Plan (3.5):** Zusatzfeld „Anzahl Sites / geschätzte Dauer der Massenmigration“.
 
 ## 4. Upgrade-Matrix (Testplan P6-14)
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * WP-CLI commands (ADR 0004): `wp form-captain jobs run|list|retry`, `cleanup`, `status`,
- * `settings list|get|set|reset|export|import` (SET-FC-14).
+ * `settings list|get|set|reset|export|import` (SET-FC-14), `migrate [--network]` (SET-FC-44).
  *
  * Logic lives in public methods returning data so it can be tested without WP-CLI.
  *
@@ -79,6 +79,21 @@ final class Commands {
 		);
 		\WP_CLI::add_command( 'form-captain cleanup', array( $this, 'cli_cleanup' ), array( 'shortdesc' => 'Runs retention, trash and log cleanup now.' ) );
 		\WP_CLI::add_command( 'form-captain status', array( $this, 'cli_status' ), array( 'shortdesc' => 'Prints the diagnostics report (no personal data).' ) );
+		\WP_CLI::add_command(
+			'form-captain migrate',
+			array( $this, 'cli_migrate' ),
+			array(
+				'shortdesc' => 'Runs or resumes the database migration without a web timeout.',
+				'synopsis'  => array(
+					array(
+						'type'        => 'flag',
+						'name'        => 'network',
+						'optional'    => true,
+						'description' => 'Migrates every site of the network, 10 sites per batch. An error on one site does not stop the others.',
+					),
+				),
+			)
+		);
 		$this->register_settings_commands();
 	}
 
@@ -228,6 +243,34 @@ final class Commands {
 
 	public function cleanup(): void {
 		do_action( 'form_captain_cleanup' );
+	}
+
+	/**
+	 * Migrates the current site or, with $network, all sites of the network (SET-FC-44).
+	 *
+	 * @param callable(array<string,mixed>):void|null $progress called after every batch (network)
+	 * @return array{migrated:int,failed:array<int,string>}
+	 */
+	public function migrate( bool $network = false, ?callable $progress = null ): array {
+		if ( ! $network || ! is_multisite() ) {
+			$code = \FormCaptain\Install\Activator::migrate_site();
+			return array(
+				'migrated' => null === $code ? 1 : 0,
+				'failed'   => null === $code ? array() : array( get_current_blog_id() => $code ),
+			);
+		}
+		$state = \FormCaptain\Network\NetworkMigration::start( false );
+		while ( 'running' === $state['status'] ) {
+			$state = \FormCaptain\Network\NetworkMigration::run_batch();
+			if ( null !== $progress ) {
+				$progress( $state );
+			}
+		}
+		$failed = array_map( 'strval', (array) $state['failed'] );
+		return array(
+			'migrated' => (int) $state['done'] - count( $failed ),
+			'failed'   => $failed,
+		);
 	}
 
 	public function status_report(): string {
@@ -540,5 +583,29 @@ final class Commands {
 	 */
 	public function cli_status( array $args, array $assoc ): void {
 		\WP_CLI::log( $this->status_report() );
+	}
+
+	/**
+	 * @param array<int,string>    $args
+	 * @param array<string,string> $assoc
+	 */
+	public function cli_migrate( array $args, array $assoc ): void {
+		$network = ! empty( $assoc['network'] );
+		if ( $network && ! is_multisite() ) {
+			\WP_CLI::error( 'This is not a multisite network.' );
+		}
+		$result = $this->migrate(
+			$network,
+			static function ( array $state ): void {
+				\WP_CLI::log( sprintf( 'Sites processed: %d of %d, failed: %d.', (int) $state['done'], (int) $state['total'], count( (array) $state['failed'] ) ) );
+			}
+		);
+		foreach ( $result['failed'] as $site_id => $code ) {
+			\WP_CLI::warning( sprintf( 'Site %d: %s', $site_id, $code ) );
+		}
+		if ( $result['failed'] ) {
+			\WP_CLI::error( sprintf( '%d site(s) migrated, %d failed. Fix the cause and run the command again.', $result['migrated'], count( $result['failed'] ) ) );
+		}
+		\WP_CLI::success( sprintf( '%d site(s) migrated to schema %d.', $result['migrated'], \FormCaptain\Database\Migrator::TARGET_VERSION ) );
 	}
 }

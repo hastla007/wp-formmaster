@@ -24,7 +24,7 @@
 | AC-004 | integration | Aktivierung prüft Capabilities | `administrator` hat alle 7 `form_captain_*`-Caps; `editor`, `author`, `contributor`, `subscriber` keine |
 | AC-005 | integration | Deaktivieren | Cron-Events `form_captain_process_jobs`, `form_captain_daily_cleanup`, `form_captain_hourly_cleanup` entfernt; alle Tabellen/Daten unverändert |
 | AC-006 | integration | Plugin auf PHP < 8.5 bzw. WP < 7.0 laden (Mock der Versionsprüfung) | kein Fatal Error; Admin-Hinweis zur Mindestversion; keine Hooks/Routen registriert |
-| AC-007 | integration | Multisite-Installation | Aktivierung verweigert/Hinweis „Multisite nicht unterstützt in v1.0“; kein Netzwerk-Aktivieren |
+| AC-007 | integration | Multisite-Installation | *Geändert 24.11.2026 (Entscheidung 23, SET-FC-44):* Einzel- und Netzwerkaktivierung möglich; Netzwerkaktivierung legt Tabellen erst beim ersten Request je Site an; Daten strikt je Site (MS-01 bis MS-12 ohne MS-11, `MultisiteTest`) |
 | AC-008 | integration | Plugin ohne WooCommerce und ohne Yoast | alle Funktionen verfügbar, keine Warnungen |
 | AC-009 | manuell | Release-ZIP installieren (Upload über Plugins → Installieren) | Aktivierung erfolgreich; ZIP enthält keine `tests/`, `node_modules/`, `.git`, Dev-Vendor, Secrets |
 | AC-010 | unit | Statische Prüfung: keine Lizenzprüfung, kein Updater, kein Remote-Call an Lizenzserver im Free-Code (Grep auf Klassen/URLs der Captain-Pro-Clients) | keine Treffer |

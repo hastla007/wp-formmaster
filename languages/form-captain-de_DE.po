@@ -7881,3 +7881,231 @@ msgstr "Shortcode:"
 #: assets/src/editor.js:2449
 msgid "Reload latest version (discards your changes)"
 msgstr "Neueste Version laden (verwirft deine Änderungen)"
+
+#: src/Admin/NetworkPage.php:124 src/Admin/NetworkPage.php:183
+msgid "You are not allowed to manage the network settings of Form Captain."
+msgstr "Du darfst die Netzwerk-Einstellungen von Form Captain nicht verwalten."
+
+#: src/Admin/NetworkPage.php:172
+msgid "Up to date"
+msgstr "Aktuell"
+
+#: src/Admin/NetworkPage.php:173
+msgid "Migration pending (runs on the next request)"
+msgstr "Migration ausstehend (läuft beim nächsten Aufruf)"
+
+#: src/Admin/NetworkPage.php:174
+msgid "Migration running"
+msgstr "Migration läuft"
+
+#: src/Admin/NetworkPage.php:175
+msgid "Migration failed"
+msgstr "Migration fehlgeschlagen"
+
+#: src/Admin/NetworkPage.php:176
+msgid "Installation planned (runs on the first request)"
+msgstr "Einrichtung vorgemerkt (läuft beim ersten Aufruf)"
+
+#: src/Admin/NetworkPage.php:177
+msgid "Not installed yet (installs on the first request)"
+msgstr "Noch nicht eingerichtet (wird beim ersten Aufruf eingerichtet)"
+
+#: src/Admin/NetworkPage.php:188
+msgid ""
+"Every site keeps its own forms, submissions, settings and queue. This page "
+"shows only the technical state of each site, never form or submission "
+"contents."
+msgstr ""
+"Jede Website hat ihre eigenen Formulare, Einsendungen, Einstellungen und "
+"Warteschlange. Diese Seite zeigt nur den technischen Zustand jeder Website, "
+"nie Formular- oder Einsendungsinhalte."
+
+#: src/Admin/NetworkPage.php:199
+msgid "Network settings saved."
+msgstr "Netzwerk-Einstellungen gespeichert."
+
+#: src/Admin/NetworkPage.php:200
+msgid "The network settings were not saved. Please check your input."
+msgstr ""
+"Die Netzwerk-Einstellungen wurden nicht gespeichert. Bitte prüfe deine "
+"Eingaben."
+
+#: src/Admin/NetworkPage.php:201
+msgid ""
+"The migration of all sites has started. It runs in the background on the "
+"main site, 10 sites at a time."
+msgstr ""
+"Die Migration aller Websites wurde gestartet und läuft im Hintergrund auf "
+"der Hauptwebsite, jeweils 10 Websites auf einmal."
+
+#: src/Admin/NetworkPage.php:212
+msgid "Database migration"
+msgstr "Datenbankmigration"
+
+#. translators: %d: schema version
+#: src/Admin/NetworkPage.php:216
+#, php-format
+msgid ""
+"Each site migrates its own database tables on its next request. You can also "
+"migrate all sites now (current schema: %d)."
+msgstr ""
+"Jede Website aktualisiert ihre Datenbanktabellen beim nächsten Aufruf "
+"selbst. Du kannst auch jetzt alle Websites migrieren (aktuelles Schema: %d)."
+
+#. translators: 1: processed sites, 2: all sites, 3: failed sites
+#: src/Admin/NetworkPage.php:224
+#, php-format
+msgid "Last run: %1$d of %2$d sites processed, %3$d failed."
+msgstr "Letzter Lauf: %1$d von %2$d Websites bearbeitet, %3$d fehlgeschlagen."
+
+#: src/Admin/NetworkPage.php:229
+msgid "The run continues in the background."
+msgstr "Der Lauf wird im Hintergrund fortgesetzt."
+
+#: src/Admin/NetworkPage.php:229
+msgid "The run is finished."
+msgstr "Der Lauf ist abgeschlossen."
+
+#: src/Admin/NetworkPage.php:231
+msgid "Failed sites (site ID: error code):"
+msgstr "Fehlgeschlagene Websites (Website-ID: Fehlercode):"
+
+#: src/Admin/NetworkPage.php:240
+msgid "Migrate all sites again"
+msgstr "Alle Websites erneut migrieren"
+
+#: src/Admin/NetworkPage.php:240
+msgid "Migrate all sites"
+msgstr "Alle Websites migrieren"
+
+#: src/Admin/NetworkPage.php:248
+msgid "Sites"
+msgstr "Websites"
+
+#: src/Admin/NetworkPage.php:250
+msgid "Site"
+msgstr "Website"
+
+#: src/Admin/NetworkPage.php:250
+msgid "Schema"
+msgstr "Schema"
+
+#: src/Admin/NetworkPage.php:250
+msgid "State"
+msgstr "Zustand"
+
+#: src/Admin/NetworkPage.php:250
+msgid "Queue (open / failed / paused / dead)"
+msgstr ""
+"Warteschlange (offen / fehlgeschlagen / pausiert / endgültig fehlgeschlagen)"
+
+#: src/Admin/NetworkPage.php:250
+msgid "Oldest due job"
+msgstr "Ältester fälliger Auftrag"
+
+#. translators: %s: minutes
+#: src/Admin/NetworkPage.php:265
+#, php-format
+msgid "%s min"
+msgstr "%s Min."
+
+#: src/Admin/NetworkPage.php:267
+msgid "Total on this page"
+msgstr "Summe auf dieser Seite"
+
+#: src/Admin/NetworkPage.php:287
+msgid "Network settings"
+msgstr "Netzwerk-Einstellungen"
+
+#: src/Admin/NetworkPage.php:291
+msgid "Super admin access to submissions"
+msgstr "Super-Admin-Zugriff auf Einsendungen"
+
+#: src/Admin/NetworkPage.php:291
+msgid ""
+"Super admins may read, edit, export and delete submissions on sites where "
+"they have no role of their own"
+msgstr ""
+"Super-Admins dürfen Einsendungen auf Websites lesen, bearbeiten, exportieren "
+"und löschen, auf denen sie keine eigene Rolle haben"
+
+#: src/Admin/NetworkPage.php:292
+msgid ""
+"Off by default: submissions often contain personal data that only the people "
+"responsible for a site should see. Super admins with a role on a site keep "
+"the access of that role."
+msgstr ""
+"Standardmäßig aus: Einsendungen enthalten oft personenbezogene Daten, die "
+"nur die Verantwortlichen einer Website sehen sollen. Super-Admins mit einer "
+"Rolle auf einer Website behalten die Rechte dieser Rolle."
+
+#: src/Admin/NetworkPage.php:293
+msgid "Data deletion on uninstall"
+msgstr "Datenlöschung bei Deinstallation"
+
+#: src/Admin/NetworkPage.php:293
+msgid ""
+"Sites may choose to delete their Form Captain data when the plugin is deleted"
+msgstr ""
+"Websites dürfen festlegen, dass ihre Form-Captain-Daten beim Löschen des "
+"Plugins gelöscht werden"
+
+#: src/Admin/NetworkPage.php:294
+msgid ""
+"Each site decides and confirms this itself in its privacy settings. Without "
+"this permission all data is kept on every site."
+msgstr ""
+"Jede Website entscheidet und bestätigt das selbst in ihren Datenschutz-"
+"Einstellungen. Ohne diese Erlaubnis bleiben alle Daten auf jeder Website "
+"erhalten."
+
+#: src/Admin/NetworkPage.php:297
+msgid "Presets for new sites"
+msgstr "Vorgaben für neue Websites"
+
+#: src/Admin/NetworkPage.php:298
+msgid ""
+"Used once, when a site sets up Form Captain for the first time. Existing "
+"sites keep their settings. Leave a field empty to use the plugin default."
+msgstr ""
+"Gilt einmalig, wenn eine Website Form Captain zum ersten Mal einrichtet. "
+"Bestehende Websites behalten ihre Einstellungen. Lass ein Feld leer, um den "
+"Standard des Plugins zu verwenden."
+
+#: src/Admin/NetworkPage.php:311
+msgid "Plugin default"
+msgstr "Standard des Plugins"
+
+#: src/Admin/NetworkPage.php:320
+msgid ""
+"A period such as 30d, 6m or 10y, or \"manual\" for no automatic deletion."
+msgstr ""
+"Ein Zeitraum wie 30d, 6m oder 10y oder „manual“ für keine automatische "
+"Löschung."
+
+#. translators: 1: minimum, 2: maximum
+#: src/Admin/NetworkPage.php:323
+#, php-format
+msgid "A number between %1$d and %2$d."
+msgstr "Eine Zahl zwischen %1$d und %2$d."
+
+#: src/Admin/NetworkPage.php:328
+msgid "Save network settings"
+msgstr "Netzwerk-Einstellungen speichern"
+
+#: src/Admin/SettingsPage.php:864
+msgid ""
+"The network administrator does not allow sites of this network to delete "
+"their data when the plugin is deleted. Forms and submissions are kept."
+msgstr ""
+"Die Netzwerk-Administration erlaubt Websites dieses Netzwerks nicht, ihre "
+"Daten beim Löschen des Plugins zu löschen. Formulare und Einsendungen "
+"bleiben erhalten."
+
+#: src/Settings/SettingsSchema.php:904
+msgid ""
+"The network administrator does not allow sites of this network to delete "
+"their data when the plugin is deleted."
+msgstr ""
+"Die Netzwerk-Administration erlaubt Websites dieses Netzwerks nicht, ihre "
+"Daten beim Löschen des Plugins zu löschen."

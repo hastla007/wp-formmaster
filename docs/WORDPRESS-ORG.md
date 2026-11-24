@@ -94,7 +94,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 - [x] Abschnitt **Privacy / Datenschutz**: gespeicherte Daten (Tabellen, keine IP), Retention-Default 12 Monate, Exporter/Eraser, Backups-Hinweis (DS-T-30), keine Telemetrie.
 - [x] Abschnitt **External services** (siehe oben).
 - [x] Abschnitt **Source code / Build**: Quellen in `assets/src`, Build mit `npm ci && npm run build` (esbuild), Repository-Link.
-- [x] FAQ: Mailzustellung/SMTP, Rechte/Rollen, Multisite nicht unterstützt (v1.0), Deinstallation und Daten, Einsendungen exportieren, Unterschied Free/Pro.
+- [x] FAQ: Mailzustellung/SMTP, Rechte/Rollen, Multisite (Daten je Website, Netzwerkseite, Super-Admin-Zugriff auf Einsendungen standardmäßig aus), Deinstallation und Daten, Einsendungen exportieren, Unterschied Free/Pro.
 - [x] Screenshots-Abschnitt: nummerierte Beschriftungen passend zu `screenshot-N.png` (8 Einträge = Screenshot-Liste in Abschnitt 4).
 - [x] Changelog-Format `= x.y.z =` (wird von `bin/build-release.sh` ausgelesen).
 - [ ] Validierung mit dem offiziellen Readme-Validator (wordpress.org, aus dieser Umgebung nicht erreichbar). `Contributors: captainsuite` ist ein Platzhalter bis E-5; `Tested up to` vor dem Release auf die geprüfte WP-Version setzen.
